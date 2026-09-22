@@ -1,0 +1,113 @@
+---
+import { PROJECTS } from '../data/projects';
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+---
+
+<section class="card col-card" aria-labelledby="t-projects">
+  <h2 class="card-title" id="t-projects">Проекты</h2>
+  <ul class="projects">
+    {PROJECTS.map((p) => (
+      <li class="proj">
+        <button class="proj-btn" type="button" aria-describedby={`case-${p.id}`}>
+          <img src={href(p.logo)} alt={p.name} width="34" height="34" loading="lazy" />
+          <span class="visually-hidden">Кейс: {p.name}</span>
+        </button>
+        <div class="case" id={`case-${p.id}`} role="tooltip">
+          <p>{p.about}</p>
+          <p>{p.did}</p>
+          <a href={p.url} target="_blank" rel="noopener">{p.domain} ↗</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .col-card {
+    padding: 14px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .projects {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+  }
+  .proj {
+    position: relative;
+  }
+  .proj-btn {
+    width: 52px;
+    height: 52px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-icon);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  .proj-btn img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+  .case {
+    position: absolute;
+    left: 66px;
+    top: -12px;
+    width: 260px;
+    z-index: 5;
+    background: var(--card);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-pop);
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+  .proj:hover .case,
+  .proj:focus-within .case {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .case a {
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+  @media (max-width: 900px) {
+    .case {
+      left: 62px;
+      width: min(280px, 62vw);
+    }
+  }
+  @media (max-width: 560px) {
+    .case {
+      left: -6px;
+      top: 60px;
+      width: min(280px, 78vw);
+      transform: translateY(-4px);
+    }
+    .proj:hover .case,
+    .proj:focus-within .case {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,241 @@
+---
+// Колесо продукта: год из 52 недель, 4 этапа по 13 недель.
+// Геометрия считается на сборке, в браузер уезжает готовый SVG.
+import { SECTORS } from '../data/site';
+
+const STEP = 360 / 52;
+const rad = (d: number) => (d * Math.PI) / 180;
+const P = (r: number, d: number) => [+(r * Math.cos(rad(d))).toFixed(2), +(r * Math.sin(rad(d))).toFixed(2)];
+// Неделя k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
+const weekAngle = (k: number) => 180 - (k - 0.5) * STEP;
+
+const SPEC = ['#e44854', '#c06c60', '#e4d830', '#b4e43c', '#30c048', '#30d890', '#30c0b4', '#30c0cc', '#309ce4', '#e44854'];
+const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16));
+function specAt(t: number) {
+  t = ((t % 1) + 1) % 1;
+  const f = t * (SPEC.length - 1);
+  const i = Math.floor(f);
+  const r = f - i;
+  const a = hex(SPEC[i]);
+  const b = hex(SPEC[i + 1]);
+  return `rgb(${a.map((v, j) => Math.round(v + (b[j] - v) * r)).join(',')})`;
+}
+
+const discSectors = SECTORS.map((s) => {
+  const [x0, y0] = P(170, weekAngle(s.to + 0.5));
+  const [x1, y1] = P(170, weekAngle(s.from - 0.5));
+  return { d: `M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`, fill: `var(--sec-${s.id})` };
+});
+
+const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
+  const a = weekAngle(k);
+  const [x1, y1] = P(50, a);
+  const [x2, y2] = P(168, a);
+  return { id: `cg${i}`, x1, y1, x2, y2, c1: specAt(i / 4), c2: specAt(i / 4 + 0.18) };
+});
+
+const weeks = Array.from({ length: 52 }, (_, i) => {
+  const k = i + 1;
+  const edge = weekAngle(k + 0.5);
+  const [tx1, ty1] = P(178, edge);
+  const [tx2, ty2] = P(194, edge);
+  const a = weekAngle(k);
+  const [x, y] = P(186, a);
+  return { label: String(k).padStart(2, '0'), tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2), color: specAt(i / 52) };
+});
+
+const labels = SECTORS.map((s, i) => {
+  const mid = weekAngle((s.from + s.to) / 2);
+  const [x1, y1] = P(125, mid - 30);
+  const [x2, y2] = P(125, mid + 30);
+  return { id: `lg${i}`, offset: +((((mid % 360) + 360) % 360) / 3.6).toFixed(2), x1, y1, x2, y2, ...s };
+});
+
+const rim = Array.from({ length: 72 }, (_, i) => {
+  const [x0, y0] = P(46, i * 5);
+  const [x1, y1] = P(46, i * 5 + 5.4);
+  return { d: `M${x0} ${y0} A46 46 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
+});
+
+const hits = SECTORS.map((s, i) => {
+  const a0 = weekAngle(s.to + 0.5);
+  const a1 = weekAngle(s.from - 0.5);
+  const [x0, y0] = P(200, a0);
+  const [x1, y1] = P(200, a1);
+  const [x2, y2] = P(48, a1);
+  const [x3, y3] = P(48, a0);
+  return { i, d: `M${x3} ${y3} L${x0} ${y0} A200 200 0 0 1 ${x1} ${y1} L${x2} ${y2} A48 48 0 0 0 ${x3} ${y3} Z`, ...s };
+});
+---
+
+<div class="wheel-box" id="wheelBox">
+  <svg viewBox="-220 -220 440 440" role="img" aria-label="Колесо продукта: касдев, дизайн, разработка, маркетинг. 52 недели по ободу, в центре внимание.">
+    <defs>
+      <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
+      {crossLines.map((l) => (
+        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
+          <stop offset="0" stop-color={l.c1}></stop>
+          <stop offset="1" stop-color={l.c2}></stop>
+        </linearGradient>
+      ))}
+      {labels.map((l) => (
+        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
+          <stop offset="0" stop-color={l.c1}></stop>
+          <stop offset="1" stop-color={l.c2}></stop>
+        </linearGradient>
+      ))}
+    </defs>
+
+    <g id="rotor">
+      <g style="opacity:var(--disc-op)">
+        {discSectors.map((s) => <path d={s.d} style={`fill:${s.fill}`}></path>)}
+      </g>
+      <circle r="170" fill="none" style="stroke:var(--disc-stroke)" stroke-width="2.5"></circle>
+
+      <g style="opacity:var(--cross-op)">
+        {crossLines.map((l) => (
+          <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={`url(#${l.id})`} stroke-width="2" stroke-dasharray="5 4"></line>
+        ))}
+      </g>
+
+      <g style="opacity:var(--tick-op)">
+        {weeks.map((w) => (
+          <line x1={w.tx1} y1={w.ty1} x2={w.tx2} y2={w.ty2} stroke={w.color} stroke-width="2.2" stroke-linecap="round"></line>
+        ))}
+      </g>
+      <g style="fill:var(--teal-num)" font-size="8.5" font-weight="600" class="num">
+        {weeks.map((w) => (
+          <text x={w.x} y={w.y} text-anchor="middle" dominant-baseline="central" transform={`rotate(${w.rot} ${w.x} ${w.y})`}>{w.label}</text>
+        ))}
+      </g>
+
+      <g style="opacity:var(--label-op)" id="labels">
+        {labels.map((l, i) => (
+          <text font-size="25" font-weight="700" fill={`url(#${l.id})`} data-label={i}>
+            <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
+          </text>
+        ))}
+      </g>
+
+      <circle r="46" style="fill:var(--center-fill)"></circle>
+      {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="3"></path>)}
+
+      {hits.map((h) => (
+        <path class="sector-hit" d={h.d} data-sector={h.i} tabindex="0" role="button" aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}`}></path>
+      ))}
+    </g>
+
+    <g id="pointer">
+      <line x1="-216" y1="0" x2="-47" y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
+      <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"></path>
+      <text x="-100" y="17" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--teal-text)">итерация</text>
+    </g>
+    <text x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="600" style="fill:var(--ink-2)">внимание</text>
+  </svg>
+</div>
+
+<p class="wheel-status" id="wheelStatus" aria-live="polite"></p>
+
+<script>
+  import { SECTORS } from '../data/site';
+
+  const box = document.getElementById('wheelBox');
+  const rotor = document.getElementById('rotor');
+  const status = document.getElementById('wheelStatus');
+  if (box && rotor && status) {
+    const STEP = 360 / 52;
+    const PERIOD = 156000; // один оборот = год
+    const labels = [...document.querySelectorAll('#labels [data-label]')] as SVGTextElement[];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const isoWeek = (d: Date) => {
+      const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const day = t.getUTCDay() || 7;
+      t.setUTCDate(t.getUTCDate() + 4 - day);
+      const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+      return Math.ceil(((t.getTime() - y.getTime()) / 864e5 + 1) / 7);
+    };
+    const sectorOf = (w: number) => SECTORS.findIndex((s) => w >= s.from && w <= s.to);
+    const nowWeek = Math.min(52, isoWeek(new Date()));
+
+    // Колесо стартует с текущей недели года: метафора совпадает с календарём.
+    let rot = (nowWeek - 0.5) * STEP;
+    let hovered: number | null = null;
+    let paused = false;
+    let last = performance.now();
+
+    const setLabelFocus = (i: number | null) => {
+      labels.forEach((el, j) => el.setAttribute('opacity', i === null || i === j ? '1' : '0.35'));
+    };
+
+    function render() {
+      rotor.setAttribute('transform', `rotate(${rot.toFixed(3)})`);
+      if (hovered !== null) {
+        const s = SECTORS[hovered];
+        status.innerHTML = `<b>${s.name}</b> · недели <span class="num">${s.from}–${s.to}</span> · ${s.text}`;
+        return;
+      }
+      const w = ((Math.floor(rot / STEP) % 52) + 52) % 52 + 1;
+      const s = SECTORS[sectorOf(w)];
+      status.innerHTML = `под стрелкой: неделя <b class="num">${String(w).padStart(2, '0')}</b> · <b>${s.name}</b>`;
+    }
+
+    const focusSector = (i: number | null) => {
+      hovered = i;
+      paused = i !== null;
+      setLabelFocus(i);
+      render();
+    };
+
+    document.querySelectorAll<SVGPathElement>('.sector-hit').forEach((hit) => {
+      const i = Number(hit.dataset.sector);
+      hit.addEventListener('mouseenter', () => focusSector(i));
+      hit.addEventListener('focus', () => focusSector(i));
+      hit.addEventListener('blur', () => focusSector(null));
+    });
+    box.addEventListener('mouseleave', () => focusSector(null));
+
+    function tick(t: number) {
+      const dt = t - last;
+      last = t;
+      if (!paused) {
+        rot += (dt / PERIOD) * 360;
+        if (rot >= 360 * 52) rot -= 360 * 52;
+      }
+      render();
+      requestAnimationFrame(tick);
+    }
+
+    render();
+    if (!reduce) requestAnimationFrame((t) => { last = t; tick(t); });
+  }
+</script>
+
+<style>
+  .wheel-box {
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+  }
+  .wheel-box svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  .sector-hit {
+    fill: transparent;
+    cursor: pointer;
+  }
+  .wheel-status {
+    font-size: 14px;
+    color: var(--ink-2);
+    text-align: center;
+    min-height: 1.5em;
+  }
+  .wheel-status :global(b) {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,550 @@
+<title>Эмилиус — дизайн-система</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --teal:#00999b; --teal-num:#009090; --teal-text:#008c8e; --on-teal:#fffdfd;
+  --ink:#000000; --ink-2:#5a5a5a; --ink-3:#8a8f8e;
+  --page:#f7f7f7; --card:#fefefe; --card-border:#efefef; --hair:#ececec;
+  --well:#f3f5f5;
+  --shadow-card:0 0 10px 2px rgba(210,210,210,.25);
+  --shadow-pop:0 0 15px 0 rgba(0,0,0,.22);
+  --shadow-icon:0 0 5px 0 rgba(0,0,0,.25);
+  --veil-a:rgba(255,255,255,.65); --veil-b:rgba(255,255,255,.45);
+  --ray-1:#e6efff; --ray-2:#e6fff0; --ray-3:#fffbe6; --ray-4:#ffe9ea;
+  --disc-stroke:#ffffff; --disc-op:.55; --label-op:.62; --tick-op:.75; --cross-op:.5;
+  --center-fill:#ffffff;
+  --font:'Glober','Manrope',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#00999b; --teal-num:#35b6b4; --teal-text:#3cc6c6; --on-teal:#fffdfd;
+    --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#6f7c79;
+    --page:#0e1413; --card:#151c1b; --card-border:#1f2a28; --hair:#24302e; --well:#1a2322;
+    --shadow-card:0 0 14px 2px rgba(0,0,0,.35); --shadow-pop:0 0 18px 0 rgba(0,0,0,.6); --shadow-icon:0 0 5px 0 rgba(0,0,0,.6);
+    --veil-a:rgba(14,20,19,.9); --veil-b:rgba(14,20,19,.84);
+    --ray-1:#2c4a8a; --ray-2:#2b8a55; --ray-3:#8a842b; --ray-4:#8a2b3a;
+    --disc-stroke:#2b3836; --disc-op:.35; --label-op:.85; --tick-op:.85; --cross-op:.55;
+    --center-fill:#151c1b;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#00999b; --teal-num:#35b6b4; --teal-text:#3cc6c6; --on-teal:#fffdfd;
+  --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#6f7c79;
+  --page:#0e1413; --card:#151c1b; --card-border:#1f2a28; --hair:#24302e; --well:#1a2322;
+  --shadow-card:0 0 14px 2px rgba(0,0,0,.35); --shadow-pop:0 0 18px 0 rgba(0,0,0,.6); --shadow-icon:0 0 5px 0 rgba(0,0,0,.6);
+  --veil-a:rgba(14,20,19,.9); --veil-b:rgba(14,20,19,.84);
+  --ray-1:#2c4a8a; --ray-2:#2b8a55; --ray-3:#8a842b; --ray-4:#8a2b3a;
+  --disc-stroke:#2b3836; --disc-op:.35; --label-op:.85; --tick-op:.85; --cross-op:.55;
+  --center-fill:#151c1b;
+}
+
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{
+  margin:0; font-family:var(--font); color:var(--ink); font-size:16px; line-height:1.45;
+  background:
+    linear-gradient(var(--veil-a),var(--veil-b)),
+    conic-gradient(from 200deg at 42% 22%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
+  background-color:var(--page);
+  background-attachment:fixed;
+  padding-inline:20px; padding-block:28px 56px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin-inline:auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
+p{margin:0}
+a{color:var(--teal-text)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+/* ===== Hero: копия композиции первого экрана ===== */
+.hero{display:flex;flex-direction:column;align-items:center;gap:22px}
+.pill{display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 22px;font-weight:600;font-size:19px}
+.pill svg{width:24px;height:37px;display:block}
+.mission{text-align:center;display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.eyebrow{color:var(--teal-text);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.h1{font-size:clamp(24px,3.6vw,38px);line-height:1.15;max-width:22ch;margin-inline:auto}
+.lead{color:var(--ink-2);max-width:60ch;margin-inline:auto;text-align:center}
+
+.bento{width:100%;display:grid;grid-template-columns:185px minmax(0,522px) 185px;justify-content:center;gap:33px;margin-top:14px;align-items:start}
+.card{background:var(--card);border:2px solid var(--card-border);border-radius:20px;box-shadow:var(--shadow-card)}
+.col-card{padding:14px 14px 18px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.card-title{font-size:20px;line-height:1.15;font-weight:600;text-align:center}
+.stack{display:flex;flex-direction:column;gap:24px}
+
+/* Проекты */
+.projects{list-style:none;margin:0;padding:6px 0 4px;display:flex;flex-direction:column;gap:22px;align-items:center}
+.proj{position:relative}
+.proj-btn{width:52px;height:52px;border-radius:50%;border:0;background:#fff;box-shadow:var(--shadow-icon);display:grid;place-items:center;cursor:pointer;font:700 22px/1 var(--font)}
+.case{position:absolute;left:66px;top:-10px;width:250px;z-index:5;background:var(--card);color:var(--ink);border-radius:10px;box-shadow:var(--shadow-pop);padding:14px 16px;font-size:14.5px;line-height:1.4;display:flex;flex-direction:column;gap:8px;opacity:0;visibility:hidden;transform:translateX(-4px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+.proj:hover .case,.proj:focus-within .case{opacity:1;visibility:visible;transform:none}
+.case .shot{height:64px;border-radius:6px;background:var(--well);display:grid;place-items:center;color:var(--ink-3);font:500 11px var(--mono)}
+.case a{font-weight:600;text-decoration-thickness:1px;text-underline-offset:3px}
+
+/* Колесо */
+.wheel-card{padding:14px 14px 16px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.wheel-box{position:relative;width:100%;max-width:440px;aspect-ratio:1/1}
+.wheel-box svg{width:100%;height:100%;display:block;overflow:visible}
+.wheel-status{font-size:14px;color:var(--ink-2);text-align:center;min-height:2.9em;display:flex;flex-direction:column;align-items:center;gap:2px}
+.wheel-status b{color:var(--ink);font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.sector-hit{cursor:pointer;fill:transparent}
+
+/* Связь */
+.btn{width:100%;height:54px;border-radius:13px;display:flex;align-items:center;justify-content:space-between;padding-inline:16px 14px;font:600 17px/1.55 var(--font);text-decoration:none;transition:background-color .2s ease-in-out,color .2s ease-in-out,border-color .2s ease-in-out;cursor:pointer}
+.btn svg{width:22px;height:22px;flex:none}
+.btn-primary{background:var(--teal);color:#fff;border:0}
+.btn-primary:hover{color:var(--on-teal)}
+.btn-secondary{background:var(--card);color:var(--ink);border:1px solid var(--teal)}
+.btn-secondary:hover{background:var(--teal);color:#fff}
+.tg{fill:#000}
+.btn-secondary .tg{fill:var(--ink)}
+.btn-secondary:hover .tg{fill:#000}
+.voice{width:100px;height:100px;border-radius:50%;border:0;background:linear-gradient(135deg,#28655e,#617170);color:#fff;font:600 15px var(--font);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:transform .2s ease-in-out}
+.voice:hover{transform:scale(1.03)}
+.voice[aria-pressed="true"] .bars i{animation:bar 0.9s ease-in-out infinite}
+.bars{display:flex;gap:3px;align-items:center;height:22px}
+.bars i{display:block;width:2px;background:#fff;border-radius:2px}
+.bars i:nth-child(1),.bars i:nth-child(7){height:6px}.bars i:nth-child(2),.bars i:nth-child(6){height:12px}.bars i:nth-child(3),.bars i:nth-child(5){height:18px}.bars i:nth-child(4){height:22px}
+.bars i:nth-child(2){animation-delay:.1s!important}.bars i:nth-child(3){animation-delay:.2s!important}.bars i:nth-child(4){animation-delay:.3s!important}.bars i:nth-child(5){animation-delay:.2s!important}.bars i:nth-child(6){animation-delay:.1s!important}
+@keyframes bar{50%{transform:scaleY(.4)}}
+.micro{font-size:11px;line-height:1.25;text-align:center;color:var(--ink-2)}
+.demo-note{font-size:12px;color:var(--ink-3);text-align:center}
+
+/* ===== Секции спецификации ===== */
+.section{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;flex-direction:column;gap:6px;max-width:66ch}
+.sec-head h2{font-size:28px;line-height:1.15}
+.sec-head p{color:var(--ink-2)}
+.panel{padding:22px}
+.grid{display:grid;gap:14px}
+.g-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.idea{padding:20px;display:flex;flex-direction:column;gap:8px}
+.idea .k{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-text)}
+.idea h3{font-size:20px;line-height:1.2}
+.idea p{color:var(--ink-2);font-size:15px}
+
+.cycle{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cycle li{padding:14px 14px 16px;border-radius:13px;background:var(--well);display:flex;flex-direction:column;gap:4px}
+.cycle .w{font:500 12px var(--mono);color:var(--ink-3)}
+.cycle .n{font-weight:700;font-size:18px}
+.cycle .d{font-size:14px;color:var(--ink-2)}
+.cycle li.now{background:transparent;box-shadow:inset 0 0 0 2px var(--teal)}
+
+.sw-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sw{display:flex;flex-direction:column;gap:8px}
+.chip{height:64px;border-radius:13px;border:1px solid var(--hair)}
+.sw b{font-size:14px;font-weight:600}
+.sw span{font:400 12px var(--mono);color:var(--ink-2)}
+.spectrum{height:44px;border-radius:13px;background:linear-gradient(90deg,#e44854,#c06c60,#e4d830,#b4e43c,#30c048,#30d890,#30c0b4,#30c0cc,#309ce4)}
+.spec-stops{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;font:400 11px var(--mono);color:var(--ink-2);text-align:center}
+
+.type-row{display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:baseline;padding-block:14px;border-top:1px solid var(--hair)}
+.type-row:first-child{border-top:0;padding-top:0}
+.type-row .meta{font:400 12px/1.5 var(--mono);color:var(--ink-2)}
+
+.spec-table{width:100%;border-collapse:collapse;font-size:15px}
+.spec-table th,.spec-table td{text-align:left;padding:10px 12px 10px 0;border-top:1px solid var(--hair);vertical-align:top}
+.spec-table th{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);border-top:0}
+.spec-table td:first-child{font-weight:600;white-space:nowrap}
+.spec-table code{font:400 13px var(--mono);color:var(--ink-2)}
+.scroll-x{overflow-x:auto}
+
+.shape-demo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.shape-demo > div{height:110px;display:flex;align-items:flex-end;padding:12px;font:400 12px/1.4 var(--mono);color:var(--ink-2);background:var(--card)}
+.r20{border-radius:20px;border:2px solid var(--card-border);box-shadow:var(--shadow-card)}
+.r13{border-radius:13px;border:1px solid var(--teal)}
+.r10{border-radius:10px;box-shadow:var(--shadow-pop)}
+
+.dd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.dd li{padding-left:22px;position:relative;font-size:15px}
+.dd li::before{position:absolute;left:0;top:0;font-weight:700}
+.do li::before{content:"✓";color:var(--teal)}
+.dont li::before{content:"✕";color:#c0243c}
+.dd h3{font-size:18px;margin-bottom:12px}
+
+.prompt{position:relative}
+.prompt pre{margin:0;padding:20px;border-radius:13px;background:var(--well);font:400 13px/1.6 var(--mono);white-space:pre-wrap;color:var(--ink);max-height:420px;overflow:auto}
+.copy{position:absolute;top:12px;right:12px;width:auto;height:40px;padding-inline:14px;gap:10px;font-size:15px}
+.toast{font-size:13px;color:var(--teal-text);min-height:1.2em}
+
+footer{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px;color:var(--ink-2);text-align:center}
+
+.theme-switch{position:fixed;top:14px;right:14px;z-index:10;display:flex;gap:4px;background:var(--card);border:1px solid var(--hair);border-radius:13px;padding:4px}
+.theme-switch button{border:0;background:transparent;color:var(--ink-2);font:600 13px var(--font);padding:6px 10px;border-radius:9px;cursor:pointer}
+.theme-switch button[aria-pressed="true"]{background:var(--teal);color:#fff}
+
+@media (max-width:900px){
+  .bento{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:16px}
+  .wheel-card{grid-column:1/-1;order:-1}
+  .g-3{grid-template-columns:1fr}
+  .cycle{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .case{left:auto;right:auto;top:62px;left:-8px;width:min(260px,70vw)}
+}
+@media (max-width:560px){
+  .g-2,.dd,.shape-demo{grid-template-columns:1fr}
+  .type-row{grid-template-columns:1fr;gap:4px}
+  .bento{grid-template-columns:96px minmax(0,1fr)}
+  .theme-switch{position:static;align-self:center}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="theme-switch" role="group" aria-label="Тема">
+  <button type="button" id="th-light" data-t="light" aria-pressed="false">Светлая</button>
+  <button type="button" id="th-dark" data-t="dark" aria-pressed="false">Тёмная</button>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="pill" aria-label="Эмилиус Эдженси">
+    <span>Эмилиус</span>
+    <svg viewBox="0 0 55 84" aria-hidden="true">
+      <defs>
+        <linearGradient id="markGrad" x1="48" y1="2" x2="18" y2="84" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#309ce4"/><stop offset=".18" stop-color="#30c0b4"/>
+          <stop offset=".34" stop-color="#30d860"/><stop offset=".5" stop-color="#b4e43c"/>
+          <stop offset=".64" stop-color="#e4d830"/><stop offset=".78" stop-color="#e44854"/>
+          <stop offset="1" stop-color="#b47860"/>
+        </linearGradient>
+      </defs>
+      <path d="M4 32 L51 32 L37 4 L19 52 L46 52 L22 81 Z" fill="none" stroke="url(#markGrad)" stroke-width="4.5" stroke-linejoin="miter"/>
+    </svg>
+    <span>Эдженси</span>
+  </div>
+
+  <div class="mission">
+    <span class="eyebrow">Дизайн-система · итерация 4</span>
+    <h1 class="h1">Помогать великолепным людям создавать великолепные продукты!</h1>
+    <p class="lead">Живой эталон стиля emilius.agency: токены, компоненты и колесо продукта, пересобранное в SVG. Этот экран повторяет композицию главной страницы сайта. Наведите курсор на колесо, логотипы проектов и кнопки.</p>
+  </div>
+
+  <div class="bento">
+    <section class="card col-card" aria-labelledby="t-proj">
+      <h2 class="card-title" id="t-proj">Проекты</h2>
+      <ul class="projects">
+        <li class="proj"><button class="proj-btn" type="button" id="p1" aria-describedby="c1" style="font-family:cursive;font-weight:400;color:#111">a</button>
+          <div class="case" id="c1" role="tooltip"><div class="shot">скриншот сайта</div><p>Интернет-магазин на inSales: ювелирные украшения с душой.</p><p>Фронтенд, тесная интеграция с inSales, собственные модули.</p><a href="https://alohagaia.ru/" target="_blank" rel="noopener">alohagaia.ru ↗</a></div></li>
+        <li class="proj"><button class="proj-btn" type="button" id="p2" aria-describedby="c2" style="color:#2f8fe8">W</button>
+          <div class="case" id="c2" role="tooltip"><div class="shot">скриншот сайта</div><p>Интернет-магазин на inSales: доставка продуктов в Чечне. Стартап вырос с 0 до 2000+ заказов в месяц.</p><p>Сделали техническую часть: сайт-витрину и интеграции.</p><a href="https://limemart.wizzu.ru/" target="_blank" rel="noopener">wizzu.ru ↗</a></div></li>
+        <li class="proj"><button class="proj-btn" type="button" id="p3" aria-describedby="c3" style="font-family:Georgia,serif;font-weight:400;color:#111">Ď</button>
+          <div class="case" id="c3" role="tooltip"><div class="shot">скриншот сайта</div><p>Интернет-магазин на inSales: дизайнерская женская одежда премиум-сегмента.</p><p>Фронтенд, сложная архитектура, выразительный UX/UI.</p><a href="https://www.duman.store/" target="_blank" rel="noopener">duman.store ↗</a></div></li>
+        <li class="proj"><button class="proj-btn" type="button" id="p4" aria-describedby="c4" style="color:#fff;background:#0f4c81">G</button>
+          <div class="case" id="c4" role="tooltip"><div class="shot">скриншот сайта</div><p>Интернет-магазин на inSales: премиальные клавиатуры, мыши и аксессуары, шоурум в Москве.</p><p>Развитие магазина и кастомизация фронтенда.</p><a href="https://geekboards.ru/" target="_blank" rel="noopener">geekboards.ru ↗</a></div></li>
+        <li class="proj"><button class="proj-btn" type="button" id="p5" aria-describedby="c5" style="color:#3f8f4f;font-size:18px">Н</button>
+          <div class="case" id="c5" role="tooltip"><div class="shot">скриншот сайта</div><p>Сайт на Tilda: одно из лучших мест отдыха в Сочи.</p><p>Ежемесячное развитие сайта и SEO.</p><a href="https://navalishenskoe.ru/" target="_blank" rel="noopener">navalishenskoe.ru ↗</a></div></li>
+      </ul>
+    </section>
+
+    <section class="card wheel-card" aria-labelledby="t-wheel">
+      <h2 class="card-title" id="t-wheel">Делаем по кругу</h2>
+      <div class="wheel-box" id="wheelBox">
+        <svg id="wheel" viewBox="-220 -220 440 440" role="img" aria-label="Колесо продукта: касдев, дизайн, разработка, маркетинг, 52 недели, в центре внимание">
+          <defs id="wdefs"></defs>
+          <g id="rotor"></g>
+          <!-- статичные элементы -->
+          <g id="pointer">
+            <line x1="-216" y1="0" x2="-47" y2="0" style="stroke:var(--teal)" stroke-width="2.4"/>
+            <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"/>
+            <text x="-100" y="17" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--teal-text)">итерация</text>
+          </g>
+          <text x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="600" style="fill:var(--ink-2)">внимание</text>
+        </svg>
+      </div>
+      <div class="wheel-status" id="status" aria-live="polite"></div>
+    </section>
+
+    <div class="stack">
+      <section class="card col-card" aria-labelledby="t-link">
+        <h2 class="card-title" id="t-link">Связь</h2>
+        <a class="btn btn-primary" href="https://t.me/EmiliusAgency" target="_blank" rel="noopener">В канал <svg viewBox="0 0 24 24" aria-hidden="true"><path class="tg" d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"/></svg></a>
+        <a class="btn btn-secondary" href="https://t.me/emillively" target="_blank" rel="noopener">Написать <svg viewBox="0 0 24 24" aria-hidden="true"><path class="tg" d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"/></svg></a>
+      </section>
+      <section class="card col-card" aria-labelledby="t-emi">
+        <h2 class="card-title" id="t-emi">Спросить 🤖 Эми</h2>
+        <button class="voice" type="button" id="voice" aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="voiceLbl">Говорить</span></button>
+        <p class="demo-note">Демо кнопки, звонка не будет</p>
+      </section>
+    </div>
+  </div>
+</header>
+
+<section class="section" aria-labelledby="s-idea">
+  <div class="sec-head">
+    <span class="eyebrow">Посыл</span>
+    <h2 id="s-idea">Агентство, которое работает циклами</h2>
+    <p>Сайт почти ничего не рассказывает словами. Метод показывает объект: медленное колесо, где год разбит на четыре квартала и в центре стоит внимание.</p>
+  </div>
+  <div class="grid g-3">
+    <article class="card idea"><span class="k">Миссия</span><h3>Партнёр, а не подрядчик</h3><p>«Великолепные люди» — это клиенты. Агентство помогает им, но не присваивает себе результат.</p></article>
+    <article class="card idea"><span class="k">Метод</span><h3>Делаем по кругу</h3><p>Продукт никогда не «сдан». Каждый цикл — это новая итерация, и сайт сам честно пишет: «Итерация 4 из 15».</p></article>
+    <article class="card idea"><span class="k">Центр</span><h3>Внимание</h3><p>Все четыре этапа проходят через центральный диск. Стрелка «итерация» упирается именно в него.</p></article>
+  </div>
+  <div class="card panel">
+    <ol class="cycle" id="cycle">
+      <li data-s="0"><span class="w num">нед. 01–13</span><span class="n" style="color:#90543c">касдев</span><span class="d">Исследуем клиентов и находим проблему</span></li>
+      <li data-s="1"><span class="w num">нед. 14–26</span><span class="n" style="color:#2484a8">дизайн</span><span class="d">Проектируем опыт и интерфейс</span></li>
+      <li data-s="2"><span class="w num">нед. 27–39</span><span class="n" style="color:#549c48">разработка</span><span class="d">Собираем и интегрируем продукт</span></li>
+      <li data-s="3"><span class="w num">нед. 40–52</span><span class="n" style="color:#609048">маркетинг</span><span class="d">Приводим людей, потом снова касдев</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-color">
+  <div class="sec-head">
+    <span class="eyebrow">Цвет</span>
+    <h2 id="s-color">Один бирюзовый и радуга на полях</h2>
+    <p>Для действий используется только #00999B. Спектр появляется в знаке, на колесе и в едва заметных лучах фона, но никогда не красит кнопки или текст.</p>
+  </div>
+  <div class="card panel grid" style="gap:22px">
+    <div class="sw-row">
+      <div class="sw"><div class="chip" style="background:#00999b"></div><b>Teal · акцент</b><span>#00999B</span></div>
+      <div class="sw"><div class="chip" style="background:#009090"></div><b>Номера недель</b><span>#009090</span></div>
+      <div class="sw"><div class="chip" style="background:#000"></div><b>Текст</b><span>#000000</span></div>
+      <div class="sw"><div class="chip" style="background:#5a5a5a"></div><b>Приглушённый</b><span>#5A5A5A</span></div>
+      <div class="sw"><div class="chip" style="background:#fefefe"></div><b>Карточка</b><span>#FEFEFE / 2px #EFEFEF</span></div>
+      <div class="sw"><div class="chip" style="background:#f7f7f7"></div><b>Страница</b><span>#F7F7F7 + лучи</span></div>
+      <div class="sw"><div class="chip" style="background:linear-gradient(135deg,#28655e,#617170)"></div><b>Голос «Эми»</b><span>#28655E → #617170</span></div>
+    </div>
+    <div class="grid" style="gap:8px">
+      <div class="spectrum" role="img" aria-label="Спектр бренда от красного до голубого"></div>
+      <div class="spec-stops num"><span>E44854</span><span>C06C60</span><span>E4D830</span><span>B4E43C</span><span>30C048</span><span>30D890</span><span>30C0B4</span><span>30C0CC</span><span>309CE4</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-type">
+  <div class="sec-head">
+    <span class="eyebrow">Типографика</span>
+    <h2 id="s-type">Glober, полужирный и дружелюбный</h2>
+    <p>На сайте стоит Glober от Fontfabric. На этой странице его заменяет Manrope, потому что Glober нет в Google Fonts. Заголовки 600, текст 400, капсом набран только eyebrow.</p>
+  </div>
+  <div class="card panel">
+    <div class="type-row"><div class="meta">H1 · 38/1.15 · 600</div><div style="font-size:clamp(24px,3.6vw,38px);line-height:1.15;font-weight:600">Великолепные продукты</div></div>
+    <div class="type-row"><div class="meta">Eyebrow · 19 · 700 · caps</div><div class="eyebrow" style="font-size:19px">Наша миссия</div></div>
+    <div class="type-row"><div class="meta">Карточка · 20/1.15 · 600</div><div style="font-size:20px;font-weight:600">Делаем по кругу</div></div>
+    <div class="type-row"><div class="meta">Кнопка · 17/1.55 · 600</div><div style="font-size:17px;font-weight:600">В канал</div></div>
+    <div class="type-row"><div class="meta">Текст · 16/1.4 · 400</div><div>Интернет-магазин на inSales: стартап вырос с 0 до 2000+ заказов в месяц.</div></div>
+    <div class="type-row"><div class="meta">Метка · 14/1 · 600 · teal</div><div style="font-size:14px;font-weight:600;color:var(--teal-text)">итерация</div></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-shape">
+  <div class="sec-head">
+    <span class="eyebrow">Форма</span>
+    <h2 id="s-shape">Три радиуса, тени без смещения</h2>
+    <p>Тень у карточек не падает вниз, а мягко окружает со всех сторон. Объекты будто парят в светлом пространстве.</p>
+  </div>
+  <div class="shape-demo">
+    <div class="r20">карточка · r20<br>2px #EFEFEF<br>0 0 10px 2px rgba(210,210,210,.25)</div>
+    <div class="r13">кнопка · r13<br>1px #00999B</div>
+    <div class="r10">кейс, поле ввода · r10<br>0 0 15px rgba(0,0,0,.3)</div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-wheel">
+  <div class="sec-head">
+    <span class="eyebrow">Колесо продукта</span>
+    <h2 id="s-wheel">Анатомия и движение</h2>
+    <p>На сайте колесо собрано из шести PNG-слоёв в Tilda, которые синхронно вращаются. Здесь оно пересобрано в одном SVG, и под стрелкой стоит текущая неделя года.</p>
+  </div>
+  <div class="card panel scroll-x">
+    <table class="spec-table">
+      <thead><tr><th>Слой</th><th>Что это</th><th>Параметры</th></tr></thead>
+      <tbody>
+        <tr><td>Риски</td><td>52 черты, окрашенные по спектру</td><td><code>⌀365 · opacity .75 · вращается</code></td></tr>
+        <tr><td>Стеклянный диск</td><td>Белая обводка, пастельная коническая заливка</td><td><code>⌀365 · вращается</code></td></tr>
+        <tr><td>Недели</td><td>01–52, номера растут против часовой</td><td><code>⌀381 · #009090 · вращается</code></td></tr>
+        <tr><td>Крест</td><td>Пунктир спектром, делит круг на 4 квартала</td><td><code>⌀362 · opacity .5 · вращается</code></td></tr>
+        <tr><td>Направления</td><td>касдев · дизайн · разработка · маркетинг, текст по дуге</td><td><code>⌀338 · opacity .6 · вращается</code></td></tr>
+        <tr><td>Центр</td><td>Белый диск со спектральным ободом</td><td><code>⌀190 · вращается</code></td></tr>
+        <tr><td>Указатель</td><td>Бирюзовая стрелка «итерация» на 9 часах</td><td><code>статичен</code></td></tr>
+        <tr><td>«внимание»</td><td>Слово в центре</td><td><code>статично · #5A5A5A 16/600</code></td></tr>
+        <tr><td>Движение</td><td>По часовой, равномерно, бесконечно</td><td><code>360° / 156s · linear · delay 5.5s</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-dd">
+  <div class="sec-head">
+    <span class="eyebrow">Границы стиля</span>
+    <h2 id="s-dd">Что сохранить, чего избегать</h2>
+  </div>
+  <div class="dd">
+    <div class="card panel do"><h3>Сохранить</h3><ul>
+      <li>Светлую bento-панель, где главное видно на первом экране</li>
+      <li>Один акцент #00999B для всех действий</li>
+      <li>Колесо как самый крупный объект, медленное вращение по часовой</li>
+      <li>Карточки r20 с тонкой обводкой и тенью без смещения</li>
+      <li>Кириллический словесный знак и строчные подписи</li>
+      <li>Связь в один клик через Telegram и голосовую «Эми»</li>
+    </ul></div>
+    <div class="card panel dont"><h3>Избегать</h3><ul>
+      <li>Тёмной темы по умолчанию и кислотных градиентных кнопок</li>
+      <li>Второго акцентного цвета</li>
+      <li>Длинного лендинга с десятком секций до контактов</li>
+      <li>Резких теней со смещением, стекла и блюра</li>
+      <li>Быстрых, пружинящих анимаций</li>
+      <li>Капса в заголовках</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="s-prompt">
+  <div class="sec-head">
+    <span class="eyebrow">Для Claude</span>
+    <h2 id="s-prompt">Блок для промта</h2>
+    <p>Вставьте этот текст в промт нового сайта. Полная версия с обоснованиями лежит в EMILIUS-DESIGN-SYSTEM.md.</p>
+  </div>
+  <div class="prompt">
+<pre id="promptText">Сделай сайт агентства «Эмилиус Эдженси» (emilius.agency) как следующую итерацию текущего сайта. Сохрани ДНК:
+
+СМЫСЛ: миссия «Помогать великолепным людям создавать великолепные продукты!». Метод «Делаем по кругу»: годовой цикл из 4 этапов по 13 недель: касдев (01–13) → дизайн (14–26) → разработка (27–39) → маркетинг (40–52) → снова касдев. В центре цикла «внимание». Сайт сам находится в процессе: «Итерация N из 15 до великолепного состояния».
+
+ГЕРОЙ: колесо продукта в inline SVG, самый крупный объект первого экрана. Слои: 52 спектральные риски (op .75), стеклянный диск с белой обводкой, номера 01–52 цветом #009090 (растут против часовой), пунктирный крест спектром (op .5), 4 подписи по дуге с градиентами (op .6), белый центральный диск со спектральным ободом и статичным словом «внимание» (#5A5A5A, 16/600). Неподвижная бирюзовая стрелка «итерация» на 9 часах. Вращение по часовой, 360° за 156 с, linear, бесконечно; при prefers-reduced-motion колесо стоит. При загрузке под стрелкой стоит текущая неделя года.
+
+ВИЗУАЛ: светлая bento-панель на один экран. Фон #F7F7F7 и едва заметные пастельные конические лучи под белой вуалью 65→45%. Карточки #FEFEFE, border 2px #EFEFEF, radius 20, shadow 0 0 10px 2px rgba(210,210,210,.25). Порядок: таблетка логотипа → eyebrow «НАША МИССИЯ» (teal, 700, caps) → H1 38/1.15/600 → три колонки 185/522/185: «Проекты» (круглые логотипы 52px, по hover открывается кейс), «Делаем по кругу» (колесо), «Связь» (кнопки Telegram) и «Спросить 🤖 Эми» (голосовой ИИ).
+
+ЦВЕТ: единственный акцент #00999B (текст на нём #FFFDFD). Текст #000 и #5A5A5A. Спектр #E44854 #C06C60 #E4D830 #B4E43C #30C048 #30D890 #30C0B4 #309CE4 используется ТОЛЬКО в знаке, колесе и фоне. Голосовая кнопка: круг с градиентом #28655E→#617170.
+
+ТИПОГРАФИКА: Glober (фолбэк Manrope). 600 для заголовков и кнопок, 400 для текста. Шкала 38/20/19/17/16/14. Подписи в колесе строчными.
+
+КОМПОНЕНТЫ: Primary: bg #00999B, r13, текст слева, чёрная иконка Telegram справа. Secondary: белая, 1px #00999B, по hover заливается teal за 0.2s. Кейс: скриншот → «Платформа — ниша» → «что сделали, цифры» → domain ↗. Тени без смещения. Анимации только спокойные: fade .2s, color .2s, медленное вращение.
+
+ЛОГОТИП: «Эмилиус [знак] Эдженси» в белой таблетке r20, 1px #ECECEC. Знак: два открытых треугольника (вверх и вниз), соединённые зигзагом-молнией, обводка со спектральным градиентом.
+
+ТОН: русский, тёплый, уверенный, короткий. В кейсах цифры, эмодзи точечно. «Знаем, как надо!»
+
+НЕ ДЕЛАТЬ: тёмную тему по умолчанию, кислотные градиентные кнопки, второй акцентный цвет, длинный лендинг до контактов, резкие или смещённые тени, быстрые пружинящие анимации, капс в заголовках.</pre>
+    <button class="btn btn-primary copy" type="button" id="copyBtn">Скопировать</button>
+  </div>
+  <p class="toast" id="toast" aria-live="polite"></p>
+</section>
+
+<footer>
+  <span>© 2026 | Emilius Agency</span>
+  <span>Итерация 4 из 15 до великолепного состояния</span>
+</footer>
+</div>
+
+<script>
+(function(){
+  const NS='http://www.w3.org/2000/svg';
+  const el=(t,a,p)=>{const e=document.createElementNS(NS,t);let st='';for(const k in a){const v=String(a[k]);if(v.includes('var('))st+=k+':'+v+';';else e.setAttribute(k,v)}if(st)e.setAttribute('style',st);if(p)p.appendChild(e);return e};
+  const rotor=document.getElementById('rotor'), defs=document.getElementById('wdefs');
+  const SPEC=['#e44854','#c06c60','#e4d830','#b4e43c','#30c048','#30d890','#30c0b4','#30c0cc','#309ce4','#e44854'];
+  const hex=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+  const specAt=t=>{t=((t%1)+1)%1;const f=t*(SPEC.length-1),i=Math.floor(f),r=f-i;const a=hex(SPEC[i]),b=hex(SPEC[i+1]);return 'rgb('+a.map((v,j)=>Math.round(v+(b[j]-v)*r)).join(',')+')'};
+  const STEP=360/52, rad=d=>d*Math.PI/180;
+  const P=(r,d)=>[r*Math.cos(rad(d)),r*Math.sin(rad(d))];
+  // угол центра недели k (SVG: по часовой от 3 часов). Недели растут против часовой, неделя 0.5 на 9 часах.
+  const weekAngle=k=>180-(k-0.5)*STEP;
+  const SECTORS=[
+    {name:'касдев',from:1,to:13,c1:'#b0703c',c2:'#7a5a3a',pastel:'#fff1e8'},
+    {name:'дизайн',from:14,to:26,c1:'#20a88e',c2:'#2468b8',pastel:'#e8f6ff'},
+    {name:'разработка',from:27,to:39,c1:'#9cc43c',c2:'#30b04c',pastel:'#f0ffe6'},
+    {name:'маркетинг',from:40,to:52,c1:'#3c9c5a',c2:'#7c9040',pastel:'#effff4'}
+  ];
+  const DESC=['исследуем клиентов','проектируем опыт','собираем продукт','приводим людей'];
+
+  // 1. стеклянный диск: 4 пастельных сектора + белая обводка
+  const disc=el('g',{opacity:'var(--disc-op)'},rotor);
+  SECTORS.forEach(s=>{
+    const a0=weekAngle(s.to+0.5), a1=weekAngle(s.from-0.5); // a0 < a1
+    const [x0,y0]=P(170,a0),[x1,y1]=P(170,a1);
+    el('path',{d:`M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`,fill:s.pastel},disc);
+  });
+  el('circle',{r:170,fill:'none',stroke:'var(--disc-stroke)','stroke-width':2.5},rotor);
+
+  // 2. крест из пунктиров на границах кварталов
+  const cross=el('g',{opacity:'var(--cross-op)'},rotor);
+  [0.5,13.5,26.5,39.5].forEach((k,i)=>{
+    const d=weekAngle(k);const [xa,ya]=P(50,d),[xb,yb]=P(168,d);
+    const id='cg'+i; const g=el('linearGradient',{id,gradientUnits:'userSpaceOnUse',x1:xa,y1:ya,x2:xb,y2:yb},defs);
+    el('stop',{offset:0,'stop-color':specAt(i/4)},g);el('stop',{offset:1,'stop-color':specAt(i/4+.18)},g);
+    el('line',{x1:xa,y1:ya,x2:xb,y2:yb,stroke:`url(#${id})`,'stroke-width':2,'stroke-dasharray':'5 4'},cross);
+  });
+
+  // 3. риски и номера недель
+  const ticks=el('g',{opacity:'var(--tick-op)'},rotor), nums=el('g',{},rotor);
+  for(let k=1;k<=52;k++){
+    const edge=weekAngle(k+0.5); const [a,b]=P(178,edge),[c,d]=P(194,edge);
+    el('line',{x1:a,y1:b,x2:c,y2:d,stroke:specAt((k-1)/52),'stroke-width':2.2,'stroke-linecap':'round'},ticks);
+    const ang=weekAngle(k); const [x,y]=P(186,ang);
+    const t=el('text',{x,y,'text-anchor':'middle','dominant-baseline':'central','font-size':8.5,'font-weight':600,fill:'var(--teal-num)','font-family':"'JetBrains Mono',monospace",transform:`rotate(${ang+90} ${x} ${y})`},nums);
+    t.textContent=String(k).padStart(2,'0');
+  }
+
+  // 4. направления по дуге
+  el('path',{id:'arc',d:'M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0',fill:'none'},defs);
+  const labels=el('g',{opacity:'var(--label-op)'},rotor);
+  SECTORS.forEach((s,i)=>{
+    const mid=weekAngle((s.from+s.to)/2); const pct=(((mid%360)+360)%360)/360*100;
+    const [xa,ya]=P(125,mid-30),[xb,yb]=P(125,mid+30);
+    const g=el('linearGradient',{id:'lg'+i,gradientUnits:'userSpaceOnUse',x1:xa,y1:ya,x2:xb,y2:yb},defs);
+    el('stop',{offset:0,'stop-color':s.c1},g);el('stop',{offset:1,'stop-color':s.c2},g);
+    const t=el('text',{'font-size':25,'font-weight':800,fill:`url(#lg${i})`,'letter-spacing':'.5'},labels);
+    const tp=el('textPath',{href:'#arc',startOffset:pct+'%','text-anchor':'middle'},t); tp.textContent=s.name;
+    s.labelEl=t;
+  });
+
+  // 5. центр со спектральным ободом
+  el('circle',{r:46,fill:'var(--center-fill)'},rotor);
+  for(let i=0;i<72;i++){const a0=i*5,a1=a0+5.4;const [x0,y0]=P(46,a0),[x1,y1]=P(46,a1);
+    el('path',{d:`M${x0} ${y0} A46 46 0 0 1 ${x1} ${y1}`,fill:'none',stroke:specAt(i/72),'stroke-width':3},rotor)}
+
+  // зоны наведения по секторам (вращаются вместе с колесом)
+  SECTORS.forEach((s,i)=>{
+    const a0=weekAngle(s.to+0.5),a1=weekAngle(s.from-0.5);
+    const [x0,y0]=P(200,a0),[x1,y1]=P(200,a1),[x2,y2]=P(48,a1),[x3,y3]=P(48,a0);
+    const h=el('path',{class:'sector-hit',d:`M${x3} ${y3} L${x0} ${y0} A200 200 0 0 1 ${x1} ${y1} L${x2} ${y2} A48 48 0 0 0 ${x3} ${y3} Z`,tabindex:0,role:'button','aria-label':`${s.name}, недели ${s.from}–${s.to}`},rotor);
+    h.addEventListener('mouseenter',()=>focusSector(i));h.addEventListener('focus',()=>focusSector(i));
+    h.addEventListener('mouseleave',()=>focusSector(null));h.addEventListener('blur',()=>focusSector(null));
+  });
+
+  // текущая ISO-неделя
+  function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7)}
+  const nowWeek=Math.min(52,isoWeek(new Date()));
+  const status=document.getElementById('status'), cycle=[...document.querySelectorAll('#cycle li')];
+  const sectorOf=w=>SECTORS.findIndex(s=>w>=s.from&&w<=s.to);
+  cycle[sectorOf(nowWeek)]?.classList.add('now');
+
+  const PERIOD=156000; let rot=(nowWeek-0.5)*STEP; let hovered=null, paused=false, last=performance.now();
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function render(){
+    rotor.setAttribute('transform',`rotate(${rot})`);
+    if(hovered!==null){const s=SECTORS[hovered];status.innerHTML=`<b>${s.name}</b><span>недели <span class="num">${s.from}–${s.to}</span> · ${DESC[hovered]}</span>`;return}
+    const w=((Math.floor(rot/STEP)%52)+52)%52+1; const si=sectorOf(w);
+    status.innerHTML=`<span>под стрелкой: неделя <b class="num">${String(w).padStart(2,'0')}</b> · <b>${SECTORS[si].name}</b></span><span>сегодня неделя <span class="num">${nowWeek}</span> · колесо на паузе, пока на нём курсор</span>`;
+  }
+  function focusSector(i){hovered=i;paused=i!==null;SECTORS.forEach((s,j)=>s.labelEl.setAttribute('opacity',i===null||i===j?1:.35));render()}
+  document.getElementById('wheelBox').addEventListener('mouseleave',()=>focusSector(null));
+  function tick(t){const dt=t-last;last=t;if(!paused&&!reduce){rot+=dt/PERIOD*360;if(rot>=360*52)rot-=360*52}render();requestAnimationFrame(tick)}
+  render(); if(!reduce) requestAnimationFrame(t=>{last=t;tick(t)});
+
+  // голос (демо)
+  const v=document.getElementById('voice'),vl=document.getElementById('voiceLbl');
+  v.addEventListener('click',()=>{const on=v.getAttribute('aria-pressed')!=='true';v.setAttribute('aria-pressed',on);vl.textContent=on?'Слушаю…':'Говорить'});
+
+  // копирование промта
+  const toast=document.getElementById('toast');
+  document.getElementById('copyBtn').addEventListener('click',async()=>{
+    const txt=document.getElementById('promptText').textContent;
+    try{await navigator.clipboard.writeText(txt);toast.textContent='Промт скопирован'}
+    catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById('promptText'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast.textContent='Текст выделен: нажмите ⌘C'}
+  });
+
+  // тема
+  const root=document.documentElement, btns=[...document.querySelectorAll('.theme-switch button')];
+  const cur=()=>root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const sync=()=>btns.forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===cur()));
+  btns.forEach(b=>b.addEventListener('click',()=>{root.dataset.theme=b.dataset.t;sync()}));sync();
+})();
+</script>

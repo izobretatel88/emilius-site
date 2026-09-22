@@ -1,0 +1,94 @@
+/* Emilius Agency — design tokens
+   [точно] = снято с кода emilius.agency, [≈] = снято с пикселей / предложено */
+
+:root {
+  /* Акцент */
+  --em-teal: #00999b;            /* [точно] CTA, eyebrow, указатель */
+  --em-teal-600: #009090;        /* [точно] номера недель */
+  --em-teal-text: #009a9c;       /* [точно] подпись «итерация» */
+  --em-on-teal: #fffdfd;         /* [точно] текст на teal */
+
+  /* Нейтральные */
+  --em-ink: #000000;             /* [точно] */
+  --em-ink-muted: #5a5a5a;       /* [точно] */
+  --em-page: #f7f7f7;            /* [точно] */
+  --em-card: #fefefe;            /* [точно] */
+  --em-card-border: #efefef;     /* [точно] 2px */
+  --em-hairline: #ececec;        /* [точно] 1px, таблетка логотипа */
+  --em-input-bg: #f0f0f0;        /* [точно] */
+  --em-input-border: #e2e2e2;    /* [точно] 2px */
+
+  /* Спектр (по кругу) [≈] */
+  --em-spec-red: #e44854;
+  --em-spec-terracotta: #c06c60;
+  --em-spec-ochre: #e4d830;
+  --em-spec-lime: #b4e43c;
+  --em-spec-green: #30c048;
+  --em-spec-mint: #30d890;
+  --em-spec-teal: #30c0b4;
+  --em-spec-cyan: #30c0cc;
+  --em-spec-blue: #309ce4;
+
+  /* Цвета секторов колеса (op .6) [≈] */
+  --em-sector-custdev: #90543c;
+  --em-sector-design: #2484a8;
+  --em-sector-dev: #549c48;
+  --em-sector-marketing: #609048;
+
+  /* Голосовая кнопка [≈] */
+  --em-voice: linear-gradient(135deg, #28655e 0%, #617170 100%);
+
+  /* Фон страницы [точно: слои; ≈: conic вместо Frame_142.jpg] */
+  --em-page-bg:
+    linear-gradient(rgba(255,255,255,.65), rgba(255,255,255,.45)),
+    conic-gradient(from 200deg at 48% 32%, #eef4ff, #effff4, #fffdf0, #fff0f0, #eef4ff);
+
+  /* Типографика [точно] */
+  --em-font: 'Glober', 'Manrope', Arial, sans-serif;
+  --em-fs-h1: 38px;   --em-lh-h1: 1.15;  /* 600 */
+  --em-fs-eyebrow: 19px;                 /* 700, CAPS, teal */
+  --em-fs-card-title: 20px; --em-lh-card-title: 1.15; /* 600 */
+  --em-fs-wordmark: 19px;                /* 600 */
+  --em-fs-button: 17px; --em-lh-button: 1.55; /* 600 */
+  --em-fs-body: 16px; --em-lh-body: 1.4;  /* 400 */
+  --em-fs-label: 14px;                   /* 600, teal */
+  --em-fs-footer: 15px; --em-lh-footer: 1.55;
+
+  /* Форма [точно] */
+  --em-radius-card: 20px;
+  --em-radius-btn: 13px;
+  --em-radius-sm: 10px;
+  --em-shadow-card: 0 0 10px 2px rgba(210,210,210,.25);
+  --em-shadow-pop: 0 0 15px 0 rgba(0,0,0,.3);
+  --em-shadow-icon: 0 0 5px 0 rgba(0,0,0,.3);
+
+  /* Сетка первого экрана [точно] */
+  --em-artboard: 1200px;
+  --em-col-side: 185px;
+  --em-col-center: 522px;
+  --em-col-gap: 33px;
+
+  /* Движение [точно] */
+  --em-wheel-duration: 156s;   /* 360° по часовой, linear, infinite */
+  --em-wheel-delay: 5.5s;
+  --em-hover: .2s ease-in-out;
+  --em-appear: opacity .2s ease-in-out;
+}
+
+/* Опциональная тёмная тема [≈, предложение] */
+:root[data-theme="dark"] {
+  --em-ink: #eef3f2;
+  --em-ink-muted: #9aa8a5;
+  --em-page: #0e1413;
+  --em-card: #151c1b;
+  --em-card-border: #1f2a28;
+  --em-hairline: #1f2a28;
+  --em-teal-text: #2bbfbf;
+  --em-page-bg:
+    linear-gradient(rgba(14,20,19,.9), rgba(14,20,19,.82)),
+    conic-gradient(from 200deg at 48% 32%, #3050a0, #30a060, #a09a30, #a03040, #3050a0);
+}
+
+@keyframes em-spin { to { transform: rotate(360deg); } }
+.em-wheel-rotor { transform-origin: 50% 50%; animation: em-spin var(--em-wheel-duration) linear var(--em-wheel-delay) infinite; }
+@media (prefers-reduced-motion: reduce) { .em-wheel-rotor { animation: none; } }
