@@ -3,6 +3,9 @@
 // Геометрия считается на сборке, в браузер уезжает готовый SVG.
 import { SECTORS } from '../data/site';
 
+const base = import.meta.env.BASE_URL;
+const servicesHref = (id: string) => `${base}${base.endsWith('/') ? '' : '/'}services/${id}/`;
+
 const STEP = 360 / 52;
 const rad = (d: number) => (d * Math.PI) / 180;
 const P = (r: number, d: number) => [+(r * Math.cos(rad(d))).toFixed(2), +(r * Math.sin(rad(d))).toFixed(2)];
@@ -121,7 +124,9 @@ const hits = SECTORS.map((s, i) => {
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="3"></path>)}
 
       {hits.map((h) => (
-        <path class="sector-hit" d={h.d} data-sector={h.i} tabindex="0" role="button" aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}`}></path>
+        <a href={servicesHref(h.id)} class="sector-link" data-sector={h.i} aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}. Подробнее об этапе`}>
+          <path class="sector-hit" d={h.d}></path>
+        </a>
       ))}
     </g>
 
@@ -172,7 +177,7 @@ const hits = SECTORS.map((s, i) => {
       rotor.setAttribute('transform', `rotate(${rot.toFixed(3)})`);
       if (hovered !== null) {
         const s = SECTORS[hovered];
-        status.innerHTML = `<b>${s.name}</b> · недели <span class="num">${s.from}–${s.to}</span> · ${s.text}`;
+        status.innerHTML = `<b>${s.name}</b> · недели <span class="num">${s.from}–${s.to}</span> · ${s.text} · <span class="more">подробнее →</span>`;
         return;
       }
       const w = ((Math.floor(rot / STEP) % 52) + 52) % 52 + 1;
@@ -187,7 +192,7 @@ const hits = SECTORS.map((s, i) => {
       render();
     };
 
-    document.querySelectorAll<SVGPathElement>('.sector-hit').forEach((hit) => {
+    document.querySelectorAll<SVGAElement>('.sector-link').forEach((hit) => {
       const i = Number(hit.dataset.sector);
       hit.addEventListener('mouseenter', () => focusSector(i));
       hit.addEventListener('focus', () => focusSector(i));
@@ -227,6 +232,18 @@ const hits = SECTORS.map((s, i) => {
   .sector-hit {
     fill: transparent;
     cursor: pointer;
+  }
+  .sector-link:focus-visible {
+    outline: none;
+  }
+  .sector-link:focus-visible .sector-hit {
+    stroke: var(--teal);
+    stroke-width: 2;
+    stroke-dasharray: 4 4;
+  }
+  .wheel-status :global(.more) {
+    color: var(--teal-text);
+    font-weight: 600;
   }
   .wheel-status {
     font-size: 14px;
