@@ -3,6 +3,7 @@ export type Project = {
   id: string;
   name: string;
   logo: string; // путь относительно public/
+  shot: string; // скриншот первого экрана, 640×400
   about: string;
   did: string;
   url: string;
@@ -14,6 +15,7 @@ export const PROJECTS: Project[] = [
     id: 'alohagaia',
     name: 'Aloha Gaia',
     logo: 'projects/alohagaia.svg',
+    shot: 'cases/alohagaia.webp',
     about: 'Интернет-магазин на inSales — ювелирные украшения с душой.',
     did: 'Фронтенд-разработка, тесная интеграция с inSales и собственные модули.',
     url: 'https://alohagaia.ru/',
@@ -23,6 +25,7 @@ export const PROJECTS: Project[] = [
     id: 'wizzu',
     name: 'LimeMart',
     logo: 'projects/wizzu.svg',
+    shot: 'cases/wizzu.webp',
     about: 'Интернет-магазин на inSales, доставка продуктов в Чечне — стартап, выросший с 0 до 2000+ заказов в месяц.',
     did: 'Разработали техническую часть стартапа: сайт-витрину и интеграции.',
     url: 'https://limemart.wizzu.ru/',
@@ -32,6 +35,7 @@ export const PROJECTS: Project[] = [
     id: 'duman',
     name: 'Duman',
     logo: 'projects/duman.svg',
+    shot: 'cases/duman.webp',
     about: 'Интернет-магазин на inSales — дизайнерская женская одежда премиум-сегмента.',
     did: 'Фронтенд-разработка, сложная архитектура и выразительный UX/UI.',
     url: 'https://www.duman.store/',
@@ -40,7 +44,8 @@ export const PROJECTS: Project[] = [
   {
     id: 'geekboards',
     name: 'Geekboards',
-    logo: 'projects/geekboards.png',
+    logo: 'projects/geekboards.svg',
+    shot: 'cases/geekboards.webp',
     about: 'Интернет-магазин на inSales — премиальные клавиатуры, мыши и аксессуары, шоурум в Москве.',
     did: 'Развитие магазина на inSales и кастомизация фронтенда.',
     url: 'https://geekboards.ru/',
@@ -50,6 +55,7 @@ export const PROJECTS: Project[] = [
     id: 'navalishenskoe',
     name: 'Навалишенское',
     logo: 'projects/navalishenskoe.png',
+    shot: 'cases/navalishenskoe.webp',
     about: 'Сайт компании на Tilda — одно из топовых мест отдыха в Сочи с уникальной природой и отличным сервисом.',
     did: 'Ежемесячное развитие сайта, SEO-продвижение.',
     url: 'https://navalishenskoe.ru/',
