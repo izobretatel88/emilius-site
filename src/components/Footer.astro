@@ -28,14 +28,22 @@ const year = new Date().getFullYear();
     display: block;
     margin-bottom: 6px;
   }
+  /* Логотип ARDA — чёрный контур на белом. В светлой теме белый фон растворяется,
+     в тёмной картинка инвертируется и фон уходит в чёрный. */
   .arda img {
     display: block;
     width: 122px;
     height: auto;
     mix-blend-mode: multiply;
   }
-  :global(:root[data-theme='dark']) .arda img,
-  :global(html) .arda img {
-    mix-blend-mode: normal;
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .arda img {
+      filter: invert(1);
+      mix-blend-mode: screen;
+    }
+  }
+  :global(:root[data-theme='dark']) .arda img {
+    filter: invert(1);
+    mix-blend-mode: screen;
   }
 </style>
