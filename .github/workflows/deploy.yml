@@ -28,6 +28,7 @@ jobs:
         env:
           SITE_URL: ${{ steps.pages.outputs.origin || format('https://{0}.github.io', github.repository_owner) }}
           BASE_PATH: /${{ github.event.repository.name }}
+          PREVIEW: '1'
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
