@@ -46,7 +46,7 @@
   /* Типографика [точно] */
   --em-font: 'Glober', 'Manrope', Arial, sans-serif;
   --em-fs-h1: 38px;   --em-lh-h1: 1.15;  /* 600 */
-  --em-fs-eyebrow: 19px;                 /* 700, CAPS, teal */
+  --em-fs-eyebrow: 19px;                 /* 800, CAPS, teal */
   --em-fs-card-title: 20px; --em-lh-card-title: 1.15; /* 600 */
   --em-fs-wordmark: 19px;                /* 600 */
   --em-fs-button: 17px; --em-lh-button: 1.55; /* 600 */

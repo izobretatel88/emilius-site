@@ -123,7 +123,7 @@ const hits = SECTORS.map((s, i) => {
       </g>
 
       <circle r="46" style="fill:var(--center-fill)"></circle>
-      {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="3"></path>)}
+      {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
         <a href={servicesHref(h.id)} class="sector-link" data-sector={h.i} aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}. Подробнее об этапе`}>
