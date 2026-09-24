@@ -167,7 +167,8 @@ const LAYERS = 9; // слои толщины знака
           duration: T.settle,
           easing: 'cubic-bezier(.15,.6,.3,1)',
         });
-        if (loop) later(T.loopEvery - hold, press);
+        // Повтор только пока вкладку видно — иначе звук играет «ниоткуда»
+        if (loop) later(T.loopEvery - hold, () => !document.hidden && press());
         else later(T.close - hold, () => close(T.fade));
       });
     };
