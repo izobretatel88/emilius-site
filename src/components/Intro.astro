@@ -5,7 +5,8 @@
 //   1,8 с знак медленно выпрямляется до ~31°, по металлу проходит блик;
 //   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
 // Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
-// Старт: «Со звуком» / «Без звука»; не нажали за T.wait — анимация сама, без звука.
+// Сначала только выбор «Со звуком» / «Без звука»; не нажали за T.wait — без звука.
+// После выбора появляется знак с надписью и сразу проигрывает анимацию.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
 const base = import.meta.env.BASE_URL;
@@ -15,11 +16,9 @@ const sound = `${root}brand/intro.mp3`;
 const LAYERS = 9; // слои толщины знака
 ---
 
-<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introHello" data-sound={sound} hidden>
-  <div class="hideable" data-intro-text>
-    <p class="hello" id="introHello">Добро пожаловать!</p>
-  </div>
-
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} hidden>
+  <!-- Знак появляется только после выбора звука -->
+  <div class="logo" id="introLogo" hidden>
   <div class="stage">
     <div class="lift" id="introLift">
       <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
@@ -34,6 +33,7 @@ const LAYERS = 9; // слои толщины знака
   </div>
 
   <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
+  </div>
 
   <!-- Выбор: со звуком или без. На «Без звука» тает кольцо — если ничего не нажать, старт без звука -->
   <div class="choice" id="introChoice">
@@ -74,6 +74,7 @@ const LAYERS = 9; // слои толщины знака
     settle: 2000, // оседание после возврата
     close: 2700, // когда показать сайт
     fade: 600,
+    appear: 1400, // знак с надписью появляются (~0,85 с) и полсекунды стоят перед наклоном
     wait: 5000, // кольцо на «Без звука»: сколько ждём выбора
   };
   // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
@@ -85,12 +86,13 @@ const LAYERS = 9; // слои толщины знака
   const mark = document.getElementById('introMark');
   const light = document.getElementById('introLight');
   const shadow = document.getElementById('introShadow');
+  const logo = document.getElementById('introLogo');
   const choice = document.getElementById('introChoice');
   const withSound = document.getElementById('introSound');
   const quiet = document.getElementById('introQuiet');
   const ring = document.getElementById('introRing');
 
-  if (intro && lift && mark && light && shadow && choice && withSound && quiet && ring && !intro.hidden) {
+  if (intro && lift && mark && light && shadow && logo && choice && withSound && quiet && ring && !intro.hidden) {
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
@@ -103,11 +105,19 @@ const LAYERS = 9; // слои толщины знака
     let ctx: AudioContext | null = null;
     let buffer: Promise<AudioBuffer | null> | null = null;
     const raw = fetch(intro.dataset.sound!).then((r) => r.arrayBuffer()).catch(() => null);
-    const playSound = () => {
+    // Вызывать прямо в обработчике нажатия: так браузер разрешает звук, который сыграет позже
+    const unlock = () => {
       try {
         ctx ??= new AudioContext();
         if (ctx.state === 'suspended') void ctx.resume();
         buffer ??= raw.then((b) => (b && ctx ? ctx.decodeAudioData(b) : null)).catch(() => null);
+      } catch {
+        /* без звука — анимация всё равно идёт */
+      }
+    };
+    const playSound = () => {
+      try {
+        if (!ctx || !buffer) return;
         const at = ctx.currentTime + T.soundAt / 1000;
         void buffer.then((buf) => {
           if (!buf || !ctx) return;
@@ -201,7 +211,7 @@ const LAYERS = 9; // слои толщины знака
     // Кольцо тает, пока ждём выбора; растаяло — старт без звука
     const countdown = ring.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: 100 }], {
       duration: T.wait,
-      delay: 900, // сначала кнопки появляются
+      delay: 400, // сначала кнопки появляются
       easing: 'linear',
       fill: 'forwards',
     });
@@ -210,8 +220,10 @@ const LAYERS = 9; // слои толщины знака
       if (done || pressed) return;
       pressed = true;
       countdown.cancel();
-      choice.classList.add('is-off');
-      press(sound);
+      if (sound) unlock();
+      choice.hidden = true;
+      logo.hidden = false;
+      later(T.appear, () => press(sound));
     };
     countdown.onfinish = () => start(false);
     // Пропустить без звука: Esc или попытка прокрутить
@@ -331,13 +343,17 @@ const LAYERS = 9; // слои толщины знака
     opacity: 0.7;
   }
 
-  .hello {
-    font-size: clamp(24px, 3.2vw, 30px);
-    font-weight: 600;
-    color: var(--ink);
-    text-align: center;
-    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
   }
+  .logo[hidden],
+  .choice[hidden] {
+    display: none;
+  }
+
   /* Надпись под знаком — как «pen.dev» в эталоне: крупно, жирно, чёрным */
   .wordmark {
     font-size: clamp(22px, 2.6vw, 28px);
@@ -345,7 +361,7 @@ const LAYERS = 9; // слои толщины знака
     line-height: 1;
     color: var(--ink);
     text-align: center;
-    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
   }
 
   /* Выбор звука: кнопки как на сайте — залитая и с рамкой */
@@ -354,8 +370,7 @@ const LAYERS = 9; // слои толщины знака
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px;
-    margin-top: 14px;
-    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both;
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
   }
   .pick {
     height: 50px;
