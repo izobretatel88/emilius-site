@@ -14,7 +14,7 @@
   /* Нейтральные */
   --ink: #000000;
   --ink-2: #5a5a5a;
-  --ink-3: #8a8f8e;
+  --ink-3: #686d6c; /* подписи и плейсхолдеры: 4,5:1 и выше на фоне страницы и поля */
   --page: #f7f7f7;
   --card: #fefefe;
   --card-border: #efefef;
@@ -74,7 +74,7 @@
     --teal-text: #3cc6c6;
     --ink: #eef3f2;
     --ink-2: #a3b0ad;
-    --ink-3: #6f7c79;
+    --ink-3: #808d8a;
     --page: #0e1413;
     --card: #151c1b;
     --card-border: #1f2a28;
@@ -109,7 +109,7 @@
   --teal-text: #3cc6c6;
   --ink: #eef3f2;
   --ink-2: #a3b0ad;
-  --ink-3: #6f7c79;
+  --ink-3: #808d8a;
   --page: #0e1413;
   --card: #151c1b;
   --card-border: #1f2a28;
