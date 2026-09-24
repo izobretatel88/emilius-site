@@ -54,7 +54,11 @@ if (!existsSync(dist)) {
   const html = readFileSync(dist, 'utf8');
   const start = html.indexOf('<div class="wheel-box"');
   const end = html.indexOf('</svg> </div>', start) + '</svg> </div>'.length;
-  const wheel = html.slice(start, end).replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '');
+  const wheel = html
+    .slice(start, end)
+    .replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '')
+    // названия этапов в центре видны только при наведении — на картинке их не нужно
+    .replace(/<text class="center-word center-sector"[\s\S]*?<\/text>/g, '');
   const font = (w) =>
     `@font-face{font-family:Manrope;font-weight:${w};src:url('file://${ROOT}/node_modules/@fontsource/manrope/files/manrope-cyrillic-${w}-normal.woff2') format('woff2')}`;
   const css = `
