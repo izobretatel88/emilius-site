@@ -20,6 +20,8 @@
   --card-border: #efefef;
   --hair: #ececec;
   --well: #f3f5f5;
+  --input-bg: #f0f0f0;
+  --input-border: #e2e2e2;
 
   /* Фон: пастельные спектральные лучи под белой вуалью */
   --veil-a: rgba(255, 255, 255, 0.78);
@@ -78,6 +80,8 @@
     --card-border: #1f2a28;
     --hair: #24302e;
     --well: #1a2322;
+    --input-bg: #1a2322;
+    --input-border: #2b3836;
     --veil-a: rgba(14, 20, 19, 0.9);
     --veil-b: rgba(14, 20, 19, 0.84);
     --ray-1: #2c4a8a;
@@ -111,6 +115,8 @@
   --card-border: #1f2a28;
   --hair: #24302e;
   --well: #1a2322;
+  --input-bg: #1a2322;
+  --input-border: #2b3836;
   --veil-a: rgba(14, 20, 19, 0.9);
   --veil-b: rgba(14, 20, 19, 0.84);
   --ray-1: #2c4a8a;

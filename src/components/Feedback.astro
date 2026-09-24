@@ -1,0 +1,187 @@
+---
+import { LINKS } from '../data/site';
+const base = import.meta.env.BASE_URL;
+const action = `${base}${base.endsWith('/') ? '' : '/'}api/lead.php`;
+const direct = LINKS.direct.replace('https://t.me/', '@');
+---
+
+<section class="card feedback" id="feedback" aria-labelledby="t-feedback">
+  <h2 id="t-feedback">Обратная связь</h2>
+  <form method="post" action={action} novalidate>
+    <label class="visually-hidden" for="fb-message">Сообщение</label>
+    <textarea
+      id="fb-message"
+      name="message"
+      required
+      maxlength="3000"
+      placeholder="Любая обратная связь будет очень полезна. Заранее благодарим!"></textarea>
+    <label class="visually-hidden" for="fb-contact">Как с вами связаться</label>
+    <input
+      id="fb-contact"
+      name="contact"
+      type="text"
+      maxlength="200"
+      placeholder="Telegram, телефон или почта — если ждёте ответа"
+    />
+    <!-- Ловушка для ботов: человек это поле не видит -->
+    <div class="trap" aria-hidden="true">
+      <input name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <button class="btn-send" type="submit">
+      <span class="label">Отправить</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
+    </button>
+    <p class="status" role="status" aria-live="polite" hidden></p>
+    <p class="status status-error" role="alert" hidden>
+      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}</a>
+    </p>
+  </form>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#feedback form');
+  if (form) {
+    const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const label = button.querySelector('.label')!;
+    const ok = form.querySelector<HTMLElement>('.status:not(.status-error)')!;
+    const fail = form.querySelector<HTMLElement>('.status-error')!;
+
+    const show = (el: HTMLElement | null, text?: string) => {
+      ok.hidden = fail.hidden = true;
+      if (!el) return;
+      if (text) el.textContent = text;
+      el.hidden = false;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!message.value.trim()) {
+        show(ok, 'Напишите пару слов — и отправим.');
+        message.focus();
+        return;
+      }
+      button.disabled = true;
+      label.textContent = 'Отправляем…';
+      show(null);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
+        form.reset();
+        show(ok, 'Спасибо! Сообщение у нас.');
+      } catch {
+        // Текст не стираем — его можно скопировать и отправить в Telegram.
+        show(fail);
+      } finally {
+        button.disabled = false;
+        label.textContent = 'Отправить';
+      }
+    });
+  }
+</script>
+
+<style>
+  .feedback {
+    grid-column: 1 / -1; /* во всю ширину сетки первого экрана */
+    width: 100%;
+    max-width: var(--col-center);
+    margin-inline: auto;
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-margin-top: 24px;
+  }
+  h2 {
+    font-size: 28px;
+    line-height: 1.15;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  textarea,
+  input {
+    width: 100%;
+    font: inherit;
+    font-size: 16px; /* меньше 16 — iOS приближает страницу при фокусе */
+    color: var(--ink);
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    transition: border-color var(--hover);
+  }
+  textarea {
+    height: 136px;
+    resize: vertical;
+    min-height: 96px;
+  }
+  input {
+    height: 50px;
+  }
+  textarea::placeholder,
+  input::placeholder {
+    color: var(--ink-3);
+  }
+  textarea:hover,
+  input:hover,
+  textarea:focus,
+  input:focus {
+    border-color: var(--teal);
+  }
+  textarea:focus-visible,
+  input:focus-visible {
+    outline: none;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .btn-send {
+    align-self: center;
+    width: min(100%, 240px);
+    height: 54px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 16px 14px;
+    cursor: pointer;
+    transition: color var(--hover), opacity var(--hover);
+  }
+  .btn-send svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    fill: #000;
+  }
+  .btn-send:hover {
+    color: var(--on-teal);
+  }
+  .btn-send:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .status {
+    font-size: 15px;
+    text-align: center;
+    color: var(--ink-2);
+  }
+</style>
