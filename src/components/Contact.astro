@@ -15,12 +15,31 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     </a>
   </section>
 
-  <section class="card col-card" aria-labelledby="t-emi">
+  <section class="card col-card" aria-labelledby="t-emi" id="emiCard">
     <h2 class="card-title" id="t-emi">Спросить 🤖 Эми</h2>
-    <iframe src={EMI_WIDGET_SRC} title="Голосовой ассистент Эми" width="170" height="144" allow="microphone" loading="lazy" scrolling="no" frameborder="0"></iframe>
+    <iframe data-src={EMI_WIDGET_SRC} title="Голосовой ассистент Эми" width="170" height="144" allow="microphone" scrolling="no" frameborder="0"></iframe>
     <p class="micro">Если не отвечает — смените интернет-соединение</p>
   </section>
 </div>
+
+<script>
+  // Виджет Эми весит ~1,7 МБ. Грузим его, когда страница уже показалась,
+  // или сразу, если человек потянулся к карточке.
+  const card = document.getElementById('emiCard');
+  const frame = card?.querySelector<HTMLIFrameElement>('iframe[data-src]');
+  if (card && frame) {
+    const load = () => {
+      if (!frame.src) frame.src = frame.dataset.src!;
+    };
+    card.addEventListener('pointerenter', load, { once: true });
+    card.addEventListener('focusin', load, { once: true });
+    const idle = (cb: () => void) =>
+      'requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 2500);
+    const later = () => setTimeout(() => idle(load), 1500);
+    if (document.readyState === 'complete') later();
+    else window.addEventListener('load', later, { once: true });
+  }
+</script>
 
 <style>
   .stack {

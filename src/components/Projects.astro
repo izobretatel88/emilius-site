@@ -14,6 +14,7 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
           <span class="visually-hidden">Кейс: {p.name}</span>
         </button>
         <div class="case" id={`case-${p.id}`} role="tooltip">
+          <img class="shot" src={href(p.shot)} alt={`Первый экран сайта ${p.domain}`} width="640" height="400" loading="lazy" decoding="async" />
           <p>{p.about}</p>
           <p>{p.did}</p>
           <a href={p.url} target="_blank" rel="noopener">{p.domain} ↗</a>
@@ -87,6 +88,17 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     opacity: 1;
     visibility: visible;
     transform: none;
+  }
+  .case .shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 6px;
+    background: var(--well);
+    border: 1px solid var(--hair);
   }
   .case a {
     font-weight: 600;
