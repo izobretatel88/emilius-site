@@ -9,6 +9,7 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://emilius.agency',
   base: process.env.BASE_PATH || '/',
   trailingSlash: 'ignore',
-  build: { format: 'directory' },
+  // Весь CSS сайта ~6 КБ — встраиваем в страницу, чтобы не ждать отдельных файлов перед отрисовкой
+  build: { format: 'directory', inlineStylesheets: 'always' },
   integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
 });
