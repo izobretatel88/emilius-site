@@ -77,10 +77,10 @@ const home = import.meta.env.BASE_URL;
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
   }
   .btn-primary {
-    background: var(--teal);
+    background: var(--teal-btn);
     color: #fff;
   }
   .btn-primary:hover {
@@ -92,7 +92,8 @@ const home = import.meta.env.BASE_URL;
     border: 1px solid var(--teal);
   }
   .btn-secondary:hover {
-    background: var(--teal);
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
     color: #fff;
   }
 </style>

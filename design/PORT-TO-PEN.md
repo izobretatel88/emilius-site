@@ -9,8 +9,9 @@
 | Переменная | Светлая | Тёмная |
 |---|---|---|
 | `color.teal` | `#00999B` | `#00999B` |
+| `color.teal.button` | `#008385` | `#008385` |
 | `color.teal.num` | `#009090` | `#35B6B4` |
-| `color.teal.text` | `#008C8E` | `#3CC6C6` |
+| `color.teal.text` | `#008385` | `#3CC6C6` |
 | `color.on.teal` | `#FFFDFD` | `#FFFDFD` |
 | `color.ink` | `#000000` | `#EEF3F2` |
 | `color.ink.muted` | `#5A5A5A` | `#A3B0AD` |
@@ -53,8 +54,8 @@
 |---|---|---|
 | `Card` | фон `color.card`, обводка 2px `color.card.border`, радиус 20, тень card | с заголовком и без |
 | `CardTitle` | текст `text.card.title` по центру, отступ сверху 16 | — |
-| `ButtonPrimary` | 152×54, радиус 13, фон teal, текст белый слева, иконка Telegram справа | обычная, наведение |
-| `ButtonSecondary` | то же, фон card, обводка 1px teal | обычная, наведение — заливка teal |
+| `ButtonPrimary` | 152×54, радиус 13, фон `color.teal.button`, текст белый слева, иконка Telegram справа | обычная, наведение |
+| `ButtonSecondary` | то же, фон card, обводка 1px teal | обычная, наведение — заливка и обводка `color.teal.button` |
 | `LogoPill` | 230×60, радиус 20, обводка 1px hairline, «Эмилиус» + знак 27×41 + «Эдженси» | — |
 | `ProjectIcon` | круг 52, белый, тень icon, логотип клиента 34 | обычный, активный |
 | `CaseCard` | 260 шир., радиус 10, тень pop: скриншот, «платформа — ниша», «что сделали», ссылка `домен ↗` | — |
