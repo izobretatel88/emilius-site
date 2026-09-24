@@ -1,5 +1,11 @@
 name: Deploy preview to GitHub Pages
 
+# Одна публикация — две версии сайта:
+#   /emilius-site/             — ветка main (рабочее превью)
+#   /emilius-site/dev/         — ветка dev (опыты), если она есть
+# Публикует всегда main: окружение github-pages разрешает деплой только из неё.
+# Пуш в dev запускает этот workflow через dev-trigger.yml.
+
 on:
   push:
     branches: [main]
@@ -17,21 +23,42 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://${{ github.repository_owner }}.github.io
+      PREVIEW: '1'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site
+
+      - id: devbranch
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: dev
+          path: devsite
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+
+      - name: Сборка main
+        working-directory: site
+        run: npm ci && npm run build
         env:
-          SITE_URL: ${{ steps.pages.outputs.origin || format('https://{0}.github.io', github.repository_owner) }}
           BASE_PATH: /${{ github.event.repository.name }}
-          PREVIEW: '1'
+
+      - name: Сборка dev
+        if: steps.devbranch.outcome == 'success'
+        working-directory: devsite
+        run: npm ci && npm run build && mkdir -p ../site/dist/dev && cp -R dist/. ../site/dist/dev/
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/dev
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site/dist
 
   deploy:
     needs: build
