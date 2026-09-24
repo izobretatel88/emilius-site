@@ -5,7 +5,7 @@ import Wheel from '../components/Wheel.astro';
 import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import { MISSION } from '../data/site';
+import { MISSION_LINES } from '../data/site';
 ---
 
 <Base
@@ -16,7 +16,7 @@ import { MISSION } from '../data/site';
     <Logo />
     <div class="mission">
       <p class="eyebrow">Наша миссия</p>
-      <h1>{MISSION}</h1>
+      <h1><span class="line">{MISSION_LINES[0]}</span> <span class="line">{MISSION_LINES[1]}</span></h1>
     </div>
   </header>
 
@@ -53,10 +53,22 @@ import { MISSION } from '../data/site';
     text-transform: uppercase;
   }
   .mission h1 {
-    font-size: clamp(19px, 3.4vw, 38px);
+    font-size: clamp(22px, 3.4vw, 38px);
     line-height: 1.15;
-    max-width: 22ch;
     margin-inline: auto;
+  }
+  /* Две строки на широком экране; на узком строки переносятся сами */
+  .mission h1 .line {
+    display: block;
+  }
+  @media (max-width: 640px) {
+    .mission h1 {
+      max-width: 22ch;
+      text-wrap: balance;
+    }
+    .mission h1 .line {
+      display: inline;
+    }
   }
 
   .bento {

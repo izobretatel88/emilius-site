@@ -3,6 +3,8 @@
 export const ITERATION = { current: 5, total: 15 };
 
 export const MISSION = 'Помогать великолепным людям создавать великолепные продукты!';
+// Миссия в две строки, как на исходном сайте: перенос после «создавать».
+export const MISSION_LINES = ['Помогать великолепным людям создавать', 'великолепные продукты!'];
 
 export const LINKS = {
   channel: 'https://t.me/EmiliusAgency',
