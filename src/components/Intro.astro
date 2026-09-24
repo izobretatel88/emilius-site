@@ -6,7 +6,7 @@
 //   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
 // Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
 // Esc или прокрутка — пропустить без звука. Один раз за визит; при «уменьшить движение» — нет.
-// ?intro — показать снова; ?intro=loop — повторять без закрытия (для сверки с видео).
+// ?intro — показать снова.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
 const mark = `${root}brand/mark.svg`;
@@ -63,7 +63,6 @@ const LAYERS = 9; // слои толщины знака
     settle: 2000, // оседание после возврата
     close: 2700, // когда показать сайт
     fade: 600,
-    loopEvery: 5400, // ?intro=loop: пауза между повторами
   };
   // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
   const TILT_FROM = -45;
@@ -77,7 +76,6 @@ const LAYERS = 9; // слои толщины знака
   const five = document.getElementById('introFive');
 
   if (intro && lift && mark && light && shadow && five && !intro.hidden) {
-    const loop = /[?&]intro=loop\b/.test(location.search);
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
@@ -167,9 +165,7 @@ const LAYERS = 9; // слои толщины знака
           duration: T.settle,
           easing: 'cubic-bezier(.15,.6,.3,1)',
         });
-        // Повтор только пока вкладку видно — иначе звук играет «ниоткуда»
-        if (loop) later(T.loopEvery - hold, () => !document.hidden && press());
-        else later(T.close - hold, () => close(T.fade));
+        later(T.close - hold, () => close(T.fade));
       });
     };
 
@@ -189,7 +185,7 @@ const LAYERS = 9; // слои толщины знака
 
     let pressed = false;
     const onPress = () => {
-      if (done || (pressed && !loop)) return;
+      if (done || pressed) return;
       pressed = true;
       press();
     };
@@ -201,10 +197,8 @@ const LAYERS = 9; // слои толщины знака
 
     intro.addEventListener('click', onPress); // нажать можно в любом месте экрана
     addEventListener('keydown', onKey);
-    if (!loop) {
-      addEventListener('wheel', skip, { passive: true });
-      addEventListener('touchmove', skip, { passive: true });
-    }
+    addEventListener('wheel', skip, { passive: true });
+    addEventListener('touchmove', skip, { passive: true });
   }
 </script>
 
