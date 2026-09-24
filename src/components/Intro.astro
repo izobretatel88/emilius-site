@@ -1,32 +1,41 @@
 ---
-// Заставка при первом заходе: «Добро пожаловать! Готовы? Дай пять!»
-// Нажатие — «пятюня»: хлопок, волна, звук удара и наклон знака с бликом, затем сайт.
-// Нажатие заодно разрешает браузеру звук — без него звук при загрузке почти всегда заблокирован.
+// Заставка при первом заходе. Движение знака повторяет эталонное видео кадр в кадр
+// (замеры по 60 к/с — в константах T ниже):
+//   нажатие → знак за 1–2 кадра наклоняется (~45°), надписи пропадают мгновенно;
+//   1,8 с знак медленно выпрямляется до ~31°, по металлу проходит блик;
+//   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
+// Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
 // Esc или прокрутка — пропустить без звука. Один раз за визит; при «уменьшить движение» — нет.
+// ?intro — показать снова; ?intro=loop — повторять без закрытия (для сверки с видео).
 const base = import.meta.env.BASE_URL;
-const mark = `${base}${base.endsWith('/') ? '' : '/'}brand/mark.svg`;
+const root = `${base}${base.endsWith('/') ? '' : '/'}`;
+const mark = `${root}brand/mark.svg`;
+const sound = `${root}brand/intro.mp3`;
 const LAYERS = 9; // слои толщины знака
 ---
 
-<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introHello" hidden>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introHello" data-sound={sound} hidden>
+  <div class="hideable" data-intro-text>
+    <p class="hello" id="introHello">Добро пожаловать!</p>
+  </div>
+
   <div class="stage">
-    <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
-      {Array.from({ length: LAYERS }, (_, i) => (
-        <img class="layer edge" src={mark} alt="" style={`--i:${LAYERS - i}`} />
-      ))}
-      <img class="layer front" src={mark} alt="" />
-      <span class="glint" id="introGlint"></span>
+    <div class="lift" id="introLift">
+      <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
+        {Array.from({ length: LAYERS }, (_, i) => (
+          <img class="layer edge" src={mark} alt="" style={`--i:${LAYERS - i}`} />
+        ))}
+        <img class="layer front" src={mark} alt="" />
+        <span class="light" id="introLight"></span>
+      </div>
     </div>
     <span class="shadow" id="introShadow"></span>
   </div>
 
-  <div class="welcome">
-    <p class="hello" id="introHello">Добро пожаловать!</p>
-    <p class="wordmark">Эмилиус Эдженси</p>
-  </div>
+  <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
 
-  <button class="five" id="introFive" type="button">
-    <span class="palm" id="introPalm" aria-hidden="true">✋</span>
+  <button class="five" id="introFive" type="button" data-intro-text>
+    <span class="palm" aria-hidden="true">✋</span>
     <span class="five-label">Готовы? Дай пять!</span>
   </button>
 </div>
@@ -46,16 +55,30 @@ const LAYERS = 9; // слои толщины знака
 </script>
 
 <script>
-  import { playSting } from '../lib/sting';
+  // Тайминги, мс от нажатия. Всё, что подгоняется под видео, — здесь.
+  const T = {
+    tilt: 50, // наклон: 1–2 кадра
+    hold: 1800, // сколько знак остаётся наклонённым
+    soundAt: 170, // звук: в видео слышен через 0,38 с, в файле 0,21 с тишины в начале
+    settle: 2000, // оседание после возврата
+    close: 2700, // когда показать сайт
+    fade: 600,
+    loopEvery: 5400, // ?intro=loop: пауза между повторами
+  };
+  // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
+  const TILT_FROM = -45;
+  const TILT_TO = -31;
 
   const intro = document.getElementById('intro');
+  const lift = document.getElementById('introLift');
   const mark = document.getElementById('introMark');
-  const glint = document.getElementById('introGlint');
+  const light = document.getElementById('introLight');
   const shadow = document.getElementById('introShadow');
   const five = document.getElementById('introFive');
-  const palm = document.getElementById('introPalm');
 
-  if (intro && mark && glint && shadow && five && palm && !intro.hidden) {
+  if (intro && lift && mark && light && shadow && five && !intro.hidden) {
+    const loop = /[?&]intro=loop\b/.test(location.search);
+    const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
     } catch {
@@ -63,98 +86,124 @@ const LAYERS = 9; // слои толщины знака
     }
     five.focus({ preventScroll: true });
 
-    const ease = 'cubic-bezier(.45,0,.2,1)';
+    // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
+    let ctx: AudioContext | null = null;
+    let buffer: Promise<AudioBuffer | null> | null = null;
+    const raw = fetch(intro.dataset.sound!).then((r) => r.arrayBuffer()).catch(() => null);
+    const playSound = () => {
+      try {
+        ctx ??= new AudioContext();
+        if (ctx.state === 'suspended') void ctx.resume();
+        buffer ??= raw.then((b) => (b && ctx ? ctx.decodeAudioData(b) : null)).catch(() => null);
+        const at = ctx.currentTime + T.soundAt / 1000;
+        void buffer.then((buf) => {
+          if (!buf || !ctx) return;
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          src.start(Math.max(at, ctx.currentTime));
+        });
+      } catch {
+        /* без звука — анимация всё равно идёт */
+      }
+    };
 
-    // Блик: маска стоит на месте (форма знака), движется только светлая полоса внутри
-    const sweep = (duration: number) =>
-      glint.animate(
+    const running: Animation[] = [];
+    const run = (el: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) => {
+      const a = el.animate(frames, { fill: 'forwards', ...opts });
+      running.push(a);
+      return a;
+    };
+    const timers: number[] = [];
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const reset = () => {
+      running.splice(0).forEach((a) => a.cancel());
+      timers.splice(0).forEach((t) => window.clearTimeout(t));
+    };
+    const showTexts = (on: boolean) => texts.forEach((el) => el.classList.toggle('is-off', !on));
+
+    const press = () => {
+      reset();
+      playSound();
+      showTexts(false);
+      const hold = T.hold;
+
+      // Наклон: мгновенно до 45°, дальше медленно выпрямляется (в видео — почти линейно после 0,4 с)
+      run(
+        mark,
         [
-          { transform: 'translateX(-160%) skewX(-18deg)', opacity: 0 },
-          { opacity: 1, offset: 0.35 },
-          { transform: 'translateX(160%) skewX(-18deg)', opacity: 0 },
+          { transform: 'rotateX(0deg)' },
+          { transform: `rotateX(${TILT_FROM}deg)`, offset: T.tilt / hold, easing: 'linear' },
+          { transform: `rotateX(${TILT_FROM + 1}deg)`, offset: 400 / hold, easing: 'linear' },
+          { transform: `rotateX(${TILT_TO}deg)` },
         ],
-        { duration, easing: 'ease-in-out', pseudoElement: '::before' },
+        { duration: hold, easing: 'linear' },
+      );
+      // Блик: тёмная и светлая полосы идут слева направо, металл к концу светлеет
+      run(
+        light,
+        [
+          { opacity: 0, backgroundPosition: '15% 0' },
+          { opacity: 1, backgroundPosition: '20% 0', offset: T.tilt / hold },
+          { opacity: 1, backgroundPosition: '85% 0' },
+        ],
+        { duration: hold, easing: 'linear' },
+      );
+      run(
+        shadow,
+        [
+          { transform: 'scale(1, 1)', opacity: 0.7 },
+          { transform: 'translateY(-190%) scale(1.05, 0.8)', opacity: 0.9, offset: T.tilt / hold },
+          { transform: 'translateY(-130%) scale(1.02, 0.9)', opacity: 0.85 },
+        ],
+        { duration: hold, easing: 'linear' },
       );
 
-    // Ожидание: знак медленно покачивается, блик иногда пробегает по металлу
-    const idle = mark.animate(
-      [{ transform: 'rotateX(8deg) rotateY(-12deg)' }, { transform: 'rotateX(-4deg) rotateY(12deg)' }],
-      { duration: 3400, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' },
-    );
-    const glintTimer = window.setInterval(() => sweep(1200), 3400);
-    window.setTimeout(() => sweep(1200), 500);
+      // Возврат: резко на место, чуть выше обычного, надписи сразу видны, затем оседание
+      later(hold, () => {
+        reset();
+        showTexts(true);
+        run(lift, [{ transform: 'translateY(-6%) scale(1.02)' }, { transform: 'translateY(0) scale(1)' }], {
+          duration: T.settle,
+          easing: 'cubic-bezier(.15,.6,.3,1)',
+        });
+        if (loop) later(T.loopEvery - hold, press);
+        else later(T.close - hold, () => close(T.fade));
+      });
+    };
 
     let done = false;
     const close = (duration: number) => {
+      if (done) return;
+      done = true;
+      removeEventListener('wheel', skip);
+      removeEventListener('touchmove', skip);
+      removeEventListener('keydown', onKey);
       intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
+        reset();
         intro.remove();
         document.documentElement.classList.remove('intro-open');
       };
     };
-    const finish = () => {
-      done = true;
-      window.clearInterval(glintTimer);
-      removeEventListener('wheel', skip);
-      removeEventListener('touchmove', skip);
-      removeEventListener('keydown', onKey);
-    };
 
-    // Волна от ладони — кольцо расходится от места «удара»
-    const ripple = () => {
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      five.append(r);
-      r.animate([{ transform: 'scale(0.6)', opacity: 0.9 }, { transform: 'scale(2.6)', opacity: 0 }], {
-        duration: 700,
-        easing: 'cubic-bezier(.2,.7,.2,1)',
-      }).onfinish = () => r.remove();
+    let pressed = false;
+    const onPress = () => {
+      if (done || (pressed && !loop)) return;
+      pressed = true;
+      press();
     };
-
-    // «Пятюня»: звук удара сразу, ладонь хлопает, знак наклоняется с бликом, сайт открывается
-    const highFive = () => {
-      if (done) return;
-      finish();
-      playSting({ riser: false });
-      five.classList.add('is-hit');
-      palm.animate(
-        [
-          { transform: 'rotate(0) scale(1)' },
-          { transform: 'rotate(-14deg) scale(0.82)', offset: 0.25 },
-          { transform: 'rotate(6deg) scale(1.08)', offset: 0.6 },
-          { transform: 'rotate(0) scale(1)' },
-        ],
-        { duration: 420, easing: 'ease-out' },
-      );
-      ripple();
-      const from = getComputedStyle(mark).transform;
-      idle.cancel();
-      mark.animate(
-        [{ transform: from }, { transform: 'rotateX(38deg) scale(1.05)', offset: 0.2 }, { transform: 'rotateX(0deg) scale(1)' }],
-        { duration: 1100, easing: ease, fill: 'forwards' },
-      );
-      shadow.animate(
-        [{ transform: 'scaleX(0.9)', opacity: 0.6 }, { transform: 'scaleX(1.15)', opacity: 0.9, offset: 0.2 }, { transform: 'scaleX(1)', opacity: 0.7 }],
-        { duration: 1100, easing: ease, fill: 'forwards' },
-      );
-      sweep(700);
-      window.setTimeout(() => close(650), 900);
-    };
-
     // Пропустить без звука: Esc или попытка прокрутить
-    const skip = () => {
-      if (done) return;
-      finish();
-      idle.cancel();
-      close(300);
-    };
+    const skip = () => close(300);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') skip();
     };
 
-    intro.addEventListener('click', highFive); // «дать пять» можно в любом месте экрана
+    intro.addEventListener('click', onPress); // нажать можно в любом месте экрана
     addEventListener('keydown', onKey);
-    addEventListener('wheel', skip, { passive: true });
-    addEventListener('touchmove', skip, { passive: true });
+    if (!loop) {
+      addEventListener('wheel', skip, { passive: true });
+      addEventListener('touchmove', skip, { passive: true });
+    }
   }
 </script>
 
@@ -167,7 +216,7 @@ const LAYERS = 9; // слои толщины знака
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    gap: 22px;
     padding: 24px;
     background:
       linear-gradient(var(--veil-a), var(--veil-b)),
@@ -182,17 +231,26 @@ const LAYERS = 9; // слои толщины знака
     overflow: hidden;
   }
 
+  /* Надписи пропадают и возвращаются мгновенно, как в видео */
+  .is-off {
+    visibility: hidden;
+  }
+
   .stage {
     position: relative;
     width: clamp(120px, 20vw, 170px);
     aspect-ratio: 1;
-    perspective: 900px;
+    perspective: 700px;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
+  .lift,
   .mark3d {
     position: absolute;
     inset: 0;
     transform-style: preserve-3d;
+  }
+  .mark3d {
+    transform-origin: 50% 8%; /* наклон вокруг верхнего края: верх на месте, низ уходит вглубь */
     will-change: transform;
   }
   .layer {
@@ -211,64 +269,69 @@ const LAYERS = 9; // слои толщины знака
   .front {
     transform: translateZ(0);
   }
-  /* Блик: светлая полоса, обрезанная по форме знака */
-  .glint {
+  /* Свет на металле при наклоне: тёмная и светлая полосы, обрезанные по форме знака */
+  .light {
     position: absolute;
     inset: 0;
-    overflow: hidden;
     transform: translateZ(0.5px);
     -webkit-mask: var(--mark) center / contain no-repeat;
     mask: var(--mark) center / contain no-repeat;
-    pointer-events: none;
-  }
-  .glint::before {
-    content: '';
-    position: absolute;
-    inset: -10% 35%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
-    transform: translateX(-160%);
+    /* Полосы идут слева направо: сначала тень на левой трети, блик по центру, к концу металл светлеет */
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0) 12%,
+        rgba(0, 0, 0, 0.1) 22%,
+        rgba(0, 0, 0, 0.55) 32%,
+        rgba(0, 0, 0, 0.2) 40%,
+        rgba(255, 255, 255, 0.95) 47%,
+        rgba(0, 0, 0, 0.35) 54%,
+        rgba(0, 0, 0, 0.05) 62%,
+        rgba(255, 255, 255, 0.85) 68%,
+        rgba(0, 0, 0, 0.45) 76%,
+        rgba(0, 0, 0, 0.1) 86%,
+        rgba(255, 255, 255, 0.4) 100%
+      )
+      0 0 / 300% 100% no-repeat;
     opacity: 0;
+    pointer-events: none;
   }
   .shadow {
     position: absolute;
-    left: 18%;
-    right: 18%;
-    bottom: -14%;
+    left: 16%;
+    right: 16%;
+    bottom: -12%;
     height: 12%;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(0, 40, 40, 0.28), transparent);
+    background: radial-gradient(closest-side, rgba(0, 30, 30, 0.3), transparent);
     filter: blur(4px);
     opacity: 0.7;
   }
 
-  .welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    text-align: center;
-  }
   .hello {
     font-size: clamp(24px, 3.2vw, 30px);
     font-weight: 600;
     color: var(--ink);
+    text-align: center;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
   }
+  /* Надпись под знаком — как «pen.dev» в эталоне: крупно, жирно, чёрным */
   .wordmark {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ink-2);
-    letter-spacing: 0.02em;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    text-align: center;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
   }
 
   /* «Дай пять»: ладонь в спектральном ободе, как центр колеса */
   .five {
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    margin-top: 12px;
     padding: 0;
     border: 0;
     background: none;
@@ -280,21 +343,18 @@ const LAYERS = 9; // слои толщины знака
   .palm {
     display: grid;
     place-items: center;
-    width: 76px;
-    height: 76px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    font-size: 34px;
+    font-size: 28px;
     line-height: 1;
     background:
       linear-gradient(var(--card), var(--card)) padding-box,
       conic-gradient(#35fe63, #fd374d, #fed835, #35ff9e, #3592fe, #35fe63) border-box;
     border: 3px solid transparent;
     box-shadow: var(--shadow-card);
-    transform-origin: 50% 80%;
-    animation: wave 2.4s ease-in-out 1.2s infinite;
     transition: scale 0.2s ease;
   }
-  /* отдельное свойство scale не спорит с покачиванием через transform */
   .five:hover .palm {
     scale: 1.06;
   }
@@ -305,38 +365,7 @@ const LAYERS = 9; // слои толщины знака
     outline: 2px solid var(--teal);
     outline-offset: 4px;
   }
-  .five.is-hit .palm {
-    animation: none;
-  }
-  .five :global(.ripple) {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 76px;
-    height: 76px;
-    margin-left: -38px;
-    border-radius: 50%;
-    border: 3px solid var(--teal);
-    pointer-events: none;
-  }
 
-  /* Ладонь приветственно покачивается, приглашая «дать пять» */
-  @keyframes wave {
-    0%,
-    60%,
-    100% {
-      transform: rotate(0);
-    }
-    15% {
-      transform: rotate(-12deg);
-    }
-    30% {
-      transform: rotate(10deg);
-    }
-    45% {
-      transform: rotate(-6deg);
-    }
-  }
   @keyframes rise {
     from {
       opacity: 0;
