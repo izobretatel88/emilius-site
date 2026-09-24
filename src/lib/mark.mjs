@@ -27,7 +27,7 @@ const SPECTRUM = [
   '#35ebb1', '#35e6b5', '#35e0ba', '#35d9bf', '#36c0d7', '#35abe9', '#3592fe', '#3593fe', '#35f176',
 ];
 
-const HEART_COLOR = '#a7a7a7';
+const HEART_COLOR = '#9a9fa0'; // плотнее прежнего #a7a7a7: читается на пастельной заливке и на 16 px
 // Сердце: контур Material Icons (поле 24×24), растянутый в прямоугольник 67×57 с левым верхним углом (56, 80).
 const HEART_PATH =
   'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z';
@@ -82,17 +82,44 @@ function outline(step = 2) {
 
 const f = (v) => +v.toFixed(2);
 
-/** Внутренности SVG знака (без обёртки <svg>). */
-export function markInner({ step = 2.5, heart = true, stroke = STROKE } = {}) {
+// Пастельный оттенок цвета обводки: доля цвета поверх белого.
+const tint = (hexColor, amount) => toHex(hex(hexColor).map((v) => 255 + (v - 255) * amount));
+
+/**
+ * Внутренности SVG знака (без обёртки <svg>).
+ * fill      — пастельная заливка внутри: тот же спектр по кругу, почти белый
+ *             (как стеклянный диск колеса). Для крупных размеров.
+ * heartColor — цвет сердца.
+ * idPrefix  — префикс id для clipPath/filter, если на странице несколько знаков.
+ */
+export function markInner({ step = 2.5, heart = true, stroke = STROKE, fill = false, fillAmount = 0.12, heartColor = HEART_COLOR, idPrefix = 'm' } = {}) {
   const pts = outline(step);
+  const angleOf = (p, q) => {
+    const mid = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+    return ((Math.atan2(mid[1] - HUB[1], mid[0] - HUB[0]) * 180) / Math.PI + 90 + 360) % 360;
+  };
   const segs = pts.map((p, i) => {
     const q = pts[(i + 1) % pts.length];
-    const mid = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
-    const deg = ((Math.atan2(mid[1] - HUB[1], mid[0] - HUB[0]) * 180) / Math.PI + 90 + 360) % 360;
-    return `<path d="M${f(p[0])} ${f(p[1])}L${f(q[0])} ${f(q[1])}" stroke="${colorAt(deg)}"/>`;
+    return `<path d="M${f(p[0])} ${f(p[1])}L${f(q[0])} ${f(q[1])}" stroke="${colorAt(angleOf(p, q))}"/>`;
   });
-  const heartEl = heart ? `<path d="${HEART_PATH}" transform="${HEART_TRANSFORM}" fill="${HEART_COLOR}"/>` : '';
-  return `<g fill="none" stroke-width="${stroke}" stroke-linecap="round">${segs.join('')}</g>${heartEl}`;
+  // Заливка — веер треугольников от центра к контуру, каждый своего оттенка.
+  // Обводка того же цвета закрывает щели сглаживания между соседними клиньями.
+  let fillEl = '';
+  if (fill) {
+    const wedges = pts.map((p, i) => {
+      const q = pts[(i + 1) % pts.length];
+      const c = tint(colorAt(angleOf(p, q)), fillAmount);
+      return `<path d="M${f(HUB[0])} ${f(HUB[1])}L${f(p[0])} ${f(p[1])}L${f(q[0])} ${f(q[1])}Z" fill="${c}" stroke="${c}" stroke-width="0.8"/>`;
+    });
+    // Размытие убирает «лучи» между клиньями; контур ограничивает заливку формой знака.
+    const poly = pts.map((p) => `${f(p[0])},${f(p[1])}`).join(' ');
+    fillEl =
+      `<defs><clipPath id="${idPrefix}clip"><polygon points="${poly}"/></clipPath>` +
+      `<filter id="${idPrefix}soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter></defs>` +
+      `<g class="mark-fill" clip-path="url(#${idPrefix}clip)"><g filter="url(#${idPrefix}soft)">${wedges.join('')}</g></g>`;
+  }
+  const heartEl = heart ? `<path d="${HEART_PATH}" transform="${HEART_TRANSFORM}" fill="${heartColor}"/>` : '';
+  return `${fillEl}<g fill="none" stroke-width="${stroke}" stroke-linecap="round">${segs.join('')}</g>${heartEl}`;
 }
 
 /** Готовый SVG знака. padding — поля вокруг в единицах viewBox (для квадратных иконок). */
