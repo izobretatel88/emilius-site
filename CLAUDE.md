@@ -1,6 +1,8 @@
 # Сайт «Эмилиус Эдженси»
 
-Astro, статическая сборка. Превью: https://izobretatel88.github.io/emilius-site/ (обновляется само при push в `main`). Продакшен позже — Бегет.
+**Новая сессия — начни с `docs/HANDOFF.md`:** там состояние проекта, решения владельца, открытые вопросы и известные грабли.
+
+Astro, статическая сборка. Превью: https://izobretatel88.github.io/emilius-site/ (из `main`), черновик экспериментов: https://izobretatel88.github.io/emilius-site/dev/ (из ветки `dev`). Продакшен позже — Бегет.
 
 Основной адрес — `https://emilius.agency` без www (решение владельца от 24.09.2026). `public/.htaccess` уводит www и http на него 301-редиректом.
 
@@ -21,6 +23,9 @@ Astro, статическая сборка. Превью: https://izobretatel88.
 ```bash
 npm run dev     # localhost:4321
 npm run build   # сборка в dist/
+npm run brand   # после build: пересобрать favicon, иконки и og.jpg из src/lib/mark.mjs
 ```
+
+Эксперименты — в ветке `dev` (видны на `/dev/`), после одобрения владельца вливаются в `main`.
 
 Итерации фиксируются в `CHANGELOG.md`, номер итерации — в `src/data/site.ts`, он виден в футере.
