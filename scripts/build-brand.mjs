@@ -46,6 +46,9 @@ shoot(
 // 4. brand/logo-mark.png — знак 512 px на прозрачном фоне, для соцсетей и документов
 shoot(page(markSvg({ square: true, padding: 8, fill: true }).replace('<svg ', '<svg width="512" height="512" ')), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
 
+// 4b. brand/mark.svg — знак с заливкой для заставки (слои объёма и маска блика берут его же)
+writeFileSync(join(PUB, 'brand', 'mark.svg'), markSvg({ square: true, padding: 8, fill: true, idPrefix: 'ms' }));
+
 // 5. og.jpg — 1200×630: логотип, миссия, колесо из собранного сайта
 const dist = join(ROOT, 'dist', 'index.html');
 if (!existsSync(dist)) {

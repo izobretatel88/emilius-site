@@ -1,0 +1,251 @@
+---
+// Заставка при первом заходе: объёмный знак, блик по поверхности и фирменный звук по клику.
+// Звук браузеры разрешают только после действия человека — поэтому кнопка «Войти».
+// Показывается один раз за визит; при «уменьшить движение» не показывается.
+const base = import.meta.env.BASE_URL;
+const mark = `${base}${base.endsWith('/') ? '' : '/'}brand/mark.svg`;
+const LAYERS = 9; // слои толщины знака
+---
+
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" hidden>
+  <div class="stage">
+    <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
+      {Array.from({ length: LAYERS }, (_, i) => (
+        <img class="layer edge" src={mark} alt="" style={`--i:${LAYERS - i}`} />
+      ))}
+      <img class="layer front" src={mark} alt="" />
+      <span class="glint" id="introGlint"></span>
+    </div>
+    <span class="shadow" id="introShadow"></span>
+  </div>
+  <p class="wordmark">Эмилиус Эдженси</p>
+  <button class="enter" id="introEnter" type="button">Войти <span aria-hidden="true">→</span></button>
+</div>
+
+<!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
+<script is:inline>
+  (function () {
+    var seen = false;
+    try { seen = sessionStorage.getItem('emilius-intro-seen') === '1'; } catch (e) {}
+    var forced = /[?&]intro\b/.test(location.search);
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (forced || (!seen && !reduce)) {
+      document.getElementById('intro').hidden = false;
+      document.documentElement.classList.add('intro-open');
+    }
+  })();
+</script>
+
+<script>
+  import { playSting, IMPACT_AT } from '../lib/sting';
+
+  const intro = document.getElementById('intro');
+  const mark = document.getElementById('introMark');
+  const glint = document.getElementById('introGlint');
+  const shadow = document.getElementById('introShadow');
+  const enter = document.getElementById('introEnter');
+
+  const KEY = 'emilius-intro-seen';
+  const forced = new URLSearchParams(location.search).has('intro');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem(KEY) === '1';
+  } catch {
+    /* приватный режим — просто показываем */
+  }
+
+  if (intro && mark && glint && shadow && enter && (forced || (!seen && !reduce))) {
+    intro.hidden = false;
+    document.documentElement.classList.add('intro-open');
+    enter.focus({ preventScroll: true });
+
+    const ease = 'cubic-bezier(.45,0,.2,1)';
+    // Маска блика стоит на месте (форма знака), движется только светлая полоса внутри
+    const sweep = (duration: number, delay = 0) =>
+      glint.animate(
+        [
+          { transform: 'translateX(-160%) skewX(-18deg)', opacity: 0 },
+          { opacity: 1, offset: 0.35 },
+          { transform: 'translateX(160%) skewX(-18deg)', opacity: 0 },
+        ],
+        { duration, delay, easing: 'ease-in-out', pseudoElement: '::before' },
+      );
+
+    // Покой: знак медленно покачивается, блик иногда пробегает по металлу
+    const idle = mark.animate(
+      [{ transform: 'rotateX(10deg) rotateY(-16deg)' }, { transform: 'rotateX(-6deg) rotateY(16deg)' }],
+      { duration: 3400, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' },
+    );
+    const idleShadow = shadow.animate(
+      [{ transform: 'translateX(-6px) scaleX(0.92)' }, { transform: 'translateX(6px) scaleX(0.92)' }],
+      { duration: 3400, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' },
+    );
+    const glintTimer = setInterval(() => sweep(1200), 3400);
+    sweep(1200, 400);
+
+    let started = false;
+    const go = () => {
+      if (started) return;
+      started = true;
+      clearInterval(glintTimer);
+      try {
+        sessionStorage.setItem(KEY, '1');
+      } catch {
+        /* ничего */
+      }
+      playSting();
+      const hit = IMPACT_AT * 1000;
+      const from = getComputedStyle(mark).transform;
+      idle.cancel();
+      idleShadow.cancel();
+      enter.disabled = true;
+
+      // Нарастание: знак собирается и чуть откидывается назад
+      mark.animate([{ transform: from }, { transform: 'rotateX(-14deg) rotateY(0deg) scale(0.97)' }], {
+        duration: hit,
+        easing: 'cubic-bezier(.6,0,.9,.4)',
+        fill: 'forwards',
+      }).onfinish = () => {
+        // Удар: наклон вперёд с бликом и плавное возвращение
+        mark.animate(
+          [
+            { transform: 'rotateX(-14deg) scale(0.97)' },
+            { transform: 'rotateX(38deg) scale(1.04)', offset: 0.22 },
+            { transform: 'rotateX(0deg) scale(1)' },
+          ],
+          { duration: 1100, easing: ease, fill: 'forwards' },
+        );
+        shadow.animate(
+          [{ transform: 'scaleX(0.8)', opacity: 0.5 }, { transform: 'scaleX(1.15)', opacity: 0.9, offset: 0.22 }, { transform: 'scaleX(1)', opacity: 0.7 }],
+          { duration: 1100, easing: ease, fill: 'forwards' },
+        );
+        sweep(700);
+        // Заставка растворяется, сайт проявляется
+        setTimeout(() => {
+          intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 650, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
+            intro.remove();
+            document.documentElement.classList.remove('intro-open');
+          };
+        }, 850);
+      };
+    };
+
+    enter.addEventListener('click', go);
+    intro.addEventListener('click', go);
+    intro.addEventListener('keydown', (e) => {
+      if (['Enter', ' ', 'Escape'].includes(e.key)) {
+        e.preventDefault();
+        go();
+      }
+    });
+  }
+</script>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    background:
+      linear-gradient(var(--veil-a), var(--veil-b)),
+      conic-gradient(from 200deg at 50% 40%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
+    background-color: var(--page);
+    cursor: pointer;
+  }
+  .intro[hidden] {
+    display: none;
+  }
+  :global(html.intro-open) {
+    overflow: hidden;
+  }
+
+  .stage {
+    position: relative;
+    width: clamp(130px, 22vw, 190px);
+    aspect-ratio: 1;
+    perspective: 900px;
+  }
+  .mark3d {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    pointer-events: none;
+  }
+  /* Толщина знака: копии уходят вглубь и темнеют, как грань металла */
+  .edge {
+    transform: translateZ(calc(var(--i) * -1.4px));
+    filter: brightness(0.62) saturate(1.25);
+  }
+  .front {
+    transform: translateZ(0);
+  }
+  /* Блик: светлая полоса, обрезанная по форме знака */
+  .glint {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    transform: translateZ(0.5px);
+    -webkit-mask: var(--mark) center / contain no-repeat;
+    mask: var(--mark) center / contain no-repeat;
+    pointer-events: none;
+  }
+  .glint::before {
+    content: '';
+    position: absolute;
+    inset: -10% 35%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+    transform: translateX(-160%);
+    opacity: 0;
+  }
+  .shadow {
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: -14%;
+    height: 12%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(0, 40, 40, 0.28), transparent);
+    filter: blur(4px);
+    opacity: 0.7;
+  }
+
+  .wordmark {
+    margin-top: 10px;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .enter {
+    min-height: 48px;
+    padding-inline: 26px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: #fff;
+    font: 600 17px var(--font);
+    cursor: pointer;
+    transition: color var(--hover), background-color var(--hover);
+  }
+  .enter:hover {
+    color: var(--on-teal);
+  }
+  .enter:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
