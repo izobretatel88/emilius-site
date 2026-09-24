@@ -63,10 +63,10 @@ if (!existsSync(dist)) {
     // названия этапов в центре видны только при наведении — на картинке их не нужно
     .replace(/<text class="center-word center-sector"[\s\S]*?<\/text>/g, '');
   const font = (w) =>
-    `@font-face{font-family:Manrope;font-weight:${w};src:url('file://${ROOT}/node_modules/@fontsource/manrope/files/manrope-cyrillic-${w}-normal.woff2') format('woff2')}`;
+    `@font-face{font-family:Glober;font-weight:${w};src:url('file://${ROOT}/src/styles/fonts/glober-${w}.woff2') format('woff2')}`;
   const css = `
     ${font(400)}${font(600)}${font(700)}${font(800)}
-    body{width:1200px;height:630px;font-family:Manrope,sans-serif;color:var(--ink);background:
+    body{width:1200px;height:630px;font-family:Glober,sans-serif;color:var(--ink);background:
       linear-gradient(var(--veil-a),var(--veil-b)),conic-gradient(from 200deg at 62% 45%,var(--ray-1),var(--ray-2),var(--ray-3),var(--ray-4),var(--ray-1));
       background-color:var(--page);display:grid;grid-template-columns:1fr 520px;align-items:center;padding:0 40px 0 72px;box-sizing:border-box}
     .left{display:flex;flex-direction:column;gap:26px}

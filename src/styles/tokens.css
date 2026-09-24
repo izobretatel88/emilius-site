@@ -55,8 +55,8 @@
   --radius-btn: 13px;
   --radius-sm: 10px;
 
-  /* Типографика: Glober, пока его нет — Manrope */
-  --font: 'Glober', 'Manrope', Arial, sans-serif;
+  /* Типографика: Glober (src/styles/fonts.css) */
+  --font: 'Glober', Arial, sans-serif;
 
   /* Сетка первого экрана */
   --col-side: 185px;
