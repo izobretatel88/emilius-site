@@ -1,14 +1,14 @@
 ---
-// Заставка при первом заходе: пауза с приветствием, затем сама играет анимация знака
-// (объём, блик, наклон на ударе) и растворяется в сайт. Клик или клавиша — пропустить.
-// Звук играет, только если браузер разрешил его без клика (обычно нет) — тогда анимация тихая.
-// Показывается один раз за визит; при «уменьшить движение» не показывается.
+// Заставка при первом заходе: «Добро пожаловать! Готовы? Дай пять!»
+// Нажатие — «пятюня»: хлопок, волна, звук удара и наклон знака с бликом, затем сайт.
+// Нажатие заодно разрешает браузеру звук — без него звук при загрузке почти всегда заблокирован.
+// Esc или прокрутка — пропустить без звука. Один раз за визит; при «уменьшить движение» — нет.
 const base = import.meta.env.BASE_URL;
 const mark = `${base}${base.endsWith('/') ? '' : '/'}brand/mark.svg`;
 const LAYERS = 9; // слои толщины знака
 ---
 
-<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Добро пожаловать в Эмилиус Эдженси" hidden>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introHello" hidden>
   <div class="stage">
     <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
       {Array.from({ length: LAYERS }, (_, i) => (
@@ -19,10 +19,16 @@ const LAYERS = 9; // слои толщины знака
     </div>
     <span class="shadow" id="introShadow"></span>
   </div>
+
   <div class="welcome">
-    <p class="hello">Добро пожаловать</p>
+    <p class="hello" id="introHello">Добро пожаловать!</p>
     <p class="wordmark">Эмилиус Эдженси</p>
   </div>
+
+  <button class="five" id="introFive" type="button">
+    <span class="palm" id="introPalm" aria-hidden="true">✋</span>
+    <span class="five-label">Готовы? Дай пять!</span>
+  </button>
 </div>
 
 <!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
@@ -40,25 +46,24 @@ const LAYERS = 9; // слои толщины знака
 </script>
 
 <script>
-  import { playSting, IMPACT_AT } from '../lib/sting';
+  import { playSting } from '../lib/sting';
 
   const intro = document.getElementById('intro');
   const mark = document.getElementById('introMark');
   const glint = document.getElementById('introGlint');
   const shadow = document.getElementById('introShadow');
+  const five = document.getElementById('introFive');
+  const palm = document.getElementById('introPalm');
 
-  const PAUSE = 1100; // пауза с приветствием перед анимацией, мс
-
-  if (intro && mark && glint && shadow && !intro.hidden) {
+  if (intro && mark && glint && shadow && five && palm && !intro.hidden) {
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
     } catch {
       /* приватный режим — не страшно */
     }
+    five.focus({ preventScroll: true });
 
     const ease = 'cubic-bezier(.45,0,.2,1)';
-    const timers: number[] = [];
-    const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
 
     // Блик: маска стоит на месте (форма знака), движется только светлая полоса внутри
     const sweep = (duration: number) =>
@@ -71,71 +76,85 @@ const LAYERS = 9; // слои толщины знака
         { duration, easing: 'ease-in-out', pseudoElement: '::before' },
       );
 
-    let closed = false;
+    // Ожидание: знак медленно покачивается, блик иногда пробегает по металлу
+    const idle = mark.animate(
+      [{ transform: 'rotateX(8deg) rotateY(-12deg)' }, { transform: 'rotateX(-4deg) rotateY(12deg)' }],
+      { duration: 3400, direction: 'alternate', iterations: Infinity, easing: 'ease-in-out' },
+    );
+    const glintTimer = window.setInterval(() => sweep(1200), 3400);
+    window.setTimeout(() => sweep(1200), 500);
+
+    let done = false;
     const close = (duration: number) => {
-      if (closed) return;
-      closed = true;
-      timers.forEach(clearTimeout);
       intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
         intro.remove();
         document.documentElement.classList.remove('intro-open');
       };
     };
-
-    // Всё начинается, только когда вкладку видно: в фоновой вкладке браузер замораживает
-    // анимации, и человек, переключившись, увидел бы сразу растворение без знака
-    const begin = () => {
-      // Пауза: знак стоит с лёгким наклоном и едва покачивается, пока появляется приветствие
-      const idle = mark.animate(
-        [{ transform: 'rotateX(8deg) rotateY(-10deg)' }, { transform: 'rotateX(2deg) rotateY(8deg)' }],
-        { duration: PAUSE + 200, easing: 'ease-in-out', fill: 'forwards' },
-      );
-      later(() => sweep(1000), 250);
-
-      // Анимация: нарастание → наклон вперёд на ударе → возвращение → растворение
-      later(() => {
-        playSting(); // сыграет, только если браузер разрешил звук
-        const from = getComputedStyle(mark).transform;
-        idle.cancel();
-        const hit = IMPACT_AT * 1000;
-        mark.animate([{ transform: from }, { transform: 'rotateX(-14deg) rotateY(0deg) scale(0.97)' }], {
-          duration: hit,
-          easing: 'cubic-bezier(.6,0,.9,.4)',
-          fill: 'forwards',
-        });
-        later(() => {
-          mark.animate(
-            [
-              { transform: 'rotateX(-14deg) scale(0.97)' },
-              { transform: 'rotateX(38deg) scale(1.04)', offset: 0.22 },
-              { transform: 'rotateX(0deg) scale(1)' },
-            ],
-            { duration: 1100, easing: ease, fill: 'forwards' },
-          );
-          shadow.animate(
-            [{ transform: 'scaleX(0.8)', opacity: 0.5 }, { transform: 'scaleX(1.15)', opacity: 0.9, offset: 0.22 }, { transform: 'scaleX(1)', opacity: 0.7 }],
-            { duration: 1100, easing: ease, fill: 'forwards' },
-          );
-          sweep(700);
-          later(() => close(650), 850);
-        }, hit);
-      }, PAUSE);
+    const finish = () => {
+      done = true;
+      window.clearInterval(glintTimer);
+      removeEventListener('wheel', skip);
+      removeEventListener('touchmove', skip);
+      removeEventListener('keydown', onKey);
     };
 
-    if (document.visibilityState === 'visible') begin();
-    else {
-      intro.classList.add('is-waiting');
-      document.addEventListener('visibilitychange', function onVisible() {
-        if (document.visibilityState !== 'visible') return;
-        document.removeEventListener('visibilitychange', onVisible);
-        intro.classList.remove('is-waiting');
-        begin();
-      });
-    }
+    // Волна от ладони — кольцо расходится от места «удара»
+    const ripple = () => {
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      five.append(r);
+      r.animate([{ transform: 'scale(0.6)', opacity: 0.9 }, { transform: 'scale(2.6)', opacity: 0 }], {
+        duration: 700,
+        easing: 'cubic-bezier(.2,.7,.2,1)',
+      }).onfinish = () => r.remove();
+    };
 
-    // Пропустить: клик, касание или любая клавиша
-    intro.addEventListener('click', () => close(300));
-    window.addEventListener('keydown', () => close(300), { once: true });
+    // «Пятюня»: звук удара сразу, ладонь хлопает, знак наклоняется с бликом, сайт открывается
+    const highFive = () => {
+      if (done) return;
+      finish();
+      playSting({ riser: false });
+      five.classList.add('is-hit');
+      palm.animate(
+        [
+          { transform: 'rotate(0) scale(1)' },
+          { transform: 'rotate(-14deg) scale(0.82)', offset: 0.25 },
+          { transform: 'rotate(6deg) scale(1.08)', offset: 0.6 },
+          { transform: 'rotate(0) scale(1)' },
+        ],
+        { duration: 420, easing: 'ease-out' },
+      );
+      ripple();
+      const from = getComputedStyle(mark).transform;
+      idle.cancel();
+      mark.animate(
+        [{ transform: from }, { transform: 'rotateX(38deg) scale(1.05)', offset: 0.2 }, { transform: 'rotateX(0deg) scale(1)' }],
+        { duration: 1100, easing: ease, fill: 'forwards' },
+      );
+      shadow.animate(
+        [{ transform: 'scaleX(0.9)', opacity: 0.6 }, { transform: 'scaleX(1.15)', opacity: 0.9, offset: 0.2 }, { transform: 'scaleX(1)', opacity: 0.7 }],
+        { duration: 1100, easing: ease, fill: 'forwards' },
+      );
+      sweep(700);
+      window.setTimeout(() => close(650), 900);
+    };
+
+    // Пропустить без звука: Esc или попытка прокрутить
+    const skip = () => {
+      if (done) return;
+      finish();
+      idle.cancel();
+      close(300);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') skip();
+    };
+
+    intro.addEventListener('click', highFive); // «дать пять» можно в любом месте экрана
+    addEventListener('keydown', onKey);
+    addEventListener('wheel', skip, { passive: true });
+    addEventListener('touchmove', skip, { passive: true });
   }
 </script>
 
@@ -148,7 +167,8 @@ const LAYERS = 9; // слои толщины знака
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 34px;
+    gap: 30px;
+    padding: 24px;
     background:
       linear-gradient(var(--veil-a), var(--veil-b)),
       conic-gradient(from 200deg at 50% 40%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
@@ -164,7 +184,7 @@ const LAYERS = 9; // слои толщины знака
 
   .stage {
     position: relative;
-    width: clamp(130px, 22vw, 190px);
+    width: clamp(120px, 20vw, 170px);
     aspect-ratio: 1;
     perspective: 900px;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -221,7 +241,6 @@ const LAYERS = 9; // слои толщины знака
     opacity: 0.7;
   }
 
-  /* Приветствие проявляется снизу вслед за знаком */
   .welcome {
     display: flex;
     flex-direction: column;
@@ -230,7 +249,7 @@ const LAYERS = 9; // слои толщины знака
     text-align: center;
   }
   .hello {
-    font-size: clamp(22px, 3vw, 28px);
+    font-size: clamp(24px, 3.2vw, 30px);
     font-weight: 600;
     color: var(--ink);
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
@@ -242,10 +261,81 @@ const LAYERS = 9; // слои толщины знака
     letter-spacing: 0.02em;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
   }
-  .is-waiting .stage,
-  .is-waiting .hello,
-  .is-waiting .wordmark {
-    animation-play-state: paused;
+
+  /* «Дай пять»: ладонь в спектральном ободе, как центр колеса */
+  .five {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: 600 16px var(--font);
+    color: var(--teal-text);
+    cursor: pointer;
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both;
+  }
+  .palm {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    font-size: 34px;
+    line-height: 1;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      conic-gradient(#35fe63, #fd374d, #fed835, #35ff9e, #3592fe, #35fe63) border-box;
+    border: 3px solid transparent;
+    box-shadow: var(--shadow-card);
+    transform-origin: 50% 80%;
+    animation: wave 2.4s ease-in-out 1.2s infinite;
+    transition: scale 0.2s ease;
+  }
+  /* отдельное свойство scale не спорит с покачиванием через transform */
+  .five:hover .palm {
+    scale: 1.06;
+  }
+  .five:focus-visible {
+    outline: none;
+  }
+  .five:focus-visible .palm {
+    outline: 2px solid var(--teal);
+    outline-offset: 4px;
+  }
+  .five.is-hit .palm {
+    animation: none;
+  }
+  .five :global(.ripple) {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 76px;
+    height: 76px;
+    margin-left: -38px;
+    border-radius: 50%;
+    border: 3px solid var(--teal);
+    pointer-events: none;
+  }
+
+  /* Ладонь приветственно покачивается, приглашая «дать пять» */
+  @keyframes wave {
+    0%,
+    60%,
+    100% {
+      transform: rotate(0);
+    }
+    15% {
+      transform: rotate(-12deg);
+    }
+    30% {
+      transform: rotate(10deg);
+    }
+    45% {
+      transform: rotate(-6deg);
+    }
   }
   @keyframes rise {
     from {
