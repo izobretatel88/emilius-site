@@ -387,6 +387,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     max-width: 460px;
     aspect-ratio: 1 / 1;
     margin-inline: auto;
+    /* Повёрнутый квадрат ротора по диагонали шире коробки — без обрезки на узком экране
+       страница прокручивается вбок. Круг колеса вписан в квадрат, поэтому ничего не теряется. */
+    overflow: clip;
   }
   .wheel-box svg {
     position: absolute;
