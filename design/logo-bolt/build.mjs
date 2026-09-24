@@ -2,7 +2,7 @@
 // Figma хранит угловой градиент как HTML внутри SVG (foreignObject) — это видит только
 // браузер. Здесь тот же градиент пересобран из клиньев обычного SVG и обрезан по форме знака.
 //
-//   node design/logo-bolt/build.mjs  →  bolt-master.svg, bolt-small.svg
+//   node design/logo-bolt/build.mjs  →  bolt-master.svg, bolt-small.svg, bolt-square.svg, bolt-square-small.svg
 import { writeFileSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -77,4 +77,18 @@ const small =
   `<g mask="url(#line)">${wedges(120)}</g></svg>`;
 writeFileSync(join(DIR, 'bolt-small.svg'), small);
 
-console.log('bolt-master.svg', master.length, 'байт | bolt-small.svg', small.length, 'байт');
+// 3. Квадратный знак (выбран 24.09.2026): та же топология, пропорции близки к квадрату —
+//    знак заполняет иконку и читается от 16 px. Градиент обычный линейный — переносим без ухищрений.
+//    Толщина 8.5 совпадает по весу с надписью «Эмилиус Эдженси» (Manrope 600) в таблетке;
+//    для иконок 16–24 px — 10.
+const SQUARE_PATH = 'M8 44 L92 44 L66 8 L40 64 L76 64 L44 94 Z';
+const square = (width, id) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">` +
+  `<defs><linearGradient id="${id}" x1="0" y1="8" x2="0" y2="94" gradientUnits="userSpaceOnUse">` +
+  `<stop offset="0" stop-color="#35d890"/><stop offset=".35" stop-color="#3591ff"/><stop offset=".55" stop-color="#b4e43c"/>` +
+  `<stop offset=".78" stop-color="#ffd835"/><stop offset="1" stop-color="#ff354d"/></linearGradient></defs>` +
+  `<path d="${SQUARE_PATH}" fill="none" stroke="url(#${id})" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+writeFileSync(join(DIR, 'bolt-square.svg'), square(8.5, 'boltSq'));
+writeFileSync(join(DIR, 'bolt-square-small.svg'), square(10, 'boltSqS'));
+
+console.log('bolt-master.svg', master.length, 'байт | bolt-small.svg', small.length, 'байт | bolt-square*.svg готовы');
