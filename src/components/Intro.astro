@@ -5,7 +5,8 @@
 //   1,8 с знак медленно выпрямляется до ~31°, по металлу проходит блик;
 //   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
 // Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
-// Esc или прокрутка — пропустить без звука. Один раз за визит; при «уменьшить движение» — нет.
+// Старт: «Со звуком» / «Без звука»; не нажали за T.wait — анимация сама, без звука.
+// Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
@@ -34,10 +35,20 @@ const LAYERS = 9; // слои толщины знака
 
   <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
 
-  <button class="five" id="introFive" type="button" data-intro-text>
-    <span class="palm" aria-hidden="true">✋</span>
-    <span class="five-label">Готовы? Дай пять!</span>
-  </button>
+  <!-- Выбор: со звуком или без. На «Без звука» тает кольцо — если ничего не нажать, старт без звука -->
+  <div class="choice" id="introChoice">
+    <button class="pick pick-sound" id="introSound" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4Z"></path><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"></path></svg>
+      Со звуком
+    </button>
+    <button class="pick pick-quiet" id="introQuiet" type="button">
+      <svg class="ring" viewBox="0 0 24 24" aria-hidden="true">
+        <circle class="ring-track" cx="12" cy="12" r="9"></circle>
+        <circle class="ring-left" id="introRing" cx="12" cy="12" r="9" pathLength="100"></circle>
+      </svg>
+      Без звука
+    </button>
+  </div>
 </div>
 
 <!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
@@ -63,6 +74,7 @@ const LAYERS = 9; // слои толщины знака
     settle: 2000, // оседание после возврата
     close: 2700, // когда показать сайт
     fade: 600,
+    wait: 5000, // кольцо на «Без звука»: сколько ждём выбора
   };
   // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
   const TILT_FROM = -45;
@@ -73,16 +85,19 @@ const LAYERS = 9; // слои толщины знака
   const mark = document.getElementById('introMark');
   const light = document.getElementById('introLight');
   const shadow = document.getElementById('introShadow');
-  const five = document.getElementById('introFive');
+  const choice = document.getElementById('introChoice');
+  const withSound = document.getElementById('introSound');
+  const quiet = document.getElementById('introQuiet');
+  const ring = document.getElementById('introRing');
 
-  if (intro && lift && mark && light && shadow && five && !intro.hidden) {
+  if (intro && lift && mark && light && shadow && choice && withSound && quiet && ring && !intro.hidden) {
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
     } catch {
       /* приватный режим — не страшно */
     }
-    five.focus({ preventScroll: true });
+    withSound.focus({ preventScroll: true });
 
     // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
     let ctx: AudioContext | null = null;
@@ -120,9 +135,9 @@ const LAYERS = 9; // слои толщины знака
     };
     const showTexts = (on: boolean) => texts.forEach((el) => el.classList.toggle('is-off', !on));
 
-    const press = () => {
+    const press = (sound: boolean) => {
       reset();
-      playSound();
+      if (sound) playSound();
       showTexts(false);
       const hold = T.hold;
 
@@ -183,19 +198,33 @@ const LAYERS = 9; // слои толщины знака
       };
     };
 
+    // Кольцо тает, пока ждём выбора; растаяло — старт без звука
+    const countdown = ring.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: 100 }], {
+      duration: T.wait,
+      delay: 900, // сначала кнопки появляются
+      easing: 'linear',
+      fill: 'forwards',
+    });
     let pressed = false;
-    const onPress = () => {
+    const start = (sound: boolean) => {
       if (done || pressed) return;
       pressed = true;
-      press();
+      countdown.cancel();
+      choice.classList.add('is-off');
+      press(sound);
     };
+    countdown.onfinish = () => start(false);
     // Пропустить без звука: Esc или попытка прокрутить
-    const skip = () => close(300);
+    const skip = () => {
+      countdown.cancel();
+      close(300);
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') skip();
     };
 
-    intro.addEventListener('click', onPress); // нажать можно в любом месте экрана
+    withSound.addEventListener('click', () => start(true));
+    quiet.addEventListener('click', () => start(false));
     addEventListener('keydown', onKey);
     addEventListener('wheel', skip, { passive: true });
     addEventListener('touchmove', skip, { passive: true });
@@ -217,7 +246,6 @@ const LAYERS = 9; // слои толщины знака
       linear-gradient(var(--veil-a), var(--veil-b)),
       conic-gradient(from 200deg at 50% 40%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
     background-color: var(--page);
-    cursor: pointer;
   }
   .intro[hidden] {
     display: none;
@@ -320,45 +348,82 @@ const LAYERS = 9; // слои толщины знака
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both;
   }
 
-  /* «Дай пять»: ладонь в спектральном ободе, как центр колеса */
-  .five {
+  /* Выбор звука: кнопки как на сайте — залитая и с рамкой */
+  .choice {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-top: 12px;
-    padding: 0;
-    border: 0;
-    background: none;
-    font: 600 16px var(--font);
-    color: var(--teal-text);
-    cursor: pointer;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
     animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s both;
   }
-  .palm {
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    font-size: 28px;
-    line-height: 1;
-    background:
-      linear-gradient(var(--card), var(--card)) padding-box,
-      conic-gradient(#35fe63, #fd374d, #fed835, #35ff9e, #3592fe, #35fe63) border-box;
-    border: 3px solid transparent;
-    box-shadow: var(--shadow-card);
-    transition: scale 0.2s ease;
+  .pick {
+    height: 50px;
+    min-width: 160px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-inline: 18px 20px;
+    border-radius: var(--radius-btn);
+    font: 600 16px var(--font);
+    cursor: pointer;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
   }
-  .five:hover .palm {
-    scale: 1.06;
+  .pick svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
   }
-  .five:focus-visible {
-    outline: none;
+  .pick-sound {
+    background: var(--teal-btn);
+    color: #fff;
+    border: 0;
   }
-  .five:focus-visible .palm {
-    outline: 2px solid var(--teal);
-    outline-offset: 4px;
+  .pick-sound:hover {
+    color: var(--on-teal);
+  }
+  .pick-sound svg {
+    fill: #000;
+  }
+  .pick-sound .wave {
+    fill: none;
+    stroke: #000;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .pick-quiet {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--teal);
+  }
+  .pick-quiet:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
+  }
+  /* Таймер: кольцо тает по часовой стрелке от верха */
+  .ring {
+    transform: rotate(-90deg);
+  }
+  .ring circle {
+    fill: none;
+    stroke-width: 3;
+  }
+  .ring-track {
+    stroke: var(--hair);
+  }
+  .ring-left {
+    stroke: var(--teal);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+  }
+  .pick-quiet:hover .ring-track {
+    stroke: rgba(255, 255, 255, 0.35);
+  }
+  .pick-quiet:hover .ring-left {
+    stroke: #fff;
   }
 
   @keyframes rise {
