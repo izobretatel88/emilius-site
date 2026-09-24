@@ -71,8 +71,10 @@ const hits = SECTORS.map((s, i) => {
 });
 ---
 
-<div class="wheel-box" id="wheelBox">
-  <svg viewBox="-220 -220 440 440" role="img" aria-label="Колесо продукта: касдев, дизайн, разработка, маркетинг. 52 недели по ободу, в центре внимание.">
+<div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: касдев, дизайн, разработка, маркетинг. 52 недели по ободу, в центре внимание.">
+  <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
+       и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-220 -220 440 440">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
       {crossLines.map((l) => (
@@ -129,7 +131,9 @@ const hits = SECTORS.map((s, i) => {
         </a>
       ))}
     </g>
+  </svg>
 
+  <svg class="wheel-overlay" viewBox="-220 -220 440 440" aria-hidden="true">
     <g id="pointer">
       <line x1="-216" y1="0" x2="-47" y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
       <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"></path>
@@ -139,15 +143,15 @@ const hits = SECTORS.map((s, i) => {
   </svg>
 </div>
 
-<p class="wheel-status" id="wheelStatus" aria-live="polite"></p>
+<p class="wheel-status" id="wheelStatus"></p>
 
 <script>
   import { SECTORS } from '../data/site';
 
   const box = document.getElementById('wheelBox');
-  const rotor = document.getElementById('rotor');
+  const rotorSvg = document.getElementById('wheelRotor');
   const status = document.getElementById('wheelStatus');
-  if (box && rotor && status) {
+  if (box && rotorSvg && status) {
     const STEP = 360 / 52;
     const PERIOD = 156000; // один оборот = год
     const labels = [...document.querySelectorAll('#labels [data-label]')] as SVGTextElement[];
@@ -164,31 +168,50 @@ const hits = SECTORS.map((s, i) => {
     const nowWeek = Math.min(52, isoWeek(new Date()));
 
     // Колесо стартует с текущей недели года: метафора совпадает с календарём.
-    let rot = (nowWeek - 0.5) * STEP;
-    let hovered: number | null = null;
-    let paused = false;
-    let last = performance.now();
+    const startDeg = (nowWeek - 0.5) * STEP;
 
-    const setLabelFocus = (i: number | null) => {
-      labels.forEach((el, j) => el.setAttribute('opacity', i === null || i === j ? '1' : '0.35'));
+    // Web Animations API: вращение идёт в потоке композитора, главный поток свободен для скролла.
+    const anim = reduce
+      ? null
+      : rotorSvg.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], {
+          duration: PERIOD,
+          iterations: Infinity,
+        });
+    if (anim) anim.currentTime = (startDeg / 360) * PERIOD;
+    else rotorSvg.style.transform = `rotate(${startDeg}deg)`;
+
+    const currentDeg = () => {
+      if (!anim) return startDeg;
+      const t = Number(anim.currentTime ?? 0);
+      return ((t % PERIOD) / PERIOD) * 360;
+    };
+
+    let hovered: number | null = null;
+    let shown = '';
+    const paint = (html: string) => {
+      // DOM трогаем только когда текст действительно поменялся — раз в ~3 секунды, а не 60 раз
+      if (html !== shown) {
+        status.innerHTML = html;
+        shown = html;
+      }
     };
 
     function render() {
-      rotor.setAttribute('transform', `rotate(${rot.toFixed(3)})`);
       if (hovered !== null) {
         const s = SECTORS[hovered];
-        status.innerHTML = `<b>${s.name}</b> · недели <span class="num">${s.from}–${s.to}</span> · ${s.text} · <span class="more">подробнее →</span>`;
+        paint(`<b>${s.name}</b> · недели <span class="num">${s.from}–${s.to}</span> · ${s.text} · <span class="more">подробнее →</span>`);
         return;
       }
-      const w = ((Math.floor(rot / STEP) % 52) + 52) % 52 + 1;
+      const w = (Math.floor(currentDeg() / STEP) % 52) + 1;
       const s = SECTORS[sectorOf(w)];
-      status.innerHTML = `под стрелкой: неделя <b class="num">${String(w).padStart(2, '0')}</b> · <b>${s.name}</b>`;
+      paint(`под стрелкой: неделя <b class="num">${String(w).padStart(2, '0')}</b> · <b>${s.name}</b>`);
     }
 
     const focusSector = (i: number | null) => {
       hovered = i;
-      paused = i !== null;
-      setLabelFocus(i);
+      if (i === null) anim?.play();
+      else anim?.pause();
+      labels.forEach((el, j) => el.setAttribute('opacity', i === null || i === j ? '1' : '0.35'));
       render();
     };
 
@@ -200,19 +223,8 @@ const hits = SECTORS.map((s, i) => {
     });
     box.addEventListener('mouseleave', () => focusSector(null));
 
-    function tick(t: number) {
-      const dt = t - last;
-      last = t;
-      if (!paused) {
-        rot += (dt / PERIOD) * 360;
-        if (rot >= 360 * 52) rot -= 360 * 52;
-      }
-      render();
-      requestAnimationFrame(tick);
-    }
-
     render();
-    if (!reduce) requestAnimationFrame((t) => { last = t; tick(t); });
+    if (anim) setInterval(render, 500);
   }
 </script>
 
@@ -223,11 +235,23 @@ const hits = SECTORS.map((s, i) => {
     aspect-ratio: 1 / 1;
     margin-inline: auto;
   }
+  .wheel-box {
+    position: relative;
+  }
   .wheel-box svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     display: block;
     overflow: visible;
+  }
+  .wheel-rotor {
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+  .wheel-overlay {
+    pointer-events: none;
   }
   .sector-hit {
     fill: transparent;

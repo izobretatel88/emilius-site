@@ -18,17 +18,25 @@ body {
   font-size: 16px;
   line-height: 1.45;
   color: var(--ink);
-  background:
-    linear-gradient(var(--veil-a), var(--veil-b)),
-    conic-gradient(from 200deg at 48% 32%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
-  background-color: var(--page);
-  background-attachment: fixed;
   padding-inline: 20px;
   padding-block: 26px 40px;
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+/* Пастельные лучи — отдельный неподвижный слой. С background-attachment: fixed
+   браузер перерисовывал бы весь экран на каждом шаге скролла. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--veil-a), var(--veil-b)),
+    conic-gradient(from 200deg at 48% 32%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
 }
 
 h1,
