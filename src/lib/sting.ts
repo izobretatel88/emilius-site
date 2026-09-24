@@ -4,10 +4,19 @@
 
 export const IMPACT_AT = 1.1;
 
+/**
+ * Играет звук. Без действия человека браузеры обычно не разрешают звук — тогда
+ * аудиоконтекст создаётся «на паузе», и мы тихо отказываемся, чтобы звук не заиграл
+ * позже, не в такт анимации.
+ */
 export function playSting(): AudioContext | null {
   const AC = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!AC) return null;
   const ctx = new AC();
+  if (ctx.state !== 'running') {
+    ctx.close();
+    return null;
+  }
   buildSting(ctx, ctx.currentTime + 0.03);
   setTimeout(() => ctx.close(), (IMPACT_AT + 3.8) * 1000);
   return ctx;
