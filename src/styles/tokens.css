@@ -14,12 +14,14 @@
   /* Нейтральные */
   --ink: #000000;
   --ink-2: #5a5a5a;
-  --ink-3: #8a8f8e;
+  --ink-3: #686d6c; /* подписи и плейсхолдеры: 4,5:1 и выше на фоне страницы и поля */
   --page: #f7f7f7;
   --card: #fefefe;
   --card-border: #efefef;
   --hair: #ececec;
   --well: #f3f5f5;
+  --input-bg: #f0f0f0;
+  --input-border: #e2e2e2;
 
   /* Фон: пастельные спектральные лучи под белой вуалью */
   --veil-a: rgba(255, 255, 255, 0.78);
@@ -53,8 +55,8 @@
   --radius-btn: 13px;
   --radius-sm: 10px;
 
-  /* Типографика: Glober, пока его нет — Manrope */
-  --font: 'Glober', 'Manrope', Arial, sans-serif;
+  /* Типографика: Glober (src/styles/fonts.css) */
+  --font: 'Glober', Arial, sans-serif;
 
   /* Сетка первого экрана */
   --col-side: 185px;
@@ -72,12 +74,14 @@
     --teal-text: #3cc6c6;
     --ink: #eef3f2;
     --ink-2: #a3b0ad;
-    --ink-3: #6f7c79;
+    --ink-3: #808d8a;
     --page: #0e1413;
     --card: #151c1b;
     --card-border: #1f2a28;
     --hair: #24302e;
     --well: #1a2322;
+    --input-bg: #1a2322;
+    --input-border: #2b3836;
     --veil-a: rgba(14, 20, 19, 0.9);
     --veil-b: rgba(14, 20, 19, 0.84);
     --ray-1: #2c4a8a;
@@ -105,12 +109,14 @@
   --teal-text: #3cc6c6;
   --ink: #eef3f2;
   --ink-2: #a3b0ad;
-  --ink-3: #6f7c79;
+  --ink-3: #808d8a;
   --page: #0e1413;
   --card: #151c1b;
   --card-border: #1f2a28;
   --hair: #24302e;
   --well: #1a2322;
+  --input-bg: #1a2322;
+  --input-border: #2b3836;
   --veil-a: rgba(14, 20, 19, 0.9);
   --veil-b: rgba(14, 20, 19, 0.84);
   --ray-1: #2c4a8a;

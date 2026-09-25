@@ -3,7 +3,8 @@
 // Знак — скруглённый треугольник со спектральной обводкой и сердцем, генерируется в src/lib/mark.mjs.
 import { markSvg } from '../lib/mark.mjs';
 
-const mark = markSvg();
+// Пастельная заливка — только в светлой теме, на тёмной она превращается в светлое пятно.
+const mark = markSvg({ fill: true, idPrefix: 'logo' });
 ---
 
 <div class="pill">
@@ -34,6 +35,14 @@ const mark = markSvg();
     display: block;
     width: 100%;
     height: 100%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .mark :global(.mark-fill) {
+      display: none;
+    }
+  }
+  :global(:root[data-theme='dark']) .mark :global(.mark-fill) {
+    display: none;
   }
   @media (max-width: 480px) {
     .pill {

@@ -1,0 +1,35 @@
+/* Glober (Fontfabric) — лицензия у владельца. Четыре начертания, которые есть на сайте.
+   Файлы урезаны до латиницы, кириллицы и знаков препинания (~19 КБ каждый).
+   Исходные TTF в репозиторий не кладём. */
+
+@font-face {
+  font-family: 'Glober';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/glober-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Glober';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./fonts/glober-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Glober';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/glober-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Glober';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('./fonts/glober-800.woff2') format('woff2');
+}

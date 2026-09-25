@@ -1,0 +1,453 @@
+---
+// Заставка при первом заходе. Движение знака повторяет эталонное видео кадр в кадр
+// (замеры по 60 к/с — в константах T ниже):
+//   нажатие → знак за 1–2 кадра наклоняется (~45°), надписи пропадают мгновенно;
+//   1,8 с знак медленно выпрямляется до ~31°, по металлу проходит блик;
+//   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
+// Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
+// Сначала только выбор «Со звуком» / «Без звука»; не нажали за T.wait — без звука.
+// После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
+// Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
+// ?intro — показать снова.
+const base = import.meta.env.BASE_URL;
+const root = `${base}${base.endsWith('/') ? '' : '/'}`;
+const mark = `${root}brand/mark.svg`;
+const sound = `${root}brand/intro.mp3`;
+const LAYERS = 9; // слои толщины знака
+---
+
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} hidden>
+  <!-- Знак появляется только после выбора звука -->
+  <div class="logo" id="introLogo" hidden>
+  <div class="stage">
+    <div class="lift" id="introLift">
+      <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
+        {Array.from({ length: LAYERS }, (_, i) => (
+          <img class="layer edge" src={mark} alt="" style={`--i:${LAYERS - i}`} />
+        ))}
+        <img class="layer front" src={mark} alt="" />
+        <span class="light" id="introLight"></span>
+      </div>
+    </div>
+    <span class="shadow" id="introShadow"></span>
+  </div>
+
+  <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
+  </div>
+
+  <!-- Выбор: со звуком или без. На «Без звука» тает кольцо — если ничего не нажать, старт без звука -->
+  <div class="choice" id="introChoice">
+    <button class="pick pick-sound" id="introSound" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4Z"></path><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"></path></svg>
+      Со звуком
+    </button>
+    <button class="pick pick-quiet" id="introQuiet" type="button">
+      <svg class="ring" viewBox="0 0 24 24" aria-hidden="true">
+        <circle class="ring-track" cx="12" cy="12" r="9"></circle>
+        <circle class="ring-left" id="introRing" cx="12" cy="12" r="9" pathLength="100"></circle>
+      </svg>
+      Без звука
+    </button>
+  </div>
+</div>
+
+<!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
+<script is:inline>
+  (function () {
+    var seen = false;
+    try { seen = sessionStorage.getItem('emilius-intro-seen') === '1'; } catch (e) {}
+    var forced = /[?&]intro\b/.test(location.search);
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (forced || (!seen && !reduce)) {
+      document.getElementById('intro').hidden = false;
+      document.documentElement.classList.add('intro-open');
+    }
+  })();
+</script>
+
+<script>
+  // Тайминги, мс от нажатия. Всё, что подгоняется под видео, — здесь.
+  const T = {
+    tilt: 50, // наклон: 1–2 кадра
+    hold: 1800, // сколько знак остаётся наклонённым
+    soundAt: 170, // звук: в видео слышен через 0,38 с, в файле 0,21 с тишины в начале
+    settle: 2000, // оседание после возврата
+    close: 2700, // когда показать сайт
+    fade: 600,
+    wait: 5000, // кольцо на «Без звука»: сколько ждём выбора
+  };
+  // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
+  const TILT_FROM = -45;
+  const TILT_TO = -31;
+
+  const intro = document.getElementById('intro');
+  const lift = document.getElementById('introLift');
+  const mark = document.getElementById('introMark');
+  const light = document.getElementById('introLight');
+  const shadow = document.getElementById('introShadow');
+  const logo = document.getElementById('introLogo');
+  const choice = document.getElementById('introChoice');
+  const withSound = document.getElementById('introSound');
+  const quiet = document.getElementById('introQuiet');
+  const ring = document.getElementById('introRing');
+
+  if (intro && lift && mark && light && shadow && logo && choice && withSound && quiet && ring && !intro.hidden) {
+    const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
+    try {
+      sessionStorage.setItem('emilius-intro-seen', '1');
+    } catch {
+      /* приватный режим — не страшно */
+    }
+    withSound.focus({ preventScroll: true });
+
+    // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
+    let ctx: AudioContext | null = null;
+    let buffer: Promise<AudioBuffer | null> | null = null;
+    const raw = fetch(intro.dataset.sound!).then((r) => r.arrayBuffer()).catch(() => null);
+    // Вызывать прямо в обработчике нажатия: так браузер разрешает звук, который сыграет позже
+    const unlock = () => {
+      try {
+        ctx ??= new AudioContext();
+        if (ctx.state === 'suspended') void ctx.resume();
+        buffer ??= raw.then((b) => (b && ctx ? ctx.decodeAudioData(b) : null)).catch(() => null);
+      } catch {
+        /* без звука — анимация всё равно идёт */
+      }
+    };
+    const playSound = () => {
+      try {
+        if (!ctx || !buffer) return;
+        const at = ctx.currentTime + T.soundAt / 1000;
+        void buffer.then((buf) => {
+          if (!buf || !ctx) return;
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          src.start(Math.max(at, ctx.currentTime));
+        });
+      } catch {
+        /* без звука — анимация всё равно идёт */
+      }
+    };
+
+    const running: Animation[] = [];
+    const run = (el: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) => {
+      const a = el.animate(frames, { fill: 'forwards', ...opts });
+      running.push(a);
+      return a;
+    };
+    const timers: number[] = [];
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    const reset = () => {
+      running.splice(0).forEach((a) => a.cancel());
+      timers.splice(0).forEach((t) => window.clearTimeout(t));
+    };
+    const showTexts = (on: boolean) => texts.forEach((el) => el.classList.toggle('is-off', !on));
+
+    const press = (sound: boolean) => {
+      reset();
+      if (sound) playSound();
+      showTexts(false);
+      const hold = T.hold;
+
+      // Наклон: мгновенно до 45°, дальше медленно выпрямляется (в видео — почти линейно после 0,4 с)
+      run(
+        mark,
+        [
+          { transform: 'rotateX(0deg)' },
+          { transform: `rotateX(${TILT_FROM}deg)`, offset: T.tilt / hold, easing: 'linear' },
+          { transform: `rotateX(${TILT_FROM + 1}deg)`, offset: 400 / hold, easing: 'linear' },
+          { transform: `rotateX(${TILT_TO}deg)` },
+        ],
+        { duration: hold, easing: 'linear' },
+      );
+      // Блик: тёмная и светлая полосы идут слева направо, металл к концу светлеет
+      run(
+        light,
+        [
+          { opacity: 0, backgroundPosition: '15% 0' },
+          { opacity: 1, backgroundPosition: '20% 0', offset: T.tilt / hold },
+          { opacity: 1, backgroundPosition: '85% 0' },
+        ],
+        { duration: hold, easing: 'linear' },
+      );
+      run(
+        shadow,
+        [
+          { transform: 'scale(1, 1)', opacity: 0.7 },
+          { transform: 'translateY(-190%) scale(1.05, 0.8)', opacity: 0.9, offset: T.tilt / hold },
+          { transform: 'translateY(-130%) scale(1.02, 0.9)', opacity: 0.85 },
+        ],
+        { duration: hold, easing: 'linear' },
+      );
+
+      // Возврат: резко на место, чуть выше обычного, надписи сразу видны, затем оседание
+      later(hold, () => {
+        reset();
+        showTexts(true);
+        run(lift, [{ transform: 'translateY(-6%) scale(1.02)' }, { transform: 'translateY(0) scale(1)' }], {
+          duration: T.settle,
+          easing: 'cubic-bezier(.15,.6,.3,1)',
+        });
+        later(T.close - hold, () => close(T.fade));
+      });
+    };
+
+    let done = false;
+    const close = (duration: number) => {
+      if (done) return;
+      done = true;
+      removeEventListener('wheel', skip);
+      removeEventListener('touchmove', skip);
+      removeEventListener('keydown', onKey);
+      intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
+        reset();
+        intro.remove();
+        document.documentElement.classList.remove('intro-open');
+      };
+    };
+
+    // Кольцо тает, пока ждём выбора; растаяло — старт без звука
+    const countdown = ring.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: 100 }], {
+      duration: T.wait,
+      delay: 400, // сначала кнопки появляются
+      easing: 'linear',
+      fill: 'forwards',
+    });
+    let pressed = false;
+    const start = (sound: boolean) => {
+      if (done || pressed) return;
+      pressed = true;
+      countdown.cancel();
+      if (sound) unlock();
+      choice.hidden = true;
+      logo.hidden = false;
+      press(sound); // без паузы: знак появляется уже наклонённым
+    };
+    countdown.onfinish = () => start(false);
+    // Пропустить без звука: Esc или попытка прокрутить
+    const skip = () => {
+      countdown.cancel();
+      close(300);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') skip();
+    };
+
+    withSound.addEventListener('click', () => start(true));
+    quiet.addEventListener('click', () => start(false));
+    addEventListener('keydown', onKey);
+    addEventListener('wheel', skip, { passive: true });
+    addEventListener('touchmove', skip, { passive: true });
+  }
+</script>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 24px;
+    background:
+      linear-gradient(var(--veil-a), var(--veil-b)),
+      conic-gradient(from 200deg at 50% 40%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
+    background-color: var(--page);
+  }
+  .intro[hidden] {
+    display: none;
+  }
+  :global(html.intro-open) {
+    overflow: hidden;
+  }
+
+  /* Надписи пропадают и возвращаются мгновенно, как в видео */
+  .is-off {
+    visibility: hidden;
+  }
+
+  .stage {
+    position: relative;
+    width: clamp(120px, 20vw, 170px);
+    aspect-ratio: 1;
+    perspective: 700px;
+    animation: fade 0.2s ease-out both; /* проявляется уже в наклоне */
+  }
+  .lift,
+  .mark3d {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+  .mark3d {
+    transform-origin: 50% 8%; /* наклон вокруг верхнего края: верх на месте, низ уходит вглубь */
+    will-change: transform;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    pointer-events: none;
+  }
+  /* Толщина знака: копии уходят вглубь и темнеют, как грань металла */
+  .edge {
+    transform: translateZ(calc(var(--i) * -1.4px));
+    filter: brightness(0.62) saturate(1.25);
+  }
+  .front {
+    transform: translateZ(0);
+  }
+  /* Свет на металле при наклоне: тёмная и светлая полосы, обрезанные по форме знака */
+  .light {
+    position: absolute;
+    inset: 0;
+    transform: translateZ(0.5px);
+    -webkit-mask: var(--mark) center / contain no-repeat;
+    mask: var(--mark) center / contain no-repeat;
+    /* Полосы идут слева направо: сначала тень на левой трети, блик по центру, к концу металл светлеет */
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0) 12%,
+        rgba(0, 0, 0, 0.1) 22%,
+        rgba(0, 0, 0, 0.55) 32%,
+        rgba(0, 0, 0, 0.2) 40%,
+        rgba(255, 255, 255, 0.95) 47%,
+        rgba(0, 0, 0, 0.35) 54%,
+        rgba(0, 0, 0, 0.05) 62%,
+        rgba(255, 255, 255, 0.85) 68%,
+        rgba(0, 0, 0, 0.45) 76%,
+        rgba(0, 0, 0, 0.1) 86%,
+        rgba(255, 255, 255, 0.4) 100%
+      )
+      0 0 / 300% 100% no-repeat;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .shadow {
+    position: absolute;
+    left: 16%;
+    right: 16%;
+    bottom: -12%;
+    height: 12%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(0, 30, 30, 0.3), transparent);
+    filter: blur(4px);
+    opacity: 0.7;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+  .logo[hidden],
+  .choice[hidden] {
+    display: none;
+  }
+
+  /* Надпись под знаком — как «pen.dev» в эталоне: крупно, жирно, чёрным */
+  .wordmark {
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    text-align: center;
+  }
+
+  /* Выбор звука: кнопки как на сайте — залитая и с рамкой */
+  .choice {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
+  }
+  .pick {
+    height: 50px;
+    min-width: 160px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-inline: 18px 20px;
+    border-radius: var(--radius-btn);
+    font: 600 16px var(--font);
+    cursor: pointer;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+  }
+  .pick svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
+  }
+  .pick-sound {
+    background: var(--teal-btn);
+    color: #fff;
+    border: 0;
+  }
+  .pick-sound:hover {
+    color: var(--on-teal);
+  }
+  .pick-sound svg {
+    fill: #000;
+  }
+  .pick-sound .wave {
+    fill: none;
+    stroke: #000;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .pick-quiet {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--teal);
+  }
+  .pick-quiet:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
+  }
+  /* Таймер: кольцо тает по часовой стрелке от верха */
+  .ring {
+    transform: rotate(-90deg);
+  }
+  .ring circle {
+    fill: none;
+    stroke-width: 3;
+  }
+  .ring-track {
+    stroke: var(--hair);
+  }
+  .ring-left {
+    stroke: var(--teal);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+  }
+  .pick-quiet:hover .ring-track {
+    stroke: rgba(255, 255, 255, 0.35);
+  }
+  .pick-quiet:hover .ring-left {
+    stroke: #fff;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+</style>

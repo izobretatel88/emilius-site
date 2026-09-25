@@ -39,12 +39,15 @@ shoot(page(faviconSvg.replace('<svg ', '<svg width="32" height="32" ')), join(PU
 
 // 3. apple-touch-icon.png — светлый квадрат, iOS сам скруглит углы
 shoot(
-  page(markSvg({ square: true, padding: 40, stroke: 9 }).replace('<svg ', '<svg width="180" height="180" '), 'body{background:#fefefe}'),
+  page(markSvg({ square: true, padding: 40, stroke: 9, fill: true }).replace('<svg ', '<svg width="180" height="180" '), 'body{background:#fefefe}'),
   join(PUB, 'apple-touch-icon.png'), 180, 180,
 );
 
 // 4. brand/logo-mark.png — знак 512 px на прозрачном фоне, для соцсетей и документов
-shoot(page(markSvg({ square: true, padding: 8 }).replace('<svg ', '<svg width="512" height="512" ')), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
+shoot(page(markSvg({ square: true, padding: 8, fill: true }).replace('<svg ', '<svg width="512" height="512" ')), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
+
+// 4b. brand/mark.svg — знак с заливкой для заставки (слои объёма и маска блика берут его же)
+writeFileSync(join(PUB, 'brand', 'mark.svg'), markSvg({ square: true, padding: 8, fill: true, idPrefix: 'ms' }));
 
 // 5. og.jpg — 1200×630: логотип, миссия, колесо из собранного сайта
 const dist = join(ROOT, 'dist', 'index.html');
@@ -54,25 +57,29 @@ if (!existsSync(dist)) {
   const html = readFileSync(dist, 'utf8');
   const start = html.indexOf('<div class="wheel-box"');
   const end = html.indexOf('</svg> </div>', start) + '</svg> </div>'.length;
-  const wheel = html.slice(start, end).replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '');
+  const wheel = html
+    .slice(start, end)
+    .replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '')
+    // названия этапов в центре видны только при наведении — на картинке их не нужно
+    .replace(/<text class="center-word center-sector"[\s\S]*?<\/text>/g, '');
   const font = (w) =>
-    `@font-face{font-family:Manrope;font-weight:${w};src:url('file://${ROOT}/node_modules/@fontsource/manrope/files/manrope-cyrillic-${w}-normal.woff2') format('woff2')}`;
+    `@font-face{font-family:Glober;font-weight:${w};src:url('file://${ROOT}/src/styles/fonts/glober-${w}.woff2') format('woff2')}`;
   const css = `
-    ${font(400)}${font(600)}${font(700)}
-    body{width:1200px;height:630px;font-family:Manrope,sans-serif;color:var(--ink);background:
+    ${font(400)}${font(600)}${font(700)}${font(800)}
+    body{width:1200px;height:630px;font-family:Glober,sans-serif;color:var(--ink);background:
       linear-gradient(var(--veil-a),var(--veil-b)),conic-gradient(from 200deg at 62% 45%,var(--ray-1),var(--ray-2),var(--ray-3),var(--ray-4),var(--ray-1));
       background-color:var(--page);display:grid;grid-template-columns:1fr 520px;align-items:center;padding:0 40px 0 72px;box-sizing:border-box}
     .left{display:flex;flex-direction:column;gap:26px}
     .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 24px;font-weight:600;font-size:22px}
     .pill svg{width:40px;height:38px;display:block}
-    .eyebrow{color:var(--teal-text);font-weight:700;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
+    .eyebrow{color:var(--teal-text);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
     h1{margin:0;font-weight:600;font-size:46px;line-height:1.12}
     .sub{font-size:22px;color:var(--ink-2)}
     .wheel-box{position:relative;width:500px;height:500px}
     .wheel-box svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}`;
   const body = `
     <div class="left">
-      <div class="pill"><span>Эмилиус</span>${markSvg()}<span>Эдженси</span></div>
+      <div class="pill"><span>Эмилиус</span>${markSvg({ fill: true, idPrefix: 'og' })}<span>Эдженси</span></div>
       <div><div class="eyebrow">Наша миссия</div><h1>Помогать великолепным людям создавать великолепные продукты!</h1></div>
       <div class="sub">Касдев → дизайн → разработка → маркетинг.<br>Делаем по кругу.</div>
     </div>

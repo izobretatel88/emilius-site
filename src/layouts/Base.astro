@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+// Основные начертания грузим заранее: заголовки (600) и текст (400) не перескакивают со шрифта на шрифт
+import glober400 from '../styles/fonts/glober-400.woff2?url';
+import glober600 from '../styles/fonts/glober-600.woff2?url';
 
 interface Props {
   title: string;
@@ -22,6 +25,8 @@ const devBuild = /\/dev\/?$/.test(base);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <link rel="preload" href={glober600} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={glober400} as="font" type="font/woff2" crossorigin />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {preview && <meta name="robots" content="noindex, nofollow" />}
