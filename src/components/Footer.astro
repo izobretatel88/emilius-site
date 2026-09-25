@@ -1,5 +1,6 @@
 ---
 import { ITERATION, LINKS } from '../data/site';
+import { OPERATOR } from '../data/legal';
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const year = new Date().getFullYear();
@@ -10,6 +11,7 @@ const year = new Date().getFullYear();
     <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств" width="122" height="58" loading="lazy" />
   </a>
   <p>© {year} | Emilius Agency</p>
+  <p class="legal">{OPERATOR.short} · ИНН {OPERATOR.inn} · <a href={href('privacy/')}>Политика конфиденциальности</a></p>
   <p>Итерация {ITERATION.current} из {ITERATION.total} до великолепного состояния</p>
 </footer>
 
@@ -23,6 +25,9 @@ const year = new Date().getFullYear();
     color: var(--ink-2);
     text-align: center;
     padding-top: 8px;
+  }
+  .legal {
+    font-size: 13px;
   }
   .arda {
     display: block;
