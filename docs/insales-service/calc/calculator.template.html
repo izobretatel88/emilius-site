@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Смета InSales</title>
+<style>
+  :root { --bg:#fff; --ink:#1d2423; --ink-2:#4a5250; --line:#dfe5e4; --teal:#008385; --soft:#eef7f7; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#121615; --ink:#e7eceb; --ink-2:#a9b3b1; --line:#2b3331; --teal:#2bb3b5; --soft:#18211f; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 64px; display:grid; gap:24px; grid-template-columns: minmax(0,1fr); }
+  @media (min-width: 900px) { main { grid-template-columns: 420px minmax(0,1fr); } }
+  h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:16px; margin:20px 0 8px; color:var(--teal); }
+  label { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line); }
+  input[type=number] { width:90px; } select, input { font:inherit; padding:4px 6px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); }
+  .sum { position:sticky; top:0; background:var(--soft); border-radius:12px; padding:16px; }
+  .price { font-size:32px; font-weight:800; } .muted { color:var(--ink-2); font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:12px; }
+  td, th { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); } td.n { text-align:right; white-space:nowrap; }
+  .opt td:first-child::before { content:'+ '; color:var(--teal); font-weight:700; }
+  button { font:inherit; background:var(--teal); color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; margin-top:12px; }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h1>Смета: магазин на шаблоне InSales</h1>
+    <p class="muted">Ответы брифа → работы из каталога → часы × ставки. Нормы — docs/insales-service/03-catalog.csv.</p>
+    <form id="f"></form>
+  </section>
+  <section><div class="sum" id="out"></div></section>
+</main>
+<script>
+/*__CORE__*/
+const CSV = "__CSV__";
+const catalog = parseCatalog(CSV);
+const Q = [
+  ['Ситуация', [
+    ['segment','Кто клиент',[['seller','Селлер WB/Ozon'],['social','Продажи в соцсетях'],['offline','Офлайн / производитель'],['oldsite','Есть старый сайт'],['new','Новый бизнес']]],
+    ['clientPace','Скорость клиента',[['fast','Материалы готовы'],['normal','Обычная'],['slow','Медленно отвечает']]],
+    ['urgent','Запуск быстрее 2 недель','bool'],
+  ]],
+  ['Каталог', [
+    ['sku','Товаров на старте','num'], ['categories','Категорий','num'],
+    ['variants','Есть размеры/цвета','bool'], ['apparel','Одежда/обувь (размерные сетки)','bool'],
+    ['source','Откуда товары',[['manual','Заводим вручную'],['excel','Excel / прайс'],['marketplace','Карточки WB/Ozon'],['1c','1С'],['moysklad','МойСклад'],['oldsite','Старый сайт']]],
+    ['dataQuality','Качество данных',[['good','Чистые'],['ok','Обычные'],['bad','Грязные']]],
+    ['photos','Фото',[['ready','Готовы'],['mixed','Разного формата']]],
+    ['descriptions','Описания',[['have','Есть'],['write','Написать']]],
+  ]],
+  ['Оплата и доставка', [
+    ['payments','Платёжных сервисов','num'], ['extraPayments','Доп. способов (счёт, долями)','num'],
+    ['pickupCourier','Самовывоз/курьер: способов','num'], ['carriers','Служб доставки (СДЭК и др.)','num'],
+  ]],
+  ['Интеграции', [
+    ['marketplaces','Связать площадок (WB, Ozon, ЯМ)','num'], ['pushCardsToMp','Выгрузить на площадки, сотен карточек','num'],
+    ['accounting','Учёт',[['none','Нет'],['1c','1С'],['moysklad','МойСклад']]], ['ordersToAccounting','Заказы в учёт','bool'],
+    ['crm','CRM','bool'], ['telephony','Телефония / колл-трекинг','bool'], ['email','Email-рассылки','bool'],
+  ]],
+  ['Перенос и продвижение', [
+    ['oldSiteUrls','URL старого сайта для редиректов','num'], ['migrateCustomers','Перенести клиентов и заказы','bool'],
+    ['seo','SEO',[['basic','Базовое'],['semantic','Семантика и структура']]], ['seoClusters','Кластеров семантики','num'], ['seoTexts','SEO-текстов категорий','num'],
+    ['offlinePoints','Офлайн-точек (Карты, 2ГИС)','num'], ['directFeed','Фид и e-commerce для Директа','bool'], ['vkAds','Пиксель и фид VK','bool'],
+  ]],
+  ['Дизайн и страницы', [
+    ['homeBlocks','Блоков на главной','num'], ['banners','Баннеров сделать','num'], ['extraPages','Доп. страниц','num'], ['blogPosts','Статей в блог','num'],
+    ['customBlocks','Блоков вне шаблона (макет + код)','num'], ['smallEdits','Мелких правок кодом','num'], ['customFeatures','Нестандартных функций','num'],
+    ['staff','Сотрудников с доступом','num'], ['mailOnDomain','Почта на домене','bool'], ['rknNotice','Уведомление в РКН','bool'],
+  ]],
+];
+const f = document.getElementById('f');
+for (const [title, items] of Q) {
+  f.insertAdjacentHTML('beforeend', `<h2>${title}</h2>`);
+  for (const [key, label, type] of items) {
+    const v = DEFAULT_BRIEF[key];
+    let input;
+    if (type === 'num') input = `<input type="number" min="0" name="${key}" value="${v}">`;
+    else if (type === 'bool') input = `<input type="checkbox" name="${key}" ${v ? 'checked' : ''}>`;
+    else input = `<select name="${key}">${type.map(([o, t]) => `<option value="${o}" ${o === v ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
+    f.insertAdjacentHTML('beforeend', `<label><span>${label}</span>${input}</label>`);
+  }
+}
+const rub = (n) => Math.round(n).toLocaleString('ru-RU') + ' ₽';
+function read() {
+  const b = {};
+  for (const el of f.elements) b[el.name] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? +el.value || 0 : el.value;
+  return b;
+}
+let last;
+function render() {
+  const e = last = estimate(read(), catalog);
+  const rows = e.lines.map((l) => `<tr class="${l.inPkg ? '' : 'opt'}"><td>${l.task}</td><td class="n">${l.qty > 1 ? '×' + l.qty : ''}</td><td class="n">${l.hours.toFixed(1)} ч</td><td class="n">${rub(l.cost)}</td></tr>`).join('');
+  document.getElementById('out').innerHTML = `
+    <div class="muted">Пакет «${e.packageName}» + опции</div>
+    <div class="price">${rub(e.price)}</div>
+    <div>${e.hours} ч работы · скидка за объём ${e.discount * 100}% · ~${e.weeks} нед. до запуска</div>
+    <div class="muted">ФИКС: коридор ±30% — ${rub(e.fixCorridor[0])}–${rub(e.fixCorridor[1])}</div>
+    ${e.coefficients.length ? `<div class="muted">Коэффициенты: ${e.coefficients.map(([n, v]) => `${n} ×${v}`).join('; ')}</div>` : ''}
+    <div class="muted" style="margin-top:8px">Платформа отдельно: тариф «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес (≈${rub(e.platform.year)} за год), тема 0–30 000 ₽. ${e.platform.notes}</div>
+    <button type="button" id="copy">Скопировать смету</button>
+    <table><tr><th>Работа</th><th></th><th class="n">Часы</th><th class="n">До коэф.</th></tr>${rows}</table>`;
+  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(
+    `Смета: пакет «${e.packageName}», ${rub(e.price)}, ~${e.weeks} нед.\n` +
+    e.lines.map((l) => `— ${l.task}${l.qty > 1 ? ' ×' + l.qty : ''}${l.inPkg ? '' : ' (опция)'}`).join('\n') +
+    `\nПлатформа отдельно: «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес.`);
+}
+f.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
