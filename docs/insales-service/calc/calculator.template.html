@@ -1,33 +1,50 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Смета InSales</title>
+<title>Смета магазина InSales</title>
 <style>
-  :root { --bg:#fff; --ink:#1d2423; --ink-2:#4a5250; --line:#dfe5e4; --teal:#008385; --soft:#eef7f7; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121615; --ink:#e7eceb; --ink-2:#a9b3b1; --line:#2b3331; --teal:#2bb3b5; --soft:#18211f; } }
+  /* Две колонки: бриф слева, живая смета справа; на телефоне смета под брифом. Токены — из src/styles/tokens.css. */
+  :root {
+    --page:#f7f7f7; --card:#fefefe; --hair:#ececec; --well:#eef6f6;
+    --ink:#000; --ink-2:#5a5a5a; --ink-3:#686d6c;
+    --teal-text:#008385; --teal-btn:#008385; --on-teal:#fff;
+    --font:'Glober', Arial, sans-serif; --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --page:#0e1413; --card:#151c1b; --hair:#1f2a28; --well:#14201f;
+    --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#808d8a; --teal-text:#3cc6c6; color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --page:#0e1413; --card:#151c1b; --hair:#1f2a28; --well:#14201f;
+    --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#808d8a; --teal-text:#3cc6c6; color-scheme: dark; }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, sans-serif; }
-  main { max-width:1100px; margin:0 auto; padding:24px 16px 64px; display:grid; gap:24px; grid-template-columns: minmax(0,1fr); }
-  @media (min-width: 900px) { main { grid-template-columns: 420px minmax(0,1fr); } }
-  h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:16px; margin:20px 0 8px; color:var(--teal); }
-  label { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line); }
-  input[type=number] { width:90px; } select, input { font:inherit; padding:4px 6px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); }
-  .sum { position:sticky; top:0; background:var(--soft); border-radius:12px; padding:16px; }
-  .price { font-size:32px; font-weight:800; } .muted { color:var(--ink-2); font-size:13px; }
-  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:12px; }
-  td, th { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); } td.n { text-align:right; white-space:nowrap; }
-  .opt td:first-child::before { content:'+ '; color:var(--teal); font-weight:700; }
-  button { font:inherit; background:var(--teal); color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; margin-top:12px; }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.45 var(--font); padding-inline:16px; }
+  main { max-width:1120px; margin:0 auto; padding-block:28px 64px; display:grid; gap:28px; grid-template-columns:minmax(0,1fr); }
+  @media (min-width: 900px) { main { grid-template-columns: minmax(0,420px) minmax(0,1fr); } }
+  section { min-width:0; }
+  .eyebrow { font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--teal-text); }
+  h1 { font-size:26px; line-height:1.15; margin:6px 0 8px; text-wrap:balance; }
+  h2 { font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:24px 0 4px; color:var(--teal-text); }
+  label { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:7px 0; border-bottom:1px solid var(--hair); }
+  input[type=number] { width:88px; text-align:right; font-variant-numeric:tabular-nums; }
+  select, input { font:inherit; padding:5px 8px; border:1px solid var(--hair); border-radius:8px; background:var(--card); color:var(--ink); max-width:60%; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline:2px solid var(--teal-text); outline-offset:2px; }
+  .sum { position:sticky; top:env(safe-area-inset-top, 0px); background:var(--well); border:1px solid var(--hair); border-radius:16px; padding:20px; }
+  .price { font-size:40px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .muted { color:var(--ink-2); font-size:13px; }
+  .tablewrap { overflow-x:auto; margin-top:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums; }
+  td, th { text-align:left; padding:5px 6px; border-bottom:1px solid var(--hair); } td.n, th.n { text-align:right; white-space:nowrap; }
+  td.id { font-family:var(--mono); font-size:11px; color:var(--ink-3); white-space:nowrap; }
+  .opt td:nth-child(2)::before { content:'опция · '; color:var(--teal-text); font-weight:700; }
+  button { font:inherit; font-weight:700; background:var(--teal-btn); color:var(--on-teal); border:0; border-radius:10px; padding:9px 16px; cursor:pointer; margin-top:14px; transition: opacity .2s ease-in-out; }
+  a { color:var(--teal-text); }
+  button:hover { opacity:.9; }
 </style>
-</head>
-<body>
 <main>
   <section>
-    <h1>Смета: магазин на шаблоне InSales</h1>
-    <p class="muted">Ответы брифа → работы из каталога → часы × ставки. Нормы — docs/insales-service/03-catalog.csv.</p>
-    <form id="f"></form>
+    <div class="eyebrow">Emilius Agency · партнёр InSales</div>
+    <h1>Смета интернет-магазина на шаблоне InSales</h1>
+    <p class="muted">Заполните бриф: работы из каталога (82 типовые работы) соберутся сами, часы умножатся на ставки ролей. Ниже открыт пример — селлер с 30 товарами.</p>
+    <form id="f" onsubmit="return false"></form>
+    <h2>Материалы услуги</h2>
+    <p class="muted">Исходники системы (v1, 05.10.2026): <a href="README.md">карта работ</a> · <a href="01-research.md">исследование</a> · <a href="02-product.md">продукт</a> · <a href="03-catalog.csv">каталог работ</a> · <a href="04-estimation.md">бриф и формула</a> · <a href="05-process.md">процесс</a> · <a href="06-service-card.md">карточка</a> · <a href="07-landing.md">лендинг</a> · <a href="08-lead-gen.md">каналы</a> · <a href="09-outreach.md">сообщения</a> · <a href="10-sales.md">продажи</a> · <a href="11-improvement.md">улучшения</a> · <a href="calc/estimate.js">estimate.js</a> · <a href="scripts/insales-calc.mjs">insales-calc.mjs</a> · <a href="calc/calculator.template.html">шаблон</a> · <a href="leads-template.csv">лист лидов</a></p>
   </section>
   <section><div class="sum" id="out"></div></section>
 </main>
@@ -78,7 +95,7 @@ for (const [title, items] of Q) {
     if (type === 'num') input = `<input type="number" min="0" name="${key}" value="${v}">`;
     else if (type === 'bool') input = `<input type="checkbox" name="${key}" ${v ? 'checked' : ''}>`;
     else input = `<select name="${key}">${type.map(([o, t]) => `<option value="${o}" ${o === v ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
-    f.insertAdjacentHTML('beforeend', `<label><span>${label}</span>${input}</label>`);
+    f.insertAdjacentHTML('beforeend', `<label for="q-${key}"><span>${label}</span>${input.replace('name=', `id="q-${key}" name=`)}</label>`);
   }
 }
 const rub = (n) => Math.round(n).toLocaleString('ru-RU') + ' ₽';
@@ -90,7 +107,7 @@ function read() {
 let last;
 function render() {
   const e = last = estimate(read(), catalog);
-  const rows = e.lines.map((l) => `<tr class="${l.inPkg ? '' : 'opt'}"><td>${l.task}</td><td class="n">${l.qty > 1 ? '×' + l.qty : ''}</td><td class="n">${l.hours.toFixed(1)} ч</td><td class="n">${rub(l.cost)}</td></tr>`).join('');
+  const rows = e.lines.map((l) => `<tr class="${l.inPkg ? '' : 'opt'}"><td class="id">${l.id}</td><td>${l.task}</td><td class="n">${l.qty > 1 ? '×' + l.qty : ''}</td><td class="n">${l.hours.toFixed(1)} ч</td><td class="n">${rub(l.cost)}</td></tr>`).join('');
   document.getElementById('out').innerHTML = `
     <div class="muted">Пакет «${e.packageName}» + опции</div>
     <div class="price">${rub(e.price)}</div>
@@ -99,14 +116,16 @@ function render() {
     ${e.coefficients.length ? `<div class="muted">Коэффициенты: ${e.coefficients.map(([n, v]) => `${n} ×${v}`).join('; ')}</div>` : ''}
     <div class="muted" style="margin-top:8px">Платформа отдельно: тариф «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес (≈${rub(e.platform.year)} за год), тема 0–30 000 ₽. ${e.platform.notes}</div>
     <button type="button" id="copy">Скопировать смету</button>
-    <table><tr><th>Работа</th><th></th><th class="n">Часы</th><th class="n">До коэф.</th></tr>${rows}</table>`;
-  document.getElementById('copy').onclick = () => navigator.clipboard.writeText(
+    <div class="tablewrap"><table><tr><th>Код</th><th>Работа</th><th></th><th class="n">Часы</th><th class="n">₽ до коэф.</th></tr>${rows}</table></div>`;
+  const text = 
     `Смета: пакет «${e.packageName}», ${rub(e.price)}, ~${e.weeks} нед.\n` +
     e.lines.map((l) => `— ${l.task}${l.qty > 1 ? ' ×' + l.qty : ''}${l.inPkg ? '' : ' (опция)'}`).join('\n') +
-    `\nПлатформа отдельно: «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес.`);
+    `\nПлатформа отдельно: «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес.`;
+  const btn = document.getElementById('copy');
+  btn.onclick = () => navigator.clipboard.writeText(text)
+    .then(() => { btn.textContent = 'Скопировано'; })
+    .catch(() => { btn.insertAdjacentHTML('afterend', `<textarea readonly rows="6" style="width:100%;margin-top:8px">${text}</textarea>`); btn.nextElementSibling.select(); });
 }
 f.addEventListener('input', render);
 render();
 </script>
-</body>
-</html>
