@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "brand": "node scripts/build-brand.mjs"
+    "brand": "node scripts/build-brand.mjs",
+    "insales:check": "node scripts/insales-lint.mjs && node scripts/insales-calc.mjs > /dev/null"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

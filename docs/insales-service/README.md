@@ -35,6 +35,7 @@
 5. **Через 30 дней** → отчёт и абонемент (`12-retention.md`).
 
 ```bash
+npm run insales:check                      # после любой правки: id работ, цены «от», тарифы, свежесть calculator.html
 node scripts/insales-calc.mjs              # 5 типовых сценариев (проверка норм)
 node scripts/insales-calc.mjs -v           # с разбивкой по работам
 node scripts/insales-calc.mjs brief.json   # смета по брифу (поля — DEFAULT_BRIEF в calc/estimate.js)
