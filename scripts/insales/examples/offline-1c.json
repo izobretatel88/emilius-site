@@ -1,0 +1,7 @@
+{
+  "title": "Пример: зоомагазин с 2 точками, 2000 товаров в 1С, SEO — основной канал",
+  "hasChannels": true, "source": "1c", "sku": 2000, "variants": 300, "cats": 60, "filters": 15,
+  "logo": true, "banners": true, "payExtra": 1, "pickups": 2, "courier": true, "dlvExtra": 0, "pages": 2,
+  "accounting": "1c", "ordersToAccounting": true, "seo": "core", "catTexts": 10, "offline": true, "bonuses": true, "utm": true,
+  "k": { "materials": "partial", "dirtyData": "some", "urgent": "no", "deciders": "one" }
+}

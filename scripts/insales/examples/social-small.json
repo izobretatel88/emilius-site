@@ -1,0 +1,6 @@
+{
+  "title": "Пример: бренд из Instagram/VK, 40 товаров, фото есть, описаний нет",
+  "hasChannels": true, "source": "none", "sku": 40, "variants": 40, "cats": 5, "filters": 3, "texts": 40, "photos": 0,
+  "logo": true, "payExtra": 0, "pickups": 0, "dlvExtra": 0, "pages": 0, "seo": "none",
+  "k": { "materials": "partial", "dirtyData": "clean", "urgent": "no", "deciders": "one" }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Пример: селлер WB/Ozon, 400 товаров с размерами, МойСклад, общие остатки",
+  "hasChannels": true, "source": "mp", "sku": 400, "variants": 120, "cats": 18, "filters": 8,
+  "logo": true, "banners": true, "mods": ["M01"],
+  "payExtra": 1, "pickups": 0, "dlvExtra": 1, "pages": 1,
+  "accounting": "moysklad", "mp": 2, "seo": "basic", "utm": true, "feed": true, "bonuses": true, "insert": true,
+  "k": { "materials": "ready", "dirtyData": "some", "urgent": "no", "deciders": "one" }
+}
