@@ -12,7 +12,8 @@ import { readFileSync } from 'node:fs';
 import { estimate, parseCatalog, RATES } from '../docs/insales-service/calc/estimate.js';
 import { SCENARIOS } from './insales-calc.mjs';
 
-const a = Object.fromEntries(process.argv.slice(2).reduce((r, x, i, arr) => (x.startsWith('--') ? [...r, [x.slice(2), Number(arr[i + 1])]] : r), []));
+const isMain = import.meta.url === `file://${process.argv[1]}`;
+const a = Object.fromEntries((isMain ? process.argv.slice(2) : []).reduce((r, x, i, arr) => (x.startsWith('--') ? [...r, [x.slice(2), Number(arr[i + 1])]] : r), []));
 const letters = a.letters ?? 20;
 const pay = a.pay ?? 0.55, overrun = a.overrun ?? 1, keep = a.keep ?? 0.2, mgr = a.mgr ?? 1000, plan = a.plan ?? 500000;
 const catalog = parseCatalog(readFileSync(new URL('../docs/insales-service/03-catalog.csv', import.meta.url), 'utf8'));
@@ -44,16 +45,6 @@ const rows = Object.entries(SCENARIOS).map(([title, brief]) => {
   return { title, e, exec, gross, cacMax, margin };
 });
 
-console.log(`Допущения: исполнителю ${pct(pay)} ставки · факт/смета ×${overrun} · агентству остаётся не меньше ${pct(keep)} цены · час менеджера ${rub(mgr)}`);
-console.log(`Продажи на 1 проект: ${qualPerDeal.toFixed(1).replace('.', ',')} квал. лида → ${diagPerDeal.toFixed(1).replace('.', ',')} диагностики → ${salesHours.toFixed(1).replace('.', ',')} ч менеджера = ${salesCost > 0 ? rub(salesCost) : '≈0 ₽: оплаченные диагностики тех, кто не купил, покрывают это время'}\n`);
-for (const r of rows) {
-  console.log(`${r.title}
-  цена ${rub(r.e.price)} · ${r.e.hours} ч · исполнители ${rub(r.exec)} · валовая маржа ${rub(r.gross)} (${pct(r.gross / r.e.price)})
-  можно потратить на привлечение одного клиента: ${r.cacMax > 0 ? rub(r.cacMax) : 'нечего — проект в минус при этих допущениях'}
-  запас по перерасходу часов: до ×${r.margin.toFixed(2).replace('.', ',')} от сметы, дальше агентству меньше ${pct(keep)}`);
-}
-console.log(`\nАбонемент сверху (не закладываем в привлечение): ~${rub(abonMargin)} маржи на запущенный магазин`);
-
 // Пределы по каналам — от типового проекта (медиана цены сценариев без 1С: крупный проект редок и задирает среднее).
 const typical = [...rows].filter((r) => !/1С/.test(r.title)).sort((x, y) => x.e.price - y.e.price);
 const mid = typical[Math.floor(typical.length / 2)];
@@ -69,6 +60,20 @@ const CHANNELS = [
   { name: 'Отклик на бирже', unit: 'отклик', conv: 0.25 * 0.5 * dealPerQual, note: 'платный отклик + 15 мин менеджера' },
   { name: 'Холодное письмо A1/A2/D', unit: 'письмо', conv: 0.05 * 0.4 * dealPerQual, note: '≈3 мин менеджера на письмо с поводом' },
 ];
+// Для insales-funnel.mjs: предел привлечения на типовой проект и конверсии v1, с которыми сравниваем факт.
+export const LIMITS = { cac, typical: mid.e.price, dealPerQual, channels: CHANNELS };
+
+if (isMain) {
+console.log(`Допущения: исполнителю ${pct(pay)} ставки · факт/смета ×${overrun} · агентству остаётся не меньше ${pct(keep)} цены · час менеджера ${rub(mgr)}`);
+console.log(`Продажи на 1 проект: ${qualPerDeal.toFixed(1).replace('.', ',')} квал. лида → ${diagPerDeal.toFixed(1).replace('.', ',')} диагностики → ${salesHours.toFixed(1).replace('.', ',')} ч менеджера = ${salesCost > 0 ? rub(salesCost) : '≈0 ₽: оплаченные диагностики тех, кто не купил, покрывают это время'}\n`);
+for (const r of rows) {
+  console.log(`${r.title}
+  цена ${rub(r.e.price)} · ${r.e.hours} ч · исполнители ${rub(r.exec)} · валовая маржа ${rub(r.gross)} (${pct(r.gross / r.e.price)})
+  можно потратить на привлечение одного клиента: ${r.cacMax > 0 ? rub(r.cacMax) : 'нечего — проект в минус при этих допущениях'}
+  запас по перерасходу часов: до ×${r.margin.toFixed(2).replace('.', ',')} от сметы, дальше агентству меньше ${pct(keep)}`);
+}
+console.log(`\nАбонемент сверху (не закладываем в привлечение): ~${rub(abonMargin)} маржи на запущенный магазин`);
+
 console.log(`\nПределы по каналам — от типового проекта «${mid.title}» (${rub(mid.e.price)}, на привлечение ${rub(cac)}):`);
 for (const c of CHANNELS) {
   const max = cac * c.conv;
@@ -87,3 +92,4 @@ console.log(`\nПлан ${rub(plan)} в месяц при типовом про�
   только заявками с сайта: ${Math.ceil(qual / 0.5)} заявок
   смесь: ${letters} писем в день дают ${(letters * 21 * 0.05 * 0.4).toFixed(1).replace('.', ',')} квал. лида → ${(letters * 21 * 0.05 * 0.4 * dealPerQual).toFixed(1).replace('.', ',')} проекта; остальное — ${Math.max(0, Math.ceil((qual - letters * 21 * 0.05 * 0.4) / 0.5))} заявок с сайта, карточки партнёра и бирж
   производство: ${Math.round(hours)} ч по смете → ${(hours / 110).toFixed(1).replace('.', ',')} сборщика при ~110 ч в месяц (templates/onboarding.md)`);
+}

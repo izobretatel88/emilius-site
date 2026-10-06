@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "brand": "node scripts/build-brand.mjs",
-    "insales:check": "node scripts/insales-lint.mjs && node scripts/insales-calc.mjs > /dev/null && node scripts/insales-calc.mjs --quick > /dev/null && node scripts/insales-unit.mjs > /dev/null"
+    "insales:check": "node scripts/insales-lint.mjs && node scripts/insales-calc.mjs > /dev/null && node scripts/insales-calc.mjs --quick > /dev/null && node scripts/insales-unit.mjs > /dev/null && node scripts/insales-funnel.mjs docs/insales-service/data/leads-example.csv --today 2026-10-20 > /dev/null"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
