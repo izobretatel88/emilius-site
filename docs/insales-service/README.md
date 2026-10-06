@@ -30,8 +30,9 @@
 
 1. **Пришёл лид** → квалификация из 5 вопросов (`04-estimation.md`) → диагностика.
 2. **На диагностике** → файл товаров клиента через `insales-import-check.mjs` → бриф → `calculator.html` или `insales-calc.mjs` → КП из `insales-kp.mjs` → после согласования опций — Заказ (`--order`).
-3. **Проект** → этапы `05-process.md`, задачи в Weeek с id из каталога, тесты и запуск — `templates/qa-protocol.md`.
-4. **После проекта** → факт часов в журнал калибровки (`11-improvement.md`).
+3. **Проект** → этапы `05-process.md`, задачи в Weeek из `insales-kp.mjs --tasks` (id каталога + план часов), тесты и запуск — `templates/qa-protocol.md`.
+4. **После проекта** → исполнители заполняют `факт_ч` → `insales-calibrate.mjs` даёт строку журнала (`11-improvement.md`) и нормы к правке.
+5. **Через 30 дней** → отчёт и абонемент (`12-retention.md`).
 
 ```bash
 node scripts/insales-calc.mjs              # 5 типовых сценариев (проверка норм)
@@ -40,6 +41,8 @@ node scripts/insales-calc.mjs brief.json   # смета по брифу (пол�
 node scripts/insales-calc.mjs --html       # пересобрать calculator.html после правки CSV
 node scripts/insales-kp.mjs brief.json > КП.md            # КП: пакет, опции с ценами, не входит, бюджет первого года
 node scripts/insales-kp.mjs brief.json --order > Заказ.md # Заказ к договору: работы по id, оплата, приёмка, гарантия
+node scripts/insales-kp.mjs brief.json --tasks > задачи.csv # задачи для Weeek: id, этап, роль, план часов, пустой факт
+node scripts/insales-calibrate.mjs п1.csv п2.csv п3.csv  # после проектов: строки журнала калибровки и нормы к правке
 node scripts/insales-import-check.mjs товары.csv --brief brief.json   # проверка файла клиента + поля брифа
 node scripts/insales-site-check.mjs бренды.txt > лиды.csv          # проспектинг: сегмент, признак, повод
 python3 scripts/import-vnimnomic.py "<Задачи и подсчеты>.xlsx"   # обновить data/orders-hours.csv из новой выгрузки
