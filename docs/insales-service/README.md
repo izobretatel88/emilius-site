@@ -20,6 +20,7 @@
 | 12 | После запуска: отчёт 30 дней, абонемент, триггеры следующей продажи | `12-retention.md` | v1 |
 | 11 | Улучшение и калибровка | `11-improvement.md` | итерация 4 |
 | — | КП и Заказ (приложение к договору) из сметы | `scripts/insales-kp.mjs`, примеры `templates/kp-example-seller.md`, `templates/order-example-seller.md` | работает, Заказ — после проверки юристом |
+| — | Текст карточки в каталоге партнёров InSales | `templates/partner-card.md` | готов к вставке |
 | — | Протокол тестов и запуска, шортлист тем | `templates/qa-protocol.md`, `templates/theme-shortlist.md` | v1 |
 | — | Проверка файла товаров клиента → бриф | `scripts/insales-import-check.mjs` | работает |
 | — | Проверка сайтов для проспектинга → лиды | `scripts/insales-site-check.mjs` | работает, нужна сеть |

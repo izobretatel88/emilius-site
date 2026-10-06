@@ -33,8 +33,8 @@ const CLIENT = {
   'SEO': 'Шаблоны заголовков и описаний, карта сайта, Вебмастер — магазин готов к индексации',
   'CRM': 'Кнопки мессенджеров и чат на сайте',
   'Маркетплейсы': 'Карточки с WB/Ozon на сайте, единые остатки: продали на площадке — уменьшилось на сайте',
-  '1С': 'Обмен с 1С: товары, цены, остатки, заказы',
-  'МойСклад': 'Обмен с МоимСкладом: товары, остатки, заказы',
+  '1С': 'Обмен с 1С: товары, цены, остатки',
+  'МойСклад': 'Обмен с МоимСкладом: товары, цены, остатки',
   'Перенос': 'Перенос со старого сайта с редиректами, чтобы не потерять позиции в поиске',
   'Модификации': 'Доработки темы кодом',
   'Email': 'Письма о брошенной корзине и рассылки',
@@ -75,11 +75,14 @@ const optGroups = Object.values(options.reduce((g, l) => {
   return g;
 }, {})).map((g) => {
   const main = g.lines.filter((l) => l.id !== 'QA-02');
-  const one = main.length === 1 ? main[0] : null;
+  // Интеграцию называем модулем («МойСклад»), а не подзадачей («Товары, цены, остатки»).
+  const one = main.length === 1 && !INTEGRATIONS.includes(g.module) ? main[0] : null;
   // Модуль уже есть в пакете (например, базовое SEO) — общая фраза ввела бы в заблуждение, перечисляем работы.
   return { ...g,
     label: one ? one.task : g.module,
-    what: one ? RES[one.id] : !modules.includes(g.module) && CLIENT[g.module] ? CLIENT[g.module] : main.map((l) => l.task).join('; ') };
+    what: one ? RES[one.id] : !modules.includes(g.module) && CLIENT[g.module]
+      ? CLIENT[g.module] + (INTEGRATIONS.includes(g.module) && main.some((l) => /аказ/.test(l.task)) ? ', заказы' : '')
+      : main.map((l) => l.task).join('; ') };
 });
 const pkgPrice = e.price - optGroups.reduce((s, g) => s + r500(g.price), 0);
 
