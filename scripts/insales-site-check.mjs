@@ -68,7 +68,25 @@ export function analyze(html, url) {
     need = cart ? `магазин на ${platform}` : platform;
   }
   if (!metrika) need += ', нет Метрики';
-  return { url, platform, title, segment, need, hook, cart, checkout, wb, ozon, ym, tildaCards, metrika, vkPixel, year: year || '' };
+  const { score, why } = siteScore(url, mpLinks, tildaCards);
+  return { url, platform, title, segment, need, hook, cart, checkout, wb, ozon, ym, tildaCards, metrika, vkPixel, year: year || '', score, why };
+}
+
+// Часть балла соответствия (08-lead-gen.md §5), которую видно по сайту. «+2 свой бренд или
+// производство» скрипт не знает — добавляет человек при ручной проверке. Поддомен конструктора
+// не штрафуем, если на сайте есть ссылки на площадки: это бренд, который не занимался сайтом.
+const SUBDOMAIN = /\.(tilda\.ws|taplink\.(ws|cc)|orgs\.biz|nethouse\.ru|wixsite\.com|craftum\.io|ecwid\.com)$/i;
+export function siteScore(url, mpLinks, cards) {
+  const host = new URL(url).hostname;
+  const parts = [];
+  let score = 0;
+  if (mpLinks) { score += 1; parts.push('+1 ссылки на площадки'); }
+  if (SUBDOMAIN.test(host)) {
+    if (!mpLinks) { score -= 2; parts.push('−2 поддомен конструктора'); }
+  } else { score += 1; parts.push('+1 свой домен'); }
+  if (cards >= 50) { score += 1; parts.push('+1 50+ карточек'); }
+  parts.push('бренд/производство (+2) — проверить вручную');
+  return { score: Math.max(0, score), why: parts.join(', ') };
 }
 
 function candidates(line) {
@@ -117,7 +135,7 @@ async function main() {
       found = await fetchHtml(url);
       if (found) break;
     }
-    const r = found ? analyze(found.html, found.url) : { url: 'нет', platform: '—', segment: 'A1', need: 'сайт не найден по типовым адресам', hook: 'Брендовый запрос в Яндексе уходит площадке и перекупщикам', title: '' };
+    const r = found ? analyze(found.html, found.url) : { url: 'нет', platform: '—', segment: 'A1', need: 'сайт не найден по типовым адресам', hook: 'Брендовый запрос в Яндексе уходит площадке и перекупщикам', title: '', score: 0, why: 'сайта нет; +2 бренд и +1 WB/Ozon — проверить на площадке вручную' };
     const row = Object.fromEntries(head.map((h) => [h, '']));
     Object.assign(row, {
       'дата': today,
@@ -127,6 +145,8 @@ async function main() {
       'платформа сайта': r.platform,
       'признак потребности (что увидели)': r.need,
       'повод для письма': r.hook,
+      'балл соответствия 0–5': r.score,
+      'почему балл': r.why,
       'статус': r.segment ? 'новый' : 'не наш',
     });
     const tail = found ? [r.cart ? 'да' : 'нет', `${r.wb}/${r.ozon}/${r.ym}`, r.metrika ? 'да' : 'нет', r.year, r.title] : ['', '', '', '', ''];

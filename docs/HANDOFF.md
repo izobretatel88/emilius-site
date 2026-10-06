@@ -82,7 +82,7 @@
 
 ## Открытые вопросы владельцу
 
-- **InSales (06.10.2026, ветка `claude/upbeat-volta-ryxhfb`)**: лендинг `/services/insales-shop/` и `/seller/` свёрстан — посмотреть и влить в `dev`. Решения по ценам и условиям приняты агентом (`docs/insales-service/04-estimation.md` §5). Заказ к договору — к юристу.
+- **InSales (06.10.2026, основная ветка — `claude/upbeat-volta-v8mibb`, итерации 1–15; ветки `-ryxhfb`, `-pa3hpb`, `-0psbs3`, `-7kz4zw`, `-aj62n4` — устаревшие параллельные прогоны)**: лендинг `/services/insales-shop/` и `/seller/` свёрстан — посмотреть и влить в `dev`. Решения по ценам и условиям приняты агентом (`docs/insales-service/04-estimation.md` §5). Заказ к договору — к юристу.
 
 - Влить `dev` в `main` (после просмотра PR https://github.com/izobretatel88/emilius-site/pull/2).
 - Тексты страниц этапов — черновик без цифр и обещаний: `src/data/services.ts`, особенно касдев и маркетинг; у касдева нет кейса.
