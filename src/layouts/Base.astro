@@ -17,6 +17,8 @@ const ogImage = new URL(href('og.jpg'), Astro.site);
 const preview = process.env.PREVIEW === '1';
 // Сборка ветки dev лежит в подпапке /dev — помечаем её, чтобы не путать с рабочим превью.
 const devBuild = /\/dev\/?$/.test(base);
+// Яндекс Метрика: номер счётчика задаётся при сборке продакшена (YM_ID=…). В превью счётчика нет, чтобы не мешать данные.
+const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
 ---
 
 <!doctype html>
@@ -46,6 +48,19 @@ const devBuild = /\/dev\/?$/.test(base);
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0e1413" media="(prefers-color-scheme: dark)" />
+    {ymId && (
+      <script is:inline define:vars={{ ymId }}>
+        (function (m, e, t, r, i, k, a) {
+          m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+          m[i].l = 1 * new Date();
+          k = e.createElement(t); a = e.getElementsByTagName(t)[0];
+          k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+        })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+        ym(ymId, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
+        // Цели страниц вызывают window.emiGoal — без счётчика это просто отсутствие функции.
+        window.emiGoal = (name, params) => ym(ymId, 'reachGoal', name, params);
+      </script>
+    )}
   </head>
   <body>
     {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}

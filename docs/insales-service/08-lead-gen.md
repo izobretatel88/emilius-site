@@ -112,4 +112,15 @@
 | 2–8 | Биржи ежедневно | Отклики → ответы → сделки |
 | 8 | Ретро: оставить 3 лучших канала, удвоить их | Стоимость оплаченного проекта по каналу |
 
+**Ссылки на лендинг — только с UTM**, иначе ретро на 8-й неделе сравнивает каналы по памяти. Заявка с сайта приходит со строкой `Источник:` (`07-landing.md` §4).
+
+| Канал | Ссылка |
+|---|---|
+| Карточка партнёра InSales | `/services/insales-shop/?utm_source=insales-partners` |
+| Письма и сообщения A1/A2 | `/services/insales-shop/seller/?utm_source=email&utm_campaign=a2-makers` (A1 — `a1-mp-only`) |
+| Письма D (Tilda) | `/services/insales-shop/?utm_source=email&utm_campaign=d-tilda` |
+| Telegram-каналы и чаты селлеров | `/services/insales-shop/seller/?utm_source=tg&utm_campaign=<канал>` |
+| Директ | `?utm_source=yandex&utm_medium=cpc&utm_campaign={campaign_id}&utm_content={ad_id}` |
+| Биржи | `?utm_source=<биржа>` |
+
 **Целевые ориентиры v1** — гипотеза, проверить: 800 писем → 40 ответов (5%) → 15 диагностик → 5 проектов → ~500 тыс. ₽ выручки.

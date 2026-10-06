@@ -135,7 +135,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block lead-form" id="lead" aria-labelledby="t-lead">
       <h2 id="t-lead">Посчитаем ваш магазин</h2>
       <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
-      <form method="post" action={action} novalidate data-norms={norms}>
+      <form method="post" action={action} novalidate data-norms={norms} data-variant={variant}>
         <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
         {questions.map((q) => (
           <fieldset>
@@ -172,8 +172,28 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 <script>
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
+  // Цели Метрики (список — docs/insales-service/07-landing.md §4). Без счётчика emiGoal нет — вызовы ничего не делают.
+  const goal = (name: string, params: Record<string, unknown> = {}) => (window as any).emiGoal?.(name, params);
+  // Источник визита: UTM из адреса или сайт, с которого пришли; запоминаем на визит, чтобы не потерять при переходе между версиями. Уходит менеджеру в заявке.
+  const source = (() => {
+    try {
+      const q = new URLSearchParams(location.search);
+      const utm = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'].map((k) => q.get(k)).filter(Boolean).join(' / ');
+      const now = utm || (document.referrer && new URL(document.referrer).host !== location.host ? new URL(document.referrer).host : '');
+      if (now) sessionStorage.setItem('emi-source', now);
+      return sessionStorage.getItem('emi-source') || 'прямой заход';
+    } catch {
+      return 'не определён';
+    }
+  })();
+
+  document.querySelectorAll<HTMLElement>('[data-goal]').forEach((el) => el.addEventListener('click', () => goal(el.dataset.goal!)));
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="https://t.me/"]').forEach((a) => a.addEventListener('click', () => goal('tg-click')));
+
   const form = document.querySelector<HTMLFormElement>('#lead form');
   if (form) {
+    const variant = form.dataset.variant;
+    let touched = false;
     const button = form.querySelector<HTMLButtonElement>('button')!;
     const ok = form.querySelector<HTMLElement>('.status:not([data-fail])')!;
     const fail = form.querySelector<HTMLElement>('[data-fail]')!;
@@ -202,7 +222,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
       box.hidden = false;
     };
-    form.addEventListener('change', update);
+    form.addEventListener('change', (e) => {
+      update();
+      // Первое изменение ответа — человек начал считать.
+      if (!touched && (e.target as HTMLInputElement).type === 'radio') {
+        touched = true;
+        goal('quick-start', { variant });
+      }
+    });
     update();
 
     form.addEventListener('submit', async (e) => {
@@ -223,6 +250,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         `Имя: ${fd.get('name') || '—'}`,
         ...Object.entries(a).map(([k, v]) => `${(QUICK_QUESTIONS as any)[k][0]}: ${label(k, v)}`),
         last ? `Ориентир на сайте: «${last.packageName}» ${rub(last.from)}–${rub(last.to)}, ${last.weeks.join('–')} нед., ${last.hours} ч, тариф «${last.tariff.name}»` : 'Ориентир не посчитан',
+        `Источник: ${source}`,
         `Ответы: ${JSON.stringify(a)}`,
       ].join('\n'));
       button.disabled = true;
@@ -232,8 +260,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         if (!res.ok || !data.ok) throw new Error(String(res.status));
         ok.textContent = 'Спасибо! Расчёт у менеджера. Напишем в течение часа в рабочее время.';
         ok.hidden = false;
+        goal('lead-sent', { variant, package: last?.packageName, from: last?.from, touched });
       } catch {
         fail.hidden = false;
+        goal('lead-fail', { variant });
       } finally {
         button.disabled = false;
       }
