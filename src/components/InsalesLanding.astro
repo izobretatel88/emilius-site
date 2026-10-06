@@ -6,8 +6,11 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, CHANNELS,
+  ACCEPTANCE, WEEKS, CHOICE, FAQ,
 } from '../data/insales';
+import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
+import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
+import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
 
 interface Props {
   variant: 'shop' | 'seller';
@@ -22,6 +25,13 @@ const other = variant === 'shop'
   : { url: href('services/insales-shop/'), text: 'Общая версия: соцсети, офлайн, переезд со старого сайта →' };
 // Селлеру первым показываем его пакет.
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
+// Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
+const norms = JSON.stringify([...parseCatalog(catalogCsv).values()].map((c) => [c.id, c.base, c.per, c.role, c.packages]));
+// Селлеру сразу отмечены площадки, в общей версии — самый частый клиент: соцсети, товары с нуля.
+const preset: Record<string, string> = variant === 'seller' ? { channel: 'mp', where: 'mp' } : { channel: 'social' };
+const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) => ({
+  name, label, opts: opts as [string, string][], checked: preset[name] ?? (opts as [string, string][])[0][0],
+}));
 ---
 
 <Base title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`} description={hero.lead}>
@@ -124,22 +134,30 @@ const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 
     <section class="card block lead-form" id="lead" aria-labelledby="t-lead">
       <h2 id="t-lead">Посчитаем ваш магазин</h2>
-      <form method="post" action={action} novalidate>
+      <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
+      <form method="post" action={action} novalidate data-norms={norms}>
         <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
+        {questions.map((q) => (
+          <fieldset>
+            <legend>{q.label}</legend>
+            <div class="chips">
+              {q.opts.map(([v, t]) => (
+                <label class="chip"><input type="radio" name={q.name} value={v} checked={v === q.checked} /><span>{t}</span></label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <div class="estimate" aria-live="polite" hidden>
+          <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
+          <p class="est-price num" data-out="price"></p>
+          <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
+          <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
+        </div>
         <label>Имя<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
         <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" /></label>
-        <fieldset>
-          <legend>Где продаёте сейчас</legend>
-          <div class="chips">
-            {CHANNELS.map((c, i) => (
-              <label class="chip"><input type="radio" name="channel" value={c} checked={variant === 'seller' ? i === 0 : undefined} /><span>{c}</span></label>
-            ))}
-          </div>
-        </fieldset>
-        <label>Сколько примерно товаров<input name="sku" type="text" inputmode="numeric" maxlength="20" /></label>
         <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
-        <button class="cta" type="submit">Записаться на диагностику</button>
-        <p class="small">Ответим в течение часа в рабочее время и пришлём 2 вопроса, чтобы не тратить ваше время на созвон зря.</p>
+        <button class="cta" type="submit">Отправить расчёт и записаться на диагностику</button>
+        <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
         <p class="status" data-fail role="alert" hidden>
           Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
@@ -152,12 +170,41 @@ const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 </Base>
 
 <script>
+  import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
+
   const form = document.querySelector<HTMLFormElement>('#lead form');
   if (form) {
     const button = form.querySelector<HTMLButtonElement>('button')!;
     const ok = form.querySelector<HTMLElement>('.status:not([data-fail])')!;
     const fail = form.querySelector<HTMLElement>('[data-fail]')!;
     const contact = form.querySelector<HTMLInputElement>('[name=contact]')!;
+    const box = form.querySelector<HTMLElement>('.estimate')!;
+    const out = (k: string) => box.querySelector<HTMLElement>(`[data-out=${k}]`)!;
+    const catalog = new Map(
+      (JSON.parse(form.dataset.norms!) as [string, number, number, string, string][])
+        .map(([id, base, per, role, packages]) => [id, { id, base, per, role, packages }]),
+    );
+    const rub = (n: number) => n.toLocaleString('ru-RU') + '\u00a0₽';
+    const answers = () => Object.fromEntries(Object.keys(QUICK_QUESTIONS).map((k) => [k, String(new FormData(form).get(k) ?? '')]));
+    const label = (k: string, v: string) => (QUICK_QUESTIONS as any)[k][1].find(([x]: string[]) => x === v)?.[1] ?? '—';
+
+    let last: ReturnType<typeof quickEstimate> | null = null;
+    const update = () => {
+      try {
+        last = quickEstimate(answers(), catalog);
+      } catch {
+        box.hidden = true;
+        return;
+      }
+      out('pkg').textContent = `«${last.packageName}»`;
+      out('price').textContent = `${rub(last.from)} – ${rub(last.to)}`;
+      out('weeks').textContent = `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`;
+      out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
+      box.hidden = false;
+    };
+    form.addEventListener('change', update);
+    update();
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       ok.hidden = fail.hidden = true;
@@ -167,17 +214,23 @@ const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
         contact.focus();
         return;
       }
-      // lead.php принимает message + contact: остальные поля собираем в текст сообщения.
+      // lead.php принимает message + contact: ответы и ориентир собираем в текст сообщения.
       const fd = new FormData(form);
+      const a = answers();
       const msg = form.querySelector<HTMLInputElement>('[name=message]')!.value;
-      fd.set('message', [msg, `Имя: ${fd.get('name') || '—'}`, `Где продаёт: ${fd.get('channel') || '—'}`, `Товаров: ${fd.get('sku') || '—'}`].join('\n'));
+      fd.set('message', [
+        msg,
+        `Имя: ${fd.get('name') || '—'}`,
+        ...Object.entries(a).map(([k, v]) => `${(QUICK_QUESTIONS as any)[k][0]}: ${label(k, v)}`),
+        last ? `Ориентир на сайте: «${last.packageName}» ${rub(last.from)}–${rub(last.to)}, ${last.weeks.join('–')} нед., ${last.hours} ч, тариф «${last.tariff.name}»` : 'Ориентир не посчитан',
+        `Ответы: ${JSON.stringify(a)}`,
+      ].join('\n'));
       button.disabled = true;
       try {
         const res = await fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
         const data = await res.json().catch(() => ({ ok: false }));
         if (!res.ok || !data.ok) throw new Error(String(res.status));
-        form.reset();
-        ok.textContent = 'Спасибо! Напишем в течение часа в рабочее время.';
+        ok.textContent = 'Спасибо! Расчёт у менеджера. Напишем в течение часа в рабочее время.';
         ok.hidden = false;
       } catch {
         fail.hidden = false;
@@ -338,6 +391,19 @@ const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
   form .cta { align-self: flex-start; }
   .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .status { font-size: 15px; }
+  .estimate {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 18px;
+    border: 2px solid var(--teal);
+    border-radius: var(--radius-sm);
+  }
+  .estimate[hidden] { display: none; }
+  .est-pkg { font-size: 15px; color: var(--ink-2); }
+  .est-pkg b { color: var(--ink); }
+  .est-price { font-size: 26px; font-weight: 700; }
+  .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
     .plans { grid-template-columns: 1fr; }
     .who { min-height: 0; }

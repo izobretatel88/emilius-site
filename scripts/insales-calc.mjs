@@ -2,13 +2,26 @@
 //   node scripts/insales-calc.mjs                 — типовые сценарии (проверка норм)
 //   node scripts/insales-calc.mjs brief.json      — смета по брифу
 //   node scripts/insales-calc.mjs --html          — пересобрать docs/insales-service/calculator.html
+//   node scripts/insales-calc.mjs --answers '{…}' — смета по ответам из заявки с лендинга (строка «Ответы» в Telegram)
+//   node scripts/insales-calc.mjs --quick         — ориентиры формы лендинга (7 вопросов) против полной сметы
 import { readFileSync, writeFileSync } from 'node:fs';
 import { estimate, parseCatalog } from '../docs/insales-service/calc/estimate.js';
+import { quickBrief, quickEstimate } from '../docs/insales-service/calc/quick.js';
 
 const dir = new URL('../docs/insales-service/', import.meta.url);
 const csv = readFileSync(new URL('03-catalog.csv', dir), 'utf8');
 const catalog = parseCatalog(csv);
 const arg = process.argv.slice(2).find((a) => a !== '-v');
+const argAfter = (flag) => process.argv[process.argv.indexOf(flag) + 1];
+
+// Ответы формы лендинга для типовых клиентов — сверяем с полной сметой тех же SCENARIOS.
+export const QUICK = {
+  'Старт: бренд из соцсетей, 30 товаров': { channel: 'social', sku: '30', where: 'head' },
+  'Магазин: офлайн-розница, 400 SKU в Excel, 2 доставки': { channel: 'offline', sku: '600', where: 'excel', variants: 'yes', carriers: '2' },
+  'Селлер: бренд одежды на WB+Ozon, 150 SKU': { channel: 'mp', sku: '150', where: 'mp', variants: 'yes', carriers: '2' },
+  'Офлайн + 1С: 2000 SKU, SEO (как Happy Animal)': { channel: 'offline', sku: '2000', where: '1c', variants: 'yes', carriers: '2' },
+  'Переезд с Tilda: 120 товаров, трафик': { channel: 'site', sku: '150', where: 'site', carriers: '2' },
+};
 
 const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
 
@@ -33,6 +46,21 @@ if (arg === '--html') {
   const html = tpl.replace('/*__CORE__*/', core).replace('"__CSV__"', JSON.stringify(csv));
   writeFileSync(new URL('calculator.html', dir), html);
   console.log('calculator.html собран');
+} else if (arg === '--answers') {
+  const b = quickBrief(JSON.parse(argAfter('--answers')));
+  console.log('бриф для правки и КП:', JSON.stringify(b));
+  print('Смета по ответам с лендинга', estimate(b, catalog), true);
+} else if (arg === '--quick') {
+  // Ориентир с сайта должен быть не выше полной сметы базовой части и не ниже минимума пакета.
+  let bad = 0;
+  for (const [t, a] of Object.entries(QUICK)) {
+    const q = quickEstimate(a, catalog);
+    const full = estimate(SCENARIOS[t], catalog);
+    const flag = q.packageName !== full.packageName ? '  ← другой пакет' : '';
+    if (flag) bad++;
+    console.log(`${t}\n  форма: ${q.packageName} ${rub(q.from)}–${rub(q.to)}, ${q.weeks.join('–')} нед. · полная смета: ${full.packageName} ${rub(full.price)}${flag}`);
+  }
+  if (bad) process.exit(1);
 } else if (arg) {
   print(arg, estimate(JSON.parse(readFileSync(arg, 'utf8')), catalog), true);
 } else {
