@@ -4,11 +4,11 @@
 import { readFileSync } from 'node:fs';
 import { WORKS, RATES, PACKAGES, BLOCKS } from './works.mjs';
 
-const byId = Object.fromEntries(WORKS.map((w) => [w.id, w]));
+export const byId = Object.fromEntries(WORKS.map((w) => [w.id, w]));
 
 // Скидки за объём — из «Введения в бизнес-процесс Emilius» (пакеты часов).
 export const PACKAGE_DISCOUNT = 0.1;
-const VOLUME_DISCOUNT = [[160, 0.2], [120, 0.15], [80, 0.1], [40, 0.05]];
+export const VOLUME_DISCOUNT = [[160, 0.2], [120, 0.15], [80, 0.1], [40, 0.05]];
 
 // Коэффициенты неопределённости. Применяются к часам, а не к цене:
 // так их видно в смете и они честно попадают в правило «ФИКС ±30%».
@@ -123,7 +123,7 @@ export function estimate(brief, ids = selectWorks(brief)) {
   return { lines, hours, gross, disc, total, byRole, weeks, kAll: round2(kAll), kCat };
 }
 
-const round2 = (x) => Math.round(x * 100) / 100;
+export const round2 = (x) => Math.round(x * 100) / 100;
 
 export function packagePrice(key) {
   const p = PACKAGES[key];

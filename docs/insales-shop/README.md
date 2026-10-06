@@ -33,6 +33,8 @@ node scripts/insales/estimate.mjs scripts/insales/examples/seller-wb.json   # с
 node scripts/insales/build-docs.mjs                                 # пересобрать 03-raboty.md, works.csv, packages.md
 ```
 
+Интерактивная версия для созвонов — `calc.html` (собирается той же командой; опубликована: https://claude.ai/artifact/79pgNQsdqzkgcX7TBTxsk8, доступ по ссылке только у владельца).
+
 Нормы и пакеты — `scripts/insales/works.mjs`. Логика брифа и коэффициенты — `scripts/insales/estimate.mjs`.
 
 ## Внешние материалы

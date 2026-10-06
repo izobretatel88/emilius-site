@@ -2,7 +2,8 @@
 // → docs/insales-shop/03-raboty.md, works.csv, packages.md, calc-data.json
 import { writeFileSync, readdirSync, readFileSync } from 'node:fs';
 import { WORKS, BLOCKS, RATES, PACKAGES, DRIVERS, STAGE0 } from './works.mjs';
-import { packagePrice, estimate, COEF } from './estimate.mjs';
+import * as est from './estimate.mjs';
+const { packagePrice, estimate, COEF } = est;
 
 const out = new URL('../../docs/insales-shop/', import.meta.url);
 const fmt = (n) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
@@ -70,3 +71,11 @@ writeFileSync(new URL('packages.md', out), pk);
 // 4. Данные для HTML-калькулятора
 writeFileSync(new URL('calc-data.json', out), JSON.stringify({ RATES, BLOCKS, WORKS, PACKAGES, COEF, STAGE0, prices }, null, 0));
 console.log('ok', prices);
+
+// 5. HTML-калькулятор: та же логика, что в estimate.mjs (функции переносятся исходником)
+const tpl = readFileSync(new URL('./calc.template.html', import.meta.url), 'utf8');
+const data = `const WORKS = ${JSON.stringify(WORKS)};\nconst RATES = ${JSON.stringify(RATES)};\nconst BLOCKS = ${JSON.stringify(BLOCKS)};\n` +
+  `const PACKAGES = ${JSON.stringify(PACKAGES)};\nconst COEF = ${JSON.stringify(COEF)};\nconst PRICES = ${JSON.stringify(prices)};\n` +
+  `const VOLUME_DISCOUNT = ${JSON.stringify(est.VOLUME_DISCOUNT)};\nconst byId = Object.fromEntries(WORKS.map((w) => [w.id, w]));\n` +
+  `const round2 = ${est.round2.toString()};\n${est.hoursOf.toString()}\n${est.selectWorks.toString()}\n${est.estimate.toString()}\n`;
+writeFileSync(new URL('calc.html', out), tpl.replace('/*__DATA__*/', () => data));

@@ -1,0 +1,364 @@
+<title>Смета магазина InSales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Раскладка: слева бриф (анкета на созвоне), справа липкая сводка сметы; ниже — работы по блокам. Цвета — токены Emilius. */
+:root {
+  --page: #f7f7f7; --card: #fefefe; --ink: #0d1414; --ink-2: #4f5757; --ink-3: #686d6c;
+  --hair: #e6eaea; --well: #f0f4f4; --teal: #00999b; --teal-btn: #008385; --on-teal: #fffdfd;
+  --warn: #9a5b00; --warn-bg: #fff3df;
+  --font: 'Manrope', 'Glober', Arial, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --r: 16px; --r-sm: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page: #0f1515; --card: #161e1e; --ink: #eef3f3; --ink-2: #b3bfbf; --ink-3: #8a9a98;
+  --hair: #263131; --well: #1c2626; --teal: #2bb8ba; --teal-btn: #008385; --on-teal: #fffdfd;
+  --warn: #f2b45c; --warn-bg: #2e2412; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --page: #0f1515; --card: #161e1e; --ink: #eef3f3; --ink-2: #b3bfbf; --ink-3: #8a9a98;
+  --hair: #263131; --well: #1c2626; --teal: #2bb8ba; --teal-btn: #008385; --on-teal: #fffdfd;
+  --warn: #f2b45c; --warn-bg: #2e2412; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--page); color: var(--ink); font: 15px/1.5 var(--font); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 20px }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--teal) }
+h1 { font-size: clamp(24px, 4vw, 34px); line-height: 1.15; margin: 4px 0 0; text-wrap: balance; font-weight: 800 }
+.presets { display: flex; flex-wrap: wrap; gap: 8px }
+button { font: inherit; cursor: pointer }
+.chip { border: 1px solid var(--hair); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600 }
+.chip:hover, .chip[aria-pressed="true"] { border-color: var(--teal); color: var(--teal) }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start }
+@media (max-width: 880px) { .grid { grid-template-columns: minmax(0, 1fr) } }
+.card { background: var(--card); border: 1px solid var(--hair); border-radius: var(--r) }
+form { display: grid; gap: 4px; padding: 8px 20px 20px }
+fieldset { border: 0; border-top: 1px solid var(--hair); margin: 0; padding: 16px 0 4px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px 16px }
+fieldset:first-of-type { border-top: 0 }
+legend { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 0 0 8px }
+label { display: grid; gap: 4px; font-size: 13px; color: var(--ink-2); min-width: 0 }
+label.check { grid-template-columns: auto 1fr; align-items: center; gap: 8px; color: var(--ink) }
+input[type=number], select { font: inherit; color: var(--ink); background: var(--well); border: 1px solid var(--hair); border-radius: var(--r-sm); padding: 7px 10px; width: 100%; font-variant-numeric: tabular-nums }
+input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--teal-btn) }
+.sum { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); padding: 20px; display: grid; gap: 14px }
+.price { font-size: 38px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums }
+.muted { color: var(--ink-3); font-size: 13px }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; font-variant-numeric: tabular-nums }
+.kv dt { color: var(--ink-2) } .kv dd { margin: 0; text-align: right; font-weight: 600 }
+.bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--well) }
+.bar span { display: block; height: 100% }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--ink-2) }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px }
+.fit { border-radius: var(--r-sm); padding: 10px 12px; font-size: 13px; background: var(--well) }
+.fit.warn { background: var(--warn-bg); color: var(--warn) }
+.btn { background: var(--teal-btn); color: var(--on-teal); border: 0; border-radius: 13px; padding: 10px 16px; font-weight: 700 }
+.works { margin-top: 20px; padding: 8px 20px 20px }
+.works h2 { font-size: 18px; margin: 12px 0 4px }
+.blk { border-top: 1px solid var(--hair); padding: 10px 0 }
+.blk h3 { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; margin: 0 0 6px; font-weight: 700 }
+.blk h3 span { color: var(--ink-3); font-weight: 600; font-variant-numeric: tabular-nums }
+.row { display: grid; grid-template-columns: 52px minmax(0, 1fr) 40px 64px 84px; gap: 10px; font-size: 13px; padding: 3px 0; font-variant-numeric: tabular-nums }
+.row .id { font-family: var(--mono); color: var(--teal); font-size: 12px }
+.row .r { text-align: right } .row .role { font-family: var(--mono); color: var(--ink-3); font-size: 12px }
+@media (max-width: 520px) { .row { grid-template-columns: 44px minmax(0, 1fr) 70px } .row .role, .row .h { display: none } }
+@media (prefers-reduced-motion: no-preference) { .price, .bar span { transition: all .2s } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Emilius Agency · INS-SHOP</div>
+      <h1>Смета магазина на шаблоне InSales</h1>
+    </div>
+    <div class="presets" id="presets" aria-label="Готовые брифы"></div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <form id="brief" autocomplete="off">
+        <fieldset><legend>Каталог</legend>
+          <label>Товаров (без вариантов)<input type="number" id="sku" min="0" step="10"></label>
+          <label>Из них с размерами/цветами<input type="number" id="variants" min="0" step="10"></label>
+          <label>Категорий<input type="number" id="cats" min="0"></label>
+          <label>Фильтров<input type="number" id="filters" min="0"></label>
+          <label>Где сейчас товары
+            <select id="source"><option value="file">Таблица Excel/CSV</option><option value="mp">WB / Ozon</option><option value="site">Старый сайт</option><option value="1c">1С</option><option value="none">Нигде — заводим вручную</option></select></label>
+          <label>Описаний написать<input type="number" id="texts" min="0" step="10"></label>
+          <label>Фото обработать<input type="number" id="photos" min="0" step="10"></label>
+        </fieldset>
+        <fieldset><legend>Внешний вид</legend>
+          <label class="check"><input type="checkbox" id="logo">Логотип есть</label>
+          <label class="check"><input type="checkbox" id="banners">Баннеры для главной</label>
+          <label class="check"><input type="checkbox" id="mockups">Макеты главной и карточки</label>
+          <label>Экранов вёрстки по макету<input type="number" id="mockupScreens" min="0"></label>
+          <label class="check"><input type="checkbox" id="M01">Таблица размеров</label>
+          <label class="check"><input type="checkbox" id="M03">Бейджи на товарах</label>
+          <label class="check"><input type="checkbox" id="M04">Особый фильтр</label>
+          <label class="check"><input type="checkbox" id="M05">Калькулятор товара</label>
+          <label>Доп. инфостраниц<input type="number" id="pages" min="0"></label>
+          <label>Блоков на главной сверх 8<input type="number" id="homeBlocks" min="0"></label>
+        </fieldset>
+        <fieldset><legend>Оплата и доставка</legend>
+          <label>Способов оплаты сверх карты/СБП<input type="number" id="payExtra" min="0"></label>
+          <label>Точек самовывоза<input type="number" id="pickups" min="0"></label>
+          <label>Служб сверх СДЭК и Почты<input type="number" id="dlvExtra" min="0"></label>
+          <label class="check"><input type="checkbox" id="courier">Своя курьерская доставка</label>
+        </fieldset>
+        <fieldset><legend>Учёт и каналы</legend>
+          <label>Учёт
+            <select id="accounting"><option value="">Нет / таблица</option><option value="1c">1С</option><option value="moysklad">МойСклад</option></select></label>
+          <label class="check"><input type="checkbox" id="ordersToAccounting">Заказы в 1С</label>
+          <label>Площадок с общими остатками<input type="number" id="mp" min="0" max="4"></label>
+          <label class="check"><input type="checkbox" id="crm">Внешняя CRM</label>
+          <label class="check"><input type="checkbox" id="telephony">Телефония</label>
+          <label class="check"><input type="checkbox" id="hasChannels">Уже продают (МП, соцсети, сайт)</label>
+          <label class="check"><input type="checkbox" id="offline">Есть офлайн-точка</label>
+        </fieldset>
+        <fieldset><legend>Продвижение</legend>
+          <label>SEO
+            <select id="seo"><option value="none">Только базовое</option><option value="basic">Мета вручную</option><option value="core">Семантика и структура</option></select></label>
+          <label>SEO-текстов категорий<input type="number" id="catTexts" min="0"></label>
+          <label>URL для редиректов<input type="number" id="urls" min="0" step="50"></label>
+          <label class="check"><input type="checkbox" id="utm">Отчёт «откуда заказы»</label>
+          <label class="check"><input type="checkbox" id="feed">Фид для Директа</label>
+          <label class="check"><input type="checkbox" id="vk">Пиксель VK</label>
+          <label class="check"><input type="checkbox" id="bonuses">Бонусы, промокоды</label>
+          <label class="check"><input type="checkbox" id="email">Брошенная корзина + письма</label>
+          <label class="check"><input type="checkbox" id="domainMail">Почта на домене</label>
+        </fieldset>
+        <fieldset><legend>Риски</legend>
+          <label>Материалы (фото, тексты)
+            <select id="k_materials"><option value="ready">Готовы ×1</option><option value="partial">Частично ×1,15</option><option value="none">Нет ×1,3</option></select></label>
+          <label>Данные каталога
+            <select id="k_dirtyData"><option value="clean">Чистые ×1</option><option value="some">Есть мусор ×1,2</option><option value="messy">Хаос ×1,4</option></select></label>
+          <label>Срочность
+            <select id="k_urgent"><option value="no">Обычно ×1</option><option value="yes">Быстрее 2 недель ×1,25</option></select></label>
+          <label>Кто согласует
+            <select id="k_deciders"><option value="one">Один ЛПР ×1</option><option value="many">Несколько ×1,1</option></select></label>
+        </fieldset>
+      </form>
+    </div>
+
+    <aside class="card sum" aria-live="polite">
+      <div>
+        <div class="muted">Смета, ₽</div>
+        <div class="price" id="total">—</div>
+        <div class="muted" id="sub"></div>
+      </div>
+      <div class="fit" id="fit"></div>
+      <div>
+        <div class="bar" id="bar"></div>
+        <div class="legend" id="legend" style="margin-top:8px"></div>
+      </div>
+      <dl class="kv" id="kv"></dl>
+      <button class="btn" id="copy" type="button">Скопировать смету текстом</button>
+      <div class="muted">Сторонние платежи клиента не входят: подписка InSales от 2 295 ₽/мес, тема, эквайринг, касса, доставка.</div>
+    </aside>
+  </div>
+
+  <section class="card works">
+    <h2>Работы в смете</h2>
+    <div class="muted">Нормы — чистое время исполнителя. Источник: scripts/insales/works.mjs.</div>
+    <div id="works"></div>
+  </section>
+</div>
+
+<script>
+const WORKS = [{"id":"D01","block":"D","name":"Квалификационный созвон","role":"NC","h":0,"lvl":1,"deps":[],"when":"всегда, до сметы; бесплатно","input":"заявка, ответы на 7 вопросов квалификации","result":"решение: этап 0 / пакет / отказ","risk":"клиент без источника покупателей — честно сказать до продажи","vars":"30 мин, видео или телефон"},{"id":"D02","block":"D","name":"Аудит текущих каналов","role":"NC","h":1.5,"lvl":1,"deps":["D01"],"when":"есть МП-кабинет, соцсети или старый сайт","input":"ссылки, выгрузка отчёта МП за 3 мес (по желанию)","result":"список того, что переносим и что теряем","risk":"клиент не даёт цифры — работаем по открытым данным","vars":"по открытым данным / с доступом к кабинету"},{"id":"D03","block":"D","name":"Смета владения магазином на 12 месяцев","role":"NC","h":1,"lvl":1,"deps":["D04"],"when":"всегда в этапе 0","input":"тариф, приложения, эквайринг, касса, доставка","result":"таблица расходов по месяцам","risk":"тарифы InSales меняются — указать дату расчёта","vars":"—"},{"id":"D04","block":"D","name":"Подбор тарифа и проверка интеграций","role":"NC","h":0.5,"lvl":1,"deps":[],"when":"всегда","input":"нужные интеграции из брифа","result":"тариф + список приложений с ценами","risk":"нужная интеграция есть только на «Комбо» или платная","vars":"«Интернет-магазин» / «Комбо»"},{"id":"D05","block":"D","name":"Подбор темы: 3 кандидата под нишу","role":"DES","h":1.5,"lvl":1,"deps":[],"when":"всегда","input":"референсы, ниша, бюджет на тему","result":"3 темы с плюсами и минусами, рекомендация","risk":"клиент выбирает тему «по картинке» без нужных блоков","vars":"бесплатная / платная тема (оплачивает клиент)"},{"id":"D06","block":"D","name":"Структура каталога: дерево, свойства, фильтры","role":"NC","h":1,"per":["cats",20,0.5],"lvl":2,"deps":[],"when":"всегда","input":"ассортимент (таблица или ссылка на МП)","result":"дерево категорий, список свойств и фильтров","risk":"свойства на МП заполнены хаотично — чистка дороже импорта","vars":"по выгрузке МП / по прайсу / с нуля"},{"id":"D07","block":"D","name":"Карта страниц и меню","role":"NC","h":0.5,"lvl":1,"deps":["D06"],"when":"всегда","input":"структура каталога, список инфостраниц","result":"схема меню и подвала","risk":"—","vars":"—"},{"id":"D08","block":"D","name":"Состав работ, смета и план-график","role":"NC","h":1,"lvl":1,"deps":["D02","D06"],"when":"всегда","input":"бриф, результаты D02–D07","result":"заказ к договору с перечнем работ и ценой","risk":"объём «плывёт» — фиксируем границы письменно","vars":"—"},{"id":"P01","block":"P","name":"Аккаунт InSales, доступы сотрудников","role":"NC","h":0.25,"lvl":1,"deps":[],"when":"всегда","input":"аккаунт оформлен на клиента","result":"клиент владелец, мы — сотрудники с правами","risk":"аккаунт оформлен на подрядчика — запрещаем","vars":"новый аккаунт / существующий"},{"id":"P02","block":"P","name":"Общие настройки магазина","role":"NC","h":0.5,"lvl":1,"deps":["P01"],"when":"всегда","input":"название, реквизиты, email, телефон","result":"валюта, единицы, часовой пояс, отправитель писем","risk":"—","vars":"—"},{"id":"P03","block":"P","name":"Подключение домена и SSL","role":"NC","h":0.5,"lvl":1,"deps":["P01"],"when":"всегда","input":"доступ к регистратору домена","result":"магазин открывается по домену с https","risk":"доступа к домену нет у клиента — ищем, кто регистрировал","vars":"свой домен / покупка нового (+0,25 ч)"},{"id":"P04","block":"P","name":"Почта на домене (Яндекс 360)","role":"NC","h":0.5,"lvl":1,"deps":["P03"],"opt":true,"when":"нет почты на домене","input":"доступ к DNS","result":"info@домен, письма магазина не в спаме","risk":"SPF/DKIM — без них письма уходят в спам","vars":"—"},{"id":"P05","block":"P","name":"Уведомления клиенту и менеджеру","role":"NC","h":0.5,"lvl":1,"deps":["P02"],"when":"всегда","input":"кому приходят заказы","result":"письма о заказе с логотипом, уведомления в Telegram/почту","risk":"письма в спаме","vars":"email / Telegram"},{"id":"P06","block":"P","name":"Статусы заказов под процесс клиента","role":"NC","h":0.5,"lvl":1,"deps":["P02"],"when":"всегда","input":"как сейчас обрабатывают заказ","result":"статусы: новый → подтверждён → собран → отправлен → доставлен","risk":"—","vars":"—"},{"id":"T01","block":"T","name":"Установка темы и базовые настройки","role":"NC","h":0.5,"lvl":1,"deps":["D05"],"when":"всегда","input":"выбранная тема","result":"тема установлена, демо-контент убран","risk":"—","vars":"—"},{"id":"T02","block":"T","name":"Брендирование: логотип, цвета, шрифты, фавикон","role":"NC","h":1,"lvl":1,"deps":["T01"],"when":"всегда","input":"логотип (SVG/PNG), цвета бренда","result":"тема в цветах бренда","risk":"нет логотипа — опция DES-логотип","vars":"по брендбуку / подбор палитры"},{"id":"T03","block":"T","name":"Шапка, меню, подвал","role":"NC","h":0.75,"lvl":1,"deps":["D07"],"when":"всегда","input":"карта меню","result":"навигация на ПК и телефоне","risk":"—","vars":"—"},{"id":"T04","block":"T","name":"Главная из блоков темы (до 8 блоков)","role":"NC","h":1.5,"per":["homeBlocks",1,0.3],"lvl":1,"deps":["T02"],"when":"всегда","input":"тексты, баннеры, подборки","result":"главная: баннер, категории, хиты, преимущества, отзывы, подписка","risk":"нет фото для баннеров","vars":"—"},{"id":"T05","block":"T","name":"Баннеры: 3 шт. для ПК и телефона","role":"DES","h":2,"lvl":1,"deps":["T02"],"opt":true,"when":"у клиента нет готовых баннеров","input":"фото товара, оффер","result":"3 баннера в двух размерах","risk":"фото низкого качества","vars":"—"},{"id":"T06","block":"T","name":"Листинг и карточка товара: блоки и порядок","role":"NC","h":1,"lvl":1,"deps":["T01"],"when":"всегда","input":"что важно покупателю в нише","result":"характеристики, доставка, отзывы, похожие товары","risk":"—","vars":"—"},{"id":"T07","block":"T","name":"Корзина и оформление заказа","role":"NC","h":0.5,"lvl":1,"deps":["T01"],"when":"всегда","input":"какие поля реально нужны","result":"короткий чекаут, минимальная сумма, промокоды","risk":"лишние поля снижают конверсию","vars":"одна страница / шаги"},{"id":"T08","block":"T","name":"Проверка мобильной версии и правки настроек","role":"NC","h":0.75,"lvl":1,"deps":["T04","T06"],"when":"всегда","input":"—","result":"все экраны проверены на 375 px","risk":"—","vars":"—"},{"id":"T09","block":"T","name":"Макеты ключевых экранов в Figma","role":"DES","h":12,"lvl":2,"deps":["D05"],"opt":true,"when":"клиенту важен уникальный вид в рамках темы","input":"референсы, брендбук","result":"главная + карточка, ПК и телефон","risk":"макет выходит за возможности темы → модификации M","vars":"—"},{"id":"T10","block":"T","name":"Логотип-знак и мини-гайд (экспресс)","role":"DES","h":6,"lvl":2,"deps":[],"opt":true,"when":"логотипа нет","input":"название, ниша, 3 референса","result":"логотип в SVG, цвета, шрифт","risk":"—","vars":"—"},{"id":"M01","block":"M","name":"Таблица размеров во всплывающем окне","role":"DEV","h":2.5,"lvl":2,"deps":["T06"],"opt":true,"when":"одежда, обувь, товары для животных","input":"таблица размеров","result":"кнопка «Подобрать размер» в карточке","risk":"—","vars":"одна таблица / по категориям (+1 ч)"},{"id":"M02","block":"M","name":"Нестандартный блок на главной или в карточке","role":"DEV","h":4,"lvl":2,"deps":["T04"],"opt":true,"when":"нужного блока нет в теме","input":"макет или пример","result":"блок, редактируемый из админки","risk":"обновление темы затирает правки — ведём в отдельных файлах","vars":"—"},{"id":"M03","block":"M","name":"Бейджи и стикеры на товарах","role":"DEV","h":2,"lvl":1,"deps":["T06"],"opt":true,"when":"«новинка», «хит», «−20%» по свойству","input":"список бейджей","result":"бейджи из свойства товара","risk":"—","vars":"—"},{"id":"M04","block":"M","name":"Фильтр/вывод по нестандартной логике","role":"DEV","h":3,"lvl":2,"deps":["C02"],"opt":true,"when":"например, «по породе», «по росту»","input":"описание логики","result":"фильтр работает на ПК и телефоне","risk":"медленно на большом каталоге","vars":"—"},{"id":"M05","block":"M","name":"Калькулятор/конструктор товара","role":"DEV","h":10,"lvl":3,"deps":["T06"],"opt":true,"when":"торт с начинкой, набор из позиций, расчёт по метражу","input":"правила расчёта","result":"выбор параметров → цена → корзина","risk":"логика уточняется в процессе — оценка по ТЗ","vars":"через варианты товара (дешевле) / JS"},{"id":"M06","block":"M","name":"Правка вёрстки по макету (за экран)","role":"DEV","h":6,"lvl":3,"deps":["T09"],"opt":true,"when":"есть макеты T09, отличающиеся от темы","input":"макет экрана","result":"экран соответствует макету","risk":"объём недооценён — оценка после макета","vars":"—"},{"id":"C01","block":"C","name":"Дерево категорий в админке","role":"NC","h":0.25,"per":["cats",10,0.5],"lvl":1,"deps":["D06"],"when":"всегда","input":"утверждённая структура","result":"категории с URL и обложками","risk":"—","vars":"—"},{"id":"C02","block":"C","name":"Свойства, параметры и фильтры","role":"NC","h":0.5,"per":["filters",1,0.15],"lvl":1,"deps":["D06"],"when":"всегда","input":"список свойств","result":"фильтры в каталоге","risk":"значения в данных записаны по-разному («чёрный»/«черный»)","vars":"—"},{"id":"C03","block":"C","name":"Варианты товаров: параметры и шаблон","role":"NC","h":0.5,"lvl":1,"deps":["C02"],"when":"есть размеры, цвета, фасовки","input":"пример товара с вариантами","result":"варианты со своими ценой, артикулом, остатком","risk":"на МП варианты — отдельные карточки, склейка вручную","vars":"—"},{"id":"C04","block":"C","name":"Подготовка файла импорта","role":"NC","h":0.75,"per":["sku",500,0.5],"lvl":2,"deps":["C02"],"when":"импорт из таблицы клиента","input":"Excel/CSV клиента","result":"файл по шаблону InSales, колонки сопоставлены","risk":"грязные данные: дубли, пустые цены","vars":"—"},{"id":"C05","block":"C","name":"Импорт товаров из файла","role":"NC","h":0.5,"per":["sku",500,0.5],"lvl":1,"deps":["C04"],"when":"есть таблица товаров","input":"файл C04, фото по ссылкам","result":"товары в каталоге с фото и ценами","risk":"фото не по ссылкам — загружаем архивом","vars":"CSV / XLSX / YML"},{"id":"C06","block":"C","name":"Импорт карточек с WB/Ozon","role":"INT","h":1,"per":["sku",500,0.5],"lvl":2,"deps":["C02"],"when":"селлер, товары уже на МП","input":"API-ключ кабинета МП","result":"товары с фото, описаниями, характеристиками","risk":"категории МП ≠ наше дерево — пересортировка в C09","vars":"приложение InSales / выгрузка Excel из кабинета"},{"id":"C07","block":"C","name":"Перенос каталога со старого сайта","role":"INT","h":3,"per":["sku",500,1],"lvl":2,"deps":["C02"],"when":"есть сайт без выгрузки","input":"адрес сайта, доступ к админке","result":"товары перенесены, старые URL записаны для редиректов","risk":"парсинг ломается на нестандартной вёрстке","vars":"выгрузка YML/CSV / парсер"},{"id":"C08","block":"C","name":"Ручное заведение товаров","role":"CNT","h":0,"per":["sku",1,0.15],"lvl":1,"deps":["C02"],"opt":true,"when":"товаров нет ни в каком файле","input":"фото, цены, описания от клиента","result":"карточки заполнены","risk":"материалы приходят частями — срок растёт","vars":"простой товар 0,15 ч / с вариантами 0,3 ч"},{"id":"C09","block":"C","name":"Разнесение по категориям и фильтрам после импорта","role":"NC","h":0.5,"per":["sku",100,0.2],"lvl":1,"deps":["C05"],"when":"всегда после импорта","input":"импортированные товары","result":"каждый товар в нужной категории, фильтры работают","risk":"—","vars":"массовое редактирование"},{"id":"C10","block":"C","name":"Склейка вариантов из отдельных карточек","role":"NC","h":0,"per":["variants",10,0.5],"lvl":2,"deps":["C06"],"when":"на МП каждый размер/цвет — отдельная карточка","input":"товары после импорта","result":"один товар с вариантами","risk":"нет общего артикула — сопоставляем вручную","vars":"—"},{"id":"C11","block":"C","name":"Обработка фото: обрезка, фон, сжатие","role":"CNT","h":0,"per":["photos",1,0.05],"lvl":1,"deps":[],"opt":true,"when":"фото разных размеров и фонов","input":"исходные фото","result":"единый формат, вес до 300 КБ","risk":"—","vars":"вручную / пакетно"},{"id":"C12","block":"C","name":"Описания товаров (ИИ-черновик + вычитка)","role":"CNT","h":0,"per":["texts",1,0.1],"lvl":1,"deps":[],"opt":true,"when":"описаний нет или они скопированы с МП","input":"характеристики, преимущества","result":"уникальные описания 500–800 знаков","risk":"факты о товаре проверяет клиент","vars":"—"},{"id":"C13","block":"C","name":"Подборки: новинки, хиты, акции","role":"NC","h":0.5,"lvl":1,"deps":["C05"],"when":"всегда","input":"какие товары в подборках","result":"3 подборки на главной и в меню","risk":"—","vars":"—"},{"id":"C14","block":"C","name":"Выборочная проверка каталога","role":"NC","h":0.25,"per":["sku",500,0.25],"lvl":1,"deps":["C09"],"when":"всегда","input":"—","result":"проверены 30+ карточек: цены, фото, остатки, дубли","risk":"—","vars":"—"},{"id":"PAY1","block":"PAY","name":"Онлайн-оплата картой и СБП","role":"NC","h":1,"lvl":1,"deps":["P02"],"when":"всегда","input":"договор эквайринга (подаёт клиент)","result":"оплата проходит, деньги приходят на р/с","risk":"модерация банка 3–10 дней — подавать в первый день","vars":"Т-Банк / ЮKassa / Сбер / CloudPayments"},{"id":"PAY2","block":"PAY","name":"Дополнительный способ оплаты","role":"NC","h":0.4,"per":["payExtra",1,0.4],"lvl":1,"deps":["PAY1"],"scale":true,"when":"наличные, счёт для юрлиц, рассрочка, Долями","input":"договор с сервисом","result":"способ виден в чекауте","risk":"—","vars":"—"},{"id":"PAY3","block":"PAY","name":"Онлайн-касса и чеки (54-ФЗ)","role":"NC","h":0.75,"lvl":2,"deps":["PAY1"],"when":"всегда, если принимают деньги онлайн","input":"касса или облачная касса, ОФД","result":"чек приходит покупателю","risk":"не указаны НДС и признак предмета расчёта","vars":"касса банка / облачная касса"},{"id":"DLV1","block":"DLV","name":"Самовывоз","role":"NC","h":0.25,"per":["pickups",1,0.15],"lvl":1,"deps":["P02"],"when":"есть точка или склад","input":"адреса, часы работы","result":"самовывоз с картой","risk":"—","vars":"—"},{"id":"DLV2","block":"DLV","name":"Курьер по городу: зоны и цены","role":"NC","h":0.75,"lvl":1,"deps":["P02"],"opt":true,"when":"своя курьерская доставка","input":"зоны, цены, интервалы","result":"стоимость считается по адресу","risk":"—","vars":"по зонам / фикс"},{"id":"DLV3","block":"DLV","name":"СДЭК: расчёт, пункты выдачи на карте","role":"NC","h":1,"lvl":1,"deps":["P02"],"when":"всегда (основная служба)","input":"договор СДЭК, ключи API","result":"цена и срок по адресу, ПВЗ на карте","risk":"у товаров нет веса и габаритов — ставим по умолчанию","vars":"—"},{"id":"DLV4","block":"DLV","name":"Почта России","role":"NC","h":0.5,"lvl":1,"deps":["P02"],"when":"всегда (покрытие регионов)","input":"договор или тариф для физлиц","result":"расчёт по индексу","risk":"—","vars":"—"},{"id":"DLV5","block":"DLV","name":"Дополнительная служба доставки","role":"NC","h":0.6,"per":["dlvExtra",1,0.6],"lvl":1,"deps":["P02"],"scale":true,"when":"Boxberry, 5Post, Яндекс Доставка, ПЭК…","input":"договор, ключи","result":"служба в чекауте","risk":"—","vars":"напрямую / через агрегатор ApiShip (+1 ч, одна интеграция на всех)"},{"id":"DLV6","block":"DLV","name":"Правила: бесплатная от суммы, вес по умолчанию","role":"NC","h":0.5,"lvl":1,"deps":["DLV3"],"when":"всегда","input":"порог бесплатной доставки","result":"правила работают в чекауте","risk":"—","vars":"—"},{"id":"L01","block":"L","name":"Политика ПДн, согласие, чекбоксы (152-ФЗ)","role":"NC","h":0.75,"lvl":1,"deps":["P02"],"when":"всегда","input":"реквизиты оператора ПДн","result":"политика, согласия во всех формах","risk":"шаблон не заменяет юриста; уведомление РКН подаёт клиент","vars":"—"},{"id":"L02","block":"L","name":"Оферта, оплата и доставка, возврат","role":"NC","h":1,"lvl":1,"deps":["L01"],"when":"всегда","input":"условия клиента","result":"3 страницы по нашему шаблону","risk":"клиент не прочитал — просим подтвердить письменно","vars":"наш шаблон / тексты юриста клиента"},{"id":"L03","block":"L","name":"Cookie-баннер","role":"NC","h":0.25,"lvl":1,"deps":[],"when":"всегда (Метрика собирает cookie)","input":"—","result":"баннер с ссылкой на политику","risk":"—","vars":"—"},{"id":"L04","block":"L","name":"Контакты, реквизиты, карта","role":"NC","h":0.5,"lvl":1,"deps":[],"when":"всегда","input":"реквизиты, адрес","result":"страница «Контакты»","risk":"—","vars":"—"},{"id":"L05","block":"L","name":"Страница «О бренде»","role":"NC","h":0.5,"lvl":1,"deps":["T02"],"when":"всегда","input":"история, фото команды/производства","result":"страница, отвечающая на «а кто вы?»","risk":"нет текста — пишем по интервью (+1 ч CNT)","vars":"—"},{"id":"L06","block":"L","name":"Дополнительная инфостраница","role":"NC","h":0.5,"per":["pages",1,0.5],"lvl":1,"deps":["T02"],"scale":true,"when":"опт, гарантия, уход за товаром, FAQ","input":"текст","result":"страница в меню","risk":"—","vars":"—"},{"id":"L07","block":"L","name":"Отзывы о товарах","role":"NC","h":0.25,"lvl":1,"deps":["T06"],"when":"всегда","input":"—","result":"отзывы с модерацией","risk":"—","vars":"встроенные / импорт отзывов с МП (приложение, +1 ч)"},{"id":"A01","block":"A","name":"Яндекс Метрика: счётчик и вебвизор","role":"NC","h":0.5,"lvl":1,"deps":["P03"],"when":"всегда","input":"доступ к Яндекс-аккаунту клиента","result":"счётчик на аккаунте клиента","risk":"счётчик на аккаунте подрядчика — запрещаем","vars":"—"},{"id":"A02","block":"A","name":"Цели: заказ, корзина, мессенджер, звонок","role":"NC","h":0.75,"lvl":1,"deps":["A01"],"when":"всегда","input":"—","result":"4–6 целей, проверены тестовыми действиями","risk":"—","vars":"—"},{"id":"A03","block":"A","name":"Электронная коммерция в Метрике","role":"NC","h":1,"lvl":2,"deps":["A01"],"when":"всегда","input":"—","result":"в Метрике видны товары, выручка, корзины","risk":"ломается после правок темы — проверка в Q01","vars":"встроенная интеграция InSales / dataLayer вручную (DEV)"},{"id":"A04","block":"A","name":"Яндекс Вебмастер и sitemap","role":"NC","h":0.5,"lvl":1,"deps":["P03"],"when":"всегда","input":"—","result":"сайт подтверждён, карта сайта отправлена","risk":"—","vars":"—"},{"id":"A05","block":"A","name":"UTM-схема и отчёт «откуда заказы»","role":"NC","h":1,"lvl":1,"deps":["A03"],"opt":true,"when":"планируется реклама и рассылки","input":"список каналов","result":"таблица UTM + сохранённый отчёт","risk":"—","vars":"—"},{"id":"A06","block":"A","name":"Пиксель VK Рекламы","role":"NC","h":0.5,"lvl":1,"deps":["P03"],"opt":true,"when":"будет реклама во ВКонтакте","input":"кабинет VK Ads","result":"пиксель и события","risk":"—","vars":"—"},{"id":"S01","block":"S","name":"Базовое SEO: шаблоны title/description, ЧПУ, robots","role":"NC","h":1,"lvl":1,"deps":["C01"],"when":"всегда","input":"—","result":"у всех категорий и товаров осмысленные title","risk":"—","vars":"—"},{"id":"S02","block":"S","name":"Мета-теги ключевых страниц вручную (до 15)","role":"SEO","h":1.5,"lvl":1,"deps":["S01"],"when":"пакеты «Бизнес» и выше","input":"основные запросы ниши","result":"главная, категории 1-го уровня, инфостраницы","risk":"—","vars":"—"},{"id":"S03","block":"S","name":"Семантическое ядро и SEO-структура","role":"SEO","h":16,"lvl":3,"deps":[],"opt":true,"when":"SEO — основной канал (локальный магазин, широкий ассортимент)","input":"ниша, регион, конкуренты","result":"ядро, кластеры, структура категорий и посадочных","risk":"делать ДО структуры каталога (D06)","vars":"экспресс 8 ч / полное 16–32 ч"},{"id":"S04","block":"S","name":"Редиректы со старого сайта","role":"NC","h":1,"per":["urls",100,0.5],"lvl":2,"deps":["C07"],"when":"переезд с сайта, который индексируется","input":"список URL (выгрузка Вебмастера)","result":"301 со старых адресов на новые","risk":"без этого теряется поисковый трафик","vars":"—"},{"id":"S05","block":"S","name":"SEO-тексты категорий","role":"SEO","h":0,"per":["catTexts",1,0.6],"lvl":1,"deps":["S03"],"opt":true,"when":"есть ядро","input":"кластер запросов","result":"текст 1000–1500 знаков","risk":"—","vars":"—"},{"id":"S06","block":"S","name":"Яндекс Бизнес / 2ГИС: связка с сайтом","role":"NC","h":0.5,"lvl":1,"deps":["P03"],"opt":true,"when":"есть офлайн-точка","input":"доступы к карточкам","result":"сайт в карточках организации","risk":"—","vars":"—"},{"id":"I1C1","block":"I1C","name":"1С: аудит конфигурации и схема обмена","role":"INT","h":2,"lvl":2,"deps":[],"opt":true,"when":"учёт в 1С","input":"конфигурация и версия (УТ, Розница, УНФ…), контакт 1С-специалиста","result":"схема: что, куда, как часто","risk":"самописная или старая конфигурация — CommerceML не работает «из коробки»","vars":"CommerceML / модуль обмена / через МойСклад"},{"id":"I1C2","block":"I1C","name":"1С: выгрузка товаров и категорий","role":"INT","h":3,"lvl":2,"deps":["I1C1","C02"],"opt":true,"when":"товары ведут в 1С","input":"настроенный узел обмена в 1С","result":"товары из 1С появляются в InSales","risk":"группы 1С ≠ категории сайта — сопоставление","vars":"—"},{"id":"I1C3","block":"I1C","name":"1С: цены и остатки","role":"INT","h":1.5,"lvl":2,"deps":["I1C2"],"opt":true,"when":"всегда при 1С","input":"типы цен, склады","result":"обновление по расписанию","risk":"несколько складов — выбрать, какие продаём","vars":"—"},{"id":"I1C4","block":"I1C","name":"1С: заказы и покупатели в 1С","role":"INT","h":2,"lvl":3,"deps":["I1C2"],"opt":true,"when":"заказы обрабатывают в 1С","input":"правила создания документов","result":"заказ сайта → документ в 1С, статусы обратно","risk":"дубли контрагентов","vars":"—"},{"id":"I1C5","block":"I1C","name":"1С: тест, отладка, инструкция","role":"INT","h":3,"lvl":2,"deps":["I1C3"],"opt":true,"when":"всегда при 1С","input":"—","result":"10 тестовых циклов без ошибок, инструкция","risk":"ошибки на стороне 1С — нужен специалист клиента","vars":"—"},{"id":"IMS1","block":"IMS","name":"МойСклад: подключение и сопоставление товаров","role":"INT","h":2,"per":["sku",500,0.5],"lvl":2,"deps":["C02"],"opt":true,"when":"учёт в МойСклад","input":"доступ к МойСклад, оплаченная интеграция","result":"товары и варианты связаны по артикулу","risk":"артикулы не совпадают","vars":"штатная интеграция / приложение"},{"id":"IMS2","block":"IMS","name":"МойСклад: остатки, цены, заказы","role":"INT","h":1.5,"lvl":2,"deps":["IMS1"],"opt":true,"when":"всегда при МойСклад","input":"склады, типы цен","result":"остатки и цены синхронны, заказы падают в МойСклад","risk":"—","vars":"—"},{"id":"IMS3","block":"IMS","name":"МойСклад: тест и инструкция","role":"INT","h":1,"lvl":1,"deps":["IMS2"],"opt":true,"when":"всегда при МойСклад","input":"—","result":"проверено на 5 заказах","risk":"—","vars":"—"},{"id":"IMP1","block":"IMP","name":"Подключение маркетплейса к InSales","role":"INT","h":1.25,"per":["mp",1,1.25],"lvl":2,"deps":["C02"],"opt":true,"scale":true,"when":"общие остатки сайта и МП","input":"тариф «Комбо», API-ключи","result":"магазин видит товары и заказы площадки","risk":"разные схемы: FBO-остатки не синхронизируются с сайтом","vars":"WB / Ozon / Я.Маркет / Avito"},{"id":"IMP2","block":"IMP","name":"Сопоставление карточек сайта и МП","role":"INT","h":1,"per":["sku",200,0.5],"lvl":2,"deps":["IMP1"],"opt":true,"when":"товары уже есть и на сайте, и на МП","input":"артикулы","result":"каждая карточка связана","risk":"нет единого артикула","vars":"—"},{"id":"IMP3","block":"IMP","name":"Правила остатков и цен по каналам, тест","role":"INT","h":1.5,"lvl":2,"deps":["IMP2"],"opt":true,"when":"всегда при IMP1","input":"наценки по каналам, резервы","result":"продали на МП — остаток на сайте уменьшился","risk":"—","vars":"—"},{"id":"CRM1","block":"CRM","name":"CRM: подключение (amoCRM, Битрикс24, RetailCRM)","role":"INT","h":2,"lvl":2,"deps":["P06"],"opt":true,"when":"заказы ведут в CRM","input":"доступ к CRM","result":"заказы и заявки падают в воронку","risk":"дубли контактов","vars":"встроенная CRM InSales — 0 ч"},{"id":"CRM2","block":"CRM","name":"CRM: статусы, поля, тест","role":"INT","h":1.5,"lvl":2,"deps":["CRM1"],"opt":true,"when":"при CRM1","input":"воронка клиента","result":"статусы синхронны в обе стороны","risk":"—","vars":"—"},{"id":"CRM3","block":"CRM","name":"Кнопки мессенджеров и онлайн-чат","role":"NC","h":0.5,"lvl":1,"deps":[],"when":"всегда","input":"Telegram/WhatsApp/MAX","result":"кнопки на сайте, цели в Метрике","risk":"—","vars":"—"},{"id":"CRM4","block":"CRM","name":"Телефония: виджет обратного звонка, коллтрекинг","role":"INT","h":1.5,"lvl":2,"deps":["A01"],"opt":true,"when":"много звонков","input":"договор с телефонией","result":"звонки видны в Метрике/CRM","risk":"—","vars":"Mango / UIS / Calltouch"},{"id":"MKT1","block":"MKT","name":"Фид для Яндекс Директа и Маркета (YML)","role":"NC","h":0.75,"lvl":1,"deps":["C09"],"opt":true,"when":"реклама товарами","input":"—","result":"фид проходит проверку","risk":"—","vars":"—"},{"id":"MKT2","block":"MKT","name":"Бонусы и промокоды InSales","role":"NC","h":1,"lvl":1,"deps":["T07"],"opt":true,"when":"повторные покупки","input":"правила начисления","result":"бонусы за заказ, промокод на первый заказ","risk":"—","vars":"встроенные / приложение"},{"id":"MKT3","block":"MKT","name":"Email-сервис и брошенная корзина","role":"INT","h":3,"lvl":2,"deps":["A01"],"opt":true,"when":"есть база или трафик от 1000 визитов/мес","input":"аккаунт сервиса","result":"письмо через 1 час после брошенной корзины","risk":"нет согласий на рассылку","vars":"Unisender / Sendsay / Mindbox"},{"id":"MKT4","block":"MKT","name":"Приветственная цепочка (3 письма)","role":"CNT","h":4,"lvl":2,"deps":["MKT3"],"opt":true,"when":"при MKT3","input":"бренд, оффер","result":"3 письма с вёрсткой","risk":"—","vars":"—"},{"id":"MKT5","block":"MKT","name":"Вкладыш «закажите на сайте» для посылок МП","role":"DES","h":2,"lvl":1,"deps":[],"opt":true,"when":"селлер, повторные покупки","input":"оффер, QR","result":"макет вкладыша для печати","risk":"правила WB/Ozon ограничивают перенаправление покупателей: без юриста — только вкладыш бренда без призыва покупать вне площадки","vars":"не включаем в пакеты по умолчанию"},{"id":"Q01","block":"Q","name":"Тестовые заказы: ПК и телефон, все оплаты и доставки","role":"NC","h":1.5,"lvl":1,"deps":["PAY1","DLV3"],"when":"всегда","input":"чек-лист Q","result":"протокол: 6+ сценариев, реальная оплата и возврат","risk":"—","vars":"—"},{"id":"Q02","block":"Q","name":"Проверка писем, форм, целей Метрики","role":"NC","h":0.5,"lvl":1,"deps":["A02"],"when":"всегда","input":"—","result":"все уведомления и цели срабатывают","risk":"—","vars":"—"},{"id":"Q03","block":"Q","name":"Скорость и мобильная проверка (Lighthouse)","role":"NC","h":0.5,"lvl":1,"deps":["T08"],"when":"всегда","input":"—","result":"замер, тяжёлые картинки сжаты","risk":"—","vars":"—"},{"id":"Q04","block":"Q","name":"Исправления по итогам тестов (резерв 10%)","role":"NC","h":0,"pct":0.1,"lvl":1,"deps":["Q01"],"when":"всегда","input":"протокол тестов","result":"найденное исправлено","risk":"—","vars":"—"},{"id":"R01","block":"R","name":"Обучение сотрудника (созвон + запись)","role":"NC","h":1,"lvl":1,"deps":["Q01"],"when":"всегда","input":"кто будет вести магазин","result":"сотрудник сам принимает заказ и меняет товар","risk":"—","vars":"—"},{"id":"R02","block":"R","name":"Инструкция «5 операций магазина»","role":"NC","h":0.25,"lvl":1,"deps":[],"when":"всегда","input":"наш шаблон","result":"заказ, товар, цена, акция, возврат — по шагам","risk":"—","vars":"—"},{"id":"R03","block":"R","name":"Открытие магазина и передача доступов","role":"NC","h":0.5,"lvl":1,"deps":["Q04"],"when":"всегда","input":"—","result":"сайт открыт для индексации, доступы у клиента, акт","risk":"—","vars":"—"},{"id":"R04","block":"R","name":"Грейс-период 14 дней: мелкие правки","role":"NC","h":1.5,"lvl":1,"deps":["R03"],"when":"всегда","input":"вопросы после запуска","result":"до 1,5 ч мелких правок без доплаты","risk":"новые хотелки — в отдельный заказ","vars":"—"}];
+const RATES = {"NC":{"name":"Ноукод-сборщик InSales","rate":2400},"DEV":{"name":"Разработчик InSales (Liquid/JS)","rate":3500},"INT":{"name":"Интегратор (1С, МойСклад, МП, CRM)","rate":3000},"DES":{"name":"Дизайнер UX/UI","rate":2400},"SEO":{"name":"SEO-специалист","rate":2400},"CNT":{"name":"Контент-менеджер","rate":1500}};
+const BLOCKS = {"D":"Этап 0 · Диагностика и план","P":"Платформа и аккаунт","T":"Тема и внешний вид","M":"Модификации шаблона","C":"Каталог и контент","PAY":"Оплата","DLV":"Доставка","L":"Юридические страницы и доверие","A":"Аналитика","S":"SEO","I1C":"Интеграция с 1С","IMS":"Интеграция с МойСклад","IMP":"Маркетплейсы","CRM":"CRM и коммуникации","MKT":"Маркетинг и удержание","Q":"Тестирование","R":"Передача и запуск"};
+const PACKAGES = {"express":{"name":"Экспресс","for":"до 50 товаров без учётной системы: продавцы из соцсетей, небольшие бренды, тест канала","brief":{"sku":50,"variants":0,"cats":5,"filters":3,"homeBlocks":0,"pickups":1,"payExtra":0,"dlvExtra":0,"pages":0},"works":["D04","P01","P02","P03","P05","T01","T02","T03","T04","T06","T07","T08","C01","C02","C04","C05","C09","PAY1","PAY3","DLV1","DLV3","DLV4","L01","L02","L03","L04","A01","A02","A03","S01","CRM3","Q01","Q04","R01","R02","R03"]},"start":{"name":"Старт","for":"до 100 товаров, товары в таблице или на МП, без учёта","brief":{"sku":100,"variants":0,"cats":10,"filters":5,"homeBlocks":0,"pickups":1,"payExtra":0,"dlvExtra":0,"pages":0},"works":["D04","D05","D06","D07","D08","P01","P02","P03","P05","P06","T01","T02","T03","T04","T06","T07","T08","C01","C02","C03","C04","C05","C09","C13","C14","PAY1","PAY3","DLV1","DLV3","DLV4","DLV6","L01","L02","L03","L04","L05","L07","A01","A02","A03","A04","S01","CRM3","Q01","Q02","Q03","Q04","R01","R02","R03","R04"]},"business":{"name":"Бизнес","for":"до 1000 товаров с вариантами, импорт с МП или из файла, 2 оплаты, 3 доставки","brief":{"sku":1000,"variants":50,"cats":40,"filters":12,"homeBlocks":2,"pickups":1,"payExtra":1,"dlvExtra":1,"pages":3},"works":["D02","D03","D04","D05","D06","D07","D08","P01","P02","P03","P04","P05","P06","T01","T02","T03","T04","T05","T06","T07","T08","C01","C02","C03","C04","C05","C09","C10","C13","C14","PAY1","PAY2","PAY3","DLV1","DLV3","DLV4","DLV5","DLV6","L01","L02","L03","L04","L05","L06","L07","A01","A02","A03","A04","A05","S01","S02","CRM3","MKT1","MKT2","Q01","Q02","Q03","Q04","R01","R02","R03","R04"]},"multi":{"name":"Селлер+","for":"«Бизнес» + общие остатки с WB и Ozon через InSales «Комбо» и связка с МойСклад","brief":{"sku":1000,"variants":50,"cats":40,"filters":12,"homeBlocks":2,"pickups":1,"payExtra":1,"dlvExtra":1,"pages":3,"mp":2},"works":["D02","D03","D04","D05","D06","D07","D08","P01","P02","P03","P04","P05","P06","T01","T02","T03","T04","T05","T06","T07","T08","C01","C02","C03","C06","C09","C10","C13","C14","PAY1","PAY2","PAY3","DLV1","DLV3","DLV4","DLV5","DLV6","L01","L02","L03","L04","L05","L06","L07","A01","A02","A03","A04","A05","S01","S02","CRM3","MKT1","MKT2","IMS1","IMS2","IMS3","IMP1","IMP2","IMP3","Q01","Q02","Q03","Q04","R01","R02","R03","R04"]}};
+const COEF = {"materials":{"ready":1,"partial":1.15,"none":1.3},"dirtyData":{"clean":1,"some":1.2,"messy":1.4},"urgent":{"no":1,"yes":1.25},"deciders":{"one":1,"many":1.1}};
+const PRICES = {"express":62000,"start":88000,"business":137000,"multi":170000};
+const VOLUME_DISCOUNT = [[160,0.2],[120,0.15],[80,0.1],[40,0.05]];
+const byId = Object.fromEntries(WORKS.map((w) => [w.id, w]));
+const round2 = (x) => Math.round(x * 100) / 100;
+function hoursOf(w, brief) {
+  if (!w.per) return w.h;
+  const [driver, size, perH] = w.per;
+  const n = Number(brief[driver] || 0);
+  const steps = Math.ceil(n / size);
+  if (w.scale) return steps * perH;
+  return w.h + steps * perH;
+}
+function selectWorks(b) {
+  // Маленький каталог без интеграций собирается от «Экспресса», остальное — от «Старта».
+  const lite = (b.sku || 0) <= 50 && !b.accounting && !b.mp && !b.crm;
+  const ids = new Set(lite ? PACKAGES.express.works : PACKAGES.start.works);
+  const add = (...xs) => xs.forEach((x) => ids.add(x));
+  const del = (...xs) => xs.forEach((x) => ids.delete(x));
+
+  if (b.hasChannels && !lite) add('D02');
+  if (!lite) add('D03');
+  // источник товаров
+  del('C04', 'C05');
+  if (b.source === 'file') add('C04', 'C05');
+  if (b.source === 'mp') add('C06');
+  if (b.source === 'site') add('C07');
+  if (b.source === 'none') add('C08');
+  if (b.source === '1c') { /* товары придут из 1С — I1C2 */ }
+  if (b.variants > 0 && (b.source === 'mp')) add('C10');
+  if (!b.variants) del('C03');
+  if (b.photos > 0) add('C11');
+  if (b.texts > 0) add('C12');
+  // витрина
+  if (b.banners) add('T05');
+  if (b.mockups) add('T09');
+  if (b.mockupScreens > 0) for (let i = 0; i < b.mockupScreens; i++) add('M06');
+  if (!b.logo) add('T10');
+  (b.mods || []).forEach((m) => add(m));
+  // оплата, доставка
+  if (b.payExtra > 0) add('PAY2');
+  if (b.courier) add('DLV2');
+  if (b.dlvExtra > 0) add('DLV5');
+  if (!b.pickups) del('DLV1');
+  if (b.pages > 0) add('L06');
+  // учёт и каналы
+  if (b.accounting === '1c') { add('I1C1', 'I1C2', 'I1C3', 'I1C5'); if (b.ordersToAccounting) add('I1C4'); }
+  if (b.accounting === 'moysklad') add('IMS1', 'IMS2', 'IMS3');
+  if (b.mp > 0) add('IMP1', 'IMP2', 'IMP3');
+  if (b.crm) add('CRM1', 'CRM2');
+  if (b.telephony) add('CRM4');
+  // продвижение
+  if (b.seo === 'basic' || b.seo === 'core') add('S02');
+  if (b.seo === 'core') add('S03');
+  if (b.catTexts > 0) add('S05');
+  if (b.urls > 0) add('S04');
+  if (b.offline) add('S06');
+  if (b.domainMail) add('P04');
+  if (b.utm) add('A05');
+  if (b.vk) add('A06');
+  if (b.feed) add('MKT1');
+  if (b.bonuses) add('MKT2');
+  if (b.email) add('MKT3', 'MKT4');
+  if (b.insert) add('MKT5');
+  return [...ids];
+}
+function estimate(brief, ids = selectWorks(brief)) {
+  const k = brief.k || {};
+  const kAll = (COEF.materials[k.materials || 'ready']) * (COEF.urgent[k.urgent || 'no']) * (COEF.deciders[k.deciders || 'one']);
+  const kCat = COEF.dirtyData[k.dirtyData || 'clean'];
+
+  const lines = [];
+  for (const id of ids) {
+    const w = byId[id];
+    if (!w) throw new Error(`Нет работы ${id}`);
+    if (w.pct) continue;
+    // M06 может повторяться — считаем количество
+    const qty = id === 'M06' ? Math.max(1, brief.mockupScreens || 1) : 1;
+    let h = hoursOf(w, brief) * qty * kAll * (w.block === 'C' ? kCat : 1);
+    if (h > 0) lines.push({ ...w, qty, hours: round2(h) });
+  }
+  for (const id of ids) {
+    const w = byId[id];
+    if (w.pct) {
+      const base = lines.filter((l) => l.role === 'NC').reduce((s, l) => s + l.hours, 0);
+      lines.push({ ...w, qty: 1, hours: round2(base * w.pct) });
+    }
+  }
+  lines.forEach((l) => (l.cost = Math.round(l.hours * RATES[l.role].rate)));
+
+  const hours = round2(lines.reduce((s, l) => s + l.hours, 0));
+  const gross = lines.reduce((s, l) => s + l.cost, 0);
+  const disc = (VOLUME_DISCOUNT.find(([h]) => hours >= h) || [0, 0])[1];
+  const total = Math.round((gross * (1 - disc)) / 100) * 100;
+
+  const byRole = {};
+  lines.forEach((l) => (byRole[l.role] = round2((byRole[l.role] || 0) + l.hours)));
+
+  // Срок: 20 продуктивных часов исполнителя в неделю (4 ч/день), роли работают
+  // параллельно; плюс ожидание клиента: эквайринг 1 нед. перекрывается сборкой.
+  const critical = Math.max(...Object.values(byRole));
+  const weeks = Math.max(2, Math.ceil(critical / 20) + 1);
+
+  return { lines, hours, gross, disc, total, byRole, weeks, kAll: round2(kAll), kCat };
+}
+
+const ROLE_COLORS = { NC: '#00999b', DEV: '#2468b8', INT: '#9cc43c', DES: '#b0703c', SEO: '#7c9040', CNT: '#9a9fa0' };
+const PRESETS = {
+  'Экспресс: соцсети, 40 товаров': { hasChannels: true, source: 'file', sku: 40, variants: 0, cats: 5, filters: 3, logo: true, pickups: 1, seo: 'none' },
+  'Селлер WB, 400 товаров, МойСклад': { hasChannels: true, source: 'mp', sku: 400, variants: 120, cats: 18, filters: 8, logo: true, banners: true, mods: ['M01'], payExtra: 1, pickups: 0, dlvExtra: 1, pages: 1, accounting: 'moysklad', mp: 2, seo: 'basic', utm: true, feed: true, bonuses: true, k: { dirtyData: 'some' } },
+  'Зоомагазин, 2000 товаров в 1С': { hasChannels: true, source: '1c', sku: 2000, variants: 300, cats: 60, filters: 15, logo: true, banners: true, payExtra: 1, pickups: 2, courier: true, pages: 2, accounting: '1c', ordersToAccounting: true, seo: 'core', catTexts: 10, offline: true, bonuses: true, utm: true, k: { materials: 'partial', dirtyData: 'some' } },
+  'Переезд с Tilda, 150 товаров': { hasChannels: true, source: 'site', sku: 150, variants: 60, cats: 12, filters: 6, logo: true, pickups: 0, pages: 2, urls: 200, seo: 'basic', utm: true, k: { dirtyData: 'some' } },
+};
+const NUMS = ['sku','variants','cats','filters','texts','photos','mockupScreens','pages','homeBlocks','payExtra','pickups','dlvExtra','mp','catTexts','urls'];
+const CHECKS = ['logo','banners','mockups','courier','ordersToAccounting','crm','telephony','hasChannels','offline','utm','feed','vk','bonuses','email','domainMail'];
+const MODS = ['M01','M03','M04','M05'];
+const fmt = (n) => Math.round(n).toLocaleString('ru-RU');
+const $ = (id) => document.getElementById(id);
+
+function read() {
+  const b = { k: {} };
+  NUMS.forEach((k) => b[k] = Number($(k).value || 0));
+  CHECKS.forEach((k) => b[k] = $(k).checked);
+  ['source','accounting','seo'].forEach((k) => b[k] = $(k).value);
+  if (!b.accounting) delete b.accounting;
+  b.mods = MODS.filter((m) => $(m).checked);
+  ['materials','dirtyData','urgent','deciders'].forEach((k) => b.k[k] = $('k_' + k).value);
+  return b;
+}
+function fill(p) {
+  NUMS.forEach((k) => $(k).value = p[k] ?? 0);
+  CHECKS.forEach((k) => $(k).checked = !!p[k]);
+  $('source').value = p.source || 'file'; $('accounting').value = p.accounting || ''; $('seo').value = p.seo || 'none';
+  MODS.forEach((m) => $(m).checked = (p.mods || []).includes(m));
+  const k = p.k || {};
+  $('k_materials').value = k.materials || 'ready'; $('k_dirtyData').value = k.dirtyData || 'clean';
+  $('k_urgent').value = k.urgent || 'no'; $('k_deciders').value = k.deciders || 'one';
+}
+function packageFit(b) {
+  const multi = b.mp > 0 && b.accounting === 'moysklad';
+  const plain = !b.accounting && !b.mp && !b.crm && !(b.mods || []).length && !b.mockups;
+  if (multi && b.sku <= 1000) return ['Селлер+', PRICES.multi];
+  if (!plain) return null;
+  if (b.sku <= 50 && !b.variants) return ['Экспресс', PRICES.express];
+  if (b.sku <= 100) return ['Старт', PRICES.start];
+  if (b.sku <= 1000) return ['Бизнес', PRICES.business];
+  return null;
+}
+let last = '';
+function render() {
+  const b = read();
+  const e = estimate(b);
+  $('total').textContent = fmt(e.total);
+  $('sub').textContent = `${String(e.hours).replace('.', ',')} ч · ~${e.weeks} нед. · скидка за объём ${e.disc * 100}%`;
+  const fit = packageFit(b);
+  const f = $('fit');
+  if (fit) { f.className = 'fit'; f.textContent = `Укладывается в пакет «${fit[0]}» — ${fmt(fit[1])} ₽ фикс. Смета показывает, что внутри. Опции сверх пакета — по смете.`; }
+  else { f.className = 'fit warn'; f.textContent = 'Не укладывается в пакет: продаём смету в формате «ФИКС ±30%». Работы уровня 3 без ТЗ — по часам.'; }
+  const total = e.hours || 1;
+  $('bar').innerHTML = Object.entries(e.byRole).map(([r, h]) => `<span style="width:${h / total * 100}%;background:${ROLE_COLORS[r]}" title="${r}"></span>`).join('');
+  $('legend').innerHTML = Object.entries(e.byRole).map(([r, h]) => `<span><i style="background:${ROLE_COLORS[r]}"></i>${RATES[r].name} · ${String(h).replace('.', ',')} ч</span>`).join('');
+  $('kv').innerHTML = [
+    ['Без скидки', fmt(e.gross) + ' ₽'], ['Коэффициент рисков', '×' + String(e.kAll).replace('.', ',')], ['Коэффициент каталога', '×' + String(e.kCat).replace('.', ',')],
+    ['Предоплата 50%', fmt(e.total / 2) + ' ₽'],
+  ].map(([a, v]) => `<dt>${a}</dt><dd>${v}</dd>`).join('');
+  const order = Object.keys(BLOCKS);
+  const groups = {};
+  e.lines.forEach((l) => (groups[l.block] ||= []).push(l));
+  $('works').innerHTML = order.filter((k) => groups[k]).map((k) => {
+    const ls = groups[k]; const sh = ls.reduce((s, l) => s + l.hours, 0); const sc = ls.reduce((s, l) => s + l.cost, 0);
+    return `<div class="blk"><h3>${BLOCKS[k]}<span>${String(round2(sh)).replace('.', ',')} ч · ${fmt(sc)} ₽</span></h3>` +
+      ls.map((l) => `<div class="row"><span class="id">${l.id}</span><span>${l.name}${l.qty > 1 ? ' ×' + l.qty : ''}</span><span class="role">${l.role}</span><span class="r h">${String(l.hours).replace('.', ',')} ч</span><span class="r">${fmt(l.cost)} ₽</span></div>`).join('') + '</div>';
+  }).join('');
+  last = `Смета: интернет-магазин на InSales\n` + order.filter((k) => groups[k]).map((k) => `\n${BLOCKS[k]}\n` + groups[k].map((l) => `  ${l.id} ${l.name} — ${String(l.hours).replace('.', ',')} ч, ${fmt(l.cost)} ₽`).join('\n')).join('\n') +
+    `\n\nИтого: ${fmt(e.total)} ₽ (${String(e.hours).replace('.', ',')} ч, ~${e.weeks} нед.)` + (fit ? `\nПакет «${fit[0]}»: ${fmt(fit[1])} ₽` : '') +
+    `\nНе входит: подписка InSales, тема, эквайринг, касса, доставка.`;
+  try { localStorage.setItem('ins-brief', JSON.stringify(b)); } catch (_) {}
+}
+$('copy').addEventListener('click', () => {
+  const done = () => { $('copy').textContent = 'Скопировано'; setTimeout(() => $('copy').textContent = 'Скопировать смету текстом', 1500); };
+  navigator.clipboard?.writeText(last).then(done).catch(() => { const t = document.createElement('textarea'); t.value = last; document.body.append(t); t.select(); try { document.execCommand('copy'); done(); } catch (_) {} t.remove(); });
+});
+$('presets').innerHTML = Object.keys(PRESETS).map((n, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="false">${n}</button>`).join('');
+$('presets').addEventListener('click', (ev) => {
+  const btn = ev.target.closest('.chip'); if (!btn) return;
+  document.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', c === btn));
+  fill(PRESETS[Object.keys(PRESETS)[btn.dataset.i]]); render();
+});
+$('brief').addEventListener('input', render);
+$('brief').addEventListener('submit', (ev) => ev.preventDefault());
+let saved = null; try { saved = JSON.parse(localStorage.getItem('ins-brief')); } catch (_) {}
+if (saved) fill(saved); else { fill(PRESETS[Object.keys(PRESETS)[1]]); document.querySelectorAll('.chip')[1].setAttribute('aria-pressed', 'true'); }
+render();
+</script>
