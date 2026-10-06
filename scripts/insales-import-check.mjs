@@ -79,6 +79,7 @@ if (idx.name >= 0) {
 }
 if (idx.price >= 0) {
   add('чистка', 'цена', 'Цена пустая, нулевая или не число', by((r) => !(num(cell(r, 'price')) > 0)));
+  add('чистка', 'цена-текстом', 'Цена с буквами или «руб.» — привести к числу: текст в цене — частая причина пустой цены после импорта', by((r) => num(cell(r, 'price')) > 0 && /[^\d\s.,]/.test(cell(r, 'price'))));
   if (idx.oldPrice >= 0) add('чистка', 'старая-цена', 'Старая цена не больше текущей — скидка не покажется', by((r) => cell(r, 'oldPrice') && num(cell(r, 'oldPrice')) <= num(cell(r, 'price'))));
 }
 if (idx.stock >= 0) add('совет', 'остаток', 'Остаток пустой или отрицательный', by((r) => !(num(cell(r, 'stock')) >= 0)));
@@ -143,7 +144,15 @@ if (idx.category >= 0) {
     cats.set(c, (cats.get(c) || 0) + 1);
     maxDepth = Math.max(maxDepth, c.split(/\s*[/>\\]\s*/).length);
   }
-  catCount = cats.size;
+  // «Брюки» и «брюки» InSales заведёт двумя разделами — считаем их одной категорией и просим свести.
+  const byKey = new Map();
+  for (const c of cats.keys()) {
+    const k = c.toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
+    byKey.set(k, [...(byKey.get(k) || []), c]);
+  }
+  const clash = [...byKey.values()].filter((l) => l.length > 1);
+  if (clash.length) add('чистка', 'категория-написание', `Одна категория записана по-разному — ${clash.slice(0, 5).map((l) => l.join(' / ')).join('; ')}. Импорт создаст два раздела`, by((r) => clash.some((l) => l.slice(1).includes(cell(r, 'category')))));
+  catCount = byKey.size;
   add('чистка', 'без-категории', 'Товар без категории', by((r) => !cell(r, 'category')));
   const tiny = [...cats.entries()].filter(([, n]) => n < 3).map(([c]) => c);
   if (catCount > 5 && tiny.length > catCount / 3) add('совет', 'мелкие-категории', `${tiny.length} из ${catCount} категорий содержат 1–2 товара — укрупнить (CAT-01)`);
