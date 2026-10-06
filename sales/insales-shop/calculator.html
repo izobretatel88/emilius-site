@@ -13,12 +13,12 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #121615; --card: #1b201f; --ink: #eef2f1; --ink-2: #c3cbc9; --ink-3: #808d8a;
-    --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a;
+    --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #121615; --card: #1b201f; --ink: #eef2f1; --ink-2: #c3cbc9; --ink-3: #808d8a;
-  --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a;
+  --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--font); }
@@ -49,6 +49,7 @@ input:focus, select:focus, button:focus-visible { outline: 2px solid var(--teal)
 table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
 td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
 td:last-child, td:nth-child(2) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
 details summary { cursor: pointer; color: var(--teal); margin-top: 10px; }
 </style>
 </head>
@@ -567,10 +568,11 @@ function calc() {
     <details><summary>Платит клиент отдельно</summary>
       <table>${PASS_THROUGH.map(([a, b]) => `<tr><td>${a}</td><td></td><td>${b}</td></tr>`).join('')}</table>
     </details>
-    <p><button type="button" id="copy">Скопировать смету для клиента</button></p>`;
+    <p><button type="button" id="copy">Скопировать смету для клиента</button></p>
+    <textarea id="kp" rows="8" hidden style="width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px"></textarea>`;
   $('#copy').onclick = async () => {
     try { await navigator.clipboard.writeText(kp); $('#copy').textContent = 'Скопировано'; }
-    catch { prompt('Скопируйте текст', kp); }
+    catch { const t = $('#kp'); t.hidden = false; t.value = kp; t.select(); }
   };
 }
 f.addEventListener('input', calc);
