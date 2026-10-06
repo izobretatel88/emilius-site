@@ -43,6 +43,7 @@ node scripts/insales-kp.mjs brief.json > КП.md            # КП: пакет, 
 node scripts/insales-kp.mjs brief.json --order > Заказ.md # Заказ к договору: работы по id, оплата, приёмка, гарантия
 node scripts/insales-kp.mjs brief.json --tasks > задачи.csv # задачи для Weeek: id, этап, роль, план часов, пустой факт
 node scripts/insales-calibrate.mjs п1.csv п2.csv п3.csv  # после проектов: строки журнала калибровки и нормы к правке
+node scripts/insales-margin.mjs --check 3500 --cost 1400 # селлеру: маржа площадка vs сайт, окупаемость
 node scripts/insales-import-check.mjs товары.csv --brief brief.json   # проверка файла клиента + поля брифа
 node scripts/insales-site-check.mjs бренды.txt > лиды.csv          # проспектинг: сегмент, признак, повод
 python3 scripts/import-vnimnomic.py "<Задачи и подсчеты>.xlsx"   # обновить data/orders-hours.csv из новой выгрузки
