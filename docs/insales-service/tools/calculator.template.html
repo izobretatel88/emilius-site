@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Калькулятор магазина InSales</title>
+<style>
+:root{--bg:#f6f7f7;--card:#fff;--ink:#1d2322;--ink2:#686d6c;--line:#dfe3e2;--teal:#008385;--teal-soft:#e3f2f2;--warn:#a35a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151a19;--card:#1e2524;--ink:#e8eceb;--ink2:#a0aaa8;--line:#334039;--teal:#2fb3b5;--teal-soft:#183332;--warn:#f0a040}}
+:root[data-theme="dark"]{--bg:#151a19;--card:#1e2524;--ink:#e8eceb;--ink2:#a0aaa8;--line:#334039;--teal:#2fb3b5;--teal-soft:#183332;--warn:#f0a040}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--ink2);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+fieldset{border:0;padding:0;margin:0 0 18px}
+legend{font-weight:700;margin-bottom:8px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--teal)}
+label{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
+label span{flex:1}
+input[type=number]{width:96px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+select{max-width:220px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid var(--teal);outline-offset:1px}
+.sticky{position:sticky;top:12px}
+.total{font-size:30px;font-weight:800;margin:4px 0}
+.kpi{display:flex;gap:18px;flex-wrap:wrap;color:var(--ink2);margin-bottom:12px}
+.kpi b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:5px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.mod td{background:var(--teal-soft);font-weight:700}
+.note{color:var(--warn);font-size:13px;margin:8px 0}
+.pk{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.pk div{border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}
+.pk div.on{border-color:var(--teal);background:var(--teal-soft)}
+button{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+.scroll{max-height:60vh;overflow:auto;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Калькулятор: магазин на шаблоне InSales</h1>
+<p class="sub">Ответы из брифа → состав работ по нормативам → часы, цена, срок. Данные — <code>tools/works.py</code>.</p>
+<div class="grid">
+<form class="card" id="f">
+<fieldset><legend>Товары</legend>
+<label><span>Сколько товаров (SKU) запускаем</span><input type="number" name="sku" value="100" min="0"></label>
+<label><span>Откуда товары</span><select name="src"><option value="file">Таблица Excel/CSV</option><option value="mp">С WB/Ozon</option><option value="manual">Вручную (нет таблицы)</option><option value="old">Со старого сайта</option></select></label>
+<label><span>Категорий (0 = посчитать по SKU)</span><input type="number" name="cats" value="0" min="0"></label>
+<label><span>Характеристик для фильтров</span><input type="number" name="props" value="4" min="0"></label>
+<label><span>Есть варианты (размер, цвет)</span><select name="variants"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>Качество данных о товарах</span><select name="dq"><option value="1">Чистые: артикулы, цены, фото</option><option value="1.2">Средние: местами пусто</option><option value="1.5">Плохие: дубли, нет артикулов</option></select></label>
+<label><span>Фото нужно обработать (кол-во фото)</span><input type="number" name="photos" value="0" min="0"></label>
+<label><span>Переписать описаний (кол-во SKU)</span><input type="number" name="texts" value="0" min="0"></label>
+</fieldset>
+<fieldset><legend>Каналы и учёт</legend>
+<label><span>Площадок для общих остатков (WB, Ozon, ЯМ)</span><input type="number" name="mps" value="0" min="0" max="4"></label>
+<label><span>Учётная система</span><select name="acc"><option value="none">Нет / таблицы</option><option value="ms">МойСклад</option><option value="1c">1С: товары, цены, остатки</option><option value="1co">1С + заказы в 1С</option></select></label>
+<label><span>CRM (amoCRM / Битрикс24)</span><select name="crm"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>Телефония / коллтрекинг</span><select name="tel"><option value="0">Нет</option><option value="1">Да</option></select></label>
+</fieldset>
+<fieldset><legend>Оплата и доставка</legend>
+<label><span>Онлайн-оплата: способов (0 = нет)</span><input type="number" name="pay" value="1" min="0"></label>
+<label><span>Онлайн-касса 54-ФЗ</span><select name="kassa"><option value="1">Да</option><option value="0">Нет / уже есть у агрегатора</option></select></label>
+<label><span>Оплата при получении, счёт для юрлиц</span><select name="pay3"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>Служб доставки (СДЭК, Почта, Яндекс…)</span><input type="number" name="dlv" value="1" min="0"></label>
+</fieldset>
+<fieldset><legend>Внешний вид и страницы</legend>
+<label><span>Блоков на главной</span><input type="number" name="blocks" value="5" min="0"></label>
+<label><span>Баннеров нарисовать</span><input type="number" name="banners" value="0" min="0"></label>
+<label><span>Доп. страниц (опт, бренд, FAQ…)</span><input type="number" name="pages" value="0" min="0"></label>
+<label><span>Написать текстов страниц</span><input type="number" name="ptexts" value="0" min="0"></label>
+<label><span>Малых правок кода шаблона</span><input type="number" name="x1" value="0" min="0"></label>
+<label><span>Новых блоков/виджетов на коде</span><input type="number" name="x2" value="0" min="0"></label>
+<label><span>Уникальных страниц (макет + вёрстка)</span><input type="number" name="x3" value="0" min="0"></label>
+</fieldset>
+<fieldset><legend>Переезд, маркетинг</legend>
+<label><span>Старый сайт в поиске: URL для редиректов</span><input type="number" name="urls" value="0" min="0"></label>
+<label><span>Страниц контента перенести</span><input type="number" name="mgp" value="0" min="0"></label>
+<label><span>Есть офлайн-точка (Яндекс Карты)</span><select name="geo"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>Будет реклама (пиксели)</span><select name="ads"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>Повторные покупки: письма, бонусы</span><select name="crmk"><option value="0">Нет</option><option value="1">Да</option></select></label>
+<label><span>SEO как канал: кластеров семантики</span><input type="number" name="sem" value="0" min="0"></label>
+<label><span>Сотрудников с доступом</span><input type="number" name="staff" value="0" min="0"></label>
+<label><span>Почта на домене</span><select name="mail"><option value="0">Нет</option><option value="1">Да</option></select></label>
+</fieldset>
+<fieldset><legend>Условия</legend>
+<label><span>Готовность клиента</span><select name="kc"><option value="1">Материалы и ответственный есть</option><option value="1.1">Материалы частично</option><option value="1.25">Ничего не готово</option></select></label>
+<label><span>Срочность</span><select name="ku"><option value="1">Обычный срок</option><option value="1.25">Быстрее обычного в 1,5 раза</option></select></label>
+<label><span>Включить Этап 0 в смету</span><select name="diag"><option value="1">Да (засчитывается)</option><option value="0">Нет</option></select></label>
+<label><span>Отчёт первых 30 дней</span><select name="af2"><option value="1">Да</option><option value="0">Нет</option></select></label>
+</fieldset>
+</form>
+<div class="card sticky" id="out"></div>
+</div>
+</div>
+<script>const D=/*DATA*/null;</script>
+<script>
+const BY=Object.fromEntries(D.works.map(w=>[w.id,w]));
+const f=document.getElementById('f'),out=document.getElementById('out');
+const fmt=n=>Math.round(n).toLocaleString('ru-RU');
+function v(n){const e=f.elements[n];return e.tagName==='SELECT'?e.value:+e.value||0}
+function scope(){
+  const s=[],add=(id,q=1)=>s.push([id,q]);
+  const sku=v('sku'),src=v('src');
+  const cats=v('cats')||Math.max(5,Math.min(60,Math.round(sku/15)));
+  if(+v('diag'))['D01','D02','D03','D04','D05','D06'].forEach(i=>add(i));
+  ['P01','P02','P03'].forEach(i=>add(i));
+  if(v('staff'))add('P05',v('staff')); if(+v('mail'))add('P04');
+  add('T01');add('T02');add('T03',v('blocks'));add('T05');add('T06');
+  if(v('banners'))add('T04',v('banners'));
+  add('C01',cats); if(v('props'))add('C02',v('props')); if(+v('variants'))add('C03');
+  if(src==='file'){add('C04');add('C05',sku)}
+  if(src==='mp')add('C06',sku);
+  if(src==='manual')add('C07',sku);
+  if(src==='old'){add('MG1');add('C05',sku)}
+  if(v('photos'))add('C08',v('photos')); if(v('texts'))add('C11',v('texts'));
+  add('C09');add('C10',sku);
+  add('S01');add('S02');add('S05'); if(v('pages'))add('S03',v('pages')); if(v('ptexts'))add('S04',v('ptexts'));
+  if(v('pay')){add('PAY1',v('pay')-1);add('PAY4')} if(+v('kassa'))add('PAY2'); if(+v('pay3'))add('PAY3');
+  add('DL1'); if(v('dlv')){add('DL2',v('dlv'));add('DL3',sku)} add('DL4');
+  ['A01','A02','A03','A04'].forEach(i=>add(i)); if(+v('geo'))add('A05'); if(+v('ads'))add('A06'); if(v('sem'))add('A07',v('sem'));
+  if(v('mps')){add('MP1',v('mps')-1);add('MP2',sku);add('MP3');add('MP4')}
+  const acc=v('acc');
+  if(acc==='ms'){add('MS1');add('MS2',sku);add('MS3');add('MS4')}
+  if(acc==='1c'||acc==='1co'){add('1C1');add('1C2');add('1C3');add('1C5'); if(acc==='1co')add('1C4')}
+  if(+v('crm'))add('CR1'); add('CR2'); if(+v('tel'))add('CR3'); if(+v('crmk')){add('CR4');add('CR5')}
+  if(v('x1'))add('X1',v('x1')); if(v('x2'))add('X2',v('x2')); if(v('x3'))add('X3',v('x3'));
+  if(v('urls')){add('MG2',v('urls'));add('MG4')} if(v('mgp'))add('MG3',v('mgp'));
+  ['Q1','Q2','Q3','L1','L2','L3','AF1'].forEach(i=>add(i)); if(+v('af2'))add('AF2');
+  return s;
+}
+function hrs(id,q){const w=BY[id];return w.unit?(w.base+w.per*q):w.base*q}
+function calc(){
+  const s=scope(),dq=+v('dq'),kc=+v('kc'),ku=+v('ku');
+  let rows=[],H=0,C=0,codeH=0;
+  for(const[id,q]of s){
+    const w=BY[id];let h=hrs(id,q);
+    if(w.module==='M3')h*=dq;
+    if(!h)continue;
+    const c=h*D.rates[w.role];H+=h;C+=c;rows.push({w,q,h,c});
+    if(['M9','M11'].includes(w.module))codeH+=h;
+  }
+  const pm=H*D.pm,base=(C+pm*D.rates.PM)*kc*ku,total=base*(1+D.risk);
+  const price=Math.ceil(total/5000)*5000;
+  const weeks=Math.ceil((H+pm)/15)+1;
+  const pkg=D.packages.filter(p=>p.id!=='diag').reduce((a,p)=>Math.abs(p.price-price)<Math.abs(a.price-price)?p:a);
+  let html=`<div class="sub">Итого к КП</div><div class="total">${fmt(price)} ₽</div>
+  <div class="kpi"><span>часов <b>${(H+pm).toFixed(1)}</b></span><span>срок <b>~${weeks} нед.</b></span><span>предоплата 50% <b>${fmt(price/2)} ₽</b></span></div>`;
+  if(price<D.min)html+=`<p class="note">Меньше ${fmt(D.min)} ₽ — это не «магазин под ключ». Предложить Этап 0 или консультацию.</p>`;
+  if(codeH>12)html+=`<p class="note">${codeH.toFixed(0)} ч кода/учёта: эти модули — по факту с потолком +20%, финальная оценка после аудита.</p>`;
+  if(v('acc').startsWith('1c'))html+=`<p class="note">1С: нужен программист 1С клиента; интеграция в InSales платная (≈990 ₽/мес, проверить на D03).</p>`;
+  html+=`<div class="pk">${D.packages.map(p=>`<div class="${p===pkg?'on':''}">${p.name}: ${fmt(p.price)} ₽</div>`).join('')}</div>`;
+  html+=`<div class="scroll"><table><tr><th>Работа</th><th class="n">Кол-во</th><th class="n">Ч</th><th class="n">₽</th></tr>`;
+  let m='';
+  for(const r of rows){
+    if(r.w.module!==m){m=r.w.module;html+=`<tr class="mod"><td colspan="4">${D.modules.find(x=>x[0]===m)[1]}</td></tr>`}
+    html+=`<tr><td>${r.w.id} · ${r.w.title}</td><td class="n">${r.w.unit?r.q+' '+r.w.unit:''}</td><td class="n">${r.h.toFixed(1)}</td><td class="n">${fmt(r.c)}</td></tr>`;
+  }
+  html+=`<tr><td>Управление проектом ${D.pm*100}%</td><td></td><td class="n">${pm.toFixed(1)}</td><td class="n">${fmt(pm*D.rates.PM)}</td></tr>`;
+  html+=`<tr><td>Коэффициенты: готовность ×${kc}, срочность ×${ku}, запас +${D.risk*100}%</td><td></td><td></td><td class="n">${fmt(total-C-pm*D.rates.PM)}</td></tr></table></div>
+  <button type="button" id="copy">Скопировать смету</button>`;
+  out.innerHTML=html;
+  document.getElementById('copy').onclick=()=>{
+    const t=['Смета: магазин на шаблоне InSales','']
+      .concat(rows.map(r=>`${r.w.title}${r.w.unit?' ('+r.q+' '+r.w.unit+')':''} — ${r.h.toFixed(1)} ч`))
+      .concat(['',`Управление проектом — ${pm.toFixed(1)} ч`,`Итого: ${fmt(price)} ₽, срок ~${weeks} нед., предоплата 50%.`,'Не входит: тариф InSales, платная тема, приложения, эквайринг, касса, доставка, реклама.']).join('\n');
+    navigator.clipboard&&navigator.clipboard.writeText(t);
+  };
+}
+f.addEventListener('input',calc);calc();
+</script>
+</body>
+</html>
