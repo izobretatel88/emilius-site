@@ -18,9 +18,10 @@ export const VOLUME_DISCOUNTS = [
 ];
 
 export const PACKAGES = {
-  S: { name: 'Старт', note: 'до 50 товаров вручную, 1 оплата, самовывоз/курьер + 1 служба доставки' },
-  M: { name: 'Магазин', note: 'импорт каталога, фильтры и варианты, 2 службы доставки, e-commerce аналитика' },
-  P: { name: 'Селлер', note: 'всё из «Магазина» + карточки с WB/Ozon и единые остатки сайт ↔ площадки' },
+  // min — публичная цена «от»: смета ниже неё не опускается (решение 06.10.2026, 04-estimation.md §5).
+  S: { name: 'Старт', min: 75000, note: 'до 50 товаров вручную, 1 оплата, самовывоз/курьер + 1 служба доставки' },
+  M: { name: 'Магазин', min: 95000, note: 'импорт каталога, фильтры и варианты, 2 службы доставки, e-commerce аналитика' },
+  P: { name: 'Селлер', min: 100000, note: 'всё из «Магазина» + карточки с WB/Ozon и единые остатки сайт ↔ площадки' },
 };
 
 // Значения брифа по умолчанию — типичный «Старт».
@@ -209,7 +210,7 @@ export function estimate(brief, catalog) {
   const hours = rawHours * kTotal;
   const rawCost = sum(lines.map((l) => l.cost)) * kTotal;
   const disc = (VOLUME_DISCOUNTS.find(([h]) => hours >= h) || [0, 0])[1];
-  const price = roundTo(rawCost * (1 - disc), 1000);
+  const price = Math.max(PACKAGES[pkg].min, roundTo(rawCost * (1 - disc), 1000));
 
   // Срок: 4 продуктивных часа в день у исполнителя (норма агентства) + ожидание клиента.
   const workDays = Math.ceil(hours / 4);
@@ -220,7 +221,7 @@ export function estimate(brief, catalog) {
   return {
     package: pkg, packageName: PACKAGES[pkg].name, lines, coefficients: k, kTotal,
     rawHours: round1(rawHours), hours: round1(hours), discount: disc, price,
-    fixCorridor: [roundTo(price * 0.7, 1000), roundTo(price * 1.3, 1000)],
+    fixCorridor: [Math.max(PACKAGES[pkg].min, roundTo(price * 0.7, 1000)), roundTo(price * 1.3, 1000)],
     calendarDays, weeks: Math.ceil(calendarDays / 5),
     platform: platformCosts(b),
   };
