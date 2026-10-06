@@ -5,6 +5,7 @@
 //   node scripts/insales-calc.mjs --answers '{…}' — смета по ответам из заявки с лендинга (строка «Ответы» в Telegram)
 //   node scripts/insales-calc.mjs --quick         — ориентиры формы лендинга (7 вопросов) против полной сметы
 import { readFileSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { estimate, parseCatalog } from '../docs/insales-service/calc/estimate.js';
 import { quickBrief, quickEstimate } from '../docs/insales-service/calc/quick.js';
 
@@ -40,7 +41,12 @@ export const SCENARIOS = {
   'Переезд с Tilda: 120 товаров, трафик': { segment: 'oldsite', sku: 120, categories: 10, source: 'oldsite', oldSiteUrls: 180, carriers: 2, migrateCustomers: true },
 };
 
-if (arg === '--html') {
+// Сценарии импортирует insales-unit.mjs — при импорте ничего не печатаем.
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (!isMain) {
+  // импорт из другого скрипта
+} else if (arg === '--html') {
   const core = readFileSync(new URL('calc/estimate.js', dir), 'utf8').replace(/^export /gm, '');
   const tpl = readFileSync(new URL('calc/calculator.template.html', dir), 'utf8');
   const html = tpl.replace('/*__CORE__*/', core).replace('"__CSV__"', JSON.stringify(csv));
