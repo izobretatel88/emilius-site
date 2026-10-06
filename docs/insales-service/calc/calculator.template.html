@@ -114,7 +114,7 @@ function render() {
     <div>${e.hours} ч работы · скидка за объём ${e.discount * 100}% · ~${e.weeks} нед. до запуска</div>
     <div class="muted">ФИКС: коридор ±30% — ${rub(e.fixCorridor[0])}–${rub(e.fixCorridor[1])}</div>
     ${e.coefficients.length ? `<div class="muted">Коэффициенты: ${e.coefficients.map(([n, v]) => `${n} ×${v}`).join('; ')}</div>` : ''}
-    <div class="muted" style="margin-top:8px">Платформа отдельно: тариф «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес (≈${rub(e.platform.year)} за год), тема 0–30 000 ₽. ${e.platform.notes}</div>
+    <div class="muted" style="margin-top:8px">Платформа отдельно: тариф «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес (≈${rub(e.platform.year)} за год), тема 0–25 000 ₽. ${e.platform.notes}</div>
     <button type="button" id="copy">Скопировать смету</button>
     <div class="tablewrap"><table><tr><th>Код</th><th>Работа</th><th></th><th class="n">Часы</th><th class="n">₽ до коэф.</th></tr>${rows}</table></div>`;
   const text = 
