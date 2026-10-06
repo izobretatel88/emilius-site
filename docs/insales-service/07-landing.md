@@ -1,6 +1,6 @@
 # Лендинг: «Свой интернет-магазин на InSales»
 
-Адрес на сайте: `/services/insales-shop/`. Сайт на Astro, стиль — `docs/EMILIUS-DESIGN-SYSTEM.md`, цвета только из токенов. Для селлеров — отдельная версия первого экрана (раздел 3).
+Адрес на сайте: `/services/insales-shop/` и `/services/insales-shop/seller/` — **свёрстано в итерации 6** (`src/components/InsalesLanding.astro`, тексты — `src/data/insales.ts`, цены пакетов берутся из калькулятора). Сайт на Astro, стиль — `docs/EMILIUS-DESIGN-SYSTEM.md`, цвета только из токенов. Для селлеров — отдельная версия первого экрана (раздел 3).
 
 Правила текста:
 - Без «уникальных решений» и «под ключ с душой».

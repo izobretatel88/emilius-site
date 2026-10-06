@@ -1,0 +1,354 @@
+---
+// Лендинг услуги «Магазин на шаблоне InSales». Две версии первого экрана: общая и для селлеров.
+import Base from '../layouts/Base.astro';
+import Logo from './Logo.astro';
+import Footer from './Footer.astro';
+import { LINKS } from '../data/site';
+import {
+  HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, CHANNELS,
+} from '../data/insales';
+
+interface Props {
+  variant: 'shop' | 'seller';
+}
+const { variant } = Astro.props;
+const hero = HERO[variant];
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const action = href('api/lead.php');
+const other = variant === 'shop'
+  ? { url: href('services/insales-shop/seller/'), text: 'Продаёте на WB или Ozon? Версия для селлеров →' }
+  : { url: href('services/insales-shop/'), text: 'Общая версия: соцсети, офлайн, переезд со старого сайта →' };
+// Селлеру первым показываем его пакет.
+const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
+---
+
+<Base title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`} description={hero.lead}>
+  <header class="top">
+    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
+  </header>
+
+  <main class="page">
+    <section class="card hero">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1>{hero.title}</h1>
+      <p class="lead">{hero.lead}</p>
+      <ul class="ticks">{hero.bullets.map((b) => <li>{b}</li>)}</ul>
+      <div class="cta-row">
+        <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
+        <p class="note">{CTA_NOTE}</p>
+      </div>
+      <a class="switch" href={other.url}>{other.text}</a>
+    </section>
+
+    <section class="card block" aria-labelledby="t-extras">
+      <h2 id="t-extras">Что обычно не пишут в предложениях — у нас входит в цену</h2>
+      <div class="grid2">
+        {EXTRAS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+      </div>
+    </section>
+
+    {variant === 'shop' && (
+      <section class="card block" aria-labelledby="t-sit">
+        <h2 id="t-sit">Узнаёте себя?</h2>
+        <div class="grid2">
+          {SITUATIONS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+        </div>
+      </section>
+    )}
+
+    <section class="card block" aria-labelledby="t-result">
+      <h2 id="t-result">Что получите</h2>
+      <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+    </section>
+
+    <section class="block plain" aria-labelledby="t-plans">
+      <h2 id="t-plans">Пакеты и цены</h2>
+      <div class="plans">
+        {plans.map((p, i) => (
+          <article class:list={['card', 'plan', { main: i === 0 && variant === 'seller' }]}>
+            <h3>{p.name}</h3>
+            <p class="who">{p.who}</p>
+            <p class="price num">{p.price}</p>
+            <p class="term">{p.term} · тариф {p.tariff}</p>
+            <ul class="dots">{p.items.map((it) => <li>{it}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+      <p class="small">{PLATFORM_NOTE}</p>
+      <p class="small">{NOT_INCLUDED}</p>
+    </section>
+
+    <div class="cols">
+      <section class="card block" aria-labelledby="t-accept">
+        <h2 id="t-accept">Магазин сдан, когда</h2>
+        <ol class="nums">{ACCEPTANCE.map((a) => <li>{a}</li>)}</ol>
+        <p class="small">Полный протокол — 12 проверок. Отдаём его вместе с магазином.</p>
+      </section>
+      <section class="card block" aria-labelledby="t-yours">
+        <h2 id="t-yours">Всё оформлено на вас</h2>
+        <p>Аккаунт InSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши.</p>
+        <h2 class="sub">Честно про трафик</h2>
+        <p>Сайт — касса и витрина, а не поток покупателей. До оплаты разберём, откуда придут первые 100 покупателей: подписчики, база клиентов, офлайн-точка, реклама. Если источника нет, скажем и предложим, с чего начать.</p>
+      </section>
+    </div>
+
+    <section class="card block" aria-labelledby="t-weeks">
+      <h2 id="t-weeks">Этапы</h2>
+      <ol class="weeks">
+        {WEEKS.map(([w, what, you]) => (
+          <li>
+            <span class="wk num">Неделя {w}</span>
+            <span class="what">{what}</span>
+            {you !== '—' && <span class="you">Вы видите: {you}</span>}
+          </li>
+        ))}
+      </ol>
+      <p class="small">Связь — в Telegram-чате проекта: менеджер отвечает в течение часа, с 11 до 19 по Москве.</p>
+    </section>
+
+    <section class="card block" aria-labelledby="t-choice">
+      <h2 id="t-choice">InSales, Tilda, Яндекс KIT или самому?</h2>
+      <dl class="choice">
+        {CHOICE.map(([c, a]) => <div><dt>{c}</dt><dd>{a}</dd></div>)}
+      </dl>
+    </section>
+
+    <section class="card block" aria-labelledby="t-faq">
+      <h2 id="t-faq">Частые вопросы</h2>
+      <div class="faq">
+        {FAQ.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+      </div>
+    </section>
+
+    <section class="card block lead-form" id="lead" aria-labelledby="t-lead">
+      <h2 id="t-lead">Посчитаем ваш магазин</h2>
+      <form method="post" action={action} novalidate>
+        <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
+        <label>Имя<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
+        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" /></label>
+        <fieldset>
+          <legend>Где продаёте сейчас</legend>
+          <div class="chips">
+            {CHANNELS.map((c, i) => (
+              <label class="chip"><input type="radio" name="channel" value={c} checked={variant === 'seller' ? i === 0 : undefined} /><span>{c}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <label>Сколько примерно товаров<input name="sku" type="text" inputmode="numeric" maxlength="20" /></label>
+        <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
+        <button class="cta" type="submit">Записаться на диагностику</button>
+        <p class="small">Ответим в течение часа в рабочее время и пришлём 2 вопроса, чтобы не тратить ваше время на созвон зря.</p>
+        <p class="status" role="status" aria-live="polite" hidden></p>
+        <p class="status" data-fail role="alert" hidden>
+          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#lead form');
+  if (form) {
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const ok = form.querySelector<HTMLElement>('.status:not([data-fail])')!;
+    const fail = form.querySelector<HTMLElement>('[data-fail]')!;
+    const contact = form.querySelector<HTMLInputElement>('[name=contact]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ok.hidden = fail.hidden = true;
+      if (!contact.value.trim()) {
+        ok.textContent = 'Оставьте Telegram или телефон — без него не ответим.';
+        ok.hidden = false;
+        contact.focus();
+        return;
+      }
+      // lead.php принимает message + contact: остальные поля собираем в текст сообщения.
+      const fd = new FormData(form);
+      const msg = form.querySelector<HTMLInputElement>('[name=message]')!.value;
+      fd.set('message', [msg, `Имя: ${fd.get('name') || '—'}`, `Где продаёт: ${fd.get('channel') || '—'}`, `Товаров: ${fd.get('sku') || '—'}`].join('\n'));
+      button.disabled = true;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (!res.ok || !data.ok) throw new Error(String(res.status));
+        form.reset();
+        ok.textContent = 'Спасибо! Напишем в течение часа в рабочее время.';
+        ok.hidden = false;
+      } catch {
+        fail.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .top { display: flex; justify-content: center; }
+  .logo-link { color: inherit; text-decoration: none; border-radius: var(--radius-card); }
+  .page {
+    width: 100%;
+    max-width: 860px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .hero { padding: 30px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow {
+    color: var(--teal-text);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
+  .lead { font-size: 18px; line-height: 1.5; color: var(--ink-2); max-width: 60ch; }
+  h2 { font-size: 22px; line-height: 1.2; }
+  h2.sub { font-size: 20px; margin-top: 8px; }
+  h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.25; }
+  ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .ticks li, .dots li { position: relative; padding-left: 18px; }
+  .ticks li::before, .dots li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 6px; }
+  .cta {
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 22px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--hover), opacity var(--hover);
+  }
+  .cta:hover { color: var(--on-teal); }
+  .cta:disabled { opacity: 0.6; cursor: wait; }
+  .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
+  .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
+  .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .block { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .block.plain { padding: 4px 0 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
+  .item { display: flex; flex-direction: column; gap: 6px; }
+  .item p { color: var(--ink-2); }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .plan { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .plan.main { border-color: var(--teal); }
+  .plan h3 { font-size: 20px; }
+  .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
+  .price { font-size: 24px; font-weight: 700; }
+  .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
+  .plan .dots { font-size: 15px; gap: 8px; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .nums { counter-reset: n; }
+  .nums li { counter-increment: n; position: relative; padding-left: 30px; }
+  .nums li::before {
+    content: counter(n);
+    position: absolute;
+    left: 0;
+    top: 0.05em;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    border: 1.5px solid var(--teal);
+    color: var(--teal-text);
+    font-size: 12px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+  }
+  .weeks { gap: 0; }
+  .weeks li {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 2px 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--hair);
+  }
+  .weeks li:first-child { border-top: 0; padding-top: 0; }
+  .wk { color: var(--teal-text); font-weight: 600; font-size: 14px; grid-row: span 2; padding-top: 1px; }
+  .you { font-size: 14px; color: var(--ink-2); }
+  .choice { margin: 0; display: flex; flex-direction: column; }
+  .choice div { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 10px 0; border-top: 1px solid var(--hair); }
+  .choice div:first-child { border-top: 0; padding-top: 0; }
+  .choice dt { color: var(--ink-2); }
+  .choice dd { margin: 0; font-weight: 600; }
+  .faq { display: flex; flex-direction: column; }
+  details { border-top: 1px solid var(--hair); padding: 12px 0; }
+  details:first-child { border-top: 0; padding-top: 0; }
+  summary { cursor: pointer; font-weight: 600; transition: color var(--hover); }
+  summary:hover { color: var(--teal-text); }
+  details p { margin-top: 8px; color: var(--ink-2); }
+  .lead-form { scroll-margin-top: 24px; }
+  form { display: flex; flex-direction: column; gap: 14px; }
+  form > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  legend { padding: 0; margin-bottom: 8px; }
+  input[type='text'] {
+    width: 100%;
+    height: 50px;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    transition: border-color var(--hover);
+  }
+  input[type='text']:hover, input[type='text']:focus { border-color: var(--teal); }
+  input[type='text']:focus-visible { outline: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { position: relative; }
+  .chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .chip span {
+    display: inline-block;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--input-border);
+    background: var(--input-bg);
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color var(--hover), color var(--hover);
+  }
+  .chip input:checked + span { border-color: var(--teal); color: var(--teal-text); font-weight: 600; }
+  .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
+  form .cta { align-self: flex-start; }
+  .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .status { font-size: 15px; }
+  @media (max-width: 760px) {
+    .plans { grid-template-columns: 1fr; }
+    .who { min-height: 0; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding: 24px 20px; }
+    .block { padding: 20px 18px 22px; }
+    .grid2, .cols { grid-template-columns: 1fr; }
+    .choice div { grid-template-columns: 1fr; gap: 2px; }
+    .weeks li { grid-template-columns: 1fr; }
+    .wk { grid-row: auto; }
+    .cta { width: 100%; }
+  }
+</style>
