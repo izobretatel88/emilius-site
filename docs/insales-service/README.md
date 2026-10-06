@@ -1,6 +1,6 @@
 # Услуга «Интернет-магазин на шаблоне InSales»
 
-Рабочая система: от поиска клиента до сдачи магазина. Версия 3 от 06.10.2026: тарифы и цены сверены с рынком, добавлены проверка файла импорта, проверка сайтов для проспектинга, протокол тестов и шортлист тем.
+Рабочая система: от поиска клиента до сдачи магазина. Версия 4 от 06.10.2026: КП и Заказ к договору собираются из сметы одной командой. Версия 3: тарифы сверены с рынком, проверка файла импорта, проверка сайтов для проспектинга, протокол тестов и шортлист тем.
 
 ## Карта работ
 
@@ -17,7 +17,8 @@
 | 8 | Каналы и проспектинг | `08-lead-gen.md`, `leads-template.csv` | v1, 8-недельный тест |
 | 9 | Исходящие сообщения | `09-outreach.md` | v1 |
 | 10 | Продажный диалог и возражения | `10-sales.md` | v1 |
-| 11 | Улучшение и калибровка | `11-improvement.md` | итерация 3 |
+| 11 | Улучшение и калибровка | `11-improvement.md` | итерация 4 |
+| — | КП и Заказ (приложение к договору) из сметы | `scripts/insales-kp.mjs`, примеры `templates/kp-example-seller.md`, `templates/order-example-seller.md` | работает, Заказ — после проверки юристом |
 | — | Протокол тестов и запуска, шортлист тем | `templates/qa-protocol.md`, `templates/theme-shortlist.md` | v1 |
 | — | Проверка файла товаров клиента → бриф | `scripts/insales-import-check.mjs` | работает |
 | — | Проверка сайтов для проспектинга → лиды | `scripts/insales-site-check.mjs` | работает, нужна сеть |
@@ -27,7 +28,7 @@
 ## Как пользоваться
 
 1. **Пришёл лид** → квалификация из 5 вопросов (`04-estimation.md`) → диагностика.
-2. **На диагностике** → файл товаров клиента через `insales-import-check.mjs` → бриф → `calculator.html` → «Скопировать смету» → КП.
+2. **На диагностике** → файл товаров клиента через `insales-import-check.mjs` → бриф → `calculator.html` или `insales-calc.mjs` → КП из `insales-kp.mjs` → после согласования опций — Заказ (`--order`).
 3. **Проект** → этапы `05-process.md`, задачи в Weeek с id из каталога, тесты и запуск — `templates/qa-protocol.md`.
 4. **После проекта** → факт часов в журнал калибровки (`11-improvement.md`).
 
@@ -36,6 +37,8 @@ node scripts/insales-calc.mjs              # 5 типовых сценариев
 node scripts/insales-calc.mjs -v           # с разбивкой по работам
 node scripts/insales-calc.mjs brief.json   # смета по брифу (поля — DEFAULT_BRIEF в calc/estimate.js)
 node scripts/insales-calc.mjs --html       # пересобрать calculator.html после правки CSV
+node scripts/insales-kp.mjs brief.json > КП.md            # КП: пакет, опции с ценами, не входит, бюджет первого года
+node scripts/insales-kp.mjs brief.json --order > Заказ.md # Заказ к договору: работы по id, оплата, приёмка, гарантия
 node scripts/insales-import-check.mjs товары.csv --brief brief.json   # проверка файла клиента + поля брифа
 node scripts/insales-site-check.mjs бренды.txt > лиды.csv          # проспектинг: сегмент, признак, повод
 python3 scripts/import-vnimnomic.py "<Задачи и подсчеты>.xlsx"   # обновить data/orders-hours.csv из новой выгрузки
