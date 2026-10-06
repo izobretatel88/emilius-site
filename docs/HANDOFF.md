@@ -20,6 +20,7 @@
 | Старый сайт на Tilda (ещё живой) | https://emilius.agency |
 | Дизайн-система | `docs/EMILIUS-DESIGN-SYSTEM.md`, токены — `src/styles/tokens.css` |
 | Холст Pencil | `design/system.pen` |
+| Услуга «магазин на InSales» (продукт, цены, калькулятор, скрипты продаж) | `sales/insales-shop/README.md` |
 | Шрифт Glober | `src/styles/fonts/` (woff2, 400/600/700/800), подключение — `src/styles/fonts.css`. Исходные TTF у владельца (`Font Glober.zip`), в репозиторий не кладём |
 
 ## Как устроен деплой

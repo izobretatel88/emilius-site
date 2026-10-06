@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Смета магазина InSales</title>
+<style>
+:root {
+  --bg: #f6f7f7; --card: #ffffff; --ink: #1d2221; --ink-2: #4a5150; --ink-3: #686d6c;
+  --line: #e2e6e5; --teal: #008385; --teal-soft: #e3f3f3; --warn: #9a5b00;
+  --r: 14px; --font: "Glober", "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121615; --card: #1b201f; --ink: #eef2f1; --ink-2: #c3cbc9; --ink-3: #808d8a;
+    --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121615; --card: #1b201f; --ink: #eef2f1; --ink-2: #c3cbc9; --ink-3: #808d8a;
+  --line: #2b3331; --teal: #2cb5b7; --teal-soft: #173233; --warn: #f0b35a;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--font); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; }
+.sub { color: var(--ink-3); margin: 0 0 20px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; }
+.pk { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--teal); background: transparent; color: var(--teal); padding: 7px 12px; transition: background .2s, color .2s; }
+button:hover, button.on { background: var(--teal); color: #fff; }
+fieldset { border: 0; margin: 0 0 14px; padding: 0; }
+legend { font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.q { display: grid; grid-template-columns: minmax(0, 1fr) 190px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.q label { color: var(--ink-2); }
+@media (max-width: 520px) { .q { grid-template-columns: 1fr; } }
+input[type=number], select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--teal); justify-self: start; }
+input:focus, select:focus, button:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+.res { position: sticky; top: 16px; }
+.total { font-size: 34px; font-weight: 800; color: var(--teal); }
+.range { color: var(--ink-3); font-size: 13px; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin: 12px 0; font-size: 14px; }
+.kv span:nth-child(even) { text-align: right; font-variant-numeric: tabular-nums; }
+.note { background: var(--teal-soft); border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-top: 10px; }
+.warn { color: var(--warn); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:last-child, td:nth-child(2) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+details summary { cursor: pointer; color: var(--teal); margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Смета интернет-магазина на InSales</h1>
+  <p class="sub">Ответы брифа → работы → часы → цена. Внутренний инструмент Emilius Agency. <span id="ver"></span></p>
+  <div class="grid">
+    <div class="card">
+      <div class="pk" id="packs"></div>
+      <form id="f"></form>
+    </div>
+    <div class="card res" id="out" aria-live="polite"></div>
+  </div>
+</div>
+<script type="module">
+/*MODEL*/
+
+const $ = (s) => document.querySelector(s);
+const rub = (x) => Math.round(x).toLocaleString('ru-RU') + ' ₽';
+const hrs = (x) => (Math.round(x * 100) / 100).toLocaleString('ru-RU');
+$('#ver').textContent = 'Модель ' + VERSION + '.';
+
+const f = $('#f');
+const groups = {};
+for (const b of BRIEF) (groups[b.group] ||= []).push(b);
+for (const [g, qs] of Object.entries(groups)) {
+  const fs = document.createElement('fieldset');
+  fs.innerHTML = `<legend>${g}</legend>`;
+  for (const b of qs) {
+    const row = document.createElement('div');
+    row.className = 'q';
+    let ctl;
+    if (b.type === 'choice') ctl = `<select id="${b.id}">${Object.entries(b.options).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>`;
+    else if (b.type === 'bool') ctl = `<input type="checkbox" id="${b.id}">`;
+    else ctl = `<input type="number" min="0" step="1" id="${b.id}">`;
+    row.innerHTML = `<label for="${b.id}">${b.q}</label>${ctl}`;
+    fs.appendChild(row);
+  }
+  f.appendChild(fs);
+}
+
+function set(values) {
+  for (const b of BRIEF) {
+    const el = document.getElementById(b.id);
+    const v = values[b.id] ?? b.def;
+    if (b.type === 'bool') el.checked = !!v; else el.value = v;
+  }
+  calc();
+}
+function read() {
+  const o = {};
+  for (const b of BRIEF) {
+    const el = document.getElementById(b.id);
+    o[b.id] = b.type === 'bool' ? el.checked : b.type === 'num' ? Number(el.value) : el.value;
+  }
+  return o;
+}
+
+const packs = $('#packs');
+for (const [k, p] of Object.entries(PACKAGES)) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = '«' + p.name + '»';
+  btn.title = p.who;
+  btn.onclick = () => { set({ ...defaults(), ...p.brief }); packs.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === btn)); };
+  packs.appendChild(btn);
+}
+const reset = document.createElement('button');
+reset.type = 'button'; reset.textContent = 'Сбросить';
+reset.onclick = () => { set(defaults()); packs.querySelectorAll('button').forEach((x) => x.classList.remove('on')); };
+packs.appendChild(reset);
+
+function calc() {
+  const e = estimate(read());
+  const mods = {};
+  for (const l of e.lines) {
+    const m = (mods[l.m] ||= { h: 0, c: 0 });
+    m.h += l.h; m.c += l.cost;
+  }
+  const roleRows = Object.entries(e.byRole).map(([r, h]) => `<span>${ROLES[r].name}</span><span>${hrs(h)} ч</span>`).join('');
+  const kp = [
+    'Смета: интернет-магазин на шаблоне InSales',
+    ...Object.entries(mods).map(([m, v]) => `— ${MODULES[m]}: ${hrs(v.h)} ч`),
+    `Итого работ: ${rub(e.total)} (коридор фикса ±30 %: ${rub(e.fixCorridor[0])}–${rub(e.fixCorridor[1])})`,
+    `Срок: около ${e.weeks} нед. при готовых материалах`,
+    `Оплата: 50 % перед стартом, 50 % после приёмки`,
+    `Отдельно оплачиваются: тариф InSales, приложения, эквайринг, касса, домен`,
+  ].join('\n');
+  $('#out').innerHTML = `
+    <div class="range">Работы Emilius, фикс</div>
+    <div class="total">${rub(e.total)}</div>
+    <div class="range">реалистичный разброс ${rub(e.min)} – ${rub(e.max)} · срок ~${e.weeks} нед.</div>
+    <div class="kv">
+      <span>Часы исполнителей</span><span>${hrs(e.hours)} ч</span>
+      <span>Стоимость по ставкам</span><span>${rub(e.cost)}</span>
+      <span>Срочность</span><span>+${Math.round(e.urgK * 100)} %</span>
+      <span>Риск (уровень ${e.risk})</span><span>+${Math.round(e.riskK * 100)} %</span>
+      <span>Материалы не готовы</span><span>+${Math.round(e.readinessK * 100)} %</span>
+      <span>Скидка за объём</span><span>−${Math.round(e.disc * 100)} %</span>
+      ${roleRows}
+    </div>
+    ${e.custom ? '<div class="note warn">Индивидуальный дизайн — это уже не «магазин на шаблоне». Считаем отдельным проектом дизайна, здесь его часы не учтены.</div>' : ''}
+    ${e.risk >= 2 ? '<div class="note warn">Высокий риск: нестандартная 1С или много интеграций. Предложить Этап 0 и формат «Нетиповая задача» для интеграции.</div>' : ''}
+    <div class="note">Этап 0 «Диагностика и план» — ${rub(STAGE0.price)}, засчитывается в проект при договоре в течение ${STAGE0.validDays} дней.</div>
+    <details><summary>Работы (${e.lines.length})</summary>
+      <table>${e.lines.map((l) => `<tr><td>${l.id} ${l.name}</td><td>${hrs(l.h)} ч</td><td>${rub(l.cost)}</td></tr>`).join('')}</table>
+    </details>
+    <details><summary>Платит клиент отдельно</summary>
+      <table>${PASS_THROUGH.map(([a, b]) => `<tr><td>${a}</td><td></td><td>${b}</td></tr>`).join('')}</table>
+    </details>
+    <p><button type="button" id="copy">Скопировать смету для клиента</button></p>`;
+  $('#copy').onclick = async () => {
+    try { await navigator.clipboard.writeText(kp); $('#copy').textContent = 'Скопировано'; }
+    catch { prompt('Скопируйте текст', kp); }
+  };
+}
+f.addEventListener('input', calc);
+set(defaults());
+</script>
+</body>
+</html>
