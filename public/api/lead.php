@@ -28,7 +28,11 @@ function reply(int $status, array $body): never
         echo json_encode($body, JSON_UNESCAPED_UNICODE);
     } else {
         // Без JavaScript форма уходит обычным POST — возвращаем человека на главную.
-        header('Location: /?sent=' . ($body['ok'] ? '1' : '0') . '#feedback', true, 303);
+        // Лендинг передаёт свой адрес в поле back — возвращаем туда, иначе на главную.
+        $back = (string)($_POST['back'] ?? '');
+        $back = preg_match('~^/[a-z0-9/_-]*$~', $back) && !str_starts_with($back, '//') ? $back : '/';
+        $anchor = $back === '/' ? '#feedback' : '#diag';
+        header('Location: ' . $back . '?sent=' . ($body['ok'] ? '1' : '0') . $anchor, true, 303);
     }
     exit;
 }
@@ -57,6 +61,21 @@ $clean = static function (string $s, int $max): string {
 $message = $clean((string)($_POST['message'] ?? ''), MAX_MESSAGE);
 $contact = $clean((string)($_POST['contact'] ?? ''), MAX_CONTACT);
 
+// Заявка на диагностику с лендинга InSales: текста нет, есть поля анкеты.
+$kind = $clean((string)($_POST['kind'] ?? ''), 40);
+$isInsales = str_starts_with($kind, 'insales-');
+if ($isInsales) {
+    if ($contact === '') {
+        reply(422, ['ok' => false, 'error' => 'empty']);
+    }
+    $message = implode("\n", array_filter([
+        'Версия: ' . ($kind === 'insales-seller' ? 'для селлеров' : 'общая'),
+        ($n = $clean((string)($_POST['name'] ?? ''), 100)) !== '' ? 'Имя: ' . $n : '',
+        'Где продаёт: ' . $clean((string)($_POST['channel'] ?? ''), 60),
+        'Товаров: ' . $clean((string)($_POST['sku'] ?? ''), 40),
+    ]));
+}
+
 if ($message === '') {
     reply(422, ['ok' => false, 'error' => 'empty']);
 }
@@ -83,7 +102,7 @@ if (!is_array($config) || empty($config['token']) || empty($config['chat_id'])) 
 }
 
 $page = $clean((string)($_SERVER['HTTP_REFERER'] ?? ''), 300);
-$text = "✉️ Обратная связь с сайта\n\n"
+$text = ($isInsales ? "🛒 Заявка на диагностику: магазин на InSales\n\n" : "✉️ Обратная связь с сайта\n\n")
     . $message . "\n\n"
     . '👤 ' . ($contact !== '' ? $contact : 'контакт не оставили')
     . ($page !== '' ? "\n🔗 " . $page : '');

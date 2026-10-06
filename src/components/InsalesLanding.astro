@@ -1,0 +1,592 @@
+---
+// Лендинг услуги «Интернет-магазин на InSales». Две версии первого экрана: общая и для селлеров.
+// Структура и тексты — docs/insales-service/07-landing.md.
+import Logo from './Logo.astro';
+import Footer from './Footer.astro';
+import { LINKS } from '../data/site';
+import { PROJECTS } from '../data/projects';
+import {
+  HERO, DIAG_NOTE, EXTRAS, SITUATIONS, RESULT, PACKS, PACK_NOTE, NOT_INCLUDED, OPTIONS,
+  ACCEPTANCE, WEEKS, COMPARE, FAQ, CHANNELS, SKU, INSALES_PATH,
+} from '../data/insales';
+
+interface Props {
+  variant: 'shop' | 'seller';
+}
+const { variant } = Astro.props;
+const hero = HERO[variant];
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const action = href('api/lead.php');
+// Магазины на InSales, которые делала команда. Цифры — только те, что есть в кейсах.
+const cases = ['wizzu', 'alohagaia', 'duman', 'geekboards'].map((id) => PROJECTS.find((p) => p.id === id)!).filter(Boolean);
+// Селлеру первым показываем его пакет.
+const packs = variant === 'seller' ? [PACKS[2], PACKS[0], PACKS[1]] : PACKS;
+const other = variant === 'seller'
+  ? { href: href(INSALES_PATH), text: 'Не продаёте на маркетплейсах? Общая версия' }
+  : { href: href(`${INSALES_PATH}seller/`), text: 'Продаёте на WB или Ozon? Версия для селлеров' };
+---
+
+<header class="top">
+  <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
+</header>
+
+<main class="page">
+  <section class="card hero">
+    <p class="eyebrow">{hero.eyebrow}</p>
+    <h1>{hero.title}</h1>
+    <p class="lead">{hero.lead}</p>
+    <ul class="ticks">{hero.bullets.map((b) => <li>{b}</li>)}</ul>
+    <div class="hero-cta">
+      <a class="btn" href="#diag">{hero.cta}</a>
+      <p class="small">{DIAG_NOTE}</p>
+    </div>
+    <a class="switch" href={other.href}>{other.text} →</a>
+  </section>
+
+  <section class="card block" aria-labelledby="t-extras">
+    <h2 id="t-extras">Что обычно не пишут в предложениях — у нас входит в цену</h2>
+    <div class="grid2">
+      {EXTRAS.map((e) => <div class="item"><h3>{e.t}</h3><p>{e.d}</p></div>)}
+    </div>
+  </section>
+
+  <section class="card block" aria-labelledby="t-sit">
+    <h2 id="t-sit">Узнаёте себя?</h2>
+    <div class="grid2">
+      {SITUATIONS.map((s) => <div class="item"><h3>{s.t}</h3><p>{s.d}</p></div>)}
+    </div>
+  </section>
+
+  <section class="card block" aria-labelledby="t-result">
+    <h2 id="t-result">Что получите</h2>
+    <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+  </section>
+
+  <section class="block plain" aria-labelledby="t-packs">
+    <h2 id="t-packs">Пакеты и цены</h2>
+    <div class="packs">
+      {packs.map((p, i) => (
+        <article class:list={['card', 'pack', { first: i === 0 }]}>
+          <h3>{p.name}</h3>
+          <p class="who">{p.who}</p>
+          <p class="price">{p.price}</p>
+          <p class="term">{p.term}</p>
+          <ul class="dots">{p.items.map((it) => <li>{it}</li>)}</ul>
+          <p class="tariff">{p.tariff}</p>
+        </article>
+      ))}
+    </div>
+    <p class="note">Во все пакеты входят домен, документы по 152-ФЗ, уведомления о заказах, базовое SEO, протокол тестовых заказов, обучение и 60 дней гарантии. Итог — по смете после диагностики, ниже «от» не опускается.</p>
+    <p class="note">{PACK_NOTE}</p>
+    <p class="note">{NOT_INCLUDED}</p>
+  </section>
+
+  <section class="card block" aria-labelledby="t-opt">
+    <h2 id="t-opt">Что можно добавить</h2>
+    <dl class="opts">
+      {OPTIONS.map((o) => <div><dt>{o.t}</dt><dd>{o.p}</dd></div>)}
+    </dl>
+  </section>
+
+  <div class="cols">
+    <section class="card block" aria-labelledby="t-accept">
+      <h2 id="t-accept">Магазин сдан, когда</h2>
+      <ol class="steps">{ACCEPTANCE.map((a) => <li>{a}</li>)}</ol>
+      <p class="small">Полный протокол — 12 проверок. Отдаём его вместе с магазином.</p>
+    </section>
+    <section class="card block" aria-labelledby="t-weeks">
+      <h2 id="t-weeks">Этапы</h2>
+      <ol class="weeks">
+        {WEEKS.map((w) => (
+          <li><span class="wk">Неделя <span class="num">{w.w}</span></span><span>{w.what}</span><span class="see">{w.see}</span></li>
+        ))}
+      </ol>
+      <p class="small">Связь — в Telegram-чате проекта: менеджер отвечает в течение часа, с 11 до 19 по Москве.</p>
+    </section>
+  </div>
+
+  <div class="cols">
+    <section class="card block" aria-labelledby="t-own">
+      <h2 id="t-own">Всё оформлено на вас</h2>
+      <p>Аккаунт InSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши. Если захотите работать с другим подрядчиком, ничего не придётся забирать.</p>
+    </section>
+    <section class="card block" aria-labelledby="t-traffic">
+      <h2 id="t-traffic">Честно про трафик</h2>
+      <p>Сайт — это касса и витрина, а не поток покупателей. До оплаты разберём, откуда придут первые 100 покупателей: подписчики, база клиентов, офлайн-точка, брендовые запросы, реклама. Если источника нет, скажем об этом и предложим, с чего начать.</p>
+    </section>
+  </div>
+
+  <section class="card block" aria-labelledby="t-cases">
+    <h2 id="t-cases">Магазины на InSales, которые мы делали</h2>
+    <ul class="cases">
+      {cases.map((p) => (
+        <li>
+          <a href={p.url} target="_blank" rel="noopener" class="case">
+            <img src={href(p.shot)} alt={`Первый экран сайта ${p.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+            <span>{p.about}</span>
+            <span class="case-link">{p.domain} ↗</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="card block" aria-labelledby="t-cmp">
+    <h2 id="t-cmp">InSales, Tilda, Яндекс KIT или самому?</h2>
+    <dl class="opts">
+      {COMPARE.map((c) => <div><dt>{c.if}</dt><dd>{c.fit}</dd></div>)}
+    </dl>
+  </section>
+
+  <section class="card block" aria-labelledby="t-faq">
+    <h2 id="t-faq">Частые вопросы</h2>
+    <div class="faq">
+      {FAQ.map((f) => (
+        <details><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+  </section>
+
+  <section class="card block diag" id="diag" aria-labelledby="t-diag">
+    <h2 id="t-diag">Посчитаем ваш магазин</h2>
+    <form method="post" action={action} novalidate>
+      <input type="hidden" name="kind" value={`insales-${variant}`} />
+      <input type="hidden" name="back" value={`/${INSALES_PATH}${variant === 'seller' ? 'seller/' : ''}`} />
+      <div class="fields">
+        <label>Имя<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
+        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" /></label>
+        <label>Где продаёте сейчас
+          <select name="channel">
+            {CHANNELS.map((c, i) => <option selected={variant === 'seller' ? i === 0 : i === 1}>{c}</option>)}
+          </select>
+        </label>
+        <label>Сколько примерно товаров
+          <select name="sku">{SKU.map((s, i) => <option selected={i === 1}>{s}</option>)}</select>
+        </label>
+      </div>
+      <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
+      <button class="btn" type="submit"><span class="label">Записаться на диагностику</span></button>
+      <p class="small">Ответим в течение часа в рабочее время. Пришлём 2 вопроса, чтобы не тратить ваше время на созвон зря.</p>
+      <p class="status" role="status" aria-live="polite" hidden></p>
+      <p class="status status-error" role="alert" hidden>
+        Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
+      </p>
+    </form>
+  </section>
+</main>
+
+<Footer />
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#diag form');
+  if (form) {
+    const contact = form.querySelector<HTMLInputElement>('input[name=contact]')!;
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const label = button.querySelector('.label')!;
+    const ok = form.querySelector<HTMLElement>('.status:not(.status-error)')!;
+    const fail = form.querySelector<HTMLElement>('.status-error')!;
+    const show = (el: HTMLElement | null, text?: string) => {
+      ok.hidden = fail.hidden = true;
+      if (!el) return;
+      if (text) el.textContent = text;
+      el.hidden = false;
+    };
+    // После отправки без JavaScript lead.php возвращает сюда с ?sent=1
+    const sent = new URLSearchParams(location.search).get('sent');
+    if (sent === '1') show(ok, 'Спасибо! Заявка у нас, ответим в течение часа.');
+    if (sent === '0') show(fail);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!contact.value.trim()) {
+        show(ok, 'Оставьте Telegram или телефон — по нему и ответим.');
+        contact.focus();
+        return;
+      }
+      button.disabled = true;
+      label.textContent = 'Отправляем…';
+      show(null);
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
+        form.reset();
+        show(ok, 'Спасибо! Заявка у нас, ответим в течение часа.');
+      } catch {
+        show(fail);
+      } finally {
+        button.disabled = false;
+        label.textContent = 'Записаться на диагностику';
+      }
+    });
+  }
+</script>
+
+<style>
+  .top {
+    display: flex;
+    justify-content: center;
+  }
+  .logo-link {
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+  }
+  .page {
+    width: 100%;
+    max-width: 880px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .hero {
+    padding: 30px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .eyebrow {
+    color: var(--teal-text);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(28px, 4.6vw, 40px);
+    line-height: 1.15;
+    max-width: 22ch;
+  }
+  .lead {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 58ch;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    padding-top: 4px;
+  }
+  .switch {
+    color: var(--teal-text);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    align-self: flex-start;
+  }
+  .switch:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .btn {
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 22px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--hover);
+  }
+  .btn:hover {
+    color: var(--on-teal);
+  }
+  .btn:disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+  .small {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .block {
+    padding: 22px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .block.plain {
+    padding: 0;
+  }
+  .block h2 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .block p {
+    line-height: 1.5;
+  }
+  h3 {
+    font-size: 17px;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 24px;
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .item p {
+    color: var(--ink-2);
+    font-size: 15.5px;
+  }
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dots li,
+  .ticks li {
+    position: relative;
+    padding-left: 18px;
+  }
+  .dots li::before,
+  .ticks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  .ticks {
+    gap: 6px;
+  }
+  .packs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .pack {
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .pack.first {
+    border-color: var(--teal);
+  }
+  .pack h3 {
+    font-size: 20px;
+  }
+  .who,
+  .term,
+  .tariff {
+    color: var(--ink-2);
+    font-size: 14.5px;
+  }
+  .price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--teal-num);
+  }
+  .tariff {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--hair);
+  }
+  .note {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .opts {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .opts div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .opts div:last-child {
+    border-bottom: 0;
+  }
+  .opts dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .steps {
+    counter-reset: s;
+  }
+  .steps li {
+    counter-increment: s;
+    position: relative;
+    padding-left: 30px;
+  }
+  .steps li::before {
+    content: counter(s);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 700;
+    color: var(--teal-num);
+  }
+  .weeks li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .wk {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+  }
+  .see {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 16px;
+  }
+  .case {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 14.5px;
+    line-height: 1.4;
+  }
+  .case img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--hair);
+    background: var(--well);
+  }
+  .case-link {
+    color: var(--teal-text);
+    font-weight: 600;
+  }
+  .case:hover .case-link {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .faq details {
+    border-bottom: 1px solid var(--hair);
+    padding: 12px 0;
+  }
+  .faq details:last-child {
+    border-bottom: 0;
+  }
+  .faq summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .faq details p {
+    padding-top: 8px;
+    color: var(--ink-2);
+  }
+  .diag form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .fields input,
+  .fields select {
+    min-height: 46px;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--hover);
+  }
+  .fields input:focus-visible,
+  .fields select:focus-visible {
+    outline: none;
+    border-color: var(--teal);
+  }
+  .diag .btn {
+    align-self: flex-start;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+  }
+  .status-error a {
+    color: var(--teal-text);
+  }
+  @media (max-width: 760px) {
+    .packs {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .grid2,
+    .cols,
+    .fields {
+      grid-template-columns: 1fr;
+    }
+    .hero,
+    .block:not(.plain) {
+      padding-inline: 18px;
+    }
+    .diag .btn,
+    .hero-cta .btn {
+      align-self: stretch;
+      width: 100%;
+      text-align: center;
+    }
+    .opts div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .opts dd {
+      text-align: left;
+      color: var(--teal-text);
+    }
+  }
+</style>
