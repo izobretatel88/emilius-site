@@ -1,0 +1,6 @@
+{
+  "title": "Пример: Старт — бренд из соцсетей, 40 товаров",
+  "segment": "B", "sku": 40, "categories": 5, "variants": true, "source": "excel",
+  "content": "ready", "domain": "buy", "payments": ["card"], "delivery": ["cdek", "pickup"],
+  "hasAudience": true, "repeat": true
+}

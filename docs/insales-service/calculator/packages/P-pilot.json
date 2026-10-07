@@ -1,0 +1,3 @@
+{ "title": "Пакет «Пилот» — граница пакета",
+  "segment": "B", "sku": 20, "categories": 5, "variants": false, "source": "none", "content": "ready", "domain": "have",
+  "payments": ["card"], "delivery": ["courier", "pickup"], "banners": 0, "homeBlocks": 6, "params": 3, "collections": 1, "infoPages": 3 }

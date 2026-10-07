@@ -1,0 +1,4 @@
+{ "title": "Пакет «Магазин с учётом» — граница пакета (МойСклад)",
+  "segment": "C", "sku": 3000, "categories": 40, "variants": true, "accounting": "moysklad", "content": "ready", "domain": "have", "mail": true, "staff": 3,
+  "payments": ["card", "cod"], "delivery": ["cdek", "courier", "pickup"], "pickupPoints": 2, "freeShipping": true,
+  "marketplaces": ["ozon"], "mpPrices": false, "mpOrders": true, "yandexFeed": true, "analytics": "ecom", "repeat": true, "params": 10 }

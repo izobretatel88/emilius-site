@@ -1,0 +1,8 @@
+{
+  "title": "Калибровка: зоомагазин с 1С, ~2000 SKU (бюджет запуска клиента 80–120 тыс. без SEO-проектирования)",
+  "segment": "C", "sku": 2000, "categories": 60, "variants": true, "dataQuality": "dirty",
+  "content": "partial", "domain": "have", "mail": false, "staff": 3,
+  "payments": ["card", "cod"], "delivery": ["courier", "pickup", "cdek"], "pickupPoints": 2,
+  "accounting": "1c", "ordersTo1c": true, "analytics": "ecom", "repeat": true, "loyalty": true,
+  "params": 10, "photosPerSku": 1
+}

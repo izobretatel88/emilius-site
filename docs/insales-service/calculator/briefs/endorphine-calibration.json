@@ -1,0 +1,6 @@
+{
+  "title": "Калибровка: MVP Endorphine (факт 25 ч, 20 карточек вручную)",
+  "segment": "C", "sku": 20, "categories": 5, "variants": false, "source": "none",
+  "content": "ready", "domain": "have", "payments": ["card"], "delivery": ["courier", "pickup"],
+  "banners": 0, "homeBlocks": 6, "params": 3, "collections": 1, "infoPages": 3
+}

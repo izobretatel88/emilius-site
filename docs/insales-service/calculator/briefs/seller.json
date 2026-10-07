@@ -1,0 +1,8 @@
+{
+  "title": "Пример: Маркетплейс + сайт — бренд текстиля, 300 SKU на WB и Ozon",
+  "segment": "A", "sku": 300, "categories": 18, "variants": true, "source": "mp", "dataQuality": "clean",
+  "content": "ready", "domain": "buy", "mail": true, "staff": 2,
+  "payments": ["card", "cod"], "delivery": ["cdek", "pochta", "pickup"], "freeShipping": true,
+  "marketplaces": ["wb", "ozon"], "mpPrices": true, "mpOrders": true, "yandexFeed": true,
+  "analytics": "ecom", "repeat": true, "hasAudience": false
+}
