@@ -1,0 +1,1 @@
+{ "name": "Минимум — 20 товаров вручную, без интеграций", "segment": "B", "sku": 20, "categories": 4, "properties": 3, "source": "manual", "theme": "free", "online_payment": true, "delivery_services": 1, "materials_ready": "yes" }
