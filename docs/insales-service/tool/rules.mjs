@@ -28,7 +28,7 @@ export const PACKAGES = [
     limits: { sku: 500, categories: 40, integrations: 0 }, includes: SHOP },
   { id: 'sync', name: 'Магазин + синхронизация', price: 169000, days: '20–30 рабочих дней',
     limits: { sku: 1000, categories: 60, integrations: 2 },
-    includes: { ...SHOP, Z01: 1, Z02: 1, Z03: 1, Z04: 1, Z05: 1, Z06: 1, K08: 10, MP1: 2, MP2: 10, MP3: 2,
+    includes: { ...SHOP, Z01: 1, Z02: 1, Z03: 1, Z04: 1, Z05: 1, Z06: 1, K02: 4, K08: 10, MP1: 2, MP2: 10, MP3: 2,
       MS1: 1, MS2: 1, MS3: 1, MS4: 1, MS5: 1, MS6: 1, MS7: 1, MS8: 1 } },
 ];
 // В пакет не помещаются: 1С, переезд, семантика, МойСклад вместе с площадками.
