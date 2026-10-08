@@ -1,0 +1,3 @@
+{ "client": "Магазин одежды на Tilda: 400 товаров, переезд с сохранением поиска", "sku": 400, "categories": 20, "properties": 10, "variants": true,
+  "source": "oldsite", "dataQuality": "partial", "payments": 1, "sbp": true, "carriers": 2, "banners": 3, "extraPages": 4,
+  "smallTweaks": 4, "migration": { "urls": 600, "articles": 10, "customers": true, "export": true }, "ecommerce": true, "feed": true }

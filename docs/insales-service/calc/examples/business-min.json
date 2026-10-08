@@ -1,0 +1,2 @@
+{ "client": "Минимальный «Бизнес»: 300 товаров в МойСклад", "sku": 300, "categories": 15, "properties": 8, "variants": true,
+  "source": "moysklad", "accounting": "moysklad", "payments": 1, "carriers": 1 }

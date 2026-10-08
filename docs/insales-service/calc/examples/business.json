@@ -1,0 +1,4 @@
+{ "client": "Зоомагазин: 2000 товаров в 1С, 2 точки, курьер по городу", "sku": 2000, "categories": 45, "properties": 14, "variants": true,
+  "source": "1c", "accounting": "1c", "ordersTo1c": true, "payments": 1, "sbp": true, "cod": true,
+  "pickupPoints": 2, "courier": true, "carriers": 1, "banners": 4, "extraPages": 3, "smallTweaks": 5, "newBlocks": 1,
+  "domainMail": true, "localSeo": true, "seo": "core", "seoTexts": 10, "bonuses": true, "reviews": true, "approvers": 2 }

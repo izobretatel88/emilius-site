@@ -1,0 +1,2 @@
+{ "client": "Минимальный «Экспресс»: 20 товаров для старта, остальное клиент сам", "package": "express", "sku": 20, "categories": 5, "properties": 3,
+  "source": "table", "dataQuality": "ready", "payments": 1, "carriers": 1 }

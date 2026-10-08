@@ -1,0 +1,3 @@
+{ "client": "Бренд косметики: 60 товаров, своя таблица, продажи из соцсетей", "sku": 60, "categories": 8, "properties": 6, "variants": true,
+  "source": "table", "dataQuality": "partial", "descriptions": 20, "payments": 1, "sbp": true, "carriers": 2,
+  "banners": 2, "extraPages": 2, "smallTweaks": 2, "bonuses": true }

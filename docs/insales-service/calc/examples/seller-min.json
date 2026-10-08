@@ -1,0 +1,2 @@
+{ "client": "Минимальный «Селлер»: 50 товаров, одна площадка", "sku": 50, "categories": 6, "properties": 5, "variants": true,
+  "source": "marketplace", "dataQuality": "ready", "marketplaces": ["wb"], "payments": 1, "carriers": 1 }
