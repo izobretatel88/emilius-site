@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Калькулятор магазина InSales</title>
+<style>
+  :root { --bg: #f7f8f8; --card: #fff; --ink: #1f2423; --ink-2: #4d5352; --line: #dfe3e2; --accent: #008385; --soft: #e6f4f4; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #141817; --card: #1d2221; --ink: #eef2f1; --ink-2: #a9b3b1; --line: #33403d; --accent: #2bb5b7; --soft: #1b3333; } }
+  :root[data-theme="dark"] { --bg: #141817; --card: #1d2221; --ink: #eef2f1; --ink-2: #a9b3b1; --line: #33403d; --accent: #2bb5b7; --soft: #1b3333; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { main { grid-template-columns: 420px minmax(0, 1fr); align-items: start; } aside { position: sticky; top: 16px; } }
+  h1 { font-size: 22px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 18px 0 8px; } p.sub { color: var(--ink-2); margin: 0 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  fieldset { border: 0; padding: 0; margin: 0 0 6px; }
+  legend { font-weight: 700; margin: 12px 0 6px; color: var(--accent); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  label { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 5px 0; color: var(--ink); }
+  label span { flex: 1; } label small { color: var(--ink-2); display: block; }
+  input[type=number] { width: 84px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+  select { max-width: 190px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+  input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--accent); }
+  .big { font-size: 30px; font-weight: 800; } .muted { color: var(--ink-2); }
+  .offer { background: var(--soft); border-radius: 12px; padding: 14px; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; } td, th { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  td.n, th.n { text-align: right; white-space: nowrap; } .scroll { overflow-x: auto; }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <section class="card">
+    <h1>Калькулятор магазина на InSales</h1>
+    <p class="sub">Ответы из брифа → объём работ → часы → цена. Нормативы: <code>tool/works.mjs</code>.</p>
+    <form id="f">
+      <fieldset><legend>Этап 0</legend>
+        <label><span>Этап 0 «Диагностика и план запуска»<small>Селлерам и тем, кто сомневается, — всегда</small></span><input type="checkbox" name="stage0"></label>
+      </fieldset>
+      <fieldset><legend>Каталог</legend>
+        <label><span>Товаров (SKU)</span><input type="number" name="sku" value="50" min="0"></label>
+        <label><span>Категорий</span><input type="number" name="categories" value="8" min="0"></label>
+        <label><span>Варианты (размер, цвет)</span><select name="variants"><option value="none">нет</option><option value="some">у части</option><option value="all">у всех</option></select></label>
+        <label><span>Откуда товары</span><select name="source"><option value="table">таблица</option><option value="manual">заводим вручную</option><option value="mp">Wildberries / Ozon</option><option value="moysklad">МойСклад</option><option value="1c">1С</option><option value="oldsite">старый сайт</option></select></label>
+        <label><span>Фото готовы (единый формат)</span><input type="checkbox" name="photosReady" checked></label>
+        <label><span>Описания готовы</span><input type="checkbox" name="descriptionsReady" checked></label>
+        <label><span>Складов / точек</span><input type="number" name="warehouses" value="1" min="1"></label>
+        <label><span>Оптовые цены, B2B</span><input type="checkbox" name="b2b"></label>
+        <label><span>Промокоды, бонусы</span><input type="checkbox" name="promo"></label>
+      </fieldset>
+      <fieldset><legend>Заказ</legend>
+        <label><span>Способов онлайн-оплаты</span><input type="number" name="payments" value="1" min="1"></label>
+        <label><span>Служб доставки с расчётом</span><input type="number" name="deliveries" value="1" min="1"></label>
+      </fieldset>
+      <fieldset><legend>Учёт и маркетплейсы</legend>
+        <label><span>Учёт</span><select name="accounting"><option value="none">нет / таблицы</option><option value="moysklad">МойСклад</option><option value="1c">1С</option></select></label>
+        <label><span>Заказы сайта — в учёт</span><input type="checkbox" name="orders1c" checked></label>
+        <label><span>Площадок для синхронизации</span><input type="number" name="marketplaces" value="0" min="0" max="4"></label>
+      </fieldset>
+      <fieldset><legend>Дизайн и шаблон</legend>
+        <label><span>Есть брендбук</span><input type="checkbox" name="brandbook"></label>
+        <label><span>Баннеров</span><input type="number" name="banners" value="1" min="0"></label>
+        <label><span>Доп. страниц</span><input type="number" name="extraPages" value="0" min="0"></label>
+        <label><span>Мелких правок шаблона<small>CSS/Liquid</small></span><input type="number" name="cssFixes" value="0" min="0"></label>
+        <label><span>Нестандартных блоков<small>макет + вёрстка</small></span><input type="number" name="customBlocks" value="0" min="0"></label>
+        <label><span>Таблица размеров</span><input type="checkbox" name="sizeTable"></label>
+      </fieldset>
+      <fieldset><legend>Маркетинг и аналитика</legend>
+        <label><span>CRM</span><input type="checkbox" name="crm"></label>
+        <label><span>Телефония</span><input type="checkbox" name="telephony"></label>
+        <label><span>Email-рассылки</span><input type="checkbox" name="email"></label>
+        <label><span>Брошенная корзина, повтор</span><input type="checkbox" name="emailTriggers"></label>
+        <label><span>Реклама: фиды и пиксели</span><input type="checkbox" name="ads"></label>
+        <label><span>Офлайн-точка (Карты, 2ГИС)</span><input type="checkbox" name="offline"></label>
+        <label><span>E-commerce в Метрике</span><input type="checkbox" name="ecommerce"></label>
+        <label><span>Отчёт первых 30 дней</span><input type="checkbox" name="report30"></label>
+      </fieldset>
+      <fieldset><legend>SEO и переезд</legend>
+        <label><span>SEO</span><select name="seo"><option value="base">базовое</option><option value="semantic">семантика и структура</option></select></label>
+        <label><span>Локальное SEO</span><input type="checkbox" name="local"></label>
+        <label><span>Переезд со старого сайта</span><input type="checkbox" name="migration"></label>
+        <label><span>URL старого сайта в индексе</span><input type="number" name="oldUrls" value="0" min="0"></label>
+        <label><span>Статей/страниц для переноса</span><input type="number" name="oldPages" value="0" min="0"></label>
+        <label><span>Перенос клиентов и заказов</span><input type="checkbox" name="oldCustomers"></label>
+      </fieldset>
+      <fieldset><legend>Сроки</legend>
+        <label><span>Срочно (быстрее нормы)<small>×1,3</small></span><input type="checkbox" name="urgent"></label>
+      </fieldset>
+    </form>
+  </section>
+  <aside class="card" id="out" aria-live="polite"></aside>
+</main>
+<script type="module">
+/*__ENGINE__*/
+
+const form = document.getElementById('f');
+const out = document.getElementById('out');
+const rub = (n) => Math.round(n).toLocaleString('ru-RU') + ' ₽';
+const hh = (n) => (+n.toFixed(1)).toLocaleString('ru-RU') + ' ч';
+
+function brief() {
+  const b = {};
+  for (const el of form.elements) {
+    if (!el.name) continue;
+    if (el.type === 'checkbox') b[el.name] = el.checked;
+    else if (el.type === 'number') b[el.name] = +el.value || 0;
+    else b[el.name] = el.value;
+  }
+  return b;
+}
+
+function render() {
+  const b = brief();
+  const e = estimate(b);
+  const p = e.package;
+  const rows = e.lines.map((l) => `<tr><td>${l.code}</td><td>${l.name}</td><td class="n">${+l.qty.toFixed(2)} × ${l.unit}</td><td class="n">${hh(l.hours)}</td><td class="n">${rub(l.cost)}</td></tr>`).join('');
+  out.innerHTML = `
+    <div class="muted">Цена для клиента</div>
+    <div class="big">${rub(p ? p.quote : e.total)}</div>
+    <div class="offer">${p
+      ? `<b>Пакет «${p.name}» ${rub(p.price)}</b> + допработы ${rub(p.quote - p.price)}<br><span class="muted">${p.extras.map((l) => `${l.name} — ${rub(l.extraCost)}`).join('; ') || 'всё в составе пакета'}</span>`
+      : '<b>Индивидуальная смета</b><br><span class="muted">1С, переезд, семантика или объём сверх пакетов — цена по смете ниже.</span>'}</div>
+    <p>Смета: <b>${rub(e.total)}</b> · ${hh(e.hoursTotal)} (худший случай ${hh(e.worstHours)})<br>
+    Сложность ${e.level}, резерв ${rub(e.risk)} · срок ~${e.workDays} рабочих дней</p>
+    <button type="button" id="copy">Скопировать бриф (JSON)</button>
+    <h2>Состав работ</h2>
+    <div class="scroll"><table><thead><tr><th>Код</th><th>Работа</th><th class="n">Объём</th><th class="n">Часы</th><th class="n">Сумма</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  document.getElementById('copy').onclick = () => navigator.clipboard?.writeText(JSON.stringify(b, null, 2));
+}
+form.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
