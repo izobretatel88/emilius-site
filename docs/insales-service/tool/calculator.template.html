@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Калькулятор магазина InSales</title>
 <style>
-  :root { --bg: #f7f8f8; --card: #fff; --ink: #1f2423; --ink-2: #4d5352; --line: #dfe3e2; --accent: #008385; --soft: #e6f4f4; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #141817; --card: #1d2221; --ink: #eef2f1; --ink-2: #a9b3b1; --line: #33403d; --accent: #2bb5b7; --soft: #1b3333; } }
-  :root[data-theme="dark"] { --bg: #141817; --card: #1d2221; --ink: #eef2f1; --ink-2: #a9b3b1; --line: #33403d; --accent: #2bb5b7; --soft: #1b3333; }
+  /* Цвета — из src/styles/tokens.css сайта: фон страницы, карточка, чернила, бирюза кнопок и текста. */
+  :root { --bg: #f7f7f7; --card: #fefefe; --ink: #000000; --ink-2: #5a5a5a; --line: #e6e8e8; --accent: #008385; --btn: #008385; --soft: #e8f4f4; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0e1413; --card: #151c1b; --ink: #eef3f2; --ink-2: #a3b0ad; --line: #1f2a28; --accent: #3cc6c6; --btn: #008385; --soft: #13302f; color-scheme: dark; } }
+  :root[data-theme="dark"] { --bg: #0e1413; --card: #151c1b; --ink: #eef3f2; --ink-2: #a3b0ad; --line: #1f2a28; --accent: #3cc6c6; --btn: #008385; --soft: #13302f; color-scheme: dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 'Glober', Arial, system-ui, sans-serif; }
   main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
   @media (min-width: 900px) { main { grid-template-columns: 420px minmax(0, 1fr); align-items: start; } aside { position: sticky; top: 16px; } }
   h1 { font-size: 22px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 18px 0 8px; } p.sub { color: var(--ink-2); margin: 0 0 12px; }
@@ -24,8 +25,8 @@
   .big { font-size: 30px; font-weight: 800; } .muted { color: var(--ink-2); }
   .offer { background: var(--soft); border-radius: 12px; padding: 14px; margin: 12px 0; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; } td, th { padding: 5px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  td.n, th.n { text-align: right; white-space: nowrap; } .scroll { overflow-x: auto; }
-  button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
+  td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; } .scroll { overflow-x: auto; }
+  button { background: var(--btn); color: #fff; border: 0; border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
   button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
 </head>
@@ -124,9 +125,16 @@ function render() {
     <p>Смета: <b>${rub(e.total)}</b> · ${hh(e.hoursTotal)} (худший случай ${hh(e.worstHours)})<br>
     Сложность ${e.level}, резерв ${rub(e.risk)} · срок ~${e.workDays} рабочих дней</p>
     <button type="button" id="copy">Скопировать бриф (JSON)</button>
+    <textarea id="json" hidden rows="6" style="width:100%;margin-top:8px" aria-label="Бриф в JSON"></textarea>
     <h2>Состав работ</h2>
     <div class="scroll"><table><thead><tr><th>Код</th><th>Работа</th><th class="n">Объём</th><th class="n">Часы</th><th class="n">Сумма</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  document.getElementById('copy').onclick = () => navigator.clipboard?.writeText(JSON.stringify(b, null, 2));
+  const btn = document.getElementById('copy');
+  btn.onclick = () => {
+    const text = JSON.stringify(b, null, 2);
+    const done = () => { btn.textContent = 'Бриф скопирован'; };
+    const fallback = () => { const t = document.getElementById('json'); t.hidden = false; t.value = text; t.select(); btn.textContent = 'Скопируйте бриф из поля ниже'; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch { fallback(); }
+  };
 }
 form.addEventListener('input', render);
 render();

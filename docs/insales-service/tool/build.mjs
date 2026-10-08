@@ -40,5 +40,10 @@ writeFileSync(out('05-price-list.md'), md.join('\n'));
 // Калькулятор: исходники модулей встраиваются в страницу как есть, без import/export.
 const strip = (f) => readFileSync(new URL(f, here), 'utf8').replace(/^import .*$/gm, '').replace(/^export /gm, '');
 const tpl = readFileSync(new URL('calculator.template.html', here), 'utf8');
-writeFileSync(out('calculator.html'), tpl.replace('/*__ENGINE__*/', () => strip('works.mjs') + '\n' + strip('rules.mjs')));
+const page = tpl.replace('/*__ENGINE__*/', () => strip('works.mjs') + '\n' + strip('rules.mjs'));
+writeFileSync(out('calculator.html'), page);
+// Версия для публикации ссылкой (Artifact): без обёртки документа, её добавляет хостинг.
+writeFileSync(out('data/calculator-artifact.html'), page
+  .replace(/<!doctype html>\s*<html[^>]*>\s*<head>/i, '').replace(/<meta charset[^>]*>\s*<meta name="viewport"[^>]*>/, '')
+  .replace(/<\/head>\s*<body>/, '').replace(/<\/body>\s*<\/html>\s*$/, '\n'));
 console.log('works.csv, 05-price-list.md, calculator.html — собраны;', WORKS.length, 'работ');
