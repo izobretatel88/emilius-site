@@ -1,0 +1,489 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Footer from '../components/Footer.astro';
+import { LINKS } from '../data/site';
+import { PROJECTS } from '../data/projects';
+import {
+  HERO,
+  SITUATIONS,
+  RESULT,
+  PACKAGES,
+  DIAGNOSTIC,
+  INCLUDED,
+  MODULES,
+  STEPS,
+  YEAR_COST,
+  NOT_FOR,
+  FAQ,
+  FINAL_CTA,
+} from '../data/insales';
+
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const cases = ['wizzu', 'alohagaia', 'geekboards'].map((id) => PROJECTS.find((p) => p.id === id)).filter(Boolean);
+---
+
+<Base title="Магазин на InSales для бренда и селлера — Эмилиус Эдженси" description={HERO.lead}>
+  <header class="top">
+    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
+  </header>
+
+  <main class="page">
+    <section class="card hero" aria-labelledby="t-hero">
+      <p class="eyebrow">{HERO.eyebrow}</p>
+      <h1 id="t-hero">{HERO.title}</h1>
+      <p class="lead">{HERO.lead}</p>
+      <div class="actions">
+        <a class="cta" href={LINKS.direct} target="_blank" rel="noopener">Посчитать мой магазин</a>
+        <a class="ghost" href="#prices">Цены и состав</a>
+      </div>
+      <ul class="facts">
+        {HERO.facts.map((f) => (
+          <li><span class="fact-value">{f.value}</span><span class="fact-label">{f.label}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="card block" aria-labelledby="t-sit">
+      <h2 id="t-sit">Узнаёте себя?</h2>
+      <ul class="grid-3">
+        {SITUATIONS.map((s) => (
+          <li class="tile"><h3>{s.title}</h3><p>{s.text}</p></li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="card block" aria-labelledby="t-result">
+      <h2 id="t-result">Что будет в день сдачи</h2>
+      <ol class="checks">{RESULT.map((r) => <li>{r}</li>)}</ol>
+    </section>
+
+    <section class="block-plain" id="prices" aria-labelledby="t-prices">
+      <h2 id="t-prices" class="section-title">Три пакета, цена фиксируется до старта</h2>
+      <ul class="packages">
+        {PACKAGES.map((p) => (
+          <li class:list={['card', 'package', { accent: p.accent }]}>
+            <p class="pkg-name">{p.name}</p>
+            <p class="pkg-price">{p.price}</p>
+            <p class="pkg-term">{p.term}</p>
+            <p class="pkg-for">{p.for}</p>
+            <ul class="pkg-items">{p.items.map((i) => <li>{i}</li>)}</ul>
+          </li>
+        ))}
+      </ul>
+      <p class="note">Точную цену считаем по вашим ответам: 87 типовых работ с нормативами часов. Подписка InSales, платная тема и приложения оплачиваются отдельно, их показываем в смете первого года.</p>
+    </section>
+
+    <section class="card block diag" aria-labelledby="t-diag">
+      <h2 id="t-diag">{DIAGNOSTIC.title}</h2>
+      <p>{DIAGNOSTIC.text}</p>
+    </section>
+
+    <div class="cols">
+      <section class="card block" aria-labelledby="t-incl">
+        <h2 id="t-incl">Входит в каждый пакет</h2>
+        <ul>{INCLUDED.map((i) => <li>{i}</li>)}</ul>
+      </section>
+      <section class="card block" aria-labelledby="t-mod">
+        <h2 id="t-mod">Можно добавить</h2>
+        <dl class="modules">
+          {MODULES.map((m) => (<div class="row"><dt>{m.name}</dt><dd>{m.price}</dd></div>))}
+        </dl>
+      </section>
+    </div>
+
+    <section class="card block" aria-labelledby="t-steps">
+      <h2 id="t-steps">Как идёт работа</h2>
+      <ol class="steps">
+        {STEPS.map((s, i) => (
+          <li>
+            <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+            <div><p class="step-name">{s.name} <span class="step-term">· {s.term}</span></p><p>{s.text}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="card block" aria-labelledby="t-year">
+      <h2 id="t-year">{YEAR_COST.title}</h2>
+      <dl class="modules">
+        {YEAR_COST.rows.map((r) => (<div class="row"><dt>{r.name}</dt><dd>{r.value}</dd></div>))}
+      </dl>
+      <p class="note">{YEAR_COST.note}</p>
+    </section>
+
+    <section class="card block" aria-labelledby="t-cases">
+      <h2 id="t-cases">Магазины на InSales, которые мы делали</h2>
+      <ul class="cases">
+        {cases.map((p) => (
+          <li>
+            <a href={p!.url} target="_blank" rel="noopener" class="case">
+              <img src={href(p!.shot)} alt={`Первый экран сайта ${p!.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+              <span class="case-text">{p!.about}</span>
+              <span class="case-link">{p!.domain} ↗</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="card block" aria-labelledby="t-honest">
+      <h2 id="t-honest">Когда мы отговорим</h2>
+      <ul>{NOT_FOR.map((n) => <li>{n}</li>)}</ul>
+    </section>
+
+    <section class="card block" aria-labelledby="t-faq">
+      <h2 id="t-faq">Частые вопросы</h2>
+      <div class="faq">
+        {FAQ.map((f) => (
+          <details><summary>{f.q}</summary><p>{f.a}</p></details>
+        ))}
+      </div>
+    </section>
+
+    <section class="card block final" aria-labelledby="t-final">
+      <h2 id="t-final">{FINAL_CTA.title}</h2>
+      <p>{FINAL_CTA.text}</p>
+      <a class="cta" href={LINKS.direct} target="_blank" rel="noopener">{FINAL_CTA.button}</a>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .top {
+    display: flex;
+    justify-content: center;
+  }
+  .logo-link {
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+  }
+  .page {
+    width: 100%;
+    max-width: 960px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .hero {
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .eyebrow {
+    color: var(--teal-text);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.12;
+    max-width: 20ch;
+  }
+  .lead {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 60ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .cta,
+  .ghost {
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 22px;
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: none;
+    transition: color var(--hover), border-color var(--hover);
+  }
+  .cta {
+    background: var(--teal-btn);
+    color: #fff;
+  }
+  .cta:hover {
+    color: var(--on-teal);
+  }
+  .ghost {
+    border: 2px solid var(--teal);
+    color: var(--teal-text);
+  }
+  .facts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .facts li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+  }
+  .fact-value {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--teal-num);
+  }
+  .fact-label {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .block {
+    padding: 24px 28px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  h2,
+  .section-title {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .block > ul:not([class]),
+  .checks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    line-height: 1.45;
+  }
+  .grid-3 {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .tile {
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tile h3 {
+    font-size: 17px;
+  }
+  .tile p {
+    color: var(--ink-2);
+    line-height: 1.45;
+    font-size: 15px;
+  }
+  .block-plain {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .section-title {
+    text-align: center;
+  }
+  .packages {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .package {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .package.accent {
+    border-color: var(--teal);
+  }
+  .pkg-name {
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+  }
+  .pkg-price {
+    font-weight: 700;
+    font-size: 28px;
+  }
+  .pkg-term {
+    color: var(--ink-2);
+  }
+  .pkg-for {
+    font-weight: 600;
+    margin-top: 6px;
+  }
+  .pkg-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 18px;
+    margin-top: 4px;
+    line-height: 1.4;
+    font-size: 15px;
+  }
+  .note {
+    font-size: 14px;
+    color: var(--ink-3);
+    line-height: 1.45;
+  }
+  .block-plain > .note {
+    text-align: center;
+    max-width: 70ch;
+    margin-inline: auto;
+  }
+  .diag {
+    border-color: var(--teal);
+  }
+  .diag p,
+  .final p {
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .modules {
+    display: flex;
+    flex-direction: column;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--hair);
+    line-height: 1.4;
+  }
+  .row:last-child {
+    border-bottom: 0;
+  }
+  dd {
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
+  }
+  .steps li {
+    display: flex;
+    gap: 12px;
+    line-height: 1.45;
+  }
+  .step-num {
+    font-weight: 700;
+    color: var(--teal-num);
+    font-size: 18px;
+    min-width: 28px;
+  }
+  .step-name {
+    font-weight: 600;
+  }
+  .step-term {
+    font-weight: 400;
+    color: var(--ink-3);
+  }
+  .cases {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .case {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .case img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--hair);
+  }
+  .case-text {
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .case-link {
+    font-weight: 600;
+    color: var(--teal-text);
+  }
+  .faq {
+    display: flex;
+    flex-direction: column;
+  }
+  details {
+    border-bottom: 1px solid var(--hair);
+    padding: 12px 0;
+  }
+  details:last-child {
+    border-bottom: 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  details p {
+    margin-top: 8px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .final {
+    align-items: flex-start;
+  }
+  @media (max-width: 760px) {
+    .facts {
+      grid-template-columns: 1fr 1fr;
+    }
+    .grid-3,
+    .packages,
+    .cases,
+    .cols,
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .hero,
+    .block {
+      padding-inline: 20px;
+    }
+    .row {
+      flex-direction: column;
+      gap: 2px;
+    }
+    dd {
+      text-align: left;
+      white-space: normal;
+    }
+    .cta,
+    .ghost {
+      width: 100%;
+    }
+  }
+</style>
