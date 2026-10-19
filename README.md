@@ -42,8 +42,10 @@ npm run build && npm run brand
 ## Публикация на Бегет
 
 ```bash
-SITE_URL=https://emilius.agency BASE_PATH=/ npm run build
+SITE_URL=https://emilius.agency BASE_PATH=/ YM_ID=<номер счётчика> npm run build
 ```
+
+`YM_ID` — номер счётчика Яндекс Метрики. Без него (и во всех сборках превью) счётчика на страницах нет. Цели лендинга InSales, которые нужно создать в Метрике, — `docs/insales-service/07-landing.md` §4.
 
 Содержимое `dist/` кладётся в корень сайта на хостинге, включая скрытый `.htaccess`: он включает https, убирает www, сжимает файлы и настраивает кеш. Позже выкладку можно автоматизировать через FTP/SSH-деплой в GitHub Actions.
 

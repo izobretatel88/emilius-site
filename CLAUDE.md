@@ -6,6 +6,10 @@ Astro, статическая сборка. Превью: https://izobretatel88.
 
 Основной адрес — `https://emilius.agency` без www (решение владельца от 24.09.2026). `public/.htaccess` уводит www и http на него 301-редиректом.
 
+## Услуга «Магазин на шаблоне InSales»
+
+Продукт, нормы работ, калькулятор сметы и продажи — `docs/insales-service/README.md`. Фактические часы по заказам (обезличено) — `docs/insales-service/data/orders-hours.csv`, уроки из переписок с клиентами — `docs/insales-service/data/lessons.md`. Сырые выгрузки VnimNomic App в репозиторий не кладём: он публичный.
+
 ## Правила
 
 - Цвета, радиусы, тени и шрифты берутся только из `src/styles/tokens.css`. Новые значения сначала появляются там, потом в компонентах.

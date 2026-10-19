@@ -1,0 +1,131 @@
+<title>Смета магазина InSales</title>
+<style>
+  /* Две колонки: бриф слева, живая смета справа; на телефоне смета под брифом. Токены — из src/styles/tokens.css. */
+  :root {
+    --page:#f7f7f7; --card:#fefefe; --hair:#ececec; --well:#eef6f6;
+    --ink:#000; --ink-2:#5a5a5a; --ink-3:#686d6c;
+    --teal-text:#008385; --teal-btn:#008385; --on-teal:#fff;
+    --font:'Glober', Arial, sans-serif; --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --page:#0e1413; --card:#151c1b; --hair:#1f2a28; --well:#14201f;
+    --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#808d8a; --teal-text:#3cc6c6; color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --page:#0e1413; --card:#151c1b; --hair:#1f2a28; --well:#14201f;
+    --ink:#eef3f2; --ink-2:#a3b0ad; --ink-3:#808d8a; --teal-text:#3cc6c6; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.45 var(--font); padding-inline:16px; }
+  main { max-width:1120px; margin:0 auto; padding-block:28px 64px; display:grid; gap:28px; grid-template-columns:minmax(0,1fr); }
+  @media (min-width: 900px) { main { grid-template-columns: minmax(0,420px) minmax(0,1fr); } }
+  section { min-width:0; }
+  .eyebrow { font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--teal-text); }
+  h1 { font-size:26px; line-height:1.15; margin:6px 0 8px; text-wrap:balance; }
+  h2 { font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:24px 0 4px; color:var(--teal-text); }
+  label { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:7px 0; border-bottom:1px solid var(--hair); }
+  input[type=number] { width:88px; text-align:right; font-variant-numeric:tabular-nums; }
+  select, input { font:inherit; padding:5px 8px; border:1px solid var(--hair); border-radius:8px; background:var(--card); color:var(--ink); max-width:60%; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline:2px solid var(--teal-text); outline-offset:2px; }
+  .sum { position:sticky; top:env(safe-area-inset-top, 0px); background:var(--well); border:1px solid var(--hair); border-radius:16px; padding:20px; }
+  .price { font-size:40px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .muted { color:var(--ink-2); font-size:13px; }
+  .tablewrap { overflow-x:auto; margin-top:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums; }
+  td, th { text-align:left; padding:5px 6px; border-bottom:1px solid var(--hair); } td.n, th.n { text-align:right; white-space:nowrap; }
+  td.id { font-family:var(--mono); font-size:11px; color:var(--ink-3); white-space:nowrap; }
+  .opt td:nth-child(2)::before { content:'опция · '; color:var(--teal-text); font-weight:700; }
+  button { font:inherit; font-weight:700; background:var(--teal-btn); color:var(--on-teal); border:0; border-radius:10px; padding:9px 16px; cursor:pointer; margin-top:14px; transition: opacity .2s ease-in-out; }
+  a { color:var(--teal-text); }
+  button:hover { opacity:.9; }
+</style>
+<main>
+  <section>
+    <div class="eyebrow">Emilius Agency · партнёр InSales</div>
+    <h1>Смета интернет-магазина на шаблоне InSales</h1>
+    <p class="muted">Заполните бриф: работы из каталога (85 типовых работ) соберутся сами, часы умножатся на ставки ролей. Ниже открыт пример — селлер с 30 товарами.</p>
+    <form id="f" onsubmit="return false"></form>
+    <h2>Материалы услуги</h2>
+    <p class="muted">Исходники системы (v1, 05.10.2026): <a href="README.md">карта работ</a> · <a href="01-research.md">исследование</a> · <a href="02-product.md">продукт</a> · <a href="03-catalog.csv">каталог работ</a> · <a href="04-estimation.md">бриф и формула</a> · <a href="05-process.md">процесс</a> · <a href="06-service-card.md">карточка</a> · <a href="07-landing.md">лендинг</a> · <a href="08-lead-gen.md">каналы</a> · <a href="09-outreach.md">сообщения</a> · <a href="10-sales.md">продажи</a> · <a href="11-improvement.md">улучшения</a> · <a href="calc/estimate.js">estimate.js</a> · <a href="scripts/insales-calc.mjs">insales-calc.mjs</a> · <a href="calc/calculator.template.html">шаблон</a> · <a href="leads-template.csv">лист лидов</a></p>
+  </section>
+  <section><div class="sum" id="out"></div></section>
+</main>
+<script>
+/*__CORE__*/
+const CSV = "__CSV__";
+const catalog = parseCatalog(CSV);
+const Q = [
+  ['Ситуация', [
+    ['segment','Кто клиент',[['seller','Селлер WB/Ozon'],['social','Продажи в соцсетях'],['offline','Офлайн / производитель'],['oldsite','Есть старый сайт'],['new','Новый бизнес']]],
+    ['clientPace','Скорость клиента',[['fast','Материалы готовы'],['normal','Обычная'],['slow','Медленно отвечает']]],
+    ['urgent','Запуск быстрее 2 недель','bool'],
+  ]],
+  ['Каталог', [
+    ['sku','Товаров на старте','num'], ['categories','Категорий','num'],
+    ['variants','Есть размеры/цвета','bool'], ['apparel','Одежда/обувь (размерные сетки)','bool'],
+    ['source','Откуда товары',[['manual','Заводим вручную'],['excel','Excel / прайс'],['marketplace','Карточки WB/Ozon'],['1c','1С'],['moysklad','МойСклад'],['oldsite','Старый сайт']]],
+    ['dataQuality','Качество данных',[['good','Чистые'],['ok','Обычные'],['bad','Грязные']]],
+    ['photos','Фото',[['ready','Готовы'],['mixed','Разного формата']]],
+    ['descriptions','Описания',[['have','Есть'],['write','Написать']]],
+  ]],
+  ['Оплата и доставка', [
+    ['payments','Платёжных сервисов','num'], ['extraPayments','Доп. способов (счёт, долями)','num'],
+    ['pickupCourier','Самовывоз/курьер: способов','num'], ['carriers','Служб доставки (СДЭК и др.)','num'],
+  ]],
+  ['Интеграции', [
+    ['marketplaces','Связать площадок (WB, Ozon, ЯМ)','num'], ['pushCardsToMp','Выгрузить на площадки, сотен карточек','num'],
+    ['accounting','Учёт',[['none','Нет'],['1c','1С'],['moysklad','МойСклад']]], ['ordersToAccounting','Заказы в учёт','bool'],
+    ['crm','CRM','bool'], ['telephony','Телефония / колл-трекинг','bool'], ['email','Email-рассылки','bool'],
+  ]],
+  ['Перенос и продвижение', [
+    ['oldSiteUrls','URL старого сайта для редиректов','num'], ['migrateCustomers','Перенести клиентов и заказы','bool'],
+    ['seo','SEO',[['basic','Базовое'],['semantic','Семантика и структура']]], ['seoClusters','Кластеров семантики','num'], ['seoTexts','SEO-текстов категорий','num'],
+    ['offlinePoints','Офлайн-точек (Карты, 2ГИС)','num'], ['directFeed','Фид и e-commerce для Директа','bool'], ['vkAds','Пиксель и фид VK','bool'],
+  ]],
+  ['Дизайн и страницы', [
+    ['homeBlocks','Блоков на главной','num'], ['banners','Баннеров сделать','num'], ['extraPages','Доп. страниц','num'], ['blogPosts','Статей в блог','num'],
+    ['customBlocks','Блоков вне шаблона (макет + код)','num'], ['smallEdits','Мелких правок кодом','num'], ['customFeatures','Нестандартных функций','num'],
+    ['staff','Сотрудников с доступом','num'], ['mailOnDomain','Почта на домене','bool'], ['rknNotice','Уведомление в РКН','bool'],
+  ]],
+];
+const f = document.getElementById('f');
+for (const [title, items] of Q) {
+  f.insertAdjacentHTML('beforeend', `<h2>${title}</h2>`);
+  for (const [key, label, type] of items) {
+    const v = DEFAULT_BRIEF[key];
+    let input;
+    if (type === 'num') input = `<input type="number" min="0" name="${key}" value="${v}">`;
+    else if (type === 'bool') input = `<input type="checkbox" name="${key}" ${v ? 'checked' : ''}>`;
+    else input = `<select name="${key}">${type.map(([o, t]) => `<option value="${o}" ${o === v ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
+    f.insertAdjacentHTML('beforeend', `<label for="q-${key}"><span>${label}</span>${input.replace('name=', `id="q-${key}" name=`)}</label>`);
+  }
+}
+const rub = (n) => Math.round(n).toLocaleString('ru-RU') + ' ₽';
+function read() {
+  const b = {};
+  for (const el of f.elements) b[el.name] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? +el.value || 0 : el.value;
+  return b;
+}
+let last;
+function render() {
+  const e = last = estimate(read(), catalog);
+  const rows = e.lines.map((l) => `<tr class="${l.inPkg ? '' : 'opt'}"><td class="id">${l.id}</td><td>${l.task}</td><td class="n">${l.qty > 1 ? '×' + l.qty : ''}</td><td class="n">${l.hours.toFixed(1)} ч</td><td class="n">${rub(l.cost)}</td></tr>`).join('');
+  document.getElementById('out').innerHTML = `
+    <div class="muted">Пакет «${e.packageName}» + опции</div>
+    <div class="price">${rub(e.price)}</div>
+    <div>${e.hours} ч работы · скидка за объём ${e.discount * 100}% · ~${e.weeks} нед. до запуска</div>
+    <div class="muted">ФИКС: коридор ±30% — ${rub(e.fixCorridor[0])}–${rub(e.fixCorridor[1])}</div>
+    ${e.coefficients.length ? `<div class="muted">Коэффициенты: ${e.coefficients.map(([n, v]) => `${n} ×${v}`).join('; ')}</div>` : ''}
+    <div class="muted" style="margin-top:8px">Платформа отдельно: тариф «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес (≈${rub(e.platform.year)} за год), тема 0–25 000 ₽. ${e.platform.notes}</div>
+    <button type="button" id="copy">Скопировать смету</button>
+    <div class="tablewrap"><table><tr><th>Код</th><th>Работа</th><th></th><th class="n">Часы</th><th class="n">₽ до коэф.</th></tr>${rows}</table></div>`;
+  const text = 
+    `Смета: пакет «${e.packageName}», ${rub(e.price)}, ~${e.weeks} нед.\n` +
+    e.lines.map((l) => `— ${l.task}${l.qty > 1 ? ' ×' + l.qty : ''}${l.inPkg ? '' : ' (опция)'}`).join('\n') +
+    `\nПлатформа отдельно: «${e.platform.tariff.name}» ${rub(e.platform.tariff.month)}/мес.`;
+  const btn = document.getElementById('copy');
+  btn.onclick = () => navigator.clipboard.writeText(text)
+    .then(() => { btn.textContent = 'Скопировано'; })
+    .catch(() => { btn.insertAdjacentHTML('afterend', `<textarea readonly rows="6" style="width:100%;margin-top:8px">${text}</textarea>`); btn.nextElementSibling.select(); });
+}
+f.addEventListener('input', render);
+render();
+</script>

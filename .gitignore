@@ -7,3 +7,6 @@ dist/
 
 # выгрузки из pen.dev — справочный материал
 design/exports/
+
+# Сырые выгрузки и соответствие кодов проектам — не в публичный репозиторий
+docs/insales-service/data/private/
