@@ -157,17 +157,17 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <!-- Подпись под стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
-    <!-- Центр — сцена методологии: сначала крупно «внимание» в середине; затем оно уходит наверх
-         и становится дугой по краю круга «внимание → этап» (как названия этапов на внешнем круге),
-         а ровно в центре, как в магическом шаре, всплывают вопросы этапа.
+    <!-- Центр — методология: «внимание» всегда дугой по верхнему краю (как названия этапов на ободе),
+         под ним ровной строкой по центру «→ этап» — меняется только она; ровно в центре,
+         как в магическом шаре, всплывают вопросы этапа.
          Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
     <defs>
       <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
     </defs>
-    <text class="attn" id="attn" x="0" y="6" text-anchor="middle" font-size="18" font-weight="800">внимание</text>
-    <text class="attn-arc" id="attnCurve" font-size="11.5" font-weight="700">
-      <textPath href="#attnArc" startOffset="50%" text-anchor="middle"><tspan class="ac-word">внимание</tspan><tspan class="ac-to" id="attnTo"></tspan></textPath>
+    <text class="attn-arc" font-size="12" font-weight="700">
+      <textPath href="#attnArc" startOffset="50%" text-anchor="middle">внимание</textPath>
     </text>
+    <text class="attn-to" id="attnTo" x="0" y="-36" text-anchor="middle" font-size="12.5" font-weight="700"></text>
     <foreignObject x={-C + 12} y="-34" width={2 * (C - 12)} height="68">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
         <span class="cq-text" id="cqText"></span>
@@ -200,9 +200,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const links = [...box.querySelectorAll<SVGAElement>('.sector-link')];
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
-    const attn = document.getElementById('attn')!;
     const attnTo = document.getElementById('attnTo')!;
-    const attnCurve = document.getElementById('attnCurve')!;
     const cqText = document.getElementById('cqText')!;
 
     // ---------- Итерация-демонстрация ----------
@@ -232,7 +230,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     let shown = '';
     let shownStage = -1;
     let hoverQ = 0;
-    let centerReady = false; // пока «внимание» не ушло наверх, вопросы не показываем
     const questionFor = (i: number) => {
       const q = SECTORS[i].questions;
       if (active() !== null) return q[hoverQ % q.length];
@@ -246,12 +243,11 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       el.classList.add(cls);
     };
     function showCenter() {
-      if (!centerReady) return;
       const i = active() ?? simSector;
       const s = SECTORS[i];
       if (i !== shownStage) {
         shownStage = i;
-        attnTo.textContent = ` → ${s.name}`;
+        attnTo.textContent = `→ ${s.name}`;
         attnTo.style.fill = s.c1;
         if (!reduce) replay(attnTo, 'is-in');
       }
@@ -271,29 +267,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       window.setTimeout(apply, 350);
     }
 
-    // Вступление: крупное «внимание» → наверх → «→ этап» и первый вопрос
-    let centerStarted = false;
-    function startCenter() {
-      if (centerStarted) return;
-      centerStarted = true;
-      const finish = () => {
-        attn.classList.add('is-up');
-        attnCurve.classList.add('is-in');
-        centerReady = true;
-        showCenter();
-      };
-      if (reduce) return finish();
-      attn.classList.add('is-show');
-      // Крупное слово уходит вверх и гаснет, на его месте по дуге проявляется «внимание → этап»
-      window.setTimeout(() => {
-        attn.classList.add('is-up');
-        window.setTimeout(() => attnCurve.classList.add('is-in'), 250);
-        window.setTimeout(() => {
-          centerReady = true;
-          showCenter();
-        }, 700);
-      }, 2200);
-    }
     window.setInterval(() => {
       if (active() === null) return;
       hoverQ += 1;
@@ -493,49 +466,20 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     tick();
     // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
     if (!reduce) window.setInterval(tick, 100);
-
-    // Сцену «внимание» начинаем, когда колесо на экране и заставка уже закрыта — иначе её никто не увидит
-    const root = document.documentElement;
-    let wheelSeen = false;
-    const tryStart = () => {
-      if (wheelSeen && !root.classList.contains('intro-open')) startCenter();
-    };
-    new MutationObserver(tryStart).observe(root, { attributes: true, attributeFilter: ['class'] });
-    // Колесо уже на первом экране — не ждём наблюдателя (в фоновой вкладке он молчит до показа)
-    const r = box.getBoundingClientRect();
-    if (r.top < innerHeight && r.bottom > 0) {
-      wheelSeen = true;
-      tryStart();
-    }
-    new IntersectionObserver((entries, io) => {
-      if (entries.some((e) => e.isIntersecting)) {
-        wheelSeen = true;
-        io.disconnect();
-        tryStart();
-      }
-    }, { threshold: 0.4 }).observe(box);
   }
 </script>
 
 <style>
+  /* Колесо во всю ширину карточки: наконечник стрелки упирается в её край.
+     14px — горизонтальный отступ .wheel-card в index.astro. */
   .wheel-box {
     position: relative;
-    width: 100%;
-    max-width: 460px;
+    width: calc(100% + 28px);
     aspect-ratio: 1 / 1;
-    margin-inline: auto;
+    margin-inline: -14px;
     /* Повёрнутый квадрат ротора по диагонали шире коробки — без обрезки на узком экране
        страница прокручивается вбок. Круг колеса вписан в квадрат, поэтому ничего не теряется. */
     overflow: clip;
-  }
-  /* Телефон: колесо во всю ширину карточки — наконечник стрелки упирается в её край.
-     14px — горизонтальный отступ .wheel-card в index.astro. */
-  @media (max-width: 520px) {
-    .wheel-box {
-      width: calc(100% + 28px);
-      max-width: none;
-      margin-inline: -14px;
-    }
   }
   .wheel-box svg {
     position: absolute;
@@ -619,43 +563,20 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     stroke-dasharray: 4 4;
   }
 
-  /* Центр. «Внимание» — главное слово методологии: сначала крупно в середине, потом наверху.
-     Движения плавные, без пружин: проявление 0,6 с, подъём 0,7 с, всплытие вопроса 0,7 с. */
-  .attn {
-    fill: var(--ink);
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-    transition:
-      opacity 0.6s ease,
-      transform 0.7s cubic-bezier(0.45, 0, 0.2, 1),
-      fill 0.7s ease;
-  }
-  .attn.is-show {
-    opacity: 1;
-  }
-  .attn.is-up {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.7);
-  }
-  /* «внимание → этап» дугой по верхнему краю внутреннего круга */
+  /* Центр. «Внимание» — главное слово методологии: всегда на месте, дугой сверху.
+     Меняется только строка «→ этап»; вопросы всплывают за 0,7 с, без пружин. */
   .attn-arc {
     fill: var(--ink-2);
-    opacity: 0;
-    transition: opacity 0.6s ease;
   }
-  .attn-arc.is-in {
-    opacity: 1;
+  .attn-to.is-in {
+    animation: attn-to-in 0.5s ease;
   }
-  .ac-to.is-in {
-    animation: ac-to-in 0.5s ease;
-  }
-  @keyframes ac-to-in {
+  @keyframes attn-to-in {
     from {
-      fill-opacity: 0;
+      opacity: 0;
     }
     to {
-      fill-opacity: 1;
+      opacity: 1;
     }
   }
   .center-q {
@@ -703,11 +624,11 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   /* На телефоне колесо ~0,7 от своего размера — шрифт центра крупнее (~12 px на экране 375) */
   @media (max-width: 520px) {
-    .attn {
-      font-size: 23px;
-    }
     .attn-arc {
-      font-size: 12px;
+      font-size: 13px;
+    }
+    .attn-to {
+      font-size: 15px;
     }
     .cq-text {
       max-width: 116px;
@@ -748,8 +669,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   @media (prefers-reduced-motion: reduce) {
     .sector-fill,
     .sector-label,
-    .attn,
-    .attn-arc,
     .cq-text {
       transition: none;
     }
