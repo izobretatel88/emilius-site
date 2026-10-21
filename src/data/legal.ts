@@ -10,4 +10,4 @@ export const OPERATOR = {
 };
 
 // Дата редакции политики и согласия
-export const LEGAL_DATE = '25.09.2026';
+export const LEGAL_DATE = '21.10.2026';
