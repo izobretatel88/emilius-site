@@ -179,14 +179,15 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     accent-color: var(--teal-btn);
     cursor: pointer;
   }
+  /* Вторичная кнопка, как «Написать»: залитая на странице одна — «В канал» */
   .btn-send {
     align-self: center;
     width: min(100%, 240px);
     height: 54px;
-    border: 0;
+    border: 1px solid var(--teal);
     border-radius: var(--radius-btn);
-    background: var(--teal-btn);
-    color: #fff;
+    background: var(--card);
+    color: var(--ink);
     font: inherit;
     font-weight: 600;
     font-size: 17px;
@@ -195,16 +196,22 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     justify-content: space-between;
     padding-inline: 16px 14px;
     cursor: pointer;
-    transition: color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover);
   }
   .btn-send svg {
     width: 22px;
     height: 22px;
     flex: none;
-    fill: #000;
+    fill: var(--ink);
+    transition: fill var(--hover);
   }
   .btn-send:hover {
-    color: var(--on-teal);
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
+  }
+  .btn-send:hover svg {
+    fill: #000;
   }
   .btn-send:disabled {
     opacity: 0.7;
