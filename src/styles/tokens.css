@@ -43,6 +43,12 @@
   --sec-design-now: #e5f5f5;
   --sec-dev-now: #eafcec;
   --sec-marketing-now: #f3f3f3;
+  /* Пройденные дни итерации — круг закрашивается цветом этапа */
+  --sec-custdev-done: #f6e6ee;
+  --sec-design-done: #e5f4f4;
+  --sec-dev-done: #eafaec;
+  --sec-marketing-done: #f2f2f2;
+  --wheel-line: #dfe3e3; /* тонкие нейтральные разделители этапов и риски дней */
 
   /* Колесо */
   --disc-stroke: #ffffff;
@@ -109,6 +115,11 @@
     --sec-design-now: #153333;
     --sec-dev-now: #1a3620;
     --sec-marketing-now: #2a2e2e;
+    --sec-custdev-done: #36212c;
+    --sec-design-done: #163535;
+    --sec-dev-done: #1b3a22;
+    --sec-marketing-done: #2c3131;
+    --wheel-line: #2c3836;
     --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
@@ -148,6 +159,11 @@
   --sec-design-now: #153333;
   --sec-dev-now: #1a3620;
   --sec-marketing-now: #2a2e2e;
+  --sec-custdev-done: #36212c;
+  --sec-design-done: #163535;
+  --sec-dev-done: #1b3a22;
+  --sec-marketing-done: #2c3131;
+  --wheel-line: #2c3836;
   --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);

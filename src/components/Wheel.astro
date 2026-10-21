@@ -28,17 +28,29 @@ function specAt(t: number) {
   return `rgb(${a.map((v, j) => Math.round(v + (b[j] - v) * r)).join(',')})`;
 }
 
+// Секторы этапов доходят до внешнего края — туда, где номера дней
+const R_OUT = 205;
 const discSectors = SECTORS.map((s, i) => {
-  const [x0, y0] = P(170, weekAngle(s.to + 0.5));
-  const [x1, y1] = P(170, weekAngle(s.from - 0.5));
-  return { i, d: `M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`, fill: `--f:var(--sec-${s.id});--f-now:var(--sec-${s.id}-now)` };
+  const [x0, y0] = P(R_OUT, weekAngle(s.to + 0.5));
+  const [x1, y1] = P(R_OUT, weekAngle(s.from - 0.5));
+  return { i, d: `M0 0 L${x0} ${y0} A${R_OUT} ${R_OUT} 0 0 1 ${x1} ${y1} Z`, fill: `--f:var(--sec-${s.id});--f-now:var(--sec-${s.id}-now)` };
 });
 
-const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
+// Клин каждого дня: пройденные дни закрашиваются цветом своего этапа — круг заполняется
+const dayCells = Array.from({ length: 52 }, (_, i) => {
+  const k = i + 1;
+  const s = SECTORS.find((x) => k >= x.from && k <= x.to)!;
+  const [x0, y0] = P(R_OUT, weekAngle(k + 0.5));
+  const [x1, y1] = P(R_OUT, weekAngle(k - 0.5));
+  return { k, d: `M0 0 L${x0} ${y0} A${R_OUT} ${R_OUT} 0 0 1 ${x1} ${y1} Z`, fill: `var(--sec-${s.id}-done)` };
+});
+
+// Разделители этапов — тонкие нейтральные линии от центра до края
+const crossLines = [0.5, 13.5, 26.5, 39.5].map((k) => {
   const a = weekAngle(k);
-  const [x1, y1] = P(C + 4, a);
-  const [x2, y2] = P(168, a);
-  return { id: `cg${i}`, x1, y1, x2, y2, c1: specAt(i / 4), c2: specAt(i / 4 + 0.18) };
+  const [x1, y1] = P(C, a);
+  const [x2, y2] = P(R_OUT, a);
+  return { x1, y1, x2, y2 };
 });
 
 // Риски между днями; на границах этапов (после 13, 26, 39, 52) — длинные.
@@ -50,7 +62,7 @@ const weeks = Array.from({ length: 52 }, (_, i) => {
   const [tx2, ty2] = P(quarter ? 199 : 194, edge);
   const a = weekAngle(k);
   const [x, y] = P(186, a);
-  return { k, label: String(k).padStart(2, '0'), quarter, tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2), color: specAt(i / 52) };
+  return { k, label: String(k).padStart(2, '0'), quarter, tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2) };
 });
 
 // Названия этапов — сплошным цветом (середина между c1 и c2). Градиент на тексте по дуге
@@ -97,22 +109,16 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
-      {crossLines.map((l) => (
-        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
-          <stop offset="0" stop-color={l.c1}></stop>
-          <stop offset="1" stop-color={l.c2}></stop>
-        </linearGradient>
-      ))}
     </defs>
 
     <g id="rotor">
       {discSectors.map((s) => <path class="sector-fill" data-sector={s.i} d={s.d} style={s.fill}></path>)}
-      <circle r="170" fill="none" style="stroke:var(--disc-stroke)" stroke-width="2.5"></circle>
+      <g class="days">
+        {dayCells.map((c) => <path class="day-cell" data-day={c.k} d={c.d} style={`fill:${c.fill};stroke:${c.fill}`}></path>)}
+      </g>
 
-      <g style="opacity:var(--cross-op)">
-        {crossLines.map((l) => (
-          <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={`url(#${l.id})`} stroke-width="2" stroke-dasharray="5 4"></line>
-        ))}
+      <g class="dividers">
+        {crossLines.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}></line>)}
       </g>
 
       <g class="ticks">
@@ -120,7 +126,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
           <line
             class:list={['tick', { quarter: w.quarter }]}
             x1={w.tx1} y1={w.ty1} x2={w.tx2} y2={w.ty2}
-            stroke={w.color} stroke-width={w.quarter ? 2.8 : 2.2} stroke-linecap="round"
+            stroke-width={w.quarter ? 2.4 : 1.6} stroke-linecap="round"
           ></line>
         ))}
       </g>
@@ -151,8 +157,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
   <!-- Поле видимости обрезано по наконечнику стрелки (x = −216): без пустых полей колесо крупнее -->
   <svg class="wheel-overlay" viewBox="-217 -217 434 434" aria-hidden="true">
-    <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть итерации -->
-    <path id="wheelProgress" class="year-progress" d=""></path>
     <g id="pointer">
       <!-- Наконечник и начало полосы — .pointer-rail у края карточки; здесь продолжение до центра -->
       <line x1="-218" y1="0" x2={-C - 1} y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
@@ -192,11 +196,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   const box = document.getElementById('wheelBox');
   const rotorSvg = document.getElementById('wheelRotor');
   const info = document.getElementById('wheelInfo');
-  const progressArc = document.getElementById('wheelProgress');
   const iterText = document.getElementById('iterText') as SVGTextElement | null;
   const SECTORS = (window as unknown as { __wheelSectors: Sector[] }).__wheelSectors;
 
-  if (box && rotorSvg && info && progressArc && iterText && SECTORS) {
+  if (box && rotorSvg && info && iterText && SECTORS) {
     const STEP = 360 / 52;
     const PERIOD = 156000; // один оборот — итерация из 52 дней, ~3 с на день
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -219,15 +222,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     let simWeek = 1;
     let simSector = 0;
 
-    // Дуга шкалы: от стрелки (180°) по часовой на пройденную часть оборота
-    const R = 207;
-    const pt = (d: number) => {
-      const a = (d * Math.PI) / 180;
-      return `${(R * Math.cos(a)).toFixed(2)} ${(R * Math.sin(a)).toFixed(2)}`;
-    };
-    const drawProgress = (turn: number) => {
-      progressArc.setAttribute('d', turn < 0.5 ? '' : `M${pt(180)} A${R} ${R} 0 ${turn > 180 ? 1 : 0} 1 ${pt(180 + turn)}`);
-    };
+    // Закрашенные дни: от первого до текущего включительно
+    const dayEls = [...box.querySelectorAll<SVGPathElement>('.day-cell')];
+    const paintDays = (upTo: number) => dayEls.forEach((el, i) => el.classList.toggle('is-done', i < upTo));
 
     const setTag = (text: string) => {
       iterText.textContent = text;
@@ -471,17 +468,15 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         }, 4000);
       }
       prevTurn = turn;
-      drawProgress(turn);
 
       const week = weekAt(turn);
       if (week !== simWeek) {
         weekEls[simWeek - 1]?.classList.remove('is-today');
         weekEls[week - 1]?.classList.add('is-today');
         simWeek = week;
+        paintDays(week);
         const sec = sectorOf(week);
         if (sec !== simSector) {
-          fills[simSector]?.classList.remove('is-now');
-          fills[sec]?.classList.add('is-now');
           labels[simSector]?.classList.remove('is-now');
           labels[sec]?.classList.add('is-now');
           simSector = sec;
@@ -492,8 +487,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
     // ---------- Вход: итерация начинается с первого дня ----------
     weekEls[0]?.classList.add('is-today');
-    fills[0]?.classList.add('is-now');
     labels[0]?.classList.add('is-now');
+    paintDays(1);
     setTag(`итерация ${iteration}`);
     render();
     startAmbient(0);
@@ -590,22 +585,39 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     pointer-events: none;
   }
 
-  /* Сектора: текущий этап подсвечен насыщенным оттенком и полной яркостью — видно без наведения;
-     при выборе — выбранный ярче, остальные гаснут */
+  /* Сектора — едва заметная заливка этапа до края круга; при выборе выбранный чуть плотнее */
   .sector-fill {
     fill: var(--f);
     opacity: var(--disc-op);
-    transition: opacity 0.8s ease, fill 0.8s ease;
-  }
-  .sector-fill.is-now {
-    fill: var(--f-now);
-    opacity: 1;
-  }
-  .has-active .sector-fill {
-    opacity: calc(var(--disc-op) * 0.45);
+    transition: opacity 0.4s ease, fill 0.4s ease;
   }
   .has-active .sector-fill.is-active {
+    fill: var(--f-now);
+  }
+  /* Пройденные дни закрашиваются цветом этапа: круг заполняется по ходу итерации */
+  /* обводка в цвет заливки закрывает светлые швы между соседними клиньями */
+  .day-cell {
+    stroke-width: 0.8;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .day-cell.is-done {
     opacity: 1;
+  }
+  .has-active .day-cell.is-done {
+    opacity: 0.55;
+  }
+  /* Разделители этапов и риски дней — тонко и нейтрально */
+  .dividers line {
+    stroke: var(--wheel-line);
+    stroke-width: 1;
+  }
+  .tick {
+    stroke: var(--wheel-line);
+  }
+  .tick.quarter {
+    stroke: var(--teal);
+    opacity: 0.6;
   }
   .sector-label {
     opacity: var(--label-op);
@@ -631,13 +643,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     fill: var(--teal-text);
     font-weight: 800;
     font-size: 10.5px;
-  }
-  .year-progress {
-    fill: none;
-    stroke: var(--teal);
-    stroke-width: 3;
-    stroke-linecap: round;
-    opacity: 0.5;
   }
   /* Подпись «итерация»: без обводки, только лёгкая тень */
   .iter-tag {

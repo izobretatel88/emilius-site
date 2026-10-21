@@ -93,7 +93,10 @@ if (!existsSync(dist)) {
     .num{fill:var(--teal-num)}
     .attn-arc{fill:var(--ink-2)}
     .iter-tag{fill:var(--teal-text)}
-    .year-progress{display:none}`;
+    .day-cell{display:none}
+    .dividers line{stroke:var(--wheel-line);stroke-width:1}
+    .tick{stroke:var(--wheel-line)}
+    .tick.quarter{stroke:var(--teal);opacity:.6}`;
   const body = `
     <div class="left">
       <div class="pill"><span>Эмилиус</span><img src="${logoUrl}" alt=""><span>Эдженси</span></div>
