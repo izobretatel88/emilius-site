@@ -31,7 +31,7 @@ function specAt(t: number) {
 const discSectors = SECTORS.map((s, i) => {
   const [x0, y0] = P(170, weekAngle(s.to + 0.5));
   const [x1, y1] = P(170, weekAngle(s.from - 0.5));
-  return { i, d: `M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`, fill: `var(--sec-${s.id})` };
+  return { i, d: `M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`, fill: `--f:var(--sec-${s.id});--f-now:var(--sec-${s.id}-now)` };
 });
 
 const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
@@ -108,7 +108,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     </defs>
 
     <g id="rotor">
-      {discSectors.map((s) => <path class="sector-fill" data-sector={s.i} d={s.d} style={`fill:${s.fill}`}></path>)}
+      {discSectors.map((s) => <path class="sector-fill" data-sector={s.i} d={s.d} style={s.fill}></path>)}
       <circle r="170" fill="none" style="stroke:var(--disc-stroke)" stroke-width="2.5"></circle>
 
       <g style="opacity:var(--cross-op)">
@@ -486,6 +486,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         if (sec !== simSector) {
           fills[simSector]?.classList.remove('is-now');
           fills[sec]?.classList.add('is-now');
+          labels[simSector]?.classList.remove('is-now');
+          labels[sec]?.classList.add('is-now');
           simSector = sec;
         }
         if (active() === null) render();
@@ -495,6 +497,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     // ---------- Вход: итерация начинается с первого дня ----------
     weekEls[0]?.classList.add('is-today');
     fills[0]?.classList.add('is-now');
+    labels[0]?.classList.add('is-now');
     setTag(`итерация ${iteration}`);
     render();
     startAmbient(0);
@@ -591,13 +594,16 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     pointer-events: none;
   }
 
-  /* Сектора: текущий этап чуть насыщеннее; при выборе — выбранный ярче, остальные гаснут */
+  /* Сектора: текущий этап подсвечен насыщенным оттенком и полной яркостью — видно без наведения;
+     при выборе — выбранный ярче, остальные гаснут */
   .sector-fill {
+    fill: var(--f);
     opacity: var(--disc-op);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease, fill 0.4s ease;
   }
   .sector-fill.is-now {
-    opacity: min(1, calc(var(--disc-op) + 0.3));
+    fill: var(--f-now);
+    opacity: 1;
   }
   .has-active .sector-fill {
     opacity: calc(var(--disc-op) * 0.45);
@@ -608,6 +614,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   .sector-label {
     opacity: var(--label-op);
     transition: opacity 0.3s ease;
+  }
+  .sector-label.is-now {
+    opacity: 1;
   }
   .has-active .sector-label {
     opacity: 0.2;
