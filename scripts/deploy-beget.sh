@@ -3,12 +3,14 @@
 #
 #   BEGET_SSH=логин@логин.beget.tech BEGET_DIR=emilius.agency/public_html npm run deploy:prod
 #
-# Вход — по SSH-ключу (пароль скрипт не спрашивает и не хранит). Ключ один раз добавляет владелец.
+# Вход — по SSH-ключу ~/.ssh/emilius_beget (пароль скрипт не спрашивает и не хранит).
+# Публичную часть ключа владелец один раз добавляет на Бегет.
 # Файл с токеном бота (emilius-telegram.php) лежит уровнем выше BEGET_DIR и скриптом не трогается.
 set -euo pipefail
 
 : "${BEGET_SSH:?Укажите BEGET_SSH, например логин@логин.beget.tech}"
 : "${BEGET_DIR:?Укажите BEGET_DIR, например emilius.agency/public_html}"
+BEGET_KEY="${BEGET_KEY:-$HOME/.ssh/emilius_beget}"
 
 cd "$(dirname "$0")/.."
 
@@ -22,6 +24,6 @@ if grep -rlq 'noindex' dist; then
 fi
 
 # --delete убирает с сервера файлы, которых больше нет в сборке; .well-known нужен для SSL-сертификата.
-rsync -az --delete --exclude '.well-known/' dist/ "$BEGET_SSH:$BEGET_DIR/"
+rsync -az --delete --exclude '.well-known/' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes" dist/ "$BEGET_SSH:$BEGET_DIR/"
 
 echo "Готово: https://emilius.agency"
