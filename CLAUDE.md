@@ -27,7 +27,7 @@ Astro, статическая сборка. Превью: https://izobretatel88.
 ```bash
 npm run dev     # localhost:4321
 npm run build   # сборка в dist/
-npm run brand   # после build: пересобрать favicon, иконки, заставку и og.jpg из знака-молнии (src/lib/bolt.mjs)
+npm run brand   # после build: пересобрать favicon, иконки и og.jpg из PNG логотипа (public/brand/logo.png)
 ```
 
 Эксперименты — в ветке `dev` (видны на `/dev/`), после одобрения владельца вливаются в `main`.

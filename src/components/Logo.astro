@@ -1,15 +1,14 @@
 ---
 // Логотип: «Эмилиус [знак] Эдженси» в светлой таблетке.
-// Знак — молния (src/lib/bolt.mjs, исходники в design/logo-bolt/). До 21.10.2026 был треугольник с сердцем (src/lib/mark.mjs).
-import { boltSvg } from '../lib/bolt.mjs';
-
-// В таблетке знак ~35 px — версия с толстой линией, тонкая на этом размере бледнеет
-const mark = boltSvg({ small: true, idPrefix: 'logo' });
+// Знак — молния из PNG владельца (public/brand/logo.png, готовится scripts/logo-from-png.py).
+// Не перерисовывать: владелец просил использовать именно его картинку.
+const base = import.meta.env.BASE_URL;
+const logo = `${base}${base.endsWith('/') ? '' : '/'}brand/logo.png`;
 ---
 
 <div class="pill">
   <span>Эмилиус</span>
-  <span class="mark" aria-hidden="true" set:html={mark} />
+  <img class="mark" src={logo} width="267" height="401" alt="" />
   <span>Эдженси</span>
 </div>
 
@@ -25,17 +24,12 @@ const mark = boltSvg({ small: true, idPrefix: 'logo' });
     font-weight: 600;
     font-size: 19px;
   }
-  /* Знак вытянут по вертикали (215×326) */
+  /* Знак вытянут по вертикали (267×401) */
   .mark {
     display: block;
     width: 25px;
     height: 38px;
     flex: none;
-  }
-  .mark :global(svg) {
-    display: block;
-    width: 100%;
-    height: 100%;
   }
   @media (max-width: 480px) {
     .pill {
