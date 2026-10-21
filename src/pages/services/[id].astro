@@ -99,7 +99,8 @@ const arc = (i: number) => {
 
     <nav class="cycle" aria-label="Этапы цикла">
       <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
-      <a class="cta" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram</a>
+      <!-- Залитая кнопка на странице одна: если есть «Готовое решение», главная — его кнопка -->
+      <a class:list={['cta', { 'cta-secondary': !!service.offer }]} href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram</a>
       <a class="step next" href={href(`services/${next.id}/`)}><span class="dir">дальше →</span><span class="name">{next.name}</span></a>
     </nav>
   </main>
@@ -307,6 +308,17 @@ const arc = (i: number) => {
   }
   .cta:hover {
     color: var(--on-teal);
+  }
+  .cta-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--teal);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+  }
+  .cta-secondary:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
   }
   @media (max-width: 640px) {
     .cols {
