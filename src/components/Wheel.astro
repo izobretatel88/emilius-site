@@ -164,7 +164,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     <!-- Центр — методология: «внимание» всегда дугой по верхнему краю (как названия этапов на ободе),
          сразу под ним такой же дугой «→ этап» — меняется только она; ровно в центре,
          как в магическом шаре, всплывают вопросы этапа.
-         Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
+         Вопрос — обычный HTML поверх центра (не foreignObject: Safari на iPhone рисует его
+         со сдвигом, когда внутри идёт анимация). -->
     <defs>
       <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
       <path id="attnArc2" d={`M${-(C - 26)} 0 A${C - 26} ${C - 26} 0 0 1 ${C - 26} 0`} fill="none"></path>
@@ -175,12 +176,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     <text class="attn-to" id="attnToText" font-size="12.5" font-weight="700">
       <textPath href="#attnArc2" startOffset="50%" text-anchor="middle" id="attnTo"></textPath>
     </text>
-    <foreignObject x={-C + 12} y="-34" width={2 * (C - 12)} height="68">
-      <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
-        <span class="cq-text" id="cqText"></span>
-      </div>
-    </foreignObject>
   </svg>
+  <div class="center-q" id="centerQ" aria-hidden="true"><span class="cq-text" id="cqText"></span></div>
 </div>
 </div>
 
@@ -519,6 +516,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   .wheel-box {
     position: relative;
+    /* Единицы cqw — доли ширины колеса: текст в центре масштабируется вместе с SVG (434 единицы) */
+    container-type: inline-size;
     width: var(--wb);
     aspect-ratio: 1 / 1;
     margin-inline: auto;
@@ -624,19 +623,26 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       opacity: 1;
     }
   }
+  /* Блок вопроса 126×68 единиц SVG по центру круга */
   .center-q {
-    height: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(126 / 434 * 100cqw);
+    height: calc(68 / 434 * 100cqw);
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     font-family: var(--font);
+    pointer-events: none;
   }
   .cq-text {
     display: block;
     /* Уже круга: вопрос переносится на 2 ровные строки и не липнет к краю */
-    max-width: 108px;
-    font-size: 13px;
+    max-width: calc(108 / 434 * 100cqw);
+    font-size: calc(13 / 434 * 100cqw);
     font-weight: 600;
     line-height: 1.2;
     color: var(--ink);
@@ -676,8 +682,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       font-size: 13.5px;
     }
     .cq-text {
-      max-width: 116px;
-      font-size: 15.5px;
+      max-width: calc(116 / 434 * 100cqw);
+      font-size: calc(15.5 / 434 * 100cqw);
       line-height: 1.1;
     }
   }
