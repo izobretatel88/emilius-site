@@ -156,12 +156,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <!-- Подпись под стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
-    <!-- Центр: «внимание» остаётся всегда; под ним этап и его вопрос. Текст переносится по словам,
-         поэтому HTML внутри foreignObject. -->
-    <text class="center-attn" x="0" y="-40" text-anchor="middle" font-size="11" font-weight="800">внимание</text>
-    <foreignObject x={-C + 7} y="-30" width={2 * (C - 7)} height="84">
+    <!-- Центр — сцена методологии: сначала крупно «внимание»; затем оно уходит наверх,
+         под ним «→ этап», а в середине, как в магическом шаре, всплывают вопросы этапа.
+         Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
+    <text class="attn" id="attn" x="0" y="6" text-anchor="middle" font-size="18" font-weight="800">внимание</text>
+    <text class="attn-to" id="attnTo" x="0" y="-24" text-anchor="middle" font-size="12" font-weight="700"></text>
+    <foreignObject x={-C + 7} y="-14" width={2 * (C - 7)} height="68">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
-        <b class="cq-stage" id="cqStage"></b>
         <span class="cq-text" id="cqText"></span>
       </div>
     </foreignObject>
@@ -192,8 +193,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const links = [...box.querySelectorAll<SVGAElement>('.sector-link')];
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
-    const centerQ = document.getElementById('centerQ')!;
-    const cqStage = document.getElementById('cqStage')!;
+    const attn = document.getElementById('attn')!;
+    const attnTo = document.getElementById('attnTo')!;
     const cqText = document.getElementById('cqText')!;
 
     // ---------- Итерация-демонстрация ----------
@@ -221,31 +222,66 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     // По ходу итерации вопрос привязан ко дню: 13 дней этапа делятся на 4 вопроса (~9 с каждый).
     // При наведении или выборе — вопросы этого этапа по очереди, раз в 3 с.
     let shown = '';
+    let shownStage = -1;
     let hoverQ = 0;
+    let centerReady = false; // пока «внимание» не ушло наверх, вопросы не показываем
     const questionFor = (i: number) => {
       const q = SECTORS[i].questions;
       if (active() !== null) return q[hoverQ % q.length];
       const dayInStage = simWeek - SECTORS[i].from; // 0..12
       return q[Math.min(q.length - 1, Math.floor((dayInStage * q.length) / 13))];
     };
+    // Перезапуск CSS-анимации: снять класс, дать браузеру заметить, вернуть
+    const replay = (el: Element, cls: string) => {
+      el.classList.remove(cls);
+      void (el as HTMLElement).getBoundingClientRect();
+      el.classList.add(cls);
+    };
     function showCenter() {
+      if (!centerReady) return;
       const i = active() ?? simSector;
       const s = SECTORS[i];
+      if (i !== shownStage) {
+        shownStage = i;
+        attnTo.textContent = `→ ${s.name}`;
+        attnTo.style.fill = s.c1;
+        if (!reduce) replay(attnTo, 'is-in');
+      }
       const text = questionFor(i);
       const key = `${i}|${text}`;
       if (key === shown) return;
       const first = shown === '';
       shown = key;
       const apply = () => {
-        cqStage.textContent = s.name;
-        cqStage.style.backgroundImage = `linear-gradient(90deg, ${s.c1}, ${s.c2})`;
         cqText.textContent = text;
-        centerQ.classList.remove('is-out');
+        cqText.classList.remove('is-out');
+        if (!reduce) replay(cqText, 'is-rise');
       };
       if (first || reduce) return apply();
-      // Спокойная смена: гаснет за 0,2 с, меняется, проявляется
-      centerQ.classList.add('is-out');
-      window.setTimeout(apply, 200);
+      // Старый вопрос тает и уходит вверх, новый всплывает снизу
+      cqText.classList.add('is-out');
+      window.setTimeout(apply, 350);
+    }
+
+    // Вступление: крупное «внимание» → наверх → «→ этап» и первый вопрос
+    let centerStarted = false;
+    function startCenter() {
+      if (centerStarted) return;
+      centerStarted = true;
+      const finish = () => {
+        attn.classList.add('is-up');
+        centerReady = true;
+        showCenter();
+      };
+      if (reduce) return finish();
+      attn.classList.add('is-show');
+      window.setTimeout(() => {
+        attn.classList.add('is-up');
+        window.setTimeout(() => {
+          centerReady = true;
+          showCenter();
+        }, 700);
+      }, 2200);
     }
     window.setInterval(() => {
       if (active() === null) return;
@@ -446,6 +482,27 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     tick();
     // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
     if (!reduce) window.setInterval(tick, 100);
+
+    // Сцену «внимание» начинаем, когда колесо на экране и заставка уже закрыта — иначе её никто не увидит
+    const root = document.documentElement;
+    let wheelSeen = false;
+    const tryStart = () => {
+      if (wheelSeen && !root.classList.contains('intro-open')) startCenter();
+    };
+    new MutationObserver(tryStart).observe(root, { attributes: true, attributeFilter: ['class'] });
+    // Колесо уже на первом экране — не ждём наблюдателя (в фоновой вкладке он молчит до показа)
+    const r = box.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) {
+      wheelSeen = true;
+      tryStart();
+    }
+    new IntersectionObserver((entries, io) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        wheelSeen = true;
+        io.disconnect();
+        tryStart();
+      }
+    }, { threshold: 0.4 }).observe(box);
   }
 </script>
 
@@ -542,48 +599,90 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     stroke-dasharray: 4 4;
   }
 
-  /* Центр: «внимание» всегда сверху, под ним этап и вопрос */
-  .center-attn {
+  /* Центр. «Внимание» — главное слово методологии: сначала крупно в середине, потом наверху.
+     Движения плавные, без пружин: проявление 0,6 с, подъём 0,7 с, всплытие вопроса 0,7 с. */
+  .attn {
+    fill: var(--ink);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.6s ease,
+      transform 0.7s cubic-bezier(0.45, 0, 0.2, 1),
+      fill 0.7s ease;
+  }
+  .attn.is-show {
+    opacity: 1;
+  }
+  .attn.is-up {
+    opacity: 1;
     fill: var(--ink-2);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    transform: translateY(-46px) scale(0.62);
+  }
+  .attn-to {
+    opacity: 0;
+  }
+  .attn-to.is-in {
+    animation: attn-to-in 0.5s ease forwards;
+  }
+  @keyframes attn-to-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
   .center-q {
     height: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    gap: 3px;
+    justify-content: center;
     text-align: center;
     font-family: var(--font);
-    transition: opacity 0.2s ease;
-  }
-  .center-q.is-out {
-    opacity: 0;
-  }
-  .cq-stage {
-    font-size: 15px;
-    font-weight: 800;
-    line-height: 1.1;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
   }
   .cq-text {
-    font-size: 12.5px;
+    display: block;
+    font-size: 13px;
     font-weight: 600;
     line-height: 1.2;
     color: var(--ink);
     text-wrap: balance;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      filter 0.35s ease;
   }
-  /* На телефоне колесо ~0,75 от своего размера — шрифт центра крупнее, чтобы вопрос читался (~12 px на экране 375) */
-  @media (max-width: 520px) {
-    .center-attn {
-      font-size: 14px;
+  .cq-text.is-out {
+    opacity: 0;
+    transform: translateY(-6px);
+    filter: blur(2px);
+  }
+  /* Магический шар: вопрос поднимается из глубины и проясняется */
+  .cq-text.is-rise {
+    animation: cq-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @keyframes cq-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.94);
+      filter: blur(4px);
     }
-    .cq-stage {
-      font-size: 19px;
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  /* На телефоне колесо ~0,7 от своего размера — шрифт центра крупнее (~12 px на экране 375) */
+  @media (max-width: 520px) {
+    .attn {
+      font-size: 23px;
+    }
+    .attn-to {
+      font-size: 15px;
     }
     .cq-text {
       font-size: 17px;
@@ -623,7 +722,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   @media (prefers-reduced-motion: reduce) {
     .sector-fill,
     .sector-label,
-    .center-q {
+    .attn,
+    .cq-text {
       transition: none;
     }
   }
