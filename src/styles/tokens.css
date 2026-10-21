@@ -36,11 +36,11 @@
   --sec-design: #e8f6ff;
   --sec-dev: #f0ffe6;
   --sec-marketing: #effff4;
-  /* Текущий этап колеса — насыщеннее, видно без наведения */
-  --sec-custdev-now: #ffdcc4;
-  --sec-design-now: #cce9ff;
-  --sec-dev-now: #dcf7c6;
-  --sec-marketing-now: #d2f5df;
+  /* Текущий этап колеса — чуть насыщеннее обычного, мягко, видно без наведения */
+  --sec-custdev-now: #ffe7d6;
+  --sec-design-now: #daf0ff;
+  --sec-dev-now: #e6fbd6;
+  --sec-marketing-now: #e1faea;
 
   /* Колесо */
   --disc-stroke: #ffffff;
@@ -103,10 +103,10 @@
     --sec-design: #17262e;
     --sec-dev: #1b2a1a;
     --sec-marketing: #17261d;
-    --sec-custdev-now: #4a3324;
-    --sec-design-now: #1d3d4f;
-    --sec-dev-now: #2a4524;
-    --sec-marketing-now: #1f4630;
+    --sec-custdev-now: #3a2a20;
+    --sec-design-now: #1a313e;
+    --sec-dev-now: #23381f;
+    --sec-marketing-now: #1b3626;
     --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
@@ -142,10 +142,10 @@
   --sec-design: #17262e;
   --sec-dev: #1b2a1a;
   --sec-marketing: #17261d;
-  --sec-custdev-now: #4a3324;
-  --sec-design-now: #1d3d4f;
-  --sec-dev-now: #2a4524;
-  --sec-marketing-now: #1f4630;
+  --sec-custdev-now: #3a2a20;
+  --sec-design-now: #1a313e;
+  --sec-dev-now: #23381f;
+  --sec-marketing-now: #1b3626;
   --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
