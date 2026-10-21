@@ -53,7 +53,7 @@
   /* Колесо */
   --disc-stroke: #ffffff;
   --disc-op: 1; /* заливки сами едва заметные — без доп. прозрачности */
-  --label-op: 0.62;
+  --label-op: 0.45; /* названия этапов на ободе — фон, акцент на вопросах в центре */
   --tick-op: 0.75;
   --cross-op: 0.5;
   --center-fill: #ffffff;
@@ -103,7 +103,7 @@
     --ray-4: #8a2b3a;
     --disc-stroke: #2b3836;
     --disc-op: 0.35;
-    --label-op: 0.85;
+    --label-op: 0.55;
     --tick-op: 0.85;
     --cross-op: 0.55;
     --center-fill: #151c1b;
@@ -147,7 +147,7 @@
   --ray-4: #8a2b3a;
   --disc-stroke: #2b3836;
   --disc-op: 0.35;
-  --label-op: 0.85;
+  --label-op: 0.55;
   --tick-op: 0.85;
   --cross-op: 0.55;
   --center-fill: #151c1b;

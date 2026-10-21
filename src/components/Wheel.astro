@@ -138,7 +138,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
       <g id="labels">
         {labels.map((l, i) => (
-          <text class="sector-label" font-size="25" font-weight="700" fill={l.color} data-sector={i}>
+          <text class="sector-label" font-size="18" font-weight="600" fill={l.color} data-sector={i}>
             <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
           </text>
         ))}
@@ -679,8 +679,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     opacity: var(--label-op);
     transition: opacity 0.3s ease;
   }
+  /* Текущий этап чуть заметнее остальных, но тише вопросов в центре */
   .sector-label.is-now {
-    opacity: 1;
+    opacity: 0.75;
   }
   .has-active .sector-label {
     opacity: 0.2;
