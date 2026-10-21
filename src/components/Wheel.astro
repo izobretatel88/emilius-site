@@ -170,7 +170,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
       <path id="attnArc2" d={`M${-(C - 26)} 0 A${C - 26} ${C - 26} 0 0 1 ${C - 26} 0`} fill="none"></path>
     </defs>
-    <text class="attn-arc" font-size="12" font-weight="700">
+    <!-- Вступление: сначала крупно и жирно «внимание» в центре, затем оно уходит в дугу сверху -->
+    <text class="attn" id="attn" x="0" y="7" text-anchor="middle" font-size="20" font-weight="800">внимание</text>
+    <text class="attn-arc" id="attnArcText" font-size="12" font-weight="700">
       <textPath href="#attnArc" startOffset="50%" text-anchor="middle">внимание</textPath>
     </text>
     <text class="attn-to" id="attnToText" font-size="12.5" font-weight="700">
@@ -206,6 +208,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
     const attnTo = document.getElementById('attnTo')!;
+    const attn = document.getElementById('attn')!;
+    const attnArcText = document.getElementById('attnArcText')!;
     const attnToText = document.getElementById('attnToText')!;
     const cqText = document.getElementById('cqText')!;
 
@@ -236,6 +240,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     let shown = '';
     let shownStage = -1;
     let hoverQ = 0;
+    let centerReady = false; // пока идёт вступление «внимание», этап и вопросы не показываем
     const questionFor = (i: number) => {
       const q = SECTORS[i].questions;
       if (active() !== null) return q[hoverQ % q.length];
@@ -249,6 +254,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       el.classList.add(cls);
     };
     function showCenter() {
+      if (!centerReady) return;
       const i = active() ?? simSector;
       const s = SECTORS[i];
       if (i !== shownStage) {
@@ -271,6 +277,29 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       // Старый вопрос тает и уходит вверх, новый всплывает снизу
       cqText.classList.add('is-out');
       window.setTimeout(apply, 350);
+    }
+
+    // Вступление: крупное «внимание» ~2 с → уходит вверх в дугу → «→ этап» и первый вопрос
+    let centerStarted = false;
+    function startCenter() {
+      if (centerStarted) return;
+      centerStarted = true;
+      const finish = () => {
+        attn.classList.add('is-up');
+        attnArcText.classList.add('is-in');
+        centerReady = true;
+        showCenter();
+      };
+      if (reduce) return finish();
+      attn.classList.add('is-show');
+      window.setTimeout(() => {
+        attn.classList.add('is-up');
+        window.setTimeout(() => attnArcText.classList.add('is-in'), 300);
+        window.setTimeout(() => {
+          centerReady = true;
+          showCenter();
+        }, 800);
+      }, 2000);
     }
 
     window.setInterval(() => {
@@ -472,6 +501,27 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     tick();
     // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
     if (!reduce) window.setInterval(tick, 100);
+
+    // Вступление «внимание» начинаем, когда колесо на экране и заставка закрыта — иначе его не увидят
+    const root = document.documentElement;
+    let wheelSeen = false;
+    const tryStart = () => {
+      if (wheelSeen && !root.classList.contains('intro-open')) startCenter();
+    };
+    new MutationObserver(tryStart).observe(root, { attributes: true, attributeFilter: ['class'] });
+    // Колесо уже на первом экране — не ждём наблюдателя (в фоновой вкладке он молчит до показа)
+    const rect = box.getBoundingClientRect();
+    if (rect.top < innerHeight && rect.bottom > 0) {
+      wheelSeen = true;
+      tryStart();
+    }
+    new IntersectionObserver((entries, io) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        wheelSeen = true;
+        io.disconnect();
+        tryStart();
+      }
+    }, { threshold: 0.4 }).observe(box);
   }
 </script>
 
@@ -609,8 +659,31 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
   /* Центр. «Внимание» — главное слово методологии: всегда на месте, дугой сверху.
      Меняется только строка «→ этап»; вопросы всплывают за 0,7 с, без пружин. */
+  /* Крупное жирное «внимание»: проявляется, держится ~2 с, уходит вверх и гаснет —
+     на его месте проявляется дуга «внимание». Без пружин. */
+  .attn {
+    fill: var(--ink);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.6s ease,
+      transform 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+  .attn.is-show {
+    opacity: 1;
+  }
+  .attn.is-up {
+    opacity: 0;
+    transform: translateY(-46px) scale(0.6);
+  }
   .attn-arc {
     fill: var(--ink-2);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .attn-arc.is-in {
+    opacity: 1;
   }
   .attn-to.is-in {
     animation: attn-to-in 0.5s ease;
@@ -675,6 +748,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   /* На телефоне колесо ~0,7 от своего размера — шрифт центра крупнее (~12 px на экране 375) */
   @media (max-width: 520px) {
+    .attn {
+      font-size: 25px;
+    }
     .attn-arc {
       font-size: 13px;
     }
@@ -720,6 +796,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   @media (prefers-reduced-motion: reduce) {
     .sector-fill,
     .sector-label,
+    .attn,
+    .attn-arc,
     .cq-text {
       transition: none;
     }
