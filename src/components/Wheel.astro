@@ -643,14 +643,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     stroke-linecap: round;
     opacity: 0.5;
   }
-  /* Подпись поверх делений: обводка цветом карточки отделяет её от рисок, тень — от фона */
+  /* Подпись «итерация»: без обводки, только лёгкая тень */
   .iter-tag {
     fill: var(--teal-text);
-    stroke: var(--card);
-    stroke-width: 3px;
-    stroke-linejoin: round;
-    paint-order: stroke;
-    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.28));
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
   }
 
   .sector-hit {
