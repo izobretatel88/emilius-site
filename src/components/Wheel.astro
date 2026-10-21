@@ -3,12 +3,14 @@
 // Геометрия считается на сборке. В браузере: вращение-демонстрация (один оборот — итерация из 52 дней,
 // не привязан к сегодняшней дате), шкала пройденной части итерации у стрелки,
 // подсветка этапов и доводка выбранного этапа под стрелку.
-import { SECTORS } from '../data/site';
+import { SECTORS, STAGE_QUESTIONS } from '../data/site';
 
 const base = import.meta.env.BASE_URL;
 const servicesHref = (id: string) => `${base}${base.endsWith('/') ? '' : '/'}services/${id}/`;
 
 const STEP = 360 / 52;
+// Центральный круг «внимание»: в нём вопросы текущего этапа
+const C = 75;
 const rad = (d: number) => (d * Math.PI) / 180;
 const P = (r: number, d: number) => [+(r * Math.cos(rad(d))).toFixed(2), +(r * Math.sin(rad(d))).toFixed(2)];
 // День k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
@@ -34,7 +36,7 @@ const discSectors = SECTORS.map((s, i) => {
 
 const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
   const a = weekAngle(k);
-  const [x1, y1] = P(54, a);
+  const [x1, y1] = P(C + 4, a);
   const [x2, y2] = P(168, a);
   return { id: `cg${i}`, x1, y1, x2, y2, c1: specAt(i / 4), c2: specAt(i / 4 + 0.18) };
 });
@@ -59,9 +61,9 @@ const labels = SECTORS.map((s, i) => {
 });
 
 const rim = Array.from({ length: 72 }, (_, i) => {
-  const [x0, y0] = P(50, i * 5);
-  const [x1, y1] = P(50, i * 5 + 5.4);
-  return { d: `M${x0} ${y0} A50 50 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
+  const [x0, y0] = P(C, i * 5);
+  const [x1, y1] = P(C, i * 5 + 5.4);
+  return { d: `M${x0} ${y0} A${C} ${C} 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
 });
 
 const hits = SECTORS.map((s, i) => {
@@ -69,13 +71,13 @@ const hits = SECTORS.map((s, i) => {
   const a1 = weekAngle(s.from - 0.5);
   const [x0, y0] = P(212, a0);
   const [x1, y1] = P(212, a1);
-  const [x2, y2] = P(52, a1);
-  const [x3, y3] = P(52, a0);
-  return { i, href: servicesHref(s.id), d: `M${x3} ${y3} L${x0} ${y0} A212 212 0 0 1 ${x1} ${y1} L${x2} ${y2} A52 52 0 0 0 ${x3} ${y3} Z`, ...s };
+  const [x2, y2] = P(C + 2, a1);
+  const [x3, y3] = P(C + 2, a0);
+  return { i, href: servicesHref(s.id), d: `M${x3} ${y3} L${x0} ${y0} A212 212 0 0 1 ${x1} ${y1} L${x2} ${y2} A${C + 2} ${C + 2} 0 0 0 ${x3} ${y3} Z`, ...s };
 });
 
 // Для скрипта: этапы со ссылками и текстами
-const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
+const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questions: STAGE_QUESTIONS[s.id] }));
 ---
 
 <!-- Строка над колесом: какой день и этап сейчас под стрелкой; при выборе — описание этапа -->
@@ -134,7 +136,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
         ))}
       </g>
 
-      <circle r="50" style="fill:var(--center-fill)"></circle>
+      <circle r={C} style="fill:var(--center-fill)"></circle>
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
@@ -146,26 +148,23 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
   </svg>
 
   <svg class="wheel-overlay" viewBox="-220 -220 440 440" aria-hidden="true">
-    <defs>
-      {SECTORS.map((s, i) => (
-        <linearGradient id={`cw${i}`} x1="-40" y1="0" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color={s.c1}></stop>
-          <stop offset="1" stop-color={s.c2}></stop>
-        </linearGradient>
-      ))}
-    </defs>
     <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть итерации -->
     <path id="wheelProgress" class="year-progress" d=""></path>
     <g id="pointer">
-      <line x1="-216" y1="0" x2="-51" y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
+      <line x1="-216" y1="0" x2={-C - 1} y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
       <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"></path>
       <!-- Подпись под стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
-    <text class="center-word center-default" x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="600" style="fill:var(--ink-2)">внимание</text>
-    {SECTORS.map((s, i) => (
-      <text class="center-word center-sector" data-sector={i} x="0" y="6" text-anchor="middle" font-size={s.name.length > 8 ? 13 : 15} font-weight="800" fill={`url(#cw${i})`}>{s.name}</text>
-    ))}
+    <!-- Центр: «внимание» остаётся всегда; под ним этап и его вопрос. Текст переносится по словам,
+         поэтому HTML внутри foreignObject. -->
+    <text class="center-attn" x="0" y="-40" text-anchor="middle" font-size="11" font-weight="800">внимание</text>
+    <foreignObject x={-C + 12} y="-30" width={2 * (C - 12)} height="78">
+      <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
+        <b class="cq-stage" id="cqStage"></b>
+        <span class="cq-text" id="cqText"></span>
+      </div>
+    </foreignObject>
   </svg>
 </div>
 
@@ -175,7 +174,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
 </script>
 
 <script>
-  type Sector = { id: string; name: string; from: number; to: number; text: string; href: string };
+  type Sector = { id: string; name: string; from: number; to: number; text: string; href: string; c1: string; c2: string; questions: string[] };
 
   const box = document.getElementById('wheelBox');
   const rotorSvg = document.getElementById('wheelRotor');
@@ -193,7 +192,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     const links = [...box.querySelectorAll<SVGAElement>('.sector-link')];
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
-    const centers = [...box.querySelectorAll<SVGTextElement>('.center-sector')];
+    const centerQ = document.getElementById('centerQ')!;
+    const cqStage = document.getElementById('cqStage')!;
+    const cqText = document.getElementById('cqText')!;
 
     // ---------- Итерация-демонстрация ----------
     // День k стоит под стрелкой при повороте (k - 0.5) * STEP; угол 0 — начало итерации у стрелки.
@@ -216,6 +217,42 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     const setTag = (text: string) => {
       iterText.textContent = text;
     };
+    // ---------- Центр: вопрос этапа ----------
+    // По ходу итерации вопрос привязан ко дню: 13 дней этапа делятся на 4 вопроса (~9 с каждый).
+    // При наведении или выборе — вопросы этого этапа по очереди, раз в 3 с.
+    let shown = '';
+    let hoverQ = 0;
+    const questionFor = (i: number) => {
+      const q = SECTORS[i].questions;
+      if (active() !== null) return q[hoverQ % q.length];
+      const dayInStage = simWeek - SECTORS[i].from; // 0..12
+      return q[Math.min(q.length - 1, Math.floor((dayInStage * q.length) / 13))];
+    };
+    function showCenter() {
+      const i = active() ?? simSector;
+      const s = SECTORS[i];
+      const text = questionFor(i);
+      const key = `${i}|${text}`;
+      if (key === shown) return;
+      const first = shown === '';
+      shown = key;
+      const apply = () => {
+        cqStage.textContent = s.name;
+        cqStage.style.backgroundImage = `linear-gradient(90deg, ${s.c1}, ${s.c2})`;
+        cqText.textContent = text;
+        centerQ.classList.remove('is-out');
+      };
+      if (first || reduce) return apply();
+      // Спокойная смена: гаснет за 0,2 с, меняется, проявляется
+      centerQ.classList.add('is-out');
+      window.setTimeout(apply, 200);
+    }
+    window.setInterval(() => {
+      if (active() === null) return;
+      hoverQ += 1;
+      showCenter();
+    }, 3000);
+
     let doneUntil = 0; // пока показываем «цикл окончен»
     let iteration = 1; // считаем круги, пока страница открыта; после обновления — снова с 1
 
@@ -260,12 +297,17 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     const active = () => selected ?? hovered;
     const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
+    let lastActive: number | null = null;
     function render() {
       const i = active();
+      if (i !== lastActive) {
+        hoverQ = 0;
+        lastActive = i;
+      }
       box.classList.toggle('has-active', i !== null);
       fills.forEach((el, j) => el.classList.toggle('is-active', i === j));
       labels.forEach((el, j) => el.classList.toggle('is-active', i === j));
-      centers.forEach((el, j) => el.classList.toggle('is-active', i === j));
+      showCenter();
 
       // Бегущий день экранный диктор не зачитывает — только выбор этапа
       info.setAttribute('aria-live', i === null ? 'off' : 'polite');
@@ -500,18 +542,40 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     stroke-dasharray: 4 4;
   }
 
-  /* Центр: «внимание» уступает место названию выбранного этапа */
-  .center-word {
-    transition: opacity 0.25s ease;
+  /* Центр: «внимание» всегда сверху, под ним этап и вопрос */
+  .center-attn {
+    fill: var(--ink-2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
-  .has-active .center-default {
+  .center-q {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3px;
+    text-align: center;
+    font-family: var(--font);
+    transition: opacity 0.2s ease;
+  }
+  .center-q.is-out {
     opacity: 0;
   }
-  .center-sector {
-    opacity: 0;
+  .cq-stage {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.1;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
-  .center-sector.is-active {
-    opacity: 1;
+  .cq-text {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
   }
 
   .wheel-info {
@@ -546,7 +610,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
   @media (prefers-reduced-motion: reduce) {
     .sector-fill,
     .sector-label,
-    .center-word {
+    .center-q {
       transition: none;
     }
   }
