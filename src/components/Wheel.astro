@@ -158,16 +158,19 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
     <!-- Центр — методология: «внимание» всегда дугой по верхнему краю (как названия этапов на ободе),
-         под ним ровной строкой по центру «→ этап» — меняется только она; ровно в центре,
+         сразу под ним такой же дугой «→ этап» — меняется только она; ровно в центре,
          как в магическом шаре, всплывают вопросы этапа.
          Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
     <defs>
       <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
+      <path id="attnArc2" d={`M${-(C - 26)} 0 A${C - 26} ${C - 26} 0 0 1 ${C - 26} 0`} fill="none"></path>
     </defs>
     <text class="attn-arc" font-size="12" font-weight="700">
       <textPath href="#attnArc" startOffset="50%" text-anchor="middle">внимание</textPath>
     </text>
-    <text class="attn-to" id="attnTo" x="0" y="-36" text-anchor="middle" font-size="12.5" font-weight="700"></text>
+    <text class="attn-to" id="attnToText" font-size="12.5" font-weight="700">
+      <textPath href="#attnArc2" startOffset="50%" text-anchor="middle" id="attnTo"></textPath>
+    </text>
     <foreignObject x={-C + 12} y="-34" width={2 * (C - 12)} height="68">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
         <span class="cq-text" id="cqText"></span>
@@ -201,6 +204,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
     const attnTo = document.getElementById('attnTo')!;
+    const attnToText = document.getElementById('attnToText')!;
     const cqText = document.getElementById('cqText')!;
 
     // ---------- Итерация-демонстрация ----------
@@ -248,8 +252,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (i !== shownStage) {
         shownStage = i;
         attnTo.textContent = `→ ${s.name}`;
-        attnTo.style.fill = s.c1;
-        if (!reduce) replay(attnTo, 'is-in');
+        attnToText.style.fill = s.c1;
+        if (!reduce) replay(attnToText, 'is-in');
       }
       const text = questionFor(i);
       const key = `${i}|${text}`;
@@ -628,7 +632,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       font-size: 13px;
     }
     .attn-to {
-      font-size: 15px;
+      font-size: 13.5px;
     }
     .cq-text {
       max-width: 116px;
