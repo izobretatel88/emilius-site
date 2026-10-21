@@ -159,7 +159,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     <!-- Центр: «внимание» остаётся всегда; под ним этап и его вопрос. Текст переносится по словам,
          поэтому HTML внутри foreignObject. -->
     <text class="center-attn" x="0" y="-40" text-anchor="middle" font-size="11" font-weight="800">внимание</text>
-    <foreignObject x={-C + 12} y="-30" width={2 * (C - 12)} height="78">
+    <foreignObject x={-C + 7} y="-30" width={2 * (C - 7)} height="84">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
         <b class="cq-stage" id="cqStage"></b>
         <span class="cq-text" id="cqText"></span>
@@ -576,6 +576,19 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     line-height: 1.2;
     color: var(--ink);
     text-wrap: balance;
+  }
+  /* На телефоне колесо ~0,75 от своего размера — шрифт центра крупнее, чтобы вопрос читался (~12 px на экране 375) */
+  @media (max-width: 520px) {
+    .center-attn {
+      font-size: 14px;
+    }
+    .cq-stage {
+      font-size: 19px;
+    }
+    .cq-text {
+      font-size: 17px;
+      line-height: 1.12;
+    }
   }
 
   .wheel-info {
