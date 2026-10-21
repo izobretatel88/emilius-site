@@ -224,7 +224,16 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
     // Закрашенные дни: от первого до текущего включительно
     const dayEls = [...box.querySelectorAll<SVGPathElement>('.day-cell')];
-    const paintDays = (upTo: number) => dayEls.forEach((el, i) => el.classList.toggle('is-done', i < upTo));
+    const paintDays = (upTo: number) =>
+      dayEls.forEach((el, i) => {
+        el.classList.toggle('is-done', i < upTo);
+        el.classList.toggle('is-current', i === upTo - 1);
+      });
+
+    // ---------- Эксперименты с колесом (21.10.2026), включаются адресом: ?exp=spin, ?exp=breathe или ?exp=all ----------
+    const expParam = new URLSearchParams(location.search).get('exp') ?? '';
+    const exp = (name: string) => expParam === 'all' || expParam.split(',').includes(name);
+    box.classList.toggle('exp-breathe', exp('breathe'));
 
     const setTag = (text: string) => {
       iterText.textContent = text;
@@ -496,6 +505,52 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
     if (!reduce) window.setInterval(tick, 100);
 
+    // Эксперимент «покрути колесо»: тянешь — колесо поворачивается за пальцем/мышью,
+    // отпустил — спокойное вращение продолжается с этого места. Короткое касание остаётся кликом.
+    if (exp('spin') && !reduce) {
+      box.classList.add('exp-spin');
+      let drag: { id: number; start: number; from: number; moved: boolean } | null = null;
+      const angleAt = (e: PointerEvent) => {
+        const r = box.getBoundingClientRect();
+        return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
+      };
+      box.addEventListener('pointerdown', (e) => {
+        drag = { id: e.pointerId, start: angleAt(e), from: currentAngle(), moved: false };
+      });
+      box.addEventListener('pointermove', (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        let d = angleAt(e) - drag.start;
+        d = ((d + 540) % 360) - 180;
+        if (!drag.moved && Math.abs(d) < 4) return;
+        if (!drag.moved) {
+          drag.moved = true;
+          try {
+            box.setPointerCapture(e.pointerId);
+          } catch {
+            /* без захвата тоже работает, пока указатель над колесом */
+          }
+          ambient?.cancel();
+          ambient = null;
+          selected = hovered = null;
+          render();
+        }
+        setAngle(drag.from + d);
+        e.preventDefault();
+      });
+      const release = (e: PointerEvent) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const moved = drag.moved;
+        drag = null;
+        if (moved) {
+          startAmbient(currentAngle());
+          // после перетаскивания не открывать этап, на котором отпустили
+          box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
+        }
+      };
+      box.addEventListener('pointerup', release);
+      box.addEventListener('pointercancel', release);
+    }
+
     // Вступление «внимание» начинаем, когда колесо на экране и заставка закрыта — иначе его не увидят
     const root = document.documentElement;
     let wheelSeen = false;
@@ -603,6 +658,26 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   .day-cell.is-done {
     opacity: 1;
+  }
+  /* Эксперимент «дыхание»: текущий день мягко пульсирует, номер под стрелкой крупнее */
+  .exp-breathe .day-cell.is-current {
+    animation: day-breathe 2.4s ease-in-out infinite;
+  }
+  @keyframes day-breathe {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  .exp-breathe .week.is-today {
+    font-size: 13px;
+  }
+  /* Эксперимент «покрути колесо»: колесо можно тянуть, страница при этом не прокручивается */
+  .exp-spin {
+    touch-action: none;
+    cursor: grab;
+  }
+  .exp-spin:active {
+    cursor: grabbing;
   }
   .has-active .day-cell.is-done {
     opacity: 0.55;
