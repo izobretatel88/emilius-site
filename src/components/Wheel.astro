@@ -370,16 +370,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         const line = performance.now() < doneUntil
           ? `<b>Цикл окончен</b> · начинаем итерацию&nbsp;${iteration}`
           : `<b>День&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
-        info.innerHTML =
-          `<p class="info-line">${line}</p>` +
-          `<p class="info-sub">Так проходит итерация: 52 дня, четыре этапа по 13 дней, затем новая. ${canHover ? 'Наведите на этап' : 'Нажмите на этап'}, чтобы узнать больше.</p>`;
+        info.innerHTML = `<p class="info-line">${line}</p>`;
         return;
       }
       const s = SECTORS[i];
+      // Одна строка, как и без выбора: высота не меняется — колесо не прыгает под курсором
       info.innerHTML =
-        `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to}</p>` +
-        `<p class="info-sub">${s.text}</p>` +
-        `<a class="info-more" href="${s.href}">Подробнее об этапе →</a>`;
+        `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to} · ` +
+        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`;
     }
 
     function select(i: number) {
@@ -769,11 +767,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     }
   }
 
+  /* Одна строка (на узком экране — до двух); высота постоянная, чтобы колесо не сдвигалось */
   .wheel-info {
-    min-height: 4.6em;
+    min-height: 2.9em;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     text-align: center;
     padding-inline: 8px;
@@ -785,14 +785,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   .wheel-info :global(.info-line b) {
     font-weight: 700;
   }
-  .wheel-info :global(.info-sub) {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    max-width: 44ch;
-  }
   .wheel-info :global(.info-more) {
-    margin-top: 2px;
-    font-size: 14px;
     font-weight: 600;
     color: var(--teal-text);
     text-underline-offset: 3px;
