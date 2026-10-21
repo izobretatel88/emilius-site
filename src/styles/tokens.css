@@ -32,14 +32,27 @@
   --ray-4: #fff2f2;
 
   /* Пастельная заливка секторов колеса */
-  --sec-custdev: #fff1e8;
-  --sec-design: #e8f6ff;
-  --sec-dev: #f0ffe6;
-  --sec-marketing: #effff4;
+  /* Строгие цвета старого колеса (Tilda): малиновый #b1004e, бирюзовый #009d9d,
+     зелёный #71f180, серый #c4c4c4 — едва заметной заливкой (5–7%) по белому. Решение владельца 21.10.2026. */
+  --sec-custdev: #fbf2f6;
+  --sec-design: #f2fafa;
+  --sec-dev: #f5fef6;
+  --sec-marketing: #fcfcfc;
+  /* Текущий этап колеса — чуть насыщеннее обычного, мягко, видно без наведения */
+  --sec-custdev-now: #f7e6ee;
+  --sec-design-now: #e5f5f5;
+  --sec-dev-now: #eafcec;
+  --sec-marketing-now: #f3f3f3;
+  /* Пройденные дни итерации — круг закрашивается цветом этапа */
+  --sec-custdev-done: #f6e6ee;
+  --sec-design-done: #e5f4f4;
+  --sec-dev-done: #eafaec;
+  --sec-marketing-done: #f2f2f2;
+  --wheel-line: #dfe3e3; /* тонкие нейтральные разделители этапов и риски дней */
 
   /* Колесо */
   --disc-stroke: #ffffff;
-  --disc-op: 0.55;
+  --disc-op: 1; /* заливки сами едва заметные — без доп. прозрачности */
   --label-op: 0.62;
   --tick-op: 0.75;
   --cross-op: 0.5;
@@ -94,10 +107,19 @@
     --tick-op: 0.85;
     --cross-op: 0.55;
     --center-fill: #151c1b;
-    --sec-custdev: #2a211c;
-    --sec-design: #17262e;
-    --sec-dev: #1b2a1a;
-    --sec-marketing: #17261d;
+    --sec-custdev: #2c1a23;
+    --sec-design: #112b2b;
+    --sec-dev: #16301b;
+    --sec-marketing: #232727;
+    --sec-custdev-now: #33202a;
+    --sec-design-now: #153333;
+    --sec-dev-now: #1a3620;
+    --sec-marketing-now: #2a2e2e;
+    --sec-custdev-done: #36212c;
+    --sec-design-done: #163535;
+    --sec-dev-done: #1b3a22;
+    --sec-marketing-done: #2c3131;
+    --wheel-line: #2c3836;
     --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
@@ -129,10 +151,19 @@
   --tick-op: 0.85;
   --cross-op: 0.55;
   --center-fill: #151c1b;
-  --sec-custdev: #2a211c;
-  --sec-design: #17262e;
-  --sec-dev: #1b2a1a;
-  --sec-marketing: #17261d;
+  --sec-custdev: #2c1a23;
+  --sec-design: #112b2b;
+  --sec-dev: #16301b;
+  --sec-marketing: #232727;
+  --sec-custdev-now: #33202a;
+  --sec-design-now: #153333;
+  --sec-dev-now: #1a3620;
+  --sec-marketing-now: #2a2e2e;
+  --sec-custdev-done: #36212c;
+  --sec-design-done: #163535;
+  --sec-dev-done: #1b3a22;
+  --sec-marketing-done: #2c3131;
+  --wheel-line: #2c3836;
   --shadow-card: 0 0 14px 2px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);

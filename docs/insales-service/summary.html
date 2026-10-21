@@ -1,0 +1,475 @@
+<title>Магазин на InSales: итог</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Раскладка: одна колонка для чтения, оглавление сверху, таблицы в своих прокрутках. Цвета — фирменные Emilius (tokens.css). */
+:root{
+  --page:#f7f7f7; --card:#fefefe; --hair:#e6eaea; --well:#eef4f4;
+  --ink:#111414; --ink-2:#4f5655; --ink-3:#656b6a;
+  --teal:#00999b; --teal-text:#007476; --teal-soft:#dff2f2;
+  --warn:#9a5a00; --warn-soft:#fff2df; --bad:#a23a3a; --bad-soft:#fbe9e9; --good:#1f7a4a; --good-soft:#e5f5ec;
+  --font:'Manrope','Glober',Arial,sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#121616; --card:#181e1e; --hair:#2a3333; --well:#1c2626;
+  --ink:#eef3f2; --ink-2:#b5c0be; --ink-3:#97a4a2;
+  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:#123536;
+  --warn:#f0b35c; --warn-soft:#352812; --bad:#f08d8d; --bad-soft:#3a1c1c; --good:#7fd6a4; --good-soft:#15301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#121616; --card:#181e1e; --hair:#2a3333; --well:#1c2626;
+  --ink:#eef3f2; --ink-2:#b5c0be; --ink-3:#97a4a2;
+  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:#123536;
+  --warn:#f0b35c; --warn-soft:#352812; --bad:#f08d8d; --bad-soft:#3a1c1c; --good:#7fd6a4; --good-soft:#15301f; color-scheme:dark}
+body{background:var(--page);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:26px;font-weight:800}
+h3{font-size:18px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-text)}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.lead{font-size:18px;color:var(--ink-2)}
+.muted{color:var(--ink-3);font-size:14px}
+code,.mono{font-family:var(--mono);font-size:.86em;background:var(--well);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+a{color:var(--teal-text)}
+a:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+.toc{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none;max-width:none}
+.toc a{display:inline-block;text-decoration:none;font-size:14px;font-weight:600;padding:5px 11px;border:1px solid var(--hair);border-radius:999px;background:var(--card);color:var(--ink)}
+.toc a:hover{border-color:var(--teal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--teal-text)}
+.stat span{font-size:13px;color:var(--ink-2);line-height:1.35}
+.callout{border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.callout.warn{background:var(--warn-soft)} .callout.warn strong:first-child{color:var(--warn)}
+.callout.bad{background:var(--bad-soft)} .callout.bad strong:first-child{color:var(--bad)}
+.callout.good{background:var(--good-soft)} .callout.good strong:first-child{color:var(--good)}
+.callout.info{background:var(--teal-soft)}
+.tbl{overflow-x:auto;border:1px solid var(--hair);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--hair)}
+th{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:var(--well)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pk{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.pk>div{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.pk .price{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.pk .who{font-size:14px;color:var(--ink-2)}
+.pk ul{font-size:14px;gap:3px}
+.pk .tariff{font-size:13px;color:var(--ink-3);margin-top:auto}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:8px}
+.steps{list-style:none;padding:0;counter-reset:s;gap:0;max-width:none;border:1px solid var(--hair);border-radius:var(--r);background:var(--card)}
+.steps li{counter-increment:s;display:grid;grid-template-columns:36px 1fr;gap:10px;padding:9px 14px;border-bottom:1px solid var(--hair);font-size:14px}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s);font-family:var(--mono);font-weight:600;color:var(--teal-text);font-variant-numeric:tabular-nums}
+.steps b{font-weight:700}
+pre.formula{font-family:var(--mono);font-size:13px;background:var(--well);border-radius:var(--r);padding:14px 16px;overflow-x:auto;margin:0;line-height:1.55}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.pill.g{background:var(--good-soft);color:var(--good)} .pill.w{background:var(--warn-soft);color:var(--warn)} .pill.b{background:var(--bad-soft);color:var(--bad)}
+.funnel{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.funnel span{background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:6px 10px;font-variant-numeric:tabular-nums}
+.funnel i{color:var(--ink-3);font-style:normal}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow">Emilius Agency · услуга · состояние на 19.10.2026</div>
+  <h1>Интернет-магазин на шаблоне InSales: что получилось в итоге</h1>
+  <p class="lead">Агент по расписанию прошёл все 15 направлений постановки за 22 итерации (05–07.10) и собрал рабочую систему: продукт, нормы, калькулятор, процесс, лендинг, каналы, письма, продажи, экономику. С 07.10 он работает в режиме ожидания: новых материалов нет, потому что нет фактов. Ни одно письмо не отправлено, ни одной диагностики не было.</p>
+  <ul class="toc">
+    <li><a href="#state">Состояние</a></li>
+    <li><a href="#product">Продукт</a></li>
+    <li><a href="#audience">Аудитория и рынок</a></li>
+    <li><a href="#builder">Конструктор и цена</a></li>
+    <li><a href="#process">Процесс</a></li>
+    <li><a href="#sales">Продажи</a></li>
+    <li><a href="#channels">Каналы и лиды</a></li>
+    <li><a href="#econ">Экономика</a></li>
+    <li><a href="#after">После запуска</a></li>
+    <li><a href="#owner">Что нужно от вас</a></li>
+    <li><a href="#files">Карта файлов</a></li>
+  </ul>
+</header>
+
+<section id="state">
+  <div class="eyebrow">Состояние</div>
+  <h2>Цифры системы</h2>
+  <div class="stats">
+    <div class="stat"><b>85</b><span>типовых работ с нормами часов, ролями и зависимостями</span></div>
+    <div class="stat"><b>3</b><span>пакета: 75 / 95 / 100 тыс. ₽</span></div>
+    <div class="stat"><b>16</b><span>этапов производства от заявки до гарантии</span></div>
+    <div class="stat"><b>~30</b><span>документов, шаблонов и таблиц в <code>docs/insales-service/</code></span></div>
+    <div class="stat"><b>11</b><span>скриптов: смета, КП, Заказ, воронка, калибровка, проверка файлов</span></div>
+    <div class="stat"><b>32</b><span>лида в таблице на Диске, касаний 0</span></div>
+  </div>
+  <div class="callout warn">
+    <strong>Всё это лежит не в main.</strong>
+    <p>Материалы и свёрстанный лендинг (<code>/services/insales-shop/</code> и <code>/seller/</code>) — в ветке <code>claude/upbeat-volta-h4mv7a</code>, итерации 1–22 и 233 записи ожидания одной линией. Остальные ~255 веток <code>claude/upbeat-volta-*</code> — промежуточные копии, их можно удалить. Чтобы увидеть лендинг на <code>/dev/</code>, ветку нужно влить в <code>dev</code>: это вопрос 6 в списке ниже.</p>
+  </div>
+  <div class="callout bad">
+    <strong>Рекомендую остановить ежечасный запуск.</strong>
+    <p>С 07.10 расписание отработало 233 раза подряд с одним результатом: «фактов нет, без новых документов». Каждый раз создаётся новая ветка. Пока вы не ответите на вопросы или не отправите первые письма, агенту нечего делать. Разумнее раз в неделю по понедельникам: разбор листа лидов и перенос ваших ответов.</p>
+  </div>
+</section>
+
+<section id="product">
+  <div class="eyebrow">1 · Описание услуги</div>
+  <h2>Продукт</h2>
+  <p><strong>Одной фразой:</strong> запускаем интернет-магазин на готовой теме InSales за 3–5 недель и сдаём, когда проходит настоящий заказ с телефона: товар, корзина, оплата, доставка, чек, письмо, заказ в админке. Цена фиксирована до старта.</p>
+  <p>Отличие от рынка — не скорость, а <strong>рабочий заказ на сдаче</strong> и <strong>смета «входит / не входит»</strong> до оплаты. Ни одна найденная студия не публикует состав пакета, юридические страницы, тестовые заказы и передачу доступов.</p>
+
+  <div class="pk">
+    <div>
+      <h3>Старт</h3>
+      <div class="price">от 75 000 ₽</div>
+      <div class="who">Бренд из соцсетей, первый сайт</div>
+      <ul><li>до 50 товаров вручную, до 10 категорий</li><li>самовывоз / курьер + 1 служба</li><li>Метрика, цели, Вебмастер</li><li>2–3 недели</li></ul>
+      <div class="tariff">Тариф InSales «Интернет-магазин» 2 700 ₽/мес</div>
+    </div>
+    <div>
+      <h3>Магазин</h3>
+      <div class="price">от 95 000 ₽</div>
+      <div class="who">Офлайн-розница, производитель, переезд</div>
+      <ul><li>от 50 товаров, импорт из Excel / старого сайта</li><li>до 30 категорий, фильтры, варианты</li><li>2 службы доставки, + e-commerce</li><li>3–5 недель</li></ul>
+      <div class="tariff">Тариф «Интернет-магазин» 2 700 ₽/мес</div>
+    </div>
+    <div>
+      <h3>Селлер</h3>
+      <div class="price">от 100 000 ₽</div>
+      <div class="who">Продаёт на WB / Ozon / ЯМ, хочет свой канал</div>
+      <ul><li>импорт карточек с площадок</li><li>единые остатки сайт ↔ площадки — входит</li><li>размерные сетки, 2 службы</li><li>3–5 недель</li></ul>
+      <div class="tariff">Тариф «Комбо» 6 600 ₽/мес</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Входит в любой пакет</h3>
+      <ul>
+        <li>Аккаунт InSales, домен, SSL — на клиента</li>
+        <li>Тема из 2–3 вариантов под нишу, главная из блоков</li>
+        <li>Дерево категорий, шаблон карточки, подборки</li>
+        <li>Эквайринг, касса, тестовый платёж и возврат</li>
+        <li>Оферта, политика ПДн, согласия, cookie</li>
+        <li>Уведомления в почту и Telegram</li>
+        <li>Метрика с целями, базовое SEO</li>
+        <li>Протокол тестов с телефона и компьютера</li>
+        <li>Видеоинструкции и обучение 1 час</li>
+        <li>Гарантия 60 дней</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Не входит</h3>
+      <ul>
+        <li>Привлечение трафика (Директ, SEO-продвижение) — апсейл</li>
+        <li>Фото, съёмка, ретушь</li>
+        <li>Юридическая проверка документов</li>
+        <li>Индивидуальный дизайн вне темы</li>
+        <li>Подписка, платная тема, эквайринг, касса, доставка — расходы клиента</li>
+      </ul>
+      <h3 style="margin-top:8px">Оплата</h3>
+      <ul>
+        <li>Диагностика 5 000 ₽, засчитывается в проект</li>
+        <li>Фикс по смете: 50% предоплата, 50% после сдачи</li>
+        <li>Коридор ±30%: больше — согласование письменно</li>
+        <li>Скидка 5% от 40 ч, 10% от 80 ч</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Опции (модули)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Модуль</th><th>Работы</th><th class="num">Ориентир</th></tr></thead>
+    <tbody>
+      <tr><td>Импорт каталога</td><td><code>IMP-01…06</code></td><td class="num">5–15 тыс. ₽ на 100–500 SKU</td></tr>
+      <tr><td>Чистка данных</td><td><code>IMP-02</code></td><td class="num">2,4 тыс. ₽ / 100 SKU</td></tr>
+      <tr><td>Описания (ИИ + редактура)</td><td><code>CNT-03</code></td><td class="num">~120 ₽ / товар</td></tr>
+      <tr><td>Маркетплейсы</td><td><code>INT-MP-01…03</code></td><td class="num">в «Селлере»</td></tr>
+      <tr><td>МойСклад</td><td><code>INT-MS-01…02</code></td><td class="num">9–14 тыс. ₽</td></tr>
+      <tr><td>1С: товары, цены, остатки, заказы</td><td><code>INT-1C-01…05</code></td><td class="num">40–45 тыс. ₽</td></tr>
+      <tr><td>CRM (RetailCRM, amo, Битрикс24)</td><td><code>CRM-01</code></td><td class="num">12 тыс. ₽</td></tr>
+      <tr><td>SEO-структура и семантика</td><td><code>SEO-02…03</code></td><td class="num">20–40 тыс. ₽</td></tr>
+      <tr><td>Перенос с редиректами</td><td><code>MIG-01, SEO-05</code></td><td class="num">10–25 тыс. ₽</td></tr>
+      <tr><td>Баннеры, страницы, блог</td><td><code>DSN-05, PAG-02…03</code></td><td class="num">2,4–3,6 тыс. ₽ / шт.</td></tr>
+      <tr><td>Доработки кодом (Liquid)</td><td><code>MOD-01…03</code></td><td class="num">3,5 тыс. ₽/ч</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="audience">
+  <div class="eyebrow">2–3 · Сегменты и JTBD</div>
+  <h2>Аудитория и рынок</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Сегмент</th><th>Что есть</th><th>Узкое место</th><th>Что отсечёт продажу</th></tr></thead>
+    <tbody>
+      <tr><td><b>A. Селлер с брендом</b></td><td>Спрос и каталог на площадке</td><td>Зависимость от площадки, нет своей базы</td><td>Нет аудитории вне карточек</td></tr>
+      <tr><td><b>B. Бренд из соцсетей</b></td><td>Подписчики, доверие</td><td>Заказы руками в личке</td><td>Малый поток</td></tr>
+      <tr><td><b>C. Офлайн и производитель</b></td><td>Клиенты, склад, учёт</td><td>Заказы из регионов, остатки</td><td>Сложный B2B, нет людей</td></tr>
+      <tr><td><b>D. Старый сайт / Tilda</b></td><td>Домен, трафик</td><td>Дорогие доработки, ручные заказы</td><td>Страх потерять позиции</td></tr>
+      <tr><td><b>E. Новый бизнес</b></td><td>Идея</td><td>Спрос не проверен</td><td>Магазин не продаём, только диагностику</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Приоритет — те, у кого уже есть источник покупателей и повторные покупки. Селлерам продаём «добавить канал», а не «уйти с маркетплейсов».</p>
+
+  <h3>Jobs To Be Done</h3>
+  <ol>
+    <li>Товар продаётся на площадке, прибыль с повтора непонятна → получать повторы в своём канале и знать покупателя.</li>
+    <li>Заказы идут через Telegram и VK → дать ссылку с каталогом и оплатой, меньше переписки.</li>
+    <li>Открываю регион или вторую точку → витрина с остатками и доставкой.</li>
+    <li>Боюсь зависимости от одного канала → запасной способ принимать заказы.</li>
+    <li>Старый магазин трудно менять → переехать без потери данных и позиций.</li>
+  </ol>
+
+  <h3>Цены рынка (сверка 06.10, по выдаче поиска)</h3>
+  <p>Рынок разделился на две зоны: <strong>15–35 тыс. ₽</strong> — поставят тему, товары клиент заводит сам; <strong>75–115 тыс. ₽</strong> — запуск под ключ (Danforge, InsalesGuru, STK-Promo). Наши 75 / 95 / 100 — внутри второй зоны. Ставка 2 400 ₽/ч ниже рынка доработок (2 700–5 000 ₽/ч), есть запас поднять после кейсов. Готового пакета «магазин + WB/Ozon + общие остатки» с ценой у конкурентов не нашли.</p>
+  <p class="muted">Ограничение: сайты студий и insales.ru из среды агента не открывались, цены и тарифы взяты из сниппетов. Тарифы 2 700 / 6 600 ₽ нужно проверить руками — вопрос 1.</p>
+</section>
+
+<section id="builder">
+  <div class="eyebrow">4–7 · Атомизация, нормы, расчёт, бриф</div>
+  <h2>Конструктор услуги и цена</h2>
+  <p>Файл <code>03-catalog.csv</code>: 85 работ в 21 модуле. У каждой — что делаем, когда нужна, вход от клиента, результат, единица, часы базовые и за единицу, сложность, роль, зависимости, риски, варианты, в каких пакетах. Нормы откалиброваны по фактическим часам прошлых заказов (выгрузка VnimNomic, обезличено в <code>data/orders-hours.csv</code>).</p>
+  <p class="muted">Модули: организация 4 · платформа 4 · дизайн 7 · каталог 7 · импорт 6 · контент 5 · оплата 3 · доставка 4 · юридическое 3 · уведомления 3 · интеграции 10 · CRM 3 · аналитика 4 · SEO 5 · перенос 2 · доработки 4 · страницы 3 · email 1 · тесты 3 · запуск 2 · поддержка 2.</p>
+
+  <h3>Как считается цена</h3>
+  <p>Квалификация (5 вопросов) → бриф на 27 вопросов, каждый ответ задаёт поле калькулятора → формула:</p>
+<pre class="formula">часы      = Σ (часы_база + часы_за_ед × количество)
+стоимость = Σ (часы × ставка роли) × K × (1 − скидка за объём)
+коридор   = цена ± 30%
+срок, дни = часы × K / 4 + ожидание клиента (3/5/10) + 3 дня на интеграцию</pre>
+  <div class="cols">
+    <div>
+      <h3>Ставки, ₽/ч</h3>
+      <div class="tbl"><table><tbody>
+        <tr><td>Сборщик InSales (ноукод)</td><td class="num">2 400</td></tr>
+        <tr><td>Контент-менеджер</td><td class="num">1 500</td></tr>
+        <tr><td>Дизайнер, SEO</td><td class="num">2 400</td></tr>
+        <tr><td>Интегратор</td><td class="num">3 000</td></tr>
+        <tr><td>Разработчик Liquid</td><td class="num">3 500</td></tr>
+      </tbody></table></div>
+    </div>
+    <div>
+      <h3>Коэффициенты риска K</h3>
+      <div class="tbl"><table><tbody>
+        <tr><td>Материалы готовы, ЛПР быстрый</td><td class="num">0,95</td></tr>
+        <tr><td>Клиент медленно отвечает</td><td class="num">1,15</td></tr>
+        <tr><td>Грязные данные о товарах</td><td class="num">1,10</td></tr>
+        <tr><td>Доработки кодом</td><td class="num">1,10</td></tr>
+        <tr><td>Срочно, быстрее 2 недель</td><td class="num">1,25</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <h3>Проверка на пяти типовых проектах</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Сценарий</th><th class="num">Часы</th><th class="num">Цена</th><th class="num">Срок</th><th class="num">Маржа</th></tr></thead>
+    <tbody>
+      <tr><td>Старт: бренд из соцсетей, 30 товаров</td><td class="num">34,7</td><td class="num">79 000 ₽</td><td class="num">~3 нед.</td><td class="num">45%</td></tr>
+      <tr><td>Магазин: офлайн-розница, 400 SKU в Excel</td><td class="num">46,8</td><td class="num">107 000 ₽</td><td class="num">~4 нед.</td><td class="num">42%</td></tr>
+      <tr><td>Селлер: одежда на WB + Ozon, 150 SKU</td><td class="num">49,8</td><td class="num">119 000 ₽</td><td class="num">~5 нед.</td><td class="num">42%</td></tr>
+      <tr><td>Офлайн + 1С, 2 000 SKU, SEO</td><td class="num">92,0</td><td class="num">206 000 ₽</td><td class="num">~7 нед.</td><td class="num">39%</td></tr>
+      <tr><td>Переезд с Tilda, 120 товаров</td><td class="num">47,2</td><td class="num">110 000 ₽</td><td class="num">~4 нед.</td><td class="num">42%</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Инструменты</h3>
+  <ul>
+    <li><code>calculator.html</code> — калькулятор для менеджера; на лендинге форма считает пакет, цену и срок по 7 вопросам и отправляет расчёт.</li>
+    <li><code>insales-import-check.mjs</code> — проверяет файл товаров клиента (дубли, пустые артикулы, цена текстом) и заполняет бриф.</li>
+    <li><code>insales-kp.mjs</code> — из брифа одной командой: КП, Заказ к договору (<code>--order</code>), задачи для Weeek с планом часов (<code>--tasks</code>).</li>
+    <li><code>insales-calibrate.mjs</code> — после проектов сравнивает факт с нормой и говорит, что править.</li>
+  </ul>
+</section>
+
+<section id="process">
+  <div class="eyebrow">9 · Порядок оказания</div>
+  <h2>Процесс: 16 этапов</h2>
+  <ol class="steps">
+    <li><span><b>Лид.</b> Сайт, карточка партнёра, Telegram, письмо. Ответ за 1 час.</span></li>
+    <li><span><b>Квалификация.</b> 5 вопросов, балл 0–5.</span></li>
+    <li><span><b>Диагностика (этап 0).</b> 40 минут, бриф, файл товаров, 5 000 ₽. Заключение в тот же день.</span></li>
+    <li><span><b>Смета.</b> Калькулятор, «входит / не входит», график, бюджет на 12 месяцев.</span></li>
+    <li><span><b>Договор и 50%.</b> Рамочный договор + Заказ, ЭДО.</span></li>
+    <li><span><b>Сбор материалов.</b> Чат, Weeek, чек-лист, доступы; клиент сразу подаёт заявку на эквайринг.</span></li>
+    <li><span><b>Платформа и дизайн.</b> Аккаунт на клиента, тема, главная; ссылка на тестовый магазин.</span></li>
+    <li><span><b>Каталог.</b> Категории, свойства, импорт, фото; проверка 10% карточек.</span></li>
+    <li><span><b>Оплата, доставка, документы.</b> Эквайринг, касса, службы, юрстраницы, уведомления.</span></li>
+    <li><span><b>Интеграции.</b> 1С / МойСклад / маркетплейсы / CRM; цикл «товар → заказ → остаток» стабилен 3 дня.</span></li>
+    <li><span><b>Аналитика и SEO.</b> Цели срабатывают на тестовом заказе.</span></li>
+    <li><span><b>Тестирование.</b> Протокол: 10 сценариев × 2 устройства.</span></li>
+    <li><span><b>Приёмка.</b> Клиент сам проходит 3 сценария; замечания одним списком за 5 рабочих дней.</span></li>
+    <li><span><b>Обучение и передача.</b> Видео + созвон 1 час, лист всех доступов.</span></li>
+    <li><span><b>Доплата и запуск.</b> Снятие пароля, первый реальный заказ.</span></li>
+    <li><span><b>Гарантия 60 дней.</b> На 30-й день — отчёт по метрикам и предложение абонемента.</span></li>
+  </ol>
+  <p class="muted">Клиент видит четыре контрольные точки: смета и график → тестовый магазин → тестовый заказ, который он проходит сам → запуск. Правила процесса дополнены уроками из 462 сигналов ваших рабочих переписок (<code>data/lessons.md</code>): склады и формат 1С спрашивать сразу, один представитель клиента, ограничения темы проверять до прототипа.</p>
+</section>
+
+<section id="sales">
+  <div class="eyebrow">14–18 · Квалификация, диалог, возражения</div>
+  <h2>Продажи</h2>
+  <div class="cols">
+    <div>
+      <h3>Квалификация: 5 вопросов, 1 балл за «да»</h3>
+      <ol>
+        <li>Товар уже продаётся, есть цифры</li>
+        <li>Понятно, откуда первые покупатели сайта</li>
+        <li>Есть человек на заказы и товары</li>
+        <li>Бюджет от 70 тыс. ₽ + подписка</li>
+        <li>Собеседник — ЛПР или приведёт его</li>
+      </ol>
+      <p class="muted"><span class="pill g">4–5</span> диагностика за 2 дня · <span class="pill w">2–3</span> диагностика с упором на трафик · <span class="pill b">0–1</span> чек-лист «Когда пора» и возврат через 2–3 месяца.</p>
+    </div>
+    <div>
+      <h3>Логика разговора</h3>
+      <ol>
+        <li>Первое сообщение с поводом из наблюдения за их бизнесом</li>
+        <li>Ответ → 3 вопроса → балл</li>
+        <li>Вилка цены из калькулятора прямо в переписке</li>
+        <li>Диагностика 40 мин: ситуация → экономика → источник покупателей → бриф → 3 сценария → следующий шаг</li>
+        <li>В тот же день заключение и КП</li>
+        <li>«Подумаю» → касания на 2-й, 5-й и 10-й день</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Главные возражения</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Возражение</th><th>Ответ коротко</th></tr></thead>
+    <tbody>
+      <tr><td>«Дорого» / «предлагают за 25–30 тысяч»</td><td>За 15–30 тыс. ставят шаблон, товары, оплату и доставку клиент заводит сам. Попросить у них список «входит / не входит» и сравнить; посчитать окупаемость в заказах.</td></tr>
+      <tr><td>«Трафика не будет»</td><td>Согласиться: сайт сам покупателей не приводит. Посчитать, кого клиент отправит на сайт в первый месяц: подписчики, повторные покупатели, офлайн, Директ.</td></tr>
+      <tr><td>«У нас уже есть сайт»</td><td>Спросить, сколько заказов он приносит. Предложить бесплатный замер, а не переделку.</td></tr>
+      <tr><td>«Сделаю сам»</td><td>Хороший вариант при 30–40 свободных часах. Отдать чек-лист из 85 работ, чтобы было видно сложные места.</td></tr>
+      <tr><td>«Почему не Tilda / Яндекс KIT»</td><td>До 30 товаров без учёта — Tilda. От 50 с остатками и маркетплейсами — InSales. KIT в бете.</td></tr>
+      <tr><td>«WB запретит»</td><td>Покупателей не уводим. Магазин для тех, кто ищет бренд в Яндексе, для подписчиков и офлайна.</td></tr>
+      <tr><td>«Подрядчик пропадёт»</td><td>Доступы на клиенте с первого дня, ответ в течение часа, 4 контрольные точки, гарантия в договоре.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Всего в <code>10-sales.md</code> 14 возражений. Сценарии первого контакта по шести сегментам (A1, A2, B, C, D, E), второе сообщение, follow-up и реакции на интерес, отказ, «дорого» и «уже есть сайт» — в <code>09-outreach.md</code>. 8 шаблонов откликов на горячие запросы — в <code>templates/hot-replies.md</code>.</p>
+</section>
+
+<section id="channels">
+  <div class="eyebrow">12–13 · Каналы, проспектинг, лиды</div>
+  <h2>Каналы и лиды</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Ранг</th><th>Каналы</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill g">Лучшие</span></td><td>Карточка партнёра InSales · канал Emilius и прошлые клиенты · партнёрский менеджер InSales</td></tr>
+      <tr><td><span class="pill w">Перспективные</span></td><td>Биржи ежедневно · Директ, тест 30 тыс. ₽ · холодные письма селлерам без сайта и Tilda-магазинам · партнёры: МойСклад, фулфилмент, фотостудии</td></tr>
+      <tr><td><span class="pill w">Эксперименты</span></td><td>Контент на vc.ru и в Telegram · разборы в чатах селлеров · офлайн из Яндекс Карт и 2ГИС · вебинар с партнёром</td></tr>
+      <tr><td><span class="pill b">Слабые</span></td><td>Массовые рассылки по базам · выставки · таргет на холодную аудиторию</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>План: 8-недельный тест каналов</h3>
+  <p>20 писем в день по сегментам A1, A2 и D, биржи каждый день, Директ 30 тыс. ₽ со стоп-правилом (после 15 тыс. ₽ заявка дороже ~1 700 ₽ — стоп). На 8-й неделе оставить 3 лучших канала. Все ссылки — с UTM, каждая заявка приходит с источником.</p>
+  <div class="funnel"><span>800 писем</span><i>→</i><span>40 ответов</span><i>→</i><span>15 диагностик</span><i>→</i><span>5 проектов</span><i>→</i><span>~500 тыс. ₽</span></div>
+  <p class="muted">Это гипотеза v1. Пересчёт в итерации 20 строже: 20 писем в день дают ~1,2 проекта в месяц, поэтому основной объём должен идти с горячих каналов.</p>
+
+  <h3>Лиды сейчас (таблица на Диске)</h3>
+  <p>32 строки, у всех статус «новый», касаний и ответов нет. Сильнейшие:</p>
+  <ul>
+    <li><b>YERRNA</b> («Шуйские ситцы») — бельё, WB / Ozon / ЯМ, 26 тыс. подписчиков на Маркете, своего магазина нет. Черновик письма готов, адресат — директор по развитию в TenChat. Шаг был назначен на 19.10.</li>
+    <li><b>3ton</b> — автохимия. Сначала 5 минут на Ozon: кто продавец по ИНН. Если дистрибьютор — не наш клиент.</li>
+    <li><b>EDELSON, InterStellar, Fabrik Cosmetology, Global Petfood</b> — кандидаты, у каждого в заметках, что проверить руками до письма.</li>
+  </ul>
+  <p class="muted">Агент не может открыть сайты WB, Ozon и студий из облака, поэтому финальная проверка каждого лида — ручная.</p>
+</section>
+
+<section id="econ">
+  <div class="eyebrow">Экономика</div>
+  <h2>Экономика для агентства</h2>
+  <p>При допущениях v1 валовая маржа 39–45%. На привлечение одного клиента можно тратить до 20–39 тыс. ₽ в зависимости от пакета. Один проект — это примерно 7 квалифицированных лидов, 3 диагностики и 9 часов менеджера.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Канал</th><th class="num">1 проект из</th><th class="num">Платить не больше</th></tr></thead>
+    <tbody>
+      <tr><td>Заявка из Директа</td><td class="num">14 заявок</td><td class="num">~1 700 ₽ / заявка</td></tr>
+      <tr><td>Карточка партнёра InSales</td><td class="num">12 заявок</td><td class="num">~2 000 ₽</td></tr>
+      <tr><td>Отклик на бирже</td><td class="num">57 откликов</td><td class="num">~430 ₽ / отклик</td></tr>
+      <tr><td>Холодное письмо с поводом</td><td class="num">357 писем</td><td class="num">~70 ₽ / письмо</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><strong>Главная неизвестная — сколько вы платите исполнителям.</strong><p>Если доля сборщика 60% от ставки и часы уйдут в перерасход как в старых заказах, «Магазин» и «Селлер» почти не оставляют денег на привлечение. Это вопрос 3.</p></div>
+</section>
+
+<section id="after">
+  <div class="eyebrow">19 · Апсейлы и удержание</div>
+  <h2>После запуска</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Абонемент</th><th class="num">Часы</th><th class="num">Цена / мес</th><th>Кому</th></tr></thead>
+    <tbody>
+      <tr><td>Дежурный</td><td class="num">5</td><td class="num">12 000 ₽</td><td>Старт: правки и товары время от времени</td></tr>
+      <tr><td>Рабочий</td><td class="num">10</td><td class="num">22 000 ₽</td><td>Магазин: акции, товары, отчёт по Метрике</td></tr>
+      <tr><td>Растущий</td><td class="num">20</td><td class="num">40 000 ₽</td><td>Селлер или 1С: интеграции, SEO, контент</td></tr>
+    </tbody>
+  </table></div>
+  <p>Апсейлы по моменту: на диагностике без трафика — запуск Директа; офлайн-точкам — Яндекс Бизнес и 2ГИС; при сдаче — абонемент; через 30 дней — отчёт и итерация 2; селлеру через 60 дней — email-цепочки и лояльность; всегда — партнёрская ссылка InSales (до 45% от подписки клиента).</p>
+</section>
+
+<section id="owner">
+  <div class="eyebrow">Что нужно от вас</div>
+  <h2>Без этого дальше не сдвинуть</h2>
+  <h3>Семь ответов (впишите в <code>14-start.md</code> §3 или одной строкой в сессию)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Вопрос</th><th>Что изменится</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Цена тарифов «Интернет-магазин» и «Комбо» в месяц</td><td>Бюджет первого года в КП</td></tr>
+      <tr><td class="num">2</td><td>Можно ли загрузить карточки с WB/Ozon без «Комбо»?</td><td>Разовый импорт перейдёт из «Селлера» в «Магазин»</td></tr>
+      <tr><td class="num">3</td><td>Сколько платим сборщику и контент-менеджеру за час</td><td>Реальная маржа; при доле 60%+ пересмотр цен</td></tr>
+      <tr><td class="num">4</td><td>Юрист согласовал Заказ к договору?</td><td>Можно подписывать первую сделку</td></tr>
+      <tr><td class="num">5</td><td>Карточка партнёра InSales обновлена? Дата</td><td>Старт 8-недельного теста</td></tr>
+      <tr><td class="num">6</td><td>Вливать ветку в <code>dev</code>?</td><td>Лендинг виден на <code>/dev/</code></td></tr>
+      <tr><td class="num">7</td><td>Happy Animal и Endorphine согласны на кейс с цифрами?</td><td>Кейсы на лендинге</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Первые 10 дней, ~6 часов вашего времени</h3>
+  <ol class="steps">
+    <li><span><b>30 мин.</b> Вставить текст в карточку партнёра InSales (<code>templates/partner-card.md</code>).</span></li>
+    <li><span><b>40 мин.</b> Отправить 6 готовых сообщений из таблицы лидов, перед отправкой открыть сайт каждого.</span></li>
+    <li><span><b>30 мин.</b> Написать 10 прошлым клиентам: кому из знакомых нужен магазин.</span></li>
+    <li><span><b>15 мин.</b> Отдать юристу Заказ и юридические шаблоны.</span></li>
+    <li><span><b>5 мин.</b> Проверить тарифы на insales.ru/signup.</span></li>
+    <li><span><b>20 мин в день.</b> Биржи и чаты, ответ на горячий запрос за 30 минут.</span></li>
+    <li><span><b>10 мин в понедельник.</b> Разбор листа лидов скриптом: кому писать сегодня.</span></li>
+  </ol>
+  <div class="callout info"><strong>Если к 10-му дню нет ни одной диагностики,</strong><p>не переписываем тексты, а смотрим, где стоит воронка: нет ответов — менять повод письма; ответы есть, диагностик нет — менять переход к платной диагностике.</p></div>
+</section>
+
+<section id="files">
+  <div class="eyebrow">Карта файлов · <code>docs/insales-service/</code></div>
+  <h2>Где что лежит</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Файл</th><th>Что внутри</th></tr></thead>
+    <tbody>
+      <tr><td><code>README.md</code></td><td>Карта работ, как пользоваться, команды</td></tr>
+      <tr><td><code>14-start.md</code></td><td>Старт продаж за 10 дней, вопросы владельцу, журнал запусков</td></tr>
+      <tr><td><code>01-research.md</code></td><td>Рынок, сегменты, JTBD, боли, язык клиента, конкуренты, альтернативы</td></tr>
+      <tr><td><code>02-product.md</code></td><td>Пакеты, входит / не входит, опции, апсейлы, оплата</td></tr>
+      <tr><td><code>03-catalog.csv</code></td><td>85 типовых работ с нормами</td></tr>
+      <tr><td><code>04-estimation.md</code></td><td>Квалификация, бриф, формула, калибровка, решения</td></tr>
+      <tr><td><code>05-process.md</code></td><td>16 этапов, график, правила из практики</td></tr>
+      <tr><td><code>06-service-card.md</code></td><td>Внутренняя карточка услуги</td></tr>
+      <tr><td><code>07-landing.md</code></td><td>Структура и тексты лендинга, версия для селлеров</td></tr>
+      <tr><td><code>08-lead-gen.md</code></td><td>Каналы, рейтинг, признаки сегментов, план 8 недель</td></tr>
+      <tr><td><code>09-outreach.md</code></td><td>Сообщения по сегментам и реакции на ответы</td></tr>
+      <tr><td><code>10-sales.md</code></td><td>Диалог, диагностика, возражения, учёт лидов</td></tr>
+      <tr><td><code>11-improvement.md</code></td><td>22 итерации, бэклог, журнал калибровки</td></tr>
+      <tr><td><code>12-retention.md</code></td><td>Абонемент, отчёт 30 дней, триггеры следующей продажи</td></tr>
+      <tr><td><code>13-economics.md</code></td><td>Маржа, предел привлечения, обратная воронка</td></tr>
+      <tr><td><code>templates/</code></td><td>Карточка партнёра, отклики, заключение диагностики, пример КП и Заказа, протокол тестов, шортлист тем, видеоинструкции, ввод нового человека</td></tr>
+      <tr><td><code>calculator.html</code>, <code>calc/</code></td><td>Калькулятор сметы и расчёт для формы лендинга</td></tr>
+      <tr><td><code>data/</code></td><td>Часы по заказам, уроки из переписок, учебные файлы</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</div>

@@ -1,15 +1,14 @@
 ---
 // Логотип: «Эмилиус [знак] Эдженси» в светлой таблетке.
-// Знак — скруглённый треугольник со спектральной обводкой и сердцем, генерируется в src/lib/mark.mjs.
-import { markSvg } from '../lib/mark.mjs';
-
-// Пастельная заливка — только в светлой теме, на тёмной она превращается в светлое пятно.
-const mark = markSvg({ fill: true, idPrefix: 'logo' });
+// Знак — молния из PNG владельца (public/brand/logo.png, готовится scripts/logo-from-png.py).
+// Не перерисовывать: владелец просил использовать именно его картинку.
+const base = import.meta.env.BASE_URL;
+const logo = `${base}${base.endsWith('/') ? '' : '/'}brand/logo.png`;
 ---
 
 <div class="pill">
   <span>Эмилиус</span>
-  <span class="mark" aria-hidden="true" set:html={mark} />
+  <img class="mark" src={logo} width="267" height="401" alt="" />
   <span>Эдженси</span>
 </div>
 
@@ -25,24 +24,12 @@ const mark = markSvg({ fill: true, idPrefix: 'logo' });
     font-weight: 600;
     font-size: 19px;
   }
+  /* Знак вытянут по вертикали (267×401) */
   .mark {
     display: block;
-    width: 34px;
-    height: 33px;
+    width: 25px;
+    height: 38px;
     flex: none;
-  }
-  .mark :global(svg) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .mark :global(.mark-fill) {
-      display: none;
-    }
-  }
-  :global(:root[data-theme='dark']) .mark :global(.mark-fill) {
-    display: none;
   }
   @media (max-width: 480px) {
     .pill {
@@ -51,8 +38,8 @@ const mark = markSvg({ fill: true, idPrefix: 'logo' });
       padding: 8px 18px;
     }
     .mark {
-      width: 30px;
-      height: 29px;
+      width: 22px;
+      height: 33px;
     }
   }
 </style>

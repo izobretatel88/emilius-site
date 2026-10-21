@@ -1,16 +1,19 @@
 ---
-// Колесо продукта: год из 52 недель, 4 этапа по 13 недель.
-// Геометрия считается на сборке. В браузере: вращение, «сегодня» на ободе,
-// подсветка этапов и доводка выбранного этапа под стрелку «итерация».
-import { SECTORS } from '../data/site';
+// Колесо продукта: итерация из 52 дней, 4 этапа по 13 дней (52 деления на ободе).
+// Геометрия считается на сборке. В браузере: вращение-демонстрация (один оборот — итерация из 52 дней,
+// не привязан к сегодняшней дате), шкала пройденной части итерации у стрелки,
+// подсветка этапов и доводка выбранного этапа под стрелку.
+import { SECTORS, STAGE_QUESTIONS } from '../data/site';
 
 const base = import.meta.env.BASE_URL;
 const servicesHref = (id: string) => `${base}${base.endsWith('/') ? '' : '/'}services/${id}/`;
 
 const STEP = 360 / 52;
+// Центральный круг «внимание»: в нём вопросы текущего этапа
+const C = 75;
 const rad = (d: number) => (d * Math.PI) / 180;
 const P = (r: number, d: number) => [+(r * Math.cos(rad(d))).toFixed(2), +(r * Math.sin(rad(d))).toFixed(2)];
-// Неделя k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
+// День k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
 const weekAngle = (k: number) => 180 - (k - 0.5) * STEP;
 
 const SPEC = ['#e44854', '#c06c60', '#e4d830', '#b4e43c', '#30c048', '#30d890', '#30c0b4', '#30c0cc', '#309ce4', '#e44854'];
@@ -25,20 +28,32 @@ function specAt(t: number) {
   return `rgb(${a.map((v, j) => Math.round(v + (b[j] - v) * r)).join(',')})`;
 }
 
+// Секторы этапов доходят до внешнего края — туда, где номера дней
+const R_OUT = 205;
 const discSectors = SECTORS.map((s, i) => {
-  const [x0, y0] = P(170, weekAngle(s.to + 0.5));
-  const [x1, y1] = P(170, weekAngle(s.from - 0.5));
-  return { i, d: `M0 0 L${x0} ${y0} A170 170 0 0 1 ${x1} ${y1} Z`, fill: `var(--sec-${s.id})` };
+  const [x0, y0] = P(R_OUT, weekAngle(s.to + 0.5));
+  const [x1, y1] = P(R_OUT, weekAngle(s.from - 0.5));
+  return { i, d: `M0 0 L${x0} ${y0} A${R_OUT} ${R_OUT} 0 0 1 ${x1} ${y1} Z`, fill: `--f:var(--sec-${s.id});--f-now:var(--sec-${s.id}-now)` };
 });
 
-const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
+// Клин каждого дня: пройденные дни закрашиваются цветом своего этапа — круг заполняется
+const dayCells = Array.from({ length: 52 }, (_, i) => {
+  const k = i + 1;
+  const s = SECTORS.find((x) => k >= x.from && k <= x.to)!;
+  const [x0, y0] = P(R_OUT, weekAngle(k + 0.5));
+  const [x1, y1] = P(R_OUT, weekAngle(k - 0.5));
+  return { k, d: `M0 0 L${x0} ${y0} A${R_OUT} ${R_OUT} 0 0 1 ${x1} ${y1} Z`, fill: `var(--sec-${s.id}-done)` };
+});
+
+// Разделители этапов — тонкие нейтральные линии от центра до края
+const crossLines = [0.5, 13.5, 26.5, 39.5].map((k) => {
   const a = weekAngle(k);
-  const [x1, y1] = P(54, a);
-  const [x2, y2] = P(168, a);
-  return { id: `cg${i}`, x1, y1, x2, y2, c1: specAt(i / 4), c2: specAt(i / 4 + 0.18) };
+  const [x1, y1] = P(C, a);
+  const [x2, y2] = P(R_OUT, a);
+  return { x1, y1, x2, y2 };
 });
 
-// Риски между неделями; на границах кварталов (после 13, 26, 39, 52) — длинные.
+// Риски между днями; на границах этапов (после 13, 26, 39, 52) — длинные.
 const weeks = Array.from({ length: 52 }, (_, i) => {
   const k = i + 1;
   const edge = weekAngle(k + 0.5);
@@ -47,20 +62,24 @@ const weeks = Array.from({ length: 52 }, (_, i) => {
   const [tx2, ty2] = P(quarter ? 199 : 194, edge);
   const a = weekAngle(k);
   const [x, y] = P(186, a);
-  return { k, label: String(k).padStart(2, '0'), quarter, tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2), color: specAt(i / 52) };
+  return { k, label: String(k).padStart(2, '0'), quarter, tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2) };
 });
 
-const labels = SECTORS.map((s, i) => {
+// Названия этапов — сплошным цветом (середина между c1 и c2). Градиент на тексте по дуге
+// Safari на iPhone обрезает по неповёрнутым рамкам букв — края букв «съедались».
+const mix = (a: string, b: string) => {
+  const [x, y] = [hex(a), hex(b)];
+  return `#${x.map((v, j) => Math.round((v + y[j]) / 2).toString(16).padStart(2, '0')).join('')}`;
+};
+const labels = SECTORS.map((s) => {
   const mid = weekAngle((s.from + s.to) / 2);
-  const [x1, y1] = P(125, mid - 30);
-  const [x2, y2] = P(125, mid + 30);
-  return { id: `lg${i}`, offset: +((((mid % 360) + 360) % 360) / 3.6).toFixed(2), x1, y1, x2, y2, ...s };
+  return { offset: +((((mid % 360) + 360) % 360) / 3.6).toFixed(2), color: mix(s.c1, s.c2), ...s };
 });
 
 const rim = Array.from({ length: 72 }, (_, i) => {
-  const [x0, y0] = P(50, i * 5);
-  const [x1, y1] = P(50, i * 5 + 5.4);
-  return { d: `M${x0} ${y0} A50 50 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
+  const [x0, y0] = P(C, i * 5);
+  const [x1, y1] = P(C, i * 5 + 5.4);
+  return { d: `M${x0} ${y0} A${C} ${C} 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
 });
 
 const hits = SECTORS.map((s, i) => {
@@ -68,43 +87,38 @@ const hits = SECTORS.map((s, i) => {
   const a1 = weekAngle(s.from - 0.5);
   const [x0, y0] = P(212, a0);
   const [x1, y1] = P(212, a1);
-  const [x2, y2] = P(52, a1);
-  const [x3, y3] = P(52, a0);
-  return { i, href: servicesHref(s.id), d: `M${x3} ${y3} L${x0} ${y0} A212 212 0 0 1 ${x1} ${y1} L${x2} ${y2} A52 52 0 0 0 ${x3} ${y3} Z`, ...s };
+  const [x2, y2] = P(C + 2, a1);
+  const [x3, y3] = P(C + 2, a0);
+  return { i, href: servicesHref(s.id), d: `M${x3} ${y3} L${x0} ${y0} A212 212 0 0 1 ${x1} ${y1} L${x2} ${y2} A${C + 2} ${C + 2} 0 0 0 ${x3} ${y3} Z`, ...s };
 });
 
 // Для скрипта: этапы со ссылками и текстами
-const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
+const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questions: STAGE_QUESTIONS[s.id] }));
 ---
 
-<div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: годовой цикл из четырёх этапов — касдев, дизайн, разработка, маркетинг">
+<!-- Строка над колесом: какой день и этап сейчас под стрелкой; при выборе — описание этапа -->
+<div class="wheel-info" id="wheelInfo"></div>
+
+<!-- Сцена во всю ширину карточки: круг по центру (не шире 460px — прежний размер), а полоса со стрелкой
+     тянется от края карточки до круга — на широком экране она длиннее, круг не раздувается. -->
+<div class="wheel-stage">
+<div class="pointer-rail" aria-hidden="true"></div>
+<div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
-  <svg class="wheel-rotor" id="wheelRotor" viewBox="-220 -220 440 440">
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
-      {crossLines.map((l) => (
-        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
-          <stop offset="0" stop-color={l.c1}></stop>
-          <stop offset="1" stop-color={l.c2}></stop>
-        </linearGradient>
-      ))}
-      {labels.map((l) => (
-        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
-          <stop offset="0" stop-color={l.c1}></stop>
-          <stop offset="1" stop-color={l.c2}></stop>
-        </linearGradient>
-      ))}
     </defs>
 
     <g id="rotor">
-      {discSectors.map((s) => <path class="sector-fill" data-sector={s.i} d={s.d} style={`fill:${s.fill}`}></path>)}
-      <circle r="170" fill="none" style="stroke:var(--disc-stroke)" stroke-width="2.5"></circle>
+      {discSectors.map((s) => <path class="sector-fill" data-sector={s.i} d={s.d} style={s.fill}></path>)}
+      <g class="days">
+        {dayCells.map((c) => <path class="day-cell" data-day={c.k} d={c.d} style={`fill:${c.fill};stroke:${c.fill}`}></path>)}
+      </g>
 
-      <g style="opacity:var(--cross-op)">
-        {crossLines.map((l) => (
-          <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={`url(#${l.id})`} stroke-width="2" stroke-dasharray="5 4"></line>
-        ))}
+      <g class="dividers">
+        {crossLines.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}></line>)}
       </g>
 
       <g class="ticks">
@@ -112,7 +126,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
           <line
             class:list={['tick', { quarter: w.quarter }]}
             x1={w.tx1} y1={w.ty1} x2={w.tx2} y2={w.ty2}
-            stroke={w.color} stroke-width={w.quarter ? 2.8 : 2.2} stroke-linecap="round"
+            stroke-width={w.quarter ? 2.4 : 1.6} stroke-linecap="round"
           ></line>
         ))}
       </g>
@@ -122,114 +136,179 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
         ))}
       </g>
 
-      <!-- «Сегодня»: дуга пройденной части года и точка текущей недели. Рисуются в браузере,
-           иначе неделя застыла бы на дате сборки. -->
-      <g id="wheelToday"></g>
-
       <g id="labels">
         {labels.map((l, i) => (
-          <text class="sector-label" font-size="25" font-weight="700" fill={`url(#${l.id})`} data-sector={i}>
+          <text class="sector-label" font-size="25" font-weight="700" fill={l.color} data-sector={i}>
             <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
           </text>
         ))}
       </g>
 
-      <circle r="50" style="fill:var(--center-fill)"></circle>
+      <circle r={C} style="fill:var(--center-fill)"></circle>
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
-        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}`}>
+        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
           <path class="sector-hit" d={h.d}></path>
         </a>
       ))}
     </g>
   </svg>
 
-  <svg class="wheel-overlay" viewBox="-220 -220 440 440" aria-hidden="true">
-    <defs>
-      {SECTORS.map((s, i) => (
-        <linearGradient id={`cw${i}`} x1="-40" y1="0" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color={s.c1}></stop>
-          <stop offset="1" stop-color={s.c2}></stop>
-        </linearGradient>
-      ))}
-    </defs>
+  <!-- Поле видимости обрезано по наконечнику стрелки (x = −216): без пустых полей колесо крупнее -->
+  <svg class="wheel-overlay" viewBox="-217 -217 434 434" aria-hidden="true">
     <g id="pointer">
-      <line x1="-216" y1="0" x2="-51" y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
-      <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"></path>
-      <text x="-100" y="17" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--teal-text)">итерация</text>
+      <!-- Наконечник и начало полосы — .pointer-rail у края карточки; здесь продолжение до центра -->
+      <line x1="-218" y1="0" x2={-C - 1} y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
+      <!-- Подпись над стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
+      <text class="iter-tag" id="iterText" x="-199" y="-7" font-size="12" font-weight="700">итерация 1</text>
     </g>
-    <text class="center-word center-default" x="0" y="5.5" text-anchor="middle" font-size="15" font-weight="600" style="fill:var(--ink-2)">внимание</text>
-    {SECTORS.map((s, i) => (
-      <text class="center-word center-sector" data-sector={i} x="0" y="6" text-anchor="middle" font-size={s.name.length > 8 ? 13 : 15} font-weight="800" fill={`url(#cw${i})`}>{s.name}</text>
-    ))}
+    <!-- Центр — методология: «внимание» всегда дугой по верхнему краю (как названия этапов на ободе),
+         сразу под ним такой же дугой «→ этап» — меняется только она; ровно в центре,
+         как в магическом шаре, всплывают вопросы этапа.
+         Вопрос — обычный HTML поверх центра (не foreignObject: Safari на iPhone рисует его
+         со сдвигом, когда внутри идёт анимация). -->
+    <defs>
+      <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
+      <path id="attnArc2" d={`M${-(C - 26)} 0 A${C - 26} ${C - 26} 0 0 1 ${C - 26} 0`} fill="none"></path>
+    </defs>
+    <!-- Вступление: сначала крупно и жирно «внимание» в центре, затем оно уходит в дугу сверху -->
+    <text class="attn" id="attn" x="0" y="7" text-anchor="middle" font-size="20" font-weight="800">внимание</text>
+    <text class="attn-arc" id="attnArcText" font-size="12" font-weight="700">
+      <textPath href="#attnArc" startOffset="50%" text-anchor="middle">внимание</textPath>
+    </text>
+    <text class="attn-to" id="attnToText" font-size="12.5" font-weight="700">
+      <textPath href="#attnArc2" startOffset="50%" text-anchor="middle" id="attnTo"></textPath>
+    </text>
   </svg>
+  <div class="center-q" id="centerQ" aria-hidden="true"><span class="cq-text" id="cqText"></span></div>
+</div>
 </div>
 
-<div class="wheel-info" id="wheelInfo" aria-live="polite"></div>
 
 <script is:inline define:vars={{ sectorData }}>
   window.__wheelSectors = sectorData;
 </script>
 
 <script>
-  type Sector = { id: string; name: string; from: number; to: number; text: string; href: string };
+  type Sector = { id: string; name: string; from: number; to: number; text: string; href: string; c1: string; c2: string; questions: string[] };
 
   const box = document.getElementById('wheelBox');
   const rotorSvg = document.getElementById('wheelRotor');
   const info = document.getElementById('wheelInfo');
-  const todayLayer = document.getElementById('wheelToday');
+  const iterText = document.getElementById('iterText') as SVGTextElement | null;
   const SECTORS = (window as unknown as { __wheelSectors: Sector[] }).__wheelSectors;
 
-  if (box && rotorSvg && info && todayLayer && SECTORS) {
+  if (box && rotorSvg && info && iterText && SECTORS) {
     const STEP = 360 / 52;
-    const PERIOD = 156000; // один оборот — год
+    const PERIOD = 156000; // один оборот — итерация из 52 дней, ~3 с на день
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canHover = matchMedia('(hover: hover)').matches;
-    const NS = 'http://www.w3.org/2000/svg';
 
     const links = [...box.querySelectorAll<SVGAElement>('.sector-link')];
     const fills = [...box.querySelectorAll<SVGPathElement>('.sector-fill')];
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
-    const centers = [...box.querySelectorAll<SVGTextElement>('.center-sector')];
+    const attnTo = document.getElementById('attnTo')!;
+    const attn = document.getElementById('attn')!;
+    const attnArcText = document.getElementById('attnArcText')!;
+    const attnToText = document.getElementById('attnToText')!;
+    const cqText = document.getElementById('cqText')!;
 
-    // ---------- Сегодня ----------
-    const isoWeek = (d: Date) => {
-      const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      const day = t.getUTCDay() || 7;
-      t.setUTCDate(t.getUTCDate() + 4 - day);
-      const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
-      return Math.ceil(((t.getTime() - y.getTime()) / 864e5 + 1) / 7);
-    };
-    const nowWeek = Math.min(52, isoWeek(new Date()));
-    const nowSector = SECTORS.findIndex((s) => nowWeek >= s.from && nowWeek <= s.to);
-    const progress = Math.round((nowWeek / 52) * 100);
+    // ---------- Итерация-демонстрация ----------
+    // День k стоит под стрелкой при повороте (k - 0.5) * STEP; угол 0 — начало итерации у стрелки.
+    const weekAt = (turn: number) => Math.min(52, Math.floor(turn / STEP) + 1);
+    const sectorOf = (week: number) => SECTORS.findIndex((s) => week >= s.from && week <= s.to);
+    const weekEls = [...box.querySelectorAll<SVGTextElement>('.week')];
+    let simWeek = 1;
+    let simSector = 0;
 
-    const weekAngle = (k: number) => 180 - (k - 0.5) * STEP;
-    const pt = (r: number, d: number) => {
-      const a = (d * Math.PI) / 180;
-      return `${(r * Math.cos(a)).toFixed(2)} ${(r * Math.sin(a)).toFixed(2)}`;
+    // Закрашенные дни: от первого до текущего включительно
+    const dayEls = [...box.querySelectorAll<SVGPathElement>('.day-cell')];
+    const paintDays = (upTo: number) => dayEls.forEach((el, i) => el.classList.toggle('is-done', i < upTo));
+
+
+    const setTag = (text: string) => {
+      iterText.textContent = text;
     };
-    // Дуга от начала года до текущей недели (недели растут против часовой)
-    const R = 207;
-    const a0 = weekAngle(0.5);
-    const a1 = weekAngle(nowWeek);
-    const arc = document.createElementNS(NS, 'path');
-    arc.setAttribute('d', `M${pt(R, a0)} A${R} ${R} 0 ${a0 - a1 > 180 ? 1 : 0} 0 ${pt(R, a1)}`);
-    arc.setAttribute('class', 'year-progress');
-    const dot = document.createElementNS(NS, 'circle');
-    const [dx, dy] = pt(R, a1).split(' ');
-    dot.setAttribute('cx', dx);
-    dot.setAttribute('cy', dy);
-    dot.setAttribute('r', '5.5');
-    dot.setAttribute('class', 'today-dot');
-    todayLayer.append(arc, dot);
-    box.querySelector(`.week[data-week="${nowWeek}"]`)?.classList.add('is-today');
-    fills[nowSector]?.classList.add('is-now');
+    // ---------- Центр: вопрос этапа ----------
+    // По ходу итерации вопрос привязан ко дню: 13 дней этапа делятся на 4 вопроса (~9 с каждый).
+    // При наведении или выборе — вопросы этого этапа по очереди, раз в 3 с.
+    let shown = '';
+    let shownStage = -1;
+    let hoverQ = 0;
+    let centerReady = false; // пока идёт вступление «внимание», этап и вопросы не показываем
+    const questionFor = (i: number) => {
+      const q = SECTORS[i].questions;
+      if (active() !== null) return q[hoverQ % q.length];
+      const dayInStage = simWeek - SECTORS[i].from; // 0..12
+      return q[Math.min(q.length - 1, Math.floor((dayInStage * q.length) / 13))];
+    };
+    // Перезапуск CSS-анимации: снять класс, дать браузеру заметить, вернуть
+    const replay = (el: Element, cls: string) => {
+      el.classList.remove(cls);
+      void (el as HTMLElement).getBoundingClientRect();
+      el.classList.add(cls);
+    };
+    function showCenter() {
+      if (!centerReady) return;
+      const i = active() ?? simSector;
+      const s = SECTORS[i];
+      if (i !== shownStage) {
+        shownStage = i;
+        attnTo.textContent = `→ ${s.name}`;
+        attnToText.style.fill = s.c1;
+        if (!reduce) replay(attnToText, 'is-in');
+      }
+      const text = questionFor(i);
+      const key = `${i}|${text}`;
+      if (key === shown) return;
+      const first = shown === '';
+      shown = key;
+      const apply = () => {
+        cqText.textContent = text;
+        cqText.classList.remove('is-out');
+        if (!reduce) replay(cqText, 'is-rise');
+      };
+      if (first || reduce) return apply();
+      // Старый вопрос тает и уходит вверх, новый всплывает снизу
+      cqText.classList.add('is-out');
+      window.setTimeout(apply, 350);
+    }
+
+    // Вступление: крупное «внимание» ~2 с → уходит вверх в дугу → «→ этап» и первый вопрос
+    let centerStarted = false;
+    function startCenter() {
+      if (centerStarted) return;
+      centerStarted = true;
+      const finish = () => {
+        attn.classList.add('is-up');
+        attnArcText.classList.add('is-in');
+        centerReady = true;
+        showCenter();
+      };
+      if (reduce) return finish();
+      attn.classList.add('is-show');
+      window.setTimeout(() => {
+        attn.classList.add('is-up');
+        window.setTimeout(() => attnArcText.classList.add('is-in'), 300);
+        window.setTimeout(() => {
+          centerReady = true;
+          showCenter();
+        }, 800);
+      }, 2000);
+    }
+
+    window.setInterval(() => {
+      if (active() === null) return;
+      hoverQ += 1;
+      showCenter();
+    }, 3000);
+
+    let doneUntil = 0; // пока показываем «цикл окончен»
+    let iteration = 1; // считаем круги, пока страница открыта; после обновления — снова с 1
 
     // ---------- Вращение ----------
     const sectorAngle = (i: number) => ((SECTORS[i].from + SECTORS[i].to) / 2 - 0.5) * STEP;
-    const todayAngle = (nowWeek - 0.5) * STEP;
     let ambient: Animation | null = null;
 
     const setAngle = (a: number) => (rotorSvg.style.transform = `rotate(${a}deg)`);
@@ -269,26 +348,32 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     const active = () => selected ?? hovered;
     const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
+    let lastActive: number | null = null;
     function render() {
       const i = active();
+      if (i !== lastActive) {
+        hoverQ = 0;
+        lastActive = i;
+      }
       box.classList.toggle('has-active', i !== null);
       fills.forEach((el, j) => el.classList.toggle('is-active', i === j));
       labels.forEach((el, j) => el.classList.toggle('is-active', i === j));
-      centers.forEach((el, j) => el.classList.toggle('is-active', i === j));
+      showCenter();
 
+      // Бегущий день экранный диктор не зачитывает — только выбор этапа
+      info.setAttribute('aria-live', i === null ? 'off' : 'polite');
       if (i === null) {
-        const s = SECTORS[nowSector];
-        info.innerHTML =
-          `<p class="info-line">Сегодня <b>неделя&nbsp;${nowWeek}</b> · идёт <b>${s.name}</b></p>` +
-          `<p class="info-sub">Пройдено ${progress}% годового цикла. ${canHover ? 'Наведите на этап' : 'Нажмите на этап'}, чтобы узнать больше.</p>`;
+        const line = performance.now() < doneUntil
+          ? `<b>Цикл окончен</b> · начинаем итерацию&nbsp;${iteration}`
+          : `<b>День&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
+        info.innerHTML = `<p class="info-line">${line}</p>`;
         return;
       }
       const s = SECTORS[i];
-      const now = i === nowSector ? ' <span class="now-chip">сейчас</span>' : '';
+      // Одна строка, как и без выбора: высота не меняется — колесо не прыгает под курсором
       info.innerHTML =
-        `<p class="info-line"><b>${cap(s.name)}</b> · недели ${s.from}–${s.to}${now}</p>` +
-        `<p class="info-sub">${s.text}</p>` +
-        `<a class="info-more" href="${s.href}">Подробнее об этапе →</a>`;
+        `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to} · ` +
+        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`;
     }
 
     function select(i: number) {
@@ -369,22 +454,162 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
       if (e.pointerType === 'touch' && !box.contains(e.target as Node) && !info.contains(e.target as Node)) clear();
     });
 
-    // ---------- Вход: колесо приезжает на сегодняшнюю неделю ----------
-    render();
-    if (reduce) {
-      setAngle(todayAngle);
-    } else {
-      setAngle(todayAngle - 110);
-      requestAnimationFrame(() => turnTo(todayAngle, 1600, (a) => startAmbient(a)));
+    // ---------- Ход итерации: что под стрелкой, шкала, завершение круга ----------
+    let prevTurn = 0;
+    function tick() {
+      const turn = ((currentAngle() % 360) + 360) % 360;
+      // Круг замкнулся: шли вперёд и перевалили через начало итерации
+      if (ambient?.playState === 'running' && prevTurn > 300 && turn < 60) {
+        doneUntil = performance.now() + 4000;
+        iteration += 1;
+        setTag('цикл окончен');
+        window.setTimeout(() => {
+          setTag(`итерация ${iteration}`);
+          render();
+        }, 4000);
+      }
+      prevTurn = turn;
+
+      const week = weekAt(turn);
+      if (week !== simWeek) {
+        weekEls[simWeek - 1]?.classList.remove('is-today');
+        weekEls[week - 1]?.classList.add('is-today');
+        simWeek = week;
+        paintDays(week);
+        const sec = sectorOf(week);
+        if (sec !== simSector) {
+          labels[simSector]?.classList.remove('is-now');
+          labels[sec]?.classList.add('is-now');
+          simSector = sec;
+        }
+        if (active() === null) render();
+      }
     }
+
+    // ---------- Вход: итерация начинается с первого дня ----------
+    weekEls[0]?.classList.add('is-today');
+    labels[0]?.classList.add('is-now');
+    paintDays(1);
+    setTag(`итерация ${iteration}`);
+    render();
+    startAmbient(0);
+    tick();
+    // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
+    if (!reduce) window.setInterval(tick, 100);
+
+    // «Покрути колесо» (выбрано владельцем 21.10.2026): тянешь — колесо поворачивается за пальцем/мышью,
+    // отпустил — спокойное вращение продолжается с этого места. Короткое касание остаётся кликом.
+    if (!reduce) {
+      box.classList.add('can-spin');
+      let drag: { id: number; start: number; from: number; moved: boolean } | null = null;
+      const angleAt = (e: PointerEvent) => {
+        const r = box.getBoundingClientRect();
+        return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
+      };
+      box.addEventListener('pointerdown', (e) => {
+        drag = { id: e.pointerId, start: angleAt(e), from: currentAngle(), moved: false };
+      });
+      box.addEventListener('pointermove', (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        let d = angleAt(e) - drag.start;
+        d = ((d + 540) % 360) - 180;
+        if (!drag.moved && Math.abs(d) < 4) return;
+        if (!drag.moved) {
+          drag.moved = true;
+          try {
+            box.setPointerCapture(e.pointerId);
+          } catch {
+            /* без захвата тоже работает, пока указатель над колесом */
+          }
+          ambient?.cancel();
+          ambient = null;
+          selected = hovered = null;
+          render();
+        }
+        setAngle(drag.from + d);
+        e.preventDefault();
+      });
+      const release = (e: PointerEvent) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const moved = drag.moved;
+        drag = null;
+        if (moved) {
+          startAmbient(currentAngle());
+          // после перетаскивания не открывать этап, на котором отпустили
+          box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
+        }
+      };
+      box.addEventListener('pointerup', release);
+      box.addEventListener('pointercancel', release);
+    }
+
+    // Вступление «внимание» начинаем, когда колесо на экране и заставка закрыта — иначе его не увидят
+    const root = document.documentElement;
+    let wheelSeen = false;
+    const tryStart = () => {
+      if (wheelSeen && !root.classList.contains('intro-open')) startCenter();
+    };
+    new MutationObserver(tryStart).observe(root, { attributes: true, attributeFilter: ['class'] });
+    // Колесо уже на первом экране — не ждём наблюдателя (в фоновой вкладке он молчит до показа)
+    const rect = box.getBoundingClientRect();
+    if (rect.top < innerHeight && rect.bottom > 0) {
+      wheelSeen = true;
+      tryStart();
+    }
+    new IntersectionObserver((entries, io) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        wheelSeen = true;
+        io.disconnect();
+        tryStart();
+      }
+    }, { threshold: 0.4 }).observe(box);
   }
 </script>
 
 <style>
+  /* Сцена во всю ширину карточки: 14px — горизонтальный отступ .wheel-card в index.astro.
+     --wb — ширина круга: на телефоне вся ширина, на компьютере не больше 460px (прежний размер). */
+  .wheel-stage {
+    --wb: min(100%, 460px);
+    position: relative;
+    width: calc(100% + 28px);
+    margin-inline: -14px;
+  }
+  /* Полоса от края карточки до круга с наконечником у края */
+  .pointer-rail {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 1;
+    width: calc((100% - var(--wb)) / 2 + 2px);
+    height: 2.5px;
+    transform: translateY(-50%);
+    background: var(--teal);
+    pointer-events: none;
+  }
+  .pointer-rail::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-style: solid;
+    border-width: 7px 0 7px 13px;
+    border-color: transparent transparent transparent var(--teal);
+  }
+  @media (max-width: 520px) {
+    .pointer-rail {
+      height: 2px;
+    }
+    .pointer-rail::before {
+      border-width: 5.6px 0 5.6px 10.5px;
+    }
+  }
   .wheel-box {
     position: relative;
-    width: 100%;
-    max-width: 460px;
+    /* Единицы cqw — доли ширины колеса: текст в центре масштабируется вместе с SVG (434 единицы) */
+    container-type: inline-size;
+    width: var(--wb);
     aspect-ratio: 1 / 1;
     margin-inline: auto;
     /* Повёрнутый квадрат ротора по диагонали шире коробки — без обрезки на узком экране
@@ -407,23 +632,55 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     pointer-events: none;
   }
 
-  /* Сектора: текущий этап чуть насыщеннее; при выборе — выбранный ярче, остальные гаснут */
+  /* Сектора — едва заметная заливка этапа до края круга; при выборе выбранный чуть плотнее */
   .sector-fill {
+    fill: var(--f);
     opacity: var(--disc-op);
-    transition: opacity 0.3s ease;
-  }
-  .sector-fill.is-now {
-    opacity: min(1, calc(var(--disc-op) + 0.3));
-  }
-  .has-active .sector-fill {
-    opacity: calc(var(--disc-op) * 0.45);
+    transition: opacity 0.4s ease, fill 0.4s ease;
   }
   .has-active .sector-fill.is-active {
+    fill: var(--f-now);
+  }
+  /* Пройденные дни закрашиваются цветом этапа: круг заполняется по ходу итерации */
+  /* обводка в цвет заливки закрывает светлые швы между соседними клиньями */
+  .day-cell {
+    stroke-width: 0.8;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .day-cell.is-done {
     opacity: 1;
+  }
+  /* «Покрути колесо»: тянуть вбок/по кругу — крутит колесо; вертикальный свайп на телефоне
+     по-прежнему листает страницу (колесо почти во всю ширину экрана) */
+  .can-spin {
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .can-spin:active {
+    cursor: grabbing;
+  }
+  .has-active .day-cell.is-done {
+    opacity: 0.55;
+  }
+  /* Разделители этапов и риски дней — тонко и нейтрально */
+  .dividers line {
+    stroke: var(--wheel-line);
+    stroke-width: 1;
+  }
+  .tick {
+    stroke: var(--wheel-line);
+  }
+  .tick.quarter {
+    stroke: var(--teal);
+    opacity: 0.6;
   }
   .sector-label {
     opacity: var(--label-op);
     transition: opacity 0.3s ease;
+  }
+  .sector-label.is-now {
+    opacity: 1;
   }
   .has-active .sector-label {
     opacity: 0.2;
@@ -443,23 +700,22 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     font-weight: 800;
     font-size: 10.5px;
   }
-  :global(.year-progress) {
-    fill: none;
-    stroke: var(--teal);
-    stroke-width: 3;
-    stroke-linecap: round;
-    opacity: 0.45;
-  }
-  :global(.today-dot) {
-    fill: var(--teal);
-    stroke: var(--card);
-    stroke-width: 2.5;
+  /* Подпись «итерация»: без обводки, только лёгкая тень */
+  .iter-tag {
+    fill: var(--teal-text);
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
   }
 
   .sector-hit {
     fill: transparent;
     cursor: pointer;
   }
+  /* Прямоугольную рамку фокуса браузера не показываем ни после клика, ни с клавиатуры:
+     для клавиатуры сектор обводится пунктиром по своей форме (ниже). */
+  .sector-link {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sector-link:focus,
   .sector-link:focus-visible {
     outline: none;
   }
@@ -469,25 +725,120 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     stroke-dasharray: 4 4;
   }
 
-  /* Центр: «внимание» уступает место названию выбранного этапа */
-  .center-word {
-    transition: opacity 0.25s ease;
-  }
-  .has-active .center-default {
+  /* Центр. «Внимание» — главное слово методологии: всегда на месте, дугой сверху.
+     Меняется только строка «→ этап»; вопросы всплывают за 0,7 с, без пружин. */
+  /* Крупное жирное «внимание»: проявляется, держится ~2 с, уходит вверх и гаснет —
+     на его месте проявляется дуга «внимание». Без пружин. */
+  .attn {
+    fill: var(--ink);
     opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.6s ease,
+      transform 0.8s cubic-bezier(0.45, 0, 0.2, 1);
   }
-  .center-sector {
-    opacity: 0;
-  }
-  .center-sector.is-active {
+  .attn.is-show {
     opacity: 1;
   }
+  .attn.is-up {
+    opacity: 0;
+    transform: translateY(-46px) scale(0.6);
+  }
+  .attn-arc {
+    fill: var(--ink-2);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .attn-arc.is-in {
+    opacity: 1;
+  }
+  .attn-to.is-in {
+    animation: attn-to-in 0.5s ease;
+  }
+  @keyframes attn-to-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  /* Блок вопроса 126×68 единиц SVG по центру круга */
+  .center-q {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(126 / 434 * 100cqw);
+    height: calc(68 / 434 * 100cqw);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--font);
+    pointer-events: none;
+  }
+  .cq-text {
+    display: block;
+    /* Уже круга: вопрос переносится на 2 ровные строки и не липнет к краю */
+    max-width: calc(108 / 434 * 100cqw);
+    font-size: calc(13 / 434 * 100cqw);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      filter 0.35s ease;
+  }
+  .cq-text.is-out {
+    opacity: 0;
+    transform: translateY(-6px);
+    filter: blur(2px);
+  }
+  /* Магический шар: вопрос поднимается из глубины и проясняется */
+  .cq-text.is-rise {
+    animation: cq-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @keyframes cq-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.94);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  /* На телефоне колесо ~0,7 от своего размера — шрифт центра крупнее (~12 px на экране 375) */
+  @media (max-width: 520px) {
+    .attn {
+      font-size: 25px;
+    }
+    .attn-arc {
+      font-size: 13px;
+    }
+    .attn-to {
+      font-size: 13.5px;
+    }
+    .cq-text {
+      max-width: calc(116 / 434 * 100cqw);
+      font-size: calc(15.5 / 434 * 100cqw);
+      line-height: 1.1;
+    }
+  }
 
+  /* Одна строка (на узком экране — до двух); высота постоянная, чтобы колесо не сдвигалось */
   .wheel-info {
-    min-height: 4.6em;
+    min-height: 2.9em;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     text-align: center;
     padding-inline: 8px;
@@ -499,33 +850,18 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
   .wheel-info :global(.info-line b) {
     font-weight: 700;
   }
-  .wheel-info :global(.info-sub) {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    max-width: 44ch;
-  }
   .wheel-info :global(.info-more) {
-    margin-top: 2px;
-    font-size: 14px;
     font-weight: 600;
     color: var(--teal-text);
     text-underline-offset: 3px;
-  }
-  .wheel-info :global(.now-chip) {
-    display: inline-block;
-    padding: 1px 8px;
-    border-radius: 999px;
-    background: var(--teal-btn);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    vertical-align: 1px;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .sector-fill,
     .sector-label,
-    .center-word {
+    .attn,
+    .attn-arc,
+    .cq-text {
       transition: none;
     }
   }

@@ -49,6 +49,11 @@ if (trim((string)($_POST['website'] ?? '')) !== '') {
     reply(200, ['ok' => true]);
 }
 
+// Без отмеченного согласия на обработку данных (152-ФЗ) сообщение не принимаем.
+if (($_POST['consent'] ?? '') !== '1') {
+    reply(422, ['ok' => false, 'error' => 'consent']);
+}
+
 $clean = static function (string $s, int $max): string {
     $s = str_replace("\r\n", "\n", $s);
     $s = preg_replace('/[^\P{C}\n\t]/u', '', $s) ?? '';

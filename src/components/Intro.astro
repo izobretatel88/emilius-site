@@ -2,18 +2,18 @@
 // Заставка при первом заходе. Движение знака повторяет эталонное видео кадр в кадр
 // (замеры по 60 к/с — в константах T ниже):
 //   нажатие → знак за 1–2 кадра наклоняется (~45°), надписи пропадают мгновенно;
-//   1,8 с знак медленно выпрямляется до ~31°, по металлу проходит блик;
+//   1,8 с знак медленно выпрямляется до ~31°;
 //   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
 // Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
-// Сначала только выбор «Со звуком» / «Без звука»; не нажали за T.wait — без звука.
+// Сначала вопрос «Удобно сейчас со звуком?» — «Да» / «Нет»; не нажали за T.wait — без звука.
+// Знак плоский, как в PNG владельца (объём и блик убраны 21.10.2026 — «криво» на тонких линиях).
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
-const mark = `${root}brand/mark.svg`;
+const mark = `${root}brand/logo.png`; // знак-молния — PNG владельца
 const sound = `${root}brand/intro.mp3`;
-const LAYERS = 9; // слои толщины знака
 ---
 
 <div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} hidden>
@@ -22,11 +22,7 @@ const LAYERS = 9; // слои толщины знака
   <div class="stage">
     <div class="lift" id="introLift">
       <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
-        {Array.from({ length: LAYERS }, (_, i) => (
-          <img class="layer edge" src={mark} alt="" style={`--i:${LAYERS - i}`} />
-        ))}
         <img class="layer front" src={mark} alt="" />
-        <span class="light" id="introLight"></span>
       </div>
     </div>
     <span class="shadow" id="introShadow"></span>
@@ -35,19 +31,22 @@ const LAYERS = 9; // слои толщины знака
   <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
   </div>
 
-  <!-- Выбор: со звуком или без. На «Без звука» тает кольцо — если ничего не нажать, старт без звука -->
-  <div class="choice" id="introChoice">
+  <!-- Вопрос о звуке. На «Нет» тает кольцо — если ничего не нажать, старт без звука -->
+  <div class="choice" id="introChoice" role="group" aria-labelledby="introAsk">
+    <p class="ask" id="introAsk">Удобно сейчас со звуком?</p>
+    <div class="picks">
     <button class="pick pick-sound" id="introSound" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4Z"></path><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"></path></svg>
-      Со звуком
+      Да
     </button>
     <button class="pick pick-quiet" id="introQuiet" type="button">
       <svg class="ring" viewBox="0 0 24 24" aria-hidden="true">
         <circle class="ring-track" cx="12" cy="12" r="9"></circle>
         <circle class="ring-left" id="introRing" cx="12" cy="12" r="9" pathLength="100"></circle>
       </svg>
-      Без звука
+      Нет
     </button>
+    </div>
   </div>
 </div>
 
@@ -74,7 +73,7 @@ const LAYERS = 9; // слои толщины знака
     settle: 2000, // оседание после возврата
     close: 2700, // когда показать сайт
     fade: 600,
-    wait: 5000, // кольцо на «Без звука»: сколько ждём выбора
+    wait: 5000, // кольцо на «Нет»: сколько ждём выбора
   };
   // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
   const TILT_FROM = -45;
@@ -83,7 +82,6 @@ const LAYERS = 9; // слои толщины знака
   const intro = document.getElementById('intro');
   const lift = document.getElementById('introLift');
   const mark = document.getElementById('introMark');
-  const light = document.getElementById('introLight');
   const shadow = document.getElementById('introShadow');
   const logo = document.getElementById('introLogo');
   const choice = document.getElementById('introChoice');
@@ -91,7 +89,7 @@ const LAYERS = 9; // слои толщины знака
   const quiet = document.getElementById('introQuiet');
   const ring = document.getElementById('introRing');
 
-  if (intro && lift && mark && light && shadow && logo && choice && withSound && quiet && ring && !intro.hidden) {
+  if (intro && lift && mark && shadow && logo && choice && withSound && quiet && ring && !intro.hidden) {
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
@@ -158,16 +156,6 @@ const LAYERS = 9; // слои толщины знака
           { transform: `rotateX(${TILT_FROM}deg)`, offset: T.tilt / hold, easing: 'linear' },
           { transform: `rotateX(${TILT_FROM + 1}deg)`, offset: 400 / hold, easing: 'linear' },
           { transform: `rotateX(${TILT_TO}deg)` },
-        ],
-        { duration: hold, easing: 'linear' },
-      );
-      // Блик: тёмная и светлая полосы идут слева направо, металл к концу светлеет
-      run(
-        light,
-        [
-          { opacity: 0, backgroundPosition: '15% 0' },
-          { opacity: 1, backgroundPosition: '20% 0', offset: T.tilt / hold },
-          { opacity: 1, backgroundPosition: '85% 0' },
         ],
         { duration: hold, easing: 'linear' },
       );
@@ -292,43 +280,13 @@ const LAYERS = 9; // слои толщины знака
     inset: 0;
     width: 100%;
     height: 100%;
+    /* знак вытянут по вертикали — без contain его растягивало в квадрат, и блик (маска) не совпадал */
+    object-fit: contain;
     user-select: none;
     pointer-events: none;
   }
-  /* Толщина знака: копии уходят вглубь и темнеют, как грань металла */
-  .edge {
-    transform: translateZ(calc(var(--i) * -1.4px));
-    filter: brightness(0.62) saturate(1.25);
-  }
   .front {
     transform: translateZ(0);
-  }
-  /* Свет на металле при наклоне: тёмная и светлая полосы, обрезанные по форме знака */
-  .light {
-    position: absolute;
-    inset: 0;
-    transform: translateZ(0.5px);
-    -webkit-mask: var(--mark) center / contain no-repeat;
-    mask: var(--mark) center / contain no-repeat;
-    /* Полосы идут слева направо: сначала тень на левой трети, блик по центру, к концу металл светлеет */
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.35) 0%,
-        rgba(255, 255, 255, 0) 12%,
-        rgba(0, 0, 0, 0.1) 22%,
-        rgba(0, 0, 0, 0.55) 32%,
-        rgba(0, 0, 0, 0.2) 40%,
-        rgba(255, 255, 255, 0.95) 47%,
-        rgba(0, 0, 0, 0.35) 54%,
-        rgba(0, 0, 0, 0.05) 62%,
-        rgba(255, 255, 255, 0.85) 68%,
-        rgba(0, 0, 0, 0.45) 76%,
-        rgba(0, 0, 0, 0.1) 86%,
-        rgba(255, 255, 255, 0.4) 100%
-      )
-      0 0 / 300% 100% no-repeat;
-    opacity: 0;
-    pointer-events: none;
   }
   .shadow {
     position: absolute;
@@ -365,14 +323,25 @@ const LAYERS = 9; // слои толщины знака
   /* Выбор звука: кнопки как на сайте — залитая и с рамкой */
   .choice {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
+  }
+  .ask {
+    font-size: clamp(20px, 2.6vw, 24px);
+    font-weight: 600;
+    color: var(--ink);
+    text-align: center;
+  }
+  .picks {
+    display: flex;
     justify-content: center;
     gap: 12px;
-        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
   }
   .pick {
     height: 50px;
-    min-width: 160px;
+    min-width: 120px;
     display: inline-flex;
     align-items: center;
     justify-content: center;

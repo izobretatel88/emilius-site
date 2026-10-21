@@ -1,4 +1,5 @@
-// Собирает фирменные картинки из одного генератора знака (src/lib/mark.mjs):
+// Собирает фирменные картинки из PNG логотипа владельца (public/brand/logo.png,
+// готовится scripts/logo-from-png.py — знак не перерисовываем):
 //   public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png,
 //   public/brand/logo-mark.png, public/og.jpg
 //
@@ -9,7 +10,6 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { markSvg } from '../src/lib/mark.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const PUB = join(ROOT, 'public');
@@ -30,24 +30,28 @@ function shoot(html, out, w, h, { transparent = false } = {}) {
 const page = (body, css = '') =>
   `<!doctype html><html data-theme="light"><head><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden}${css}</style></head><body>${body}</body></html>`;
 
-// 1. favicon.svg — обводка толще: на 16–32 px тонкая линия пропадает
-const faviconSvg = markSvg({ square: true, padding: 12, stroke: 12 });
-writeFileSync(join(PUB, 'favicon.svg'), faviconSvg);
+const LOGO = join(PUB, 'brand', 'logo.png');
+const logoUrl = `file://${LOGO}`;
+// Знак по центру квадрата side×side с полем pad
+const squareLogo = (side, pad, bg = 'transparent') =>
+  page(`<div style="width:${side}px;height:${side}px;display:grid;place-items:center;background:${bg}"><img src="${logoUrl}" style="max-width:${side - pad * 2}px;max-height:${side - pad * 2}px"></div>`);
 
-// 2. favicon-32.png — прозрачный фон
-shoot(page(faviconSvg.replace('<svg ', '<svg width="32" height="32" ')), join(PUB, 'favicon-32.png'), 32, 32, { transparent: true });
-
-// 3. apple-touch-icon.png — светлый квадрат, iOS сам скруглит углы
-shoot(
-  page(markSvg({ square: true, padding: 40, stroke: 9, fill: true }).replace('<svg ', '<svg width="180" height="180" '), 'body{background:#fefefe}'),
-  join(PUB, 'apple-touch-icon.png'), 180, 180,
+// 1. favicon.svg — та же PNG внутри SVG: браузеры, которые берут svg-иконку, покажут картинку владельца
+const pngB64 = readFileSync(LOGO).toString('base64');
+const [lw, lh] = [267, 401];
+writeFileSync(
+  join(PUB, 'favicon.svg'),
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${lh} ${lh}"><image href="data:image/png;base64,${pngB64}" x="${(lh - lw) / 2}" y="0" width="${lw}" height="${lh}"/></svg>`,
 );
 
-// 4. brand/logo-mark.png — знак 512 px на прозрачном фоне, для соцсетей и документов
-shoot(page(markSvg({ square: true, padding: 8, fill: true }).replace('<svg ', '<svg width="512" height="512" ')), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
+// 2. favicon-32.png — прозрачный фон
+shoot(squareLogo(32, 1), join(PUB, 'favicon-32.png'), 32, 32, { transparent: true });
 
-// 4b. brand/mark.svg — знак с заливкой для заставки (слои объёма и маска блика берут его же)
-writeFileSync(join(PUB, 'brand', 'mark.svg'), markSvg({ square: true, padding: 8, fill: true, idPrefix: 'ms' }));
+// 3. apple-touch-icon.png — светлый квадрат, iOS сам скруглит углы
+shoot(squareLogo(180, 28, '#fefefe'), join(PUB, 'apple-touch-icon.png'), 180, 180);
+
+// 4. brand/logo-mark.png — знак 512 px на прозрачном фоне, для соцсетей и документов
+shoot(squareLogo(512, 40), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
 
 // 5. og.jpg — 1200×630: логотип, миссия, колесо из собранного сайта
 const dist = join(ROOT, 'dist', 'index.html');
@@ -56,9 +60,13 @@ if (!existsSync(dist)) {
 } else {
   const html = readFileSync(dist, 'utf8');
   const start = html.indexOf('<div class="wheel-box"');
-  const end = html.indexOf('</svg> </div>', start) + '</svg> </div>'.length;
+  // Колесо — до блока вопроса в центре (он заполняется скриптом); коробку закрываем сами
+  const end = html.indexOf('<div class="center-q"', start);
   const wheel = html
     .slice(start, end)
+    .concat('</div>')
+    // крупное «внимание» вступления на картинке не нужно — остаётся дуга
+    .replace(/<text class="attn"[\s\S]*?<\/text>/, '')
     .replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '')
     // названия этапов в центре видны только при наведении — на картинке их не нужно
     .replace(/<text class="center-word center-sector"[\s\S]*?<\/text>/g, '');
@@ -71,15 +79,27 @@ if (!existsSync(dist)) {
       background-color:var(--page);display:grid;grid-template-columns:1fr 520px;align-items:center;padding:0 40px 0 72px;box-sizing:border-box}
     .left{display:flex;flex-direction:column;gap:26px}
     .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 24px;font-weight:600;font-size:22px}
-    .pill svg{width:40px;height:38px;display:block}
+    .pill img{width:27px;height:40px;display:block}
     .eyebrow{color:var(--teal-text);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
     h1{margin:0;font-weight:600;font-size:46px;line-height:1.12}
     .sub{font-size:22px;color:var(--ink-2)}
     .wheel-box{position:relative;width:500px;height:500px}
-    .wheel-box svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}`;
+    .wheel-box svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+    /* стили колеса из Wheel.astro, которые нужны неподвижной картинке */
+    .sector-fill{fill:var(--f);opacity:var(--disc-op)}
+    .sector-fill.is-now{fill:var(--f);opacity:var(--disc-op)}
+    .sector-label{opacity:var(--label-op)}
+    .ticks{opacity:var(--tick-op)}
+    .num{fill:var(--teal-num)}
+    .attn-arc{fill:var(--ink-2)}
+    .iter-tag{fill:var(--teal-text)}
+    .day-cell{display:none}
+    .dividers line{stroke:var(--wheel-line);stroke-width:1}
+    .tick{stroke:var(--wheel-line)}
+    .tick.quarter{stroke:var(--teal);opacity:.6}`;
   const body = `
     <div class="left">
-      <div class="pill"><span>Эмилиус</span>${markSvg({ fill: true, idPrefix: 'og' })}<span>Эдженси</span></div>
+      <div class="pill"><span>Эмилиус</span><img src="${logoUrl}" alt=""><span>Эдженси</span></div>
       <div><div class="eyebrow">Наша миссия</div><h1>Помогать великолепным людям создавать великолепные продукты!</h1></div>
       <div class="sub">Касдев → дизайн → разработка → маркетинг.<br>Делаем по кругу.</div>
     </div>

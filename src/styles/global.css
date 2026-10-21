@@ -84,6 +84,13 @@ a {
   white-space: nowrap;
 }
 
+/* Узкий телефон: поля страницы уже — места и так мало */
+@media (max-width: 480px) {
+  body {
+    padding-inline: 12px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

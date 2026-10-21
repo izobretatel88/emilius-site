@@ -54,7 +54,7 @@ const arc = (i: number) => {
             <path d={arc(i)} fill="none" stroke-width="7" stroke-linecap="round" style={i === index ? 'stroke:url(#cur)' : 'stroke:var(--hair)'}></path>
           ))}
         </svg>
-        <p class="eyebrow">Этап {index + 1} из 4 · недели <span class="num">{pad(sector.from)}–{pad(sector.to)}</span></p>
+        <p class="eyebrow">Этап {index + 1} из 4 · дни <span class="num">{pad(sector.from)}–{pad(sector.to)}</span></p>
       </div>
       <h1>{service.title}</h1>
       <p class="lead">{service.lead}</p>
