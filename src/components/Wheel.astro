@@ -729,6 +729,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     fill: transparent;
     cursor: pointer;
   }
+  /* Прямоугольную рамку фокуса браузера не показываем ни после клика, ни с клавиатуры:
+     для клавиатуры сектор обводится пунктиром по своей форме (ниже). */
+  .sector-link {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sector-link:focus,
   .sector-link:focus-visible {
     outline: none;
   }
