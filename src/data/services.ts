@@ -6,6 +6,8 @@ export type Service = {
   doing: string[];
   result: string[];
   cases: string[]; // id из projects.ts
+  // Готовое решение этапа — блок со ссылкой на отдельную страницу услуги
+  offer?: { eyebrow: string; title: string; text: string; href: string; cta: string };
 };
 
 export const SERVICES: Record<string, Service> = {
@@ -41,6 +43,13 @@ export const SERVICES: Record<string, Service> = {
     ],
     result: ['Работающий продукт, а не набор макетов', 'Код, который можно развивать дальше'],
     cases: ['wizzu', 'alohagaia', 'geekboards'],
+    offer: {
+      eyebrow: 'Готовое решение',
+      title: 'Интернет-магазин на InSales за 3–5 недель',
+      text: 'Готовая тема, ваш каталог, оплата, доставка и аналитика. Состав и цену фиксируем до старта.',
+      href: 'services/insales-shop/',
+      cta: 'Посчитать магазин →',
+    },
   },
   marketing: {
     title: 'Маркетинг',
