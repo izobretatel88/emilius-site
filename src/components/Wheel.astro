@@ -160,8 +160,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
          под ним «→ этап», а в середине, как в магическом шаре, всплывают вопросы этапа.
          Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
     <text class="attn" id="attn" x="0" y="6" text-anchor="middle" font-size="18" font-weight="800">внимание</text>
-    <text class="attn-to" id="attnTo" x="0" y="-24" text-anchor="middle" font-size="12" font-weight="700"></text>
-    <foreignObject x={-C + 7} y="-14" width={2 * (C - 7)} height="68">
+    <text class="attn-to" id="attnTo" x="0" y="-20" text-anchor="middle" font-size="12" font-weight="700"></text>
+    <foreignObject x={-C + 7} y="-12" width={2 * (C - 7)} height="64">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
         <span class="cq-text" id="cqText"></span>
       </div>
@@ -617,7 +617,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   .attn.is-up {
     opacity: 1;
     fill: var(--ink-2);
-    transform: translateY(-46px) scale(0.62);
+    transform: translateY(-42px) scale(0.62);
   }
   .attn-to {
     opacity: 0;
@@ -645,6 +645,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   .cq-text {
     display: block;
+    /* Уже круга: вопрос переносится на 2 ровные строки и не липнет к краю */
+    max-width: 104px;
     font-size: 13px;
     font-weight: 600;
     line-height: 1.2;
@@ -685,7 +687,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       font-size: 15px;
     }
     .cq-text {
-      font-size: 17px;
+      max-width: 124px;
+      font-size: 16px;
       line-height: 1.12;
     }
   }
