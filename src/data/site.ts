@@ -16,7 +16,7 @@ export const LINKS = {
 export const EMI_WIDGET_SRC =
   'https://app.millis.ai/agents/embedded?id=-Or5e2l2n8R7drrR-yId&k=fEG4QMFDR2LxTbNwFA0ZLKGvNENPTmcC&c=eJxlj8FKAzEURX8lRAodmBknxaKdLv0NN5nJmxhMk5JkrFgK0nXBhV%2Fgwr10o6t%2BQ%2BaPfLGFIj4eWZybe7lvTYMKGjyt17S1xkAblJG0pvE97ofX%2BDXsyrKkOVVCQ8Jv8RD38TC8xO9hO%2BxQcb0xJ88HSp%2FDNkl0gx5M%2FJ8ceKPB1cIGf87trusVf4TOusWfSOQL1RZec3%2BfIps%2BBGtuPcbShrcP0tneiEItuISaaGWAu0I6LhSYMGZsKkDmxMlmzCoym6W9JKyqRtmRHtEvvZmMsmx%2BZxrrBPYjbPlEvNVKpI98PJlOc3J%2BqnJylc2xa6p87HPR%2Fg6yc7OEu9Og4NUzXstYldPguPGtU8tA645rD3g2SGUNWqAvVuAD3fwA9FqQoQ%3D%3D';
 
-// Годовой цикл: 52 недели, 4 этапа по 13 недель. Порядок важен — это логика колеса.
+// Итерация: 52 дня (52 деления колеса), 4 этапа по 13 дней. Порядок важен — это логика колеса.
 export const SECTORS = [
   { id: 'custdev', name: 'касдев', from: 1, to: 13, c1: '#b0703c', c2: '#7a5a3a', pastel: '#fff1e8', text: 'Исследуем клиентов и находим настоящую проблему' },
   { id: 'design', name: 'дизайн', from: 14, to: 26, c1: '#20a88e', c2: '#2468b8', pastel: '#e8f6ff', text: 'Проектируем опыт и интерфейс' },

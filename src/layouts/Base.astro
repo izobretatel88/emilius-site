@@ -48,7 +48,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0e1413" media="(prefers-color-scheme: dark)" />
-    {ymId && (
+    {ymId > 0 && (
       <script is:inline define:vars={{ ymId }}>
         (function (m, e, t, r, i, k, a) {
           m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };

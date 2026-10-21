@@ -1,7 +1,7 @@
 ---
-// Колесо продукта: год из 52 недель, 4 этапа по 13 недель.
-// Геометрия считается на сборке. В браузере: вращение-демонстрация (один оборот — условный год,
-// не привязан к сегодняшней дате), шкала пройденного года у стрелки «итерация»,
+// Колесо продукта: итерация из 52 дней, 4 этапа по 13 дней (52 деления на ободе).
+// Геометрия считается на сборке. В браузере: вращение-демонстрация (один оборот — итерация из 52 дней,
+// не привязан к сегодняшней дате), шкала пройденной части итерации у стрелки,
 // подсветка этапов и доводка выбранного этапа под стрелку.
 import { SECTORS } from '../data/site';
 
@@ -11,7 +11,7 @@ const servicesHref = (id: string) => `${base}${base.endsWith('/') ? '' : '/'}ser
 const STEP = 360 / 52;
 const rad = (d: number) => (d * Math.PI) / 180;
 const P = (r: number, d: number) => [+(r * Math.cos(rad(d))).toFixed(2), +(r * Math.sin(rad(d))).toFixed(2)];
-// Неделя k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
+// День k стоит под стрелкой (9 часов) при повороте (k - 0.5) * STEP.
 const weekAngle = (k: number) => 180 - (k - 0.5) * STEP;
 
 const SPEC = ['#e44854', '#c06c60', '#e4d830', '#b4e43c', '#30c048', '#30d890', '#30c0b4', '#30c0cc', '#309ce4', '#e44854'];
@@ -39,7 +39,7 @@ const crossLines = [0.5, 13.5, 26.5, 39.5].map((k, i) => {
   return { id: `cg${i}`, x1, y1, x2, y2, c1: specAt(i / 4), c2: specAt(i / 4 + 0.18) };
 });
 
-// Риски между неделями; на границах кварталов (после 13, 26, 39, 52) — длинные.
+// Риски между днями; на границах этапов (после 13, 26, 39, 52) — длинные.
 const weeks = Array.from({ length: 52 }, (_, i) => {
   const k = i + 1;
   const edge = weekAngle(k + 0.5);
@@ -78,10 +78,10 @@ const hits = SECTORS.map((s, i) => {
 const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
 ---
 
-<!-- Строка над колесом: какая неделя и этап сейчас под стрелкой; при выборе — описание этапа -->
+<!-- Строка над колесом: какой день и этап сейчас под стрелкой; при выборе — описание этапа -->
 <div class="wheel-info" id="wheelInfo"></div>
 
-<div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: годовой цикл из четырёх этапов — касдев, дизайн, разработка, маркетинг">
+<div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
   <svg class="wheel-rotor" id="wheelRotor" viewBox="-220 -220 440 440">
@@ -138,7 +138,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
-        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: недели ${h.from}–${h.to}. ${h.text}`}>
+        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
           <path class="sector-hit" d={h.d}></path>
         </a>
       ))}
@@ -154,7 +154,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
         </linearGradient>
       ))}
     </defs>
-    <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть года -->
+    <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть итерации -->
     <path id="wheelProgress" class="year-progress" d=""></path>
     <g id="pointer">
       <line x1="-216" y1="0" x2="-51" y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
@@ -190,7 +190,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
 
   if (box && rotorSvg && info && progressArc && iterBg && iterText && SECTORS) {
     const STEP = 360 / 52;
-    const PERIOD = 156000; // один оборот — условный год, ~3 с на неделю
+    const PERIOD = 156000; // один оборот — итерация из 52 дней, ~3 с на день
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canHover = matchMedia('(hover: hover)').matches;
 
@@ -199,8 +199,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
     const centers = [...box.querySelectorAll<SVGTextElement>('.center-sector')];
 
-    // ---------- Год-демонстрация ----------
-    // Неделя k стоит под стрелкой при повороте (k - 0.5) * STEP; угол 0 — начало года у стрелки.
+    // ---------- Итерация-демонстрация ----------
+    // День k стоит под стрелкой при повороте (k - 0.5) * STEP; угол 0 — начало итерации у стрелки.
     const weekAt = (turn: number) => Math.min(52, Math.floor(turn / STEP) + 1);
     const sectorOf = (week: number) => SECTORS.findIndex((s) => week >= s.from && week <= s.to);
     const weekEls = [...box.querySelectorAll<SVGTextElement>('.week')];
@@ -273,20 +273,20 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
       labels.forEach((el, j) => el.classList.toggle('is-active', i === j));
       centers.forEach((el, j) => el.classList.toggle('is-active', i === j));
 
-      // Бегущую неделю экранный диктор не зачитывает — только выбор этапа
+      // Бегущий день экранный диктор не зачитывает — только выбор этапа
       info.setAttribute('aria-live', i === null ? 'off' : 'polite');
       if (i === null) {
         const line = performance.now() < doneUntil
           ? `<b>Итерация выполнена</b> · начинаем новую`
-          : `<b>Неделя&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
+          : `<b>День&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
         info.innerHTML =
           `<p class="info-line">${line}</p>` +
-          `<p class="info-sub">Так проходит год: четыре этапа по 13 недель, затем новая итерация. ${canHover ? 'Наведите на этап' : 'Нажмите на этап'}, чтобы узнать больше.</p>`;
+          `<p class="info-sub">Так проходит итерация: 52 дня, четыре этапа по 13 дней, затем новая. ${canHover ? 'Наведите на этап' : 'Нажмите на этап'}, чтобы узнать больше.</p>`;
         return;
       }
       const s = SECTORS[i];
       info.innerHTML =
-        `<p class="info-line"><b>${cap(s.name)}</b> · недели ${s.from}–${s.to}</p>` +
+        `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to}</p>` +
         `<p class="info-sub">${s.text}</p>` +
         `<a class="info-more" href="${s.href}">Подробнее об этапе →</a>`;
     }
@@ -369,11 +369,11 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
       if (e.pointerType === 'touch' && !box.contains(e.target as Node) && !info.contains(e.target as Node)) clear();
     });
 
-    // ---------- Ход года: что под стрелкой, шкала, завершение круга ----------
+    // ---------- Ход итерации: что под стрелкой, шкала, завершение круга ----------
     let prevTurn = 0;
     function tick() {
       const turn = ((currentAngle() % 360) + 360) % 360;
-      // Круг замкнулся: шли вперёд и перевалили через начало года
+      // Круг замкнулся: шли вперёд и перевалили через начало итерации
       if (ambient?.playState === 'running' && prevTurn > 300 && turn < 60) {
         doneUntil = performance.now() + 4000;
         setTag('итерация выполнена');
@@ -400,7 +400,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id) }));
       }
     }
 
-    // ---------- Вход: год начинается с первой недели ----------
+    // ---------- Вход: итерация начинается с первого дня ----------
     weekEls[0]?.classList.add('is-today');
     fills[0]?.classList.add('is-now');
     setTag('итерация');
