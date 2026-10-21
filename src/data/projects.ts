@@ -3,6 +3,7 @@ export type Project = {
   id: string;
   name: string;
   logo: string; // путь относительно public/
+  logoMono?: boolean; // чёрно-белый логотип: в тёмной теме инвертируется в светлый
   shot: string; // скриншот первого экрана, 640×400
   about: string;
   did: string;
@@ -15,6 +16,7 @@ export const PROJECTS: Project[] = [
     id: 'alohagaia',
     name: 'Aloha Gaia',
     logo: 'projects/alohagaia.svg',
+    logoMono: true,
     shot: 'cases/alohagaia.webp',
     about: 'Интернет-магазин на inSales — ювелирные украшения с душой.',
     did: 'Фронтенд-разработка, тесная интеграция с inSales и собственные модули.',
@@ -35,6 +37,7 @@ export const PROJECTS: Project[] = [
     id: 'duman',
     name: 'Duman',
     logo: 'projects/duman.svg',
+    logoMono: true,
     shot: 'cases/duman.webp',
     about: 'Интернет-магазин на inSales — дизайнерская женская одежда премиум-сегмента.',
     did: 'Фронтенд-разработка, сложная архитектура и выразительный UX/UI.',
@@ -45,6 +48,7 @@ export const PROJECTS: Project[] = [
     id: 'geekboards',
     name: 'Geekboards',
     logo: 'projects/geekboards.svg',
+    logoMono: true,
     shot: 'cases/geekboards.webp',
     about: 'Интернет-магазин на inSales — премиальные клавиатуры, мыши и аксессуары, шоурум в Москве.',
     did: 'Развитие магазина на inSales и кастомизация фронтенда.',

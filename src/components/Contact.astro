@@ -106,6 +106,19 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     overflow: hidden;
     background: var(--well);
   }
+  /* Виджет Эми рисует белый фон внутри себя — в тёмной теме переворачиваем цвета:
+     белое становится тёмным, оттенки сохраняются за счёт поворота тона на 180° */
+  /* Фон пустой рамки до загрузки — «перевёрнутый» тёмный (#e5dcdd), чтобы под фильтром он стал тёмным */
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) iframe {
+      filter: invert(1) hue-rotate(180deg);
+      background: #e5dcdd;
+    }
+  }
+  :global(:root[data-theme='dark']) iframe {
+    filter: invert(1) hue-rotate(180deg);
+    background: #e5dcdd;
+  }
   .micro {
     font-size: 12px;
     line-height: 1.3;
