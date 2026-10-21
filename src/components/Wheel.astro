@@ -53,11 +53,15 @@ const weeks = Array.from({ length: 52 }, (_, i) => {
   return { k, label: String(k).padStart(2, '0'), quarter, tx1, ty1, tx2, ty2, x, y, rot: +(a + 90).toFixed(2), color: specAt(i / 52) };
 });
 
-const labels = SECTORS.map((s, i) => {
+// Названия этапов — сплошным цветом (середина между c1 и c2). Градиент на тексте по дуге
+// Safari на iPhone обрезает по неповёрнутым рамкам букв — края букв «съедались».
+const mix = (a: string, b: string) => {
+  const [x, y] = [hex(a), hex(b)];
+  return `#${x.map((v, j) => Math.round((v + y[j]) / 2).toString(16).padStart(2, '0')).join('')}`;
+};
+const labels = SECTORS.map((s) => {
   const mid = weekAngle((s.from + s.to) / 2);
-  const [x1, y1] = P(125, mid - 30);
-  const [x2, y2] = P(125, mid + 30);
-  return { id: `lg${i}`, offset: +((((mid % 360) + 360) % 360) / 3.6).toFixed(2), x1, y1, x2, y2, ...s };
+  return { offset: +((((mid % 360) + 360) % 360) / 3.6).toFixed(2), color: mix(s.c1, s.c2), ...s };
 });
 
 const rim = Array.from({ length: 72 }, (_, i) => {
@@ -99,12 +103,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
           <stop offset="1" stop-color={l.c2}></stop>
         </linearGradient>
       ))}
-      {labels.map((l) => (
-        <linearGradient id={l.id} gradientUnits="userSpaceOnUse" x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}>
-          <stop offset="0" stop-color={l.c1}></stop>
-          <stop offset="1" stop-color={l.c2}></stop>
-        </linearGradient>
-      ))}
     </defs>
 
     <g id="rotor">
@@ -134,7 +132,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
       <g id="labels">
         {labels.map((l, i) => (
-          <text class="sector-label" font-size="25" font-weight="700" fill={`url(#${l.id})`} data-sector={i}>
+          <text class="sector-label" font-size="25" font-weight="700" fill={l.color} data-sector={i}>
             <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
           </text>
         ))}
