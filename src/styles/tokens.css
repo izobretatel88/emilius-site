@@ -20,6 +20,7 @@
   --card-border: #efefef;
   --hair: #ececec;
   --well: #f3f5f5;
+  --proj-bg: #ffffff; /* кружки логотипов проектов */
   --input-bg: #f0f0f0;
   --input-border: #e2e2e2;
 
@@ -53,7 +54,7 @@
   /* Колесо */
   --disc-stroke: #ffffff;
   --disc-op: 1; /* заливки сами едва заметные — без доп. прозрачности */
-  --label-op: 0.62;
+  --label-op: 0.45; /* названия этапов на ободе — фон, акцент на вопросах в центре */
   --tick-op: 0.75;
   --cross-op: 0.5;
   --center-fill: #ffffff;
@@ -93,6 +94,7 @@
     --card-border: #1f2a28;
     --hair: #24302e;
     --well: #1a2322;
+    --proj-bg: #222c2b;
     --input-bg: #1a2322;
     --input-border: #2b3836;
     --veil-a: rgba(14, 20, 19, 0.9);
@@ -103,7 +105,7 @@
     --ray-4: #8a2b3a;
     --disc-stroke: #2b3836;
     --disc-op: 0.35;
-    --label-op: 0.85;
+    --label-op: 0.55;
     --tick-op: 0.85;
     --cross-op: 0.55;
     --center-fill: #151c1b;
@@ -137,6 +139,7 @@
   --card-border: #1f2a28;
   --hair: #24302e;
   --well: #1a2322;
+  --proj-bg: #222c2b;
   --input-bg: #1a2322;
   --input-border: #2b3836;
   --veil-a: rgba(14, 20, 19, 0.9);
@@ -147,7 +150,7 @@
   --ray-4: #8a2b3a;
   --disc-stroke: #2b3836;
   --disc-op: 0.35;
-  --label-op: 0.85;
+  --label-op: 0.55;
   --tick-op: 0.85;
   --cross-op: 0.55;
   --center-fill: #151c1b;

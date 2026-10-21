@@ -10,7 +10,7 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     {PROJECTS.map((p) => (
       <li class="proj">
         <button class="proj-btn" type="button" aria-describedby={`case-${p.id}`}>
-          <img src={href(p.logo)} alt={p.name} width="34" height="34" loading="lazy" />
+          <img class:list={[{ mono: p.logoMono }]} src={href(p.logo)} alt={p.name} width="34" height="34" loading="lazy" />
           <span class="visually-hidden">Кейс: {p.name}</span>
         </button>
         <div class="case" id={`case-${p.id}`} role="tooltip">
@@ -49,12 +49,21 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     height: 52px;
     border: 0;
     border-radius: 50%;
-    background: #fff;
+    background: var(--proj-bg);
     box-shadow: var(--shadow-icon);
     display: grid;
     place-items: center;
     cursor: pointer;
     padding: 0;
+  }
+  /* Тёмная тема: кружки тёмные, чёрно-белые логотипы становятся светлыми */
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .proj-btn img.mono {
+      filter: invert(1);
+    }
+  }
+  :global(:root[data-theme='dark']) .proj-btn img.mono {
+    filter: invert(1);
   }
   .proj-btn img {
     width: 34px;

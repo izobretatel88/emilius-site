@@ -106,6 +106,18 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     overflow: hidden;
     background: var(--well);
   }
+  /* Виджет Эми рисует белый фон внутри себя — в тёмной теме показываем только его круглую кнопку:
+     обрезаем рамку кругом по кнопке (её цвета не трогаем) */
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) iframe {
+      clip-path: circle(56px at 50% 50%);
+      background: transparent;
+    }
+  }
+  :global(:root[data-theme='dark']) iframe {
+    clip-path: circle(56px at 50% 50%);
+    background: transparent;
+  }
   .micro {
     font-size: 12px;
     line-height: 1.3;

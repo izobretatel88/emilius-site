@@ -71,6 +71,15 @@ const arc = (i: number) => {
       </section>
     </div>
 
+    {service.offer && (
+      <section class="card block offer" aria-labelledby="t-offer">
+        <p class="offer-eyebrow">{service.offer.eyebrow}</p>
+        <h2 id="t-offer">{service.offer.title}</h2>
+        <p class="offer-text">{service.offer.text}</p>
+        <a class="offer-cta" href={href(service.offer.href)}>{service.offer.cta}</a>
+      </section>
+    )}
+
     {cases.length > 0 && (
       <section class="card block" aria-labelledby="t-cases">
         <h2 id="t-cases">Проекты</h2>
@@ -90,7 +99,8 @@ const arc = (i: number) => {
 
     <nav class="cycle" aria-label="Этапы цикла">
       <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
-      <a class="cta" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram</a>
+      <!-- Залитая кнопка на странице одна: если есть «Готовое решение», главная — его кнопка -->
+      <a class:list={['cta', { 'cta-secondary': !!service.offer }]} href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram</a>
       <a class="step next" href={href(`services/${next.id}/`)}><span class="dir">дальше →</span><span class="name">{next.name}</span></a>
     </nav>
   </main>
@@ -186,6 +196,37 @@ const arc = (i: number) => {
     border-radius: 50%;
     background: var(--teal);
   }
+  /* Готовое решение этапа: акцент рамкой фирменного цвета, кнопка как основная */
+  .offer {
+    border-color: var(--teal);
+    align-items: flex-start;
+  }
+  .offer-eyebrow {
+    color: var(--teal-text);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .offer-text {
+    color: var(--ink-2);
+  }
+  .offer-cta {
+    margin-top: 4px;
+    min-height: 50px;
+    display: inline-flex;
+    align-items: center;
+    padding-inline: 20px;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--hover);
+  }
+  .offer-cta:hover {
+    color: var(--on-teal);
+  }
   .cases {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -267,6 +308,17 @@ const arc = (i: number) => {
   }
   .cta:hover {
     color: var(--on-teal);
+  }
+  .cta-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--teal);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+  }
+  .cta-secondary:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
   }
   @media (max-width: 640px) {
     .cols {
