@@ -83,6 +83,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 <!-- Строка над колесом: какой день и этап сейчас под стрелкой; при выборе — описание этапа -->
 <div class="wheel-info" id="wheelInfo"></div>
 
+<!-- Сцена во всю ширину карточки: круг по центру (не шире 460px — прежний размер), а полоса со стрелкой
+     тянется от края карточки до круга — на широком экране она длиннее, круг не раздувается. -->
+<div class="wheel-stage">
+<div class="pointer-rail" aria-hidden="true"></div>
 <div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
@@ -152,8 +156,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть итерации -->
     <path id="wheelProgress" class="year-progress" d=""></path>
     <g id="pointer">
-      <line x1="-216" y1="0" x2={-C - 1} y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
-      <path d="M-216 -7 L-203 0 L-216 7 Z" style="fill:var(--teal)"></path>
+      <!-- Наконечник и начало полосы — .pointer-rail у края карточки; здесь продолжение до центра -->
+      <line x1="-218" y1="0" x2={-C - 1} y2="0" style="stroke:var(--teal)" stroke-width="2.4"></line>
       <!-- Подпись под стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
@@ -177,6 +181,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       </div>
     </foreignObject>
   </svg>
+</div>
 </div>
 
 
@@ -474,13 +479,49 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 </script>
 
 <style>
-  /* Колесо во всю ширину карточки: наконечник стрелки упирается в её край.
-     14px — горизонтальный отступ .wheel-card в index.astro. */
-  .wheel-box {
+  /* Сцена во всю ширину карточки: 14px — горизонтальный отступ .wheel-card в index.astro.
+     --wb — ширина круга: на телефоне вся ширина, на компьютере не больше 460px (прежний размер). */
+  .wheel-stage {
+    --wb: min(100%, 460px);
     position: relative;
     width: calc(100% + 28px);
-    aspect-ratio: 1 / 1;
     margin-inline: -14px;
+  }
+  /* Полоса от края карточки до круга с наконечником у края */
+  .pointer-rail {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 1;
+    width: calc((100% - var(--wb)) / 2 + 2px);
+    height: 2.5px;
+    transform: translateY(-50%);
+    background: var(--teal);
+    pointer-events: none;
+  }
+  .pointer-rail::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-style: solid;
+    border-width: 7px 0 7px 13px;
+    border-color: transparent transparent transparent var(--teal);
+  }
+  @media (max-width: 520px) {
+    .pointer-rail {
+      height: 2px;
+    }
+    .pointer-rail::before {
+      border-width: 5.6px 0 5.6px 10.5px;
+    }
+  }
+  .wheel-box {
+    position: relative;
+    width: var(--wb);
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
     /* Повёрнутый квадрат ротора по диагонали шире коробки — без обрезки на узком экране
        страница прокручивается вбок. Круг колеса вписан в квадрат, поэтому ничего не теряется. */
     overflow: clip;
