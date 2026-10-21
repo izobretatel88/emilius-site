@@ -86,7 +86,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 <div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
-  <svg class="wheel-rotor" id="wheelRotor" viewBox="-220 -220 440 440">
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
       {crossLines.map((l) => (
@@ -147,7 +147,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     </g>
   </svg>
 
-  <svg class="wheel-overlay" viewBox="-220 -220 440 440" aria-hidden="true">
+  <!-- Поле видимости обрезано по наконечнику стрелки (x = −216): без пустых полей колесо крупнее -->
+  <svg class="wheel-overlay" viewBox="-217 -217 434 434" aria-hidden="true">
     <!-- Шкала, как у спидометра: от стрелки по часовой растёт пройденная часть итерации -->
     <path id="wheelProgress" class="year-progress" d=""></path>
     <g id="pointer">
@@ -526,6 +527,15 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     /* Повёрнутый квадрат ротора по диагонали шире коробки — без обрезки на узком экране
        страница прокручивается вбок. Круг колеса вписан в квадрат, поэтому ничего не теряется. */
     overflow: clip;
+  }
+  /* Телефон: колесо во всю ширину карточки — наконечник стрелки упирается в её край.
+     14px — горизонтальный отступ .wheel-card в index.astro. */
+  @media (max-width: 520px) {
+    .wheel-box {
+      width: calc(100% + 28px);
+      max-width: none;
+      margin-inline: -14px;
+    }
   }
   .wheel-box svg {
     position: absolute;
