@@ -156,12 +156,18 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <!-- Подпись под стрелкой от внешнего конца делений; по завершении круга — «цикл окончен», затем «итерация 2» и т. д. -->
       <text class="iter-tag" id="iterText" x="-199" y="19" font-size="12" font-weight="700">итерация 1</text>
     </g>
-    <!-- Центр — сцена методологии: сначала крупно «внимание»; затем оно уходит наверх,
-         под ним «→ этап», а в середине, как в магическом шаре, всплывают вопросы этапа.
+    <!-- Центр — сцена методологии: сначала крупно «внимание» в середине; затем оно уходит наверх
+         и становится дугой по краю круга «внимание → этап» (как названия этапов на внешнем круге),
+         а ровно в центре, как в магическом шаре, всплывают вопросы этапа.
          Вопрос переносится по словам, поэтому он HTML внутри foreignObject. -->
+    <defs>
+      <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
+    </defs>
     <text class="attn" id="attn" x="0" y="6" text-anchor="middle" font-size="18" font-weight="800">внимание</text>
-    <text class="attn-to" id="attnTo" x="0" y="-20" text-anchor="middle" font-size="12" font-weight="700"></text>
-    <foreignObject x={-C + 7} y="-12" width={2 * (C - 7)} height="64">
+    <text class="attn-arc" id="attnCurve" font-size="11.5" font-weight="700">
+      <textPath href="#attnArc" startOffset="50%" text-anchor="middle"><tspan class="ac-word">внимание</tspan><tspan class="ac-to" id="attnTo"></tspan></textPath>
+    </text>
+    <foreignObject x={-C + 12} y="-34" width={2 * (C - 12)} height="68">
       <div class="center-q" id="centerQ" xmlns="http://www.w3.org/1999/xhtml">
         <span class="cq-text" id="cqText"></span>
       </div>
@@ -195,6 +201,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const labels = [...box.querySelectorAll<SVGTextElement>('.sector-label')];
     const attn = document.getElementById('attn')!;
     const attnTo = document.getElementById('attnTo')!;
+    const attnCurve = document.getElementById('attnCurve')!;
     const cqText = document.getElementById('cqText')!;
 
     // ---------- Итерация-демонстрация ----------
@@ -243,7 +250,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       const s = SECTORS[i];
       if (i !== shownStage) {
         shownStage = i;
-        attnTo.textContent = `→ ${s.name}`;
+        attnTo.textContent = ` → ${s.name}`;
         attnTo.style.fill = s.c1;
         if (!reduce) replay(attnTo, 'is-in');
       }
@@ -270,13 +277,16 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       centerStarted = true;
       const finish = () => {
         attn.classList.add('is-up');
+        attnCurve.classList.add('is-in');
         centerReady = true;
         showCenter();
       };
       if (reduce) return finish();
       attn.classList.add('is-show');
+      // Крупное слово уходит вверх и гаснет, на его месте по дуге проявляется «внимание → этап»
       window.setTimeout(() => {
         attn.classList.add('is-up');
+        window.setTimeout(() => attnCurve.classList.add('is-in'), 250);
         window.setTimeout(() => {
           centerReady = true;
           showCenter();
@@ -615,24 +625,27 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     opacity: 1;
   }
   .attn.is-up {
-    opacity: 1;
-    fill: var(--ink-2);
-    transform: translateY(-42px) scale(0.62);
-  }
-  .attn-to {
     opacity: 0;
+    transform: translateY(-40px) scale(0.7);
   }
-  .attn-to.is-in {
-    animation: attn-to-in 0.5s ease forwards;
+  /* «внимание → этап» дугой по верхнему краю внутреннего круга */
+  .attn-arc {
+    fill: var(--ink-2);
+    opacity: 0;
+    transition: opacity 0.6s ease;
   }
-  @keyframes attn-to-in {
+  .attn-arc.is-in {
+    opacity: 1;
+  }
+  .ac-to.is-in {
+    animation: ac-to-in 0.5s ease;
+  }
+  @keyframes ac-to-in {
     from {
-      opacity: 0;
-      transform: translateY(4px);
+      fill-opacity: 0;
     }
     to {
-      opacity: 1;
-      transform: none;
+      fill-opacity: 1;
     }
   }
   .center-q {
@@ -646,7 +659,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   .cq-text {
     display: block;
     /* Уже круга: вопрос переносится на 2 ровные строки и не липнет к краю */
-    max-width: 104px;
+    max-width: 108px;
     font-size: 13px;
     font-weight: 600;
     line-height: 1.2;
@@ -683,13 +696,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     .attn {
       font-size: 23px;
     }
-    .attn-to {
-      font-size: 15px;
+    .attn-arc {
+      font-size: 12px;
     }
     .cq-text {
-      max-width: 124px;
-      font-size: 16px;
-      line-height: 1.12;
+      max-width: 116px;
+      font-size: 15.5px;
+      line-height: 1.1;
     }
   }
 
@@ -726,6 +739,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     .sector-fill,
     .sector-label,
     .attn,
+    .attn-arc,
     .cq-text {
       transition: none;
     }
