@@ -61,17 +61,17 @@ import { MISSION_LINES } from '../data/site';
     line-height: 1.15;
     margin-inline: auto;
   }
-  /* Две строки на широком экране; на узком строки переносятся сами */
+  /* Всегда две строки, перенос после «создавать» (решение владельца 22.10.2026: и на телефоне тоже).
+     На узком экране шрифт уменьшается вместе с шириной, чтобы первая строка влезала целиком. */
   .mission h1 .line {
     display: block;
   }
   @media (max-width: 640px) {
     .mission h1 {
-      max-width: 22ch;
-      text-wrap: balance;
+      font-size: clamp(14px, 4.7vw, 24px);
     }
     .mission h1 .line {
-      display: inline;
+      white-space: nowrap;
     }
   }
 
