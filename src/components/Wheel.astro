@@ -82,13 +82,13 @@ const rim = Array.from({ length: 72 }, (_, i) => {
   return { d: `M${x0} ${y0} A${C} ${C} 0 0 1 ${x1} ${y1}`, color: specAt(i / 72) };
 });
 
-// Плашка-превью, вариант «c»: 52 риски обода цветом своего этапа, медленно вращаются
+// Плашка-превью: 52 риски обода цветом своего этапа, вращаются и откликаются на курсор
 const launchTicks = weeks.map((w) => {
   const s = SECTORS.find((x) => w.k >= x.from && w.k <= x.to)!;
   const a = weekAngle(w.k);
   const [x1, y1] = P(w.quarter ? 176 : 182, a);
   const [x2, y2] = P(196, a);
-  return { x1, y1, x2, y2, quarter: w.quarter, color: w.quarter ? 'var(--teal)' : mix(s.c1, s.c2) };
+  return { x1, y1, x2, y2, a: +a.toFixed(2), r1: w.quarter ? 176 : 182, quarter: w.quarter, color: w.quarter ? 'var(--teal)' : mix(s.c1, s.c2) };
 });
 
 const hits = SECTORS.map((s, i) => {
@@ -191,31 +191,21 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     </text>
   </svg>
   <div class="center-q" id="centerQ" aria-hidden="true"><span class="cq-text" id="cqText"></span></div>
-  <!-- Превью: круглая плашка закрывает колесо, всё начинается по нажатию -->
-  <!-- Варианты для сравнения (22.10.2026): a — сплошная плашка, b — матовое стекло поверх колеса,
-       c — обод из 52 дней. Переключаются ?plate=b / ?plate=c. -->
+  <!-- Превью (22.10.2026, вариант «обод из 52 дней»): плашка закрывает колесо, всё начинается по нажатию.
+       Обод вращается, риски у курсора подсвечиваются; обод можно покрутить, как колесо. -->
   <button type="button" class="wheel-launch" id="wheelLaunch">
-    <svg class="launch-ring" viewBox="-205 -205 410 410" aria-hidden="true">
+    <svg class="launch-ring" id="launchRing" viewBox="-205 -205 410 410" aria-hidden="true">
       {launchTicks.map((t) => (
-        <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke={t.color} stroke-width={t.quarter ? 2.4 : 2} stroke-linecap="round"></line>
+        <line x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} data-a={t.a} data-r={t.r1} data-w={t.quarter ? 2.4 : 2} stroke={t.color} stroke-width={t.quarter ? 2.4 : 2} stroke-linecap="round"></line>
       ))}
     </svg>
     <span class="launch-core">
-      <span class="launch-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z"></path></svg>
-      </span>
-      <span class="launch-text">Запустить <span class="nb">колесо продукта</span></span>
       <span class="launch-sub">52 дня · 4 этапа</span>
+      <span class="launch-text">Запустить <span class="nb">колесо продукта&nbsp;<span class="launch-arrow" aria-hidden="true">→</span></span></span>
     </span>
   </button>
 </div>
 </div>
-<script is:inline>
-  (function () {
-    var v = new URLSearchParams(location.search).get('plate');
-    if (v === 'b' || v === 'c') document.getElementById('wheelStage').dataset.plate = v;
-  })();
-</script>
 
 
 <script is:inline define:vars={{ sectorData }}>
@@ -309,10 +299,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
     // Вступление: крупное «внимание» ~2 с → уходит вверх в дугу → «→ этап» и первый вопрос
     let centerStarted = false;
-    function startCenter() {
+    // onGo — момент, когда «внимание» уходит вверх: с него колесо начинает вращаться
+    function startCenter(onGo?: () => void) {
       if (centerStarted) return;
       centerStarted = true;
       const finish = () => {
+        onGo?.();
         attn.classList.add('is-up');
         attnArcText.classList.add('is-in');
         centerReady = true;
@@ -322,6 +314,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       attn.classList.add('is-show');
       window.setTimeout(() => {
         attn.classList.add('is-up');
+        onGo?.();
         window.setTimeout(() => attnArcText.classList.add('is-in'), 300);
         window.setTimeout(() => {
           centerReady = true;
@@ -356,6 +349,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         duration: PERIOD,
         iterations: Infinity,
       });
+    };
+    // Продолжить вращение после наведения; до конца паузы на «внимании» колесо не трогаем
+    let rolling = false;
+    const resume = () => {
+      if (ambient) ambient.play();
+      else if (rolling) startAmbient(currentAngle());
     };
     // Спокойная доводка по кратчайшему пути, без пружин
     const turnTo = (target: number, duration: number, done?: (a: number) => void) => {
@@ -421,7 +420,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       hovered = null;
       render();
       if (wasSelected) startAmbient(currentAngle());
-      else ambient?.play();
+      else resume();
     }
 
     // ---------- События ----------
@@ -459,7 +458,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (e.pointerType !== 'mouse' || hovered === null) return;
       hovered = null;
       render();
-      if (selected === null) ambient?.play();
+      if (selected === null) resume();
     });
 
     box.addEventListener('keydown', (e) => {
@@ -530,6 +529,109 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const stage = document.getElementById('wheelStage')!;
     const launch = document.getElementById('wheelLaunch') as HTMLButtonElement;
     let idle = true;
+
+    // Обод плашки: вращается сам (оборот 156 с, как колесо), при наведении плавно ускоряется,
+    // риски у курсора подсвечиваются; обод можно потянуть пальцем/мышью — после отпускания он
+    // докатывается и возвращается к спокойной скорости. Короткое нажатие — запуск.
+    const ring = document.getElementById('launchRing')!;
+    const ticks = [...ring.querySelectorAll<SVGLineElement>('line')].map((el) => ({
+      el,
+      a: Number(el.dataset.a),
+      r: Number(el.dataset.r),
+      w: Number(el.dataset.w),
+      cos: Math.cos((Number(el.dataset.a) * Math.PI) / 180),
+      sin: Math.sin((Number(el.dataset.a) * Math.PI) / 180),
+    }));
+    const BASE = 360 / PERIOD; // градусов в миллисекунду
+    let ringAngle = 0;
+    let speed = reduce ? 0 : BASE;
+    let boost = false; // наведение или фокус
+    let light = 0; // сила подсветки у курсора, 0..1
+    let pointerAt: number | null = null; // угол указателя на экране
+    let ringDrag: { id: number; last: number; t: number; moved: boolean } | null = null;
+    let lastT = performance.now();
+    const pointerAngle = (e: PointerEvent) => {
+      const r = launch.getBoundingClientRect();
+      return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
+    };
+    const wrap = (d: number) => ((d % 360) + 540) % 360 - 180;
+    function ringFrame(t: number) {
+      if (!idle) return;
+      const dt = Math.min(64, t - lastT);
+      lastT = t;
+      if (!ringDrag && !reduce) {
+        // к целевой скорости — плавно, без рывков (~0,6 с)
+        const target = boost ? BASE * 8 : BASE;
+        speed += (target - speed) * Math.min(1, dt / 300);
+        ringAngle += speed * dt;
+      }
+      light += ((pointerAt !== null ? 1 : 0) - light) * Math.min(1, dt / 200);
+      ring.style.transform = `rotate(${ringAngle}deg)`;
+      for (const k of ticks) {
+        let f = 0;
+        if (pointerAt !== null || light > 0.01) {
+          const d = Math.abs(wrap((pointerAt ?? 0) - (k.a + ringAngle)));
+          f = Math.max(0, 1 - d / 40) ** 2 * light;
+        }
+        // у курсора риска ярче, толще и длиннее внутрь
+        const r1 = k.r - 16 * f;
+        k.el.style.opacity = String(0.45 + 0.55 * f);
+        k.el.setAttribute('stroke-width', String(+(k.w * (1 + f)).toFixed(2)));
+        k.el.setAttribute('x1', (r1 * k.cos).toFixed(2));
+        k.el.setAttribute('y1', (r1 * k.sin).toFixed(2));
+      }
+      requestAnimationFrame(ringFrame);
+    }
+    requestAnimationFrame(ringFrame);
+
+    launch.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse') boost = true;
+    });
+    launch.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') boost = false;
+      if (!ringDrag) pointerAt = null;
+    });
+    launch.addEventListener('focus', () => {
+      if (launch.matches(':focus-visible')) boost = true;
+    });
+    launch.addEventListener('blur', () => (boost = false));
+    launch.addEventListener('pointerdown', (e) => {
+      pointerAt = pointerAngle(e);
+      ringDrag = { id: e.pointerId, last: pointerAt, t: performance.now(), moved: false };
+    });
+    launch.addEventListener('pointermove', (e) => {
+      const p = pointerAngle(e);
+      pointerAt = p;
+      if (!ringDrag || e.pointerId !== ringDrag.id) return;
+      const d = wrap(p - ringDrag.last);
+      if (!ringDrag.moved && Math.abs(d) < 4) return;
+      if (!ringDrag.moved) {
+        ringDrag.moved = true;
+        try {
+          launch.setPointerCapture(e.pointerId);
+        } catch {
+          /* без захвата тоже работает */
+        }
+      }
+      const now = performance.now();
+      ringAngle += d;
+      // скорость пальца — чтобы после отпускания обод докатился
+      speed = d / Math.max(16, now - ringDrag.t);
+      ringDrag.last = p;
+      ringDrag.t = now;
+      e.preventDefault();
+    });
+    const ringRelease = (e: PointerEvent) => {
+      if (!ringDrag || e.pointerId !== ringDrag.id) return;
+      const moved = ringDrag.moved;
+      ringDrag = null;
+      if (e.pointerType !== 'mouse') pointerAt = null;
+      // после перетаскивания не запускать
+      if (moved) launch.addEventListener('click', (ev) => ev.stopImmediatePropagation(), { capture: true, once: true });
+    };
+    launch.addEventListener('pointerup', ringRelease);
+    launch.addEventListener('pointercancel', ringRelease);
+
     launch.addEventListener('click', () => {
       if (!idle) return;
       idle = false;
@@ -541,11 +643,15 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам
       box.tabIndex = -1;
       box.focus({ preventScroll: true });
-      startAmbient(0);
       tick();
       // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
       if (!reduce) window.setInterval(tick, 100);
-      startCenter();
+      // Пауза на «внимании» 2 с: колесо стоит, вращение — когда слово уходит вверх.
+      // Если колесо уже успели покрутить или выбрали этап — не перебиваем.
+      startCenter(() => {
+        rolling = true;
+        if (!ambient && selected === null && hovered === null) startAmbient(currentAngle());
+      });
     });
 
     // «Покрути колесо» (выбрано владельцем 21.10.2026): тянешь — колесо поворачивается за пальцем/мышью,
@@ -913,32 +1019,32 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   .wheel-box:focus {
     outline: none;
   }
+  /* Плашка: обод из 52 дней цветом этапов (риски — в скрипте), в центре призыв */
   .wheel-launch {
     position: absolute;
     /* круг колеса — 410 единиц из 434 */
     inset: calc(12 / 434 * 100%);
     z-index: 2;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     padding: 0 18%;
-    border: 1.1px solid var(--teal);
+    border: 1.1px solid var(--hair);
     border-radius: 50%;
-    background: var(--well);
+    background: var(--card);
     box-shadow: var(--shadow-card);
     font-family: var(--font);
     color: var(--ink);
     text-align: center;
     cursor: pointer;
+    touch-action: pan-y;
     -webkit-tap-highlight-color: transparent;
     transition:
       opacity 0.3s ease,
-      background-color 0.2s ease;
+      border-color 0.2s ease;
   }
   .wheel-launch:hover {
-    background: var(--card);
+    border-color: var(--teal);
   }
   .wheel-launch:focus-visible {
     outline: 2px dashed var(--teal);
@@ -948,139 +1054,45 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     opacity: 0;
     pointer-events: none;
   }
-  .launch-icon {
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    border: 1.1px solid var(--teal);
-    border-radius: 50%;
-    transition: background-color 0.2s ease;
-  }
-  .wheel-box .launch-icon svg {
-    position: static;
-    width: 26px;
-    height: 26px;
-    fill: var(--teal);
-    transition: fill 0.2s ease;
-  }
-  .wheel-launch:hover .launch-icon {
-    background: var(--teal-btn);
-  }
-  .wheel-box .wheel-launch:hover .launch-icon svg {
-    fill: var(--on-teal);
-  }
-  .launch-text {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.2;
-    text-wrap: balance;
-  }
-  .launch-sub {
-    font-size: 14px;
-    color: var(--ink-3);
+  .wheel-box .launch-ring {
+    pointer-events: none;
   }
   .launch-core {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-  }
-  .nb {
-    white-space: nowrap;
-  }
-  .wheel-box .launch-ring {
-    display: none;
-  }
-
-  /* Вариант b — матовое стекло: колесо угадывается размытым, кнопка — диск на месте центра колеса */
-  .wheel-stage[data-plate='b'].is-idle .wheel-rotor {
-    opacity: 0.6;
-    filter: blur(5px) saturate(0.7);
-  }
-  .wheel-stage[data-plate='b'].is-idle .pointer-rail {
-    opacity: 0.35;
-  }
-  [data-plate='b'] .wheel-launch {
-    inset: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-  [data-plate='b'] .launch-core {
-    justify-content: center;
-    gap: 8px;
-    width: 48%;
-    aspect-ratio: 1 / 1;
-    padding: 0 7%;
-    border: 1.1px solid var(--teal);
-    border-radius: 50%;
-    background: var(--card);
-    box-shadow: var(--shadow-pop);
-  }
-  [data-plate='b'] .launch-icon {
-    width: 44px;
-    height: 44px;
-  }
-  [data-plate='b'] .launch-text {
-    font-size: 16px;
-  }
-  [data-plate='b'] .launch-sub {
-    display: none;
-  }
-
-  /* Вариант c — обод из 52 дней цветом этапов медленно вращается (как колесо, 156 с), в центре — призыв */
-  [data-plate='c'] .wheel-launch {
-    border-color: var(--hair);
-    background: var(--card);
-  }
-  [data-plate='c'] .wheel-box .launch-ring {
-    display: block;
-    animation: launch-spin 156s linear infinite;
-  }
-  @keyframes launch-spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  [data-plate='c'] .launch-icon {
-    display: none;
-  }
-  [data-plate='c'] .launch-core {
-    flex-direction: column-reverse;
     gap: 12px;
   }
-  [data-plate='c'] .launch-sub {
+  .launch-sub {
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--teal-text);
   }
-  [data-plate='c'] .launch-text {
+  .launch-text {
     font-size: 24px;
     font-weight: 800;
+    line-height: 1.2;
+    text-wrap: balance;
   }
-  [data-plate='c'] .launch-text::after {
-    content: ' →';
+  .nb {
+    white-space: nowrap;
+  }
+  .launch-arrow {
+    display: inline-block;
     color: var(--teal-text);
-    transition: color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
-  [data-plate='c'] .wheel-launch:hover .launch-text::after {
+  .wheel-launch:hover .launch-arrow,
+  .wheel-launch:focus-visible .launch-arrow {
     color: var(--ink);
+    transform: translateX(4px);
   }
   @media (max-width: 520px) {
     .launch-text {
-      font-size: 18px;
-    }
-    [data-plate='b'] .launch-core {
-      width: 56%;
-    }
-    [data-plate='b'] .launch-text {
-      font-size: 14px;
-    }
-    [data-plate='c'] .launch-text {
       font-size: 20px;
     }
   }
