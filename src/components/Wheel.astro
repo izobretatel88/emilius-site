@@ -101,12 +101,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 
 <!-- Сцена во всю ширину карточки: круг по центру (не шире 460px — прежний размер), а полоса со стрелкой
      тянется от края карточки до круга — на широком экране она длиннее, круг не раздувается. -->
-<div class="wheel-stage">
+<div class="wheel-stage is-idle" id="wheelStage">
 <div class="pointer-rail" aria-hidden="true"></div>
 <div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
-  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434">
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434" inert>
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
     </defs>
@@ -182,6 +182,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     </text>
   </svg>
   <div class="center-q" id="centerQ" aria-hidden="true"><span class="cq-text" id="cqText"></span></div>
+  <!-- Превью: круглая плашка закрывает колесо, всё начинается по нажатию -->
+  <button type="button" class="wheel-launch" id="wheelLaunch">
+    <span class="launch-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z"></path></svg>
+    </span>
+    <span class="launch-text">Запустить колесо продукта</span>
+    <span class="launch-sub">52 дня · 4 этапа</span>
+  </button>
 </div>
 </div>
 
@@ -492,10 +500,29 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     paintDays(1);
     setTag(`итерация ${iteration}`);
     render();
-    startAmbient(0);
-    tick();
-    // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
-    if (!reduce) window.setInterval(tick, 100);
+    setAngle(0);
+
+    // ---------- Превью: колесо скрыто под плашкой, запуск по нажатию ----------
+    const stage = document.getElementById('wheelStage')!;
+    const launch = document.getElementById('wheelLaunch') as HTMLButtonElement;
+    let idle = true;
+    launch.addEventListener('click', () => {
+      if (!idle) return;
+      idle = false;
+      stage.classList.remove('is-idle');
+      rotorSvg.removeAttribute('inert');
+      launch.classList.add('is-gone');
+      launch.addEventListener('transitionend', () => launch.remove(), { once: true });
+      if (reduce) launch.remove();
+      // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам
+      box.tabIndex = -1;
+      box.focus({ preventScroll: true });
+      startAmbient(0);
+      tick();
+      // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
+      if (!reduce) window.setInterval(tick, 100);
+      startCenter();
+    });
 
     // «Покрути колесо» (выбрано владельцем 21.10.2026): тянешь — колесо поворачивается за пальцем/мышью,
     // отпустил — спокойное вращение продолжается с этого места. Короткое касание остаётся кликом.
@@ -507,6 +534,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
       };
       box.addEventListener('pointerdown', (e) => {
+        if (idle) return;
         drag = { id: e.pointerId, start: angleAt(e), from: currentAngle(), moved: false };
       });
       box.addEventListener('pointermove', (e) => {
@@ -543,26 +571,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       box.addEventListener('pointercancel', release);
     }
 
-    // Вступление «внимание» начинаем, когда колесо на экране и заставка закрыта — иначе его не увидят
-    const root = document.documentElement;
-    let wheelSeen = false;
-    const tryStart = () => {
-      if (wheelSeen && !root.classList.contains('intro-open')) startCenter();
-    };
-    new MutationObserver(tryStart).observe(root, { attributes: true, attributeFilter: ['class'] });
-    // Колесо уже на первом экране — не ждём наблюдателя (в фоновой вкладке он молчит до показа)
-    const rect = box.getBoundingClientRect();
-    if (rect.top < innerHeight && rect.bottom > 0) {
-      wheelSeen = true;
-      tryStart();
-    }
-    new IntersectionObserver((entries, io) => {
-      if (entries.some((e) => e.isIntersecting)) {
-        wheelSeen = true;
-        io.disconnect();
-        tryStart();
-      }
-    }, { threshold: 0.4 }).observe(box);
   }
 </script>
 
@@ -844,6 +852,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     text-align: center;
     padding-inline: 8px;
   }
+  .wheel-info {
+    transition: opacity 0.6s ease;
+  }
+  .wheel-info:has(+ .is-idle) {
+    opacity: 0;
+  }
   .wheel-info :global(.info-line) {
     font-size: 15px;
     color: var(--ink);
@@ -855,6 +869,95 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     font-weight: 600;
     color: var(--teal-text);
     text-underline-offset: 3px;
+  }
+
+  /* Превью: колесо скрыто, видна только круглая плашка «Запустить колесо продукта» */
+  .wheel-rotor,
+  .wheel-overlay,
+  .center-q,
+  .pointer-rail {
+    transition: opacity 0.6s ease;
+  }
+  .wheel-stage.is-idle .wheel-rotor,
+  .wheel-stage.is-idle .wheel-overlay,
+  .wheel-stage.is-idle .center-q,
+  .wheel-stage.is-idle .pointer-rail {
+    opacity: 0;
+  }
+  .wheel-box:focus {
+    outline: none;
+  }
+  .wheel-launch {
+    position: absolute;
+    /* круг колеса — 410 единиц из 434 */
+    inset: calc(12 / 434 * 100%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 18%;
+    border: 1.1px solid var(--teal);
+    border-radius: 50%;
+    background: var(--well);
+    box-shadow: var(--shadow-card);
+    font-family: var(--font);
+    color: var(--ink);
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      opacity 0.3s ease,
+      background-color 0.2s ease;
+  }
+  .wheel-launch:hover {
+    background: var(--card);
+  }
+  .wheel-launch:focus-visible {
+    outline: 2px dashed var(--teal);
+    outline-offset: 4px;
+  }
+  .wheel-launch.is-gone {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .launch-icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 1.1px solid var(--teal);
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+  .wheel-box .launch-icon svg {
+    position: static;
+    width: 26px;
+    height: 26px;
+    fill: var(--teal);
+    transition: fill 0.2s ease;
+  }
+  .wheel-launch:hover .launch-icon {
+    background: var(--teal-btn);
+  }
+  .wheel-box .wheel-launch:hover .launch-icon svg {
+    fill: var(--on-teal);
+  }
+  .launch-text {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .launch-sub {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  @media (max-width: 520px) {
+    .launch-text {
+      font-size: 18px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
