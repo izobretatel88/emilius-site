@@ -96,6 +96,16 @@ mark{background:rgba(255,214,10,.45);color:inherit;padding:0 1px;border-radius:3
 .row:hover{background:var(--card-2);text-decoration:none}
 .row + .row::before{content:"";position:absolute;top:0;right:0;left:56px;border-top:.5px solid var(--sep)}
 .rt{flex:1;min-width:0;line-height:1.3}
+.rt small{display:block;font-size:14px;color:var(--ink-2);line-height:1.38;margin-top:2px}
+.taskgrid{display:grid;grid-template-columns:1fr 1fr}
+.taskgrid .row + .row::before{display:none}
+.taskgrid .row:nth-child(n+3)::before{display:block;content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--sep)}
+.taskgrid .row:nth-child(odd){box-shadow:inset -.5px 0 0 var(--sep)}
+.task .rt{font-weight:500}
+.resume .ico{background:var(--teal-soft);color:var(--teal-text)}
+.kbd{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-family:var(--font);font-size:12px;color:var(--ink-3);border:.5px solid var(--sep);border-radius:5px;padding:0 6px;line-height:18px;pointer-events:none}
+.search:focus + .kbd,.search:not(:placeholder-shown) + .kbd{display:none}
+.hit small{display:block;font-size:13px;color:var(--teal-text);font-weight:500;margin:1px 0 2px}
 .chev{width:8px;height:8px;border-top:2px solid var(--ink-3);border-right:2px solid var(--ink-3);transform:rotate(45deg);opacity:.6;flex-shrink:0;margin-right:4px}
 .ico{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:var(--teal-btn);color:var(--on-teal);flex-shrink:0}
 .ico svg{width:18px;height:18px}
@@ -231,6 +241,10 @@ ul.qlist b{font-weight:600;line-height:1.35;display:block}
   .qs{grid-column:1;grid-row:auto;justify-self:start;order:-1}
   ul.qlist li > div{grid-row:auto}
   .homegroups{grid-template-columns:minmax(0,1fr)}
+  .taskgrid{grid-template-columns:minmax(0,1fr)}
+  .taskgrid .row:nth-child(odd){box-shadow:none}
+  .taskgrid .row:nth-child(n+2)::before{display:block;content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--sep)}
+  .kbd{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -241,7 +255,7 @@ ul.qlist b{font-weight:600;line-height:1.35;display:block}
     <div class="sheethead"><b>Разделы</b><button id="sheetclose" type="button">Готово</button></div>
     <a class="brand" href="#home"><span>Emilius Agency</span><b>Магазин на шаблоне InSales</b></a>
     <div class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
-      <input class="search" id="q" type="search" placeholder="Поиск" aria-label="Поиск по всем документам"></div>
+      <input class="search" id="q" type="search" placeholder="Поиск" aria-label="Поиск по всем документам"><span class="kbd" aria-hidden="true">/</span></div>
     <nav id="nav"><div class="navgroup"><a href="#home" data-id="home">Главная</a></div>%NAV%</nav>
     <div class="extra">
       <a href="calculator.html">Калькулятор сметы ↗</a>
@@ -257,6 +271,12 @@ ul.qlist b{font-weight:600;line-height:1.35;display:block}
         <h1>Магазин на шаблоне InSales.</h1>
         <p class="lead">Всё, чтобы продавать и делать эту услугу: цены, состав, работы с нормами часов, тексты для клиентов и шаблоны документов.</p>
       </div>
+      <div class="group" id="resumebox" hidden><a class="row resume" id="resume" href="#home"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h10.5a3 3 0 0 1 3 3V20l-4.5-3H5z"/></svg></span><span class="rt">Продолжить чтение<small id="resumetitle"></small></span><span class="chev" aria-hidden="true"></span></a></div>
+
+      <div class="sectionhead"><h2>Я хочу…</h2></div>
+      <div class="group taskgrid">%TASKS%</div>
+
+      <div class="sectionhead"><h2>Пакеты</h2><a href="#product">Подробнее о составе</a></div>
       <div class="pkgs">%PKGS%</div>
       <p class="small">%WORKS% типовых работ с нормами часов. Точную цену проекта считает <a href="calculator.html">калькулятор</a>.</p>
 
@@ -291,6 +311,9 @@ const q = document.getElementById('q');
 const titles = Object.fromEntries(INDEX.map(d => [d.id, d.title]));
 const views = () => document.querySelectorAll('main > .doc, main > .view');
 let pendingTerm = '';
+
+// На телефоне оглавления свёрнуты, чтобы документ начинался с текста
+if (matchMedia('(max-width:640px)').matches) document.querySelectorAll('details.toc').forEach(d => { d.open = false; });
 
 // Подписи для строк таблиц на телефоне
 document.querySelectorAll('.tablewrap table').forEach(t => {
@@ -341,7 +364,8 @@ function show(token) {
   clearMarks(view);
   if (pendingTerm) {
     const marks = highlight(view, pendingTerm); pendingTerm = '';
-    if (marks.length) { const d = marks[0].closest('details'); if (d) d.open = true; marks[0].scrollIntoView({ block: 'center' }); return; }
+    const m = (target && marks.find(x => target.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING)) || marks[0];
+    if (m) { const d = m.closest('details'); if (d) d.open = true; m.scrollIntoView({ block: 'center' }); return; }
   }
   if (target) { const d = target.closest('details'); if (d) d.open = true; target.scrollIntoView(); }
   else window.scrollTo(0, 0);
@@ -386,30 +410,63 @@ if (cq) {
   apply();
 }
 
-// Поиск по всем документам
+// Поиск по разделам всех документов
 const escHtml = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 q.addEventListener('input', () => {
-  const term = q.value.trim().toLowerCase();
+  const raw = q.value.trim(), term = raw.toLowerCase();
   if (term.length < 2) { route(); return; }
   const hits = [];
-  for (const d of INDEX) {
-    const low = d.text.toLowerCase();
-    let i = low.indexOf(term), n = 0, first = i;
-    while (i !== -1) { n++; i = low.indexOf(term, i + term.length); }
-    if (n) hits.push({ d, n, first });
+  const docsHit = new Set();
+  for (const d of INDEX) for (const sec of d.secs) {
+    const hay = (sec.s + ' ' + sec.t).toLowerCase();
+    let i = hay.indexOf(term), n = 0;
+    while (i !== -1) { n++; i = hay.indexOf(term, i + term.length); }
+    if (!n) continue;
+    const inTitle = (d.title + ' ' + sec.s).toLowerCase().includes(term);
+    const quoted = hay.includes('«' + term);  // фраза клиента в кавычках — возражение или ответ
+    docsHit.add(d.id);
+    hits.push({ d, sec, n: n + (inTitle ? 20 : 0) + (quoted ? 10 : 0) });
   }
   hits.sort((a, b) => b.n - a.n);
   views().forEach(el => { el.hidden = el.id !== 'doc-search'; });
   nav.querySelectorAll('a').forEach(a => a.classList.remove('on'));
-  document.getElementById('searchtitle').textContent = hits.length ? '«' + q.value.trim() + '» в ' + hits.length + ' док.' : 'Ничего не найдено';
-  document.getElementById('hits').hidden = !hits.length;
-  document.getElementById('hits').innerHTML = hits.map(({ d, n, first }) => {
-    const from = Math.max(0, first - 70), snip = d.text.slice(from, first + term.length + 110);
-    const marked = escHtml(snip).replace(new RegExp(escRe(escHtml(term)), 'ig'), m => '<mark>' + m + '</mark>');
-    return '<a class="hit" href="#' + d.id + '"><b>' + escHtml(d.title) + ' · ' + n + '</b><span>' + (from ? '…' : '') + marked + '…</span></a>';
+  document.getElementById('searchtitle').textContent = hits.length ? '«' + raw + '»: ' + hits.length + ' разд. в ' + docsHit.size + ' док.' : 'Ничего не найдено';
+  const box = document.getElementById('hits');
+  box.hidden = !hits.length;
+  box.innerHTML = hits.slice(0, 40).map(({ d, sec }) => {
+    const low = sec.t.toLowerCase(), first = Math.max(0, low.indexOf(term));
+    const from = Math.max(0, first - 60), snip = sec.t.slice(from, first + term.length + 120);
+    const marked = escHtml(snip).replace(new RegExp(escRe(escHtml(raw)), 'ig'), m => '<mark>' + m + '</mark>');
+    return '<a class="hit" href="#' + sec.a + '"><b>' + escHtml(d.title) + '</b>' + (sec.s ? '<small>' + escHtml(sec.s) + '</small>' : '') + '<span>' + (from ? '…' : '') + marked + '…</span></a>';
   }).join('');
+  window.scrollTo(0, 0);
 });
+
+// «/» или ⌘K — к поиску
+document.addEventListener('keydown', e => {
+  const typing = /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if ((e.key === '/' && !typing) || (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey))) {
+    e.preventDefault();
+    if (matchMedia('(max-width:900px)').matches) setMenu(true);
+    q.focus(); q.select();
+  }
+});
+
+// Продолжить чтение: последний открытый документ (только в этом браузере)
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+window.addEventListener('hashchange', () => {
+  const id = (location.hash || '').slice(1);
+  const art = document.getElementById(id) && document.getElementById(id).closest('main > .doc');
+  const doc = document.getElementById('doc-' + id) || art;
+  if (doc && doc.classList.contains('doc')) store.set('handbook-last', doc.id.slice(4));
+});
+const last = store.get('handbook-last');
+if (last && titles[last]) {
+  document.getElementById('resume').setAttribute('href', '#' + last);
+  document.getElementById('resumetitle').textContent = titles[last];
+  document.getElementById('resumebox').hidden = false;
+}
 
 route();
 </script>

@@ -63,6 +63,50 @@ const GROUPS = [
   ]],
 ];
 
+// Зачем открывать документ — одна строка под заголовком, в меню на главной и в поиске
+const DESCS = {
+  start: 'Что сделать владельцу за 10 дней до первой оплаченной диагностики и какие ответы ждёт агент.',
+  map: 'Оглавление системы: какой файл за что отвечает и в каком он состоянии.',
+  research: 'Кто покупает, когда возникает потребность, боли, язык клиента, конкуренты и их цены.',
+  product: 'Из чего состоит услуга: пакеты, опции, апсейлы и формат оплаты.',
+  catalog: 'Все типовые работы с нормами часов. Из них собирается любой проект.',
+  estimation: 'Как за 5 минут квалифицировать клиента, заполнить бриф и посчитать проект.',
+  card: 'Услуга на одной странице: кому подходит и нет, состав, сроки, ограничения, частые вопросы.',
+  economics: 'Сколько агентство зарабатывает на проекте и сколько можно платить за клиента.',
+  landing: 'Структура и готовые тексты продающей страницы, версия для селлеров.',
+  leadgen: 'Где искать клиентов: горячие, тёплые и холодные каналы, рейтинг и план на 8 недель.',
+  outreach: 'Первые сообщения по сегментам, повторные касания и ответы на реакции.',
+  sales: 'Логика разговора, вопросы диагностики, ответы на возражения, учёт лидов.',
+  hot: 'Как ответить за 30 минут, когда клиент сам ищет подрядчика: 8 шаблонов.',
+  partner: 'Готовый текст для карточки агентства в каталоге партнёров InSales.',
+  process: 'Этапы от заявки до сдачи магазина, контрольные точки и правила из практики.',
+  diag: 'Шаблон заключения платной диагностики с тремя сценариями для клиента.',
+  kp: 'Как выглядит коммерческое предложение, собранное из сметы.',
+  order: 'Приложение к договору: работы, оплата, приёмка, гарантия.',
+  qa: 'Что проверить перед сдачей: тестовые заказы, оплата, доставка, мобильная версия.',
+  themes: 'Какие шаблоны InSales предлагать клиенту и почему.',
+  video: '13 видеоинструкций для клиента и сценарий обучения.',
+  onboarding: 'Как за 5 дней ввести в работу нового менеджера или сборщика.',
+  retention: 'Отчёт через 30 дней, абонемент и поводы для следующей продажи.',
+  improvement: 'История итераций, журнал калибровки норм и бэклог улучшений.',
+  lessons: 'Выводы из 462 сигналов в переписках с клиентами прошлых проектов.',
+};
+// Вход по задачам на главной: что нужно сделать → куда идти
+const TASKS = [
+  ['Понять услугу за 5 минут', '#card'],
+  ['Найти клиентов', '#leadgen-4'],
+  ['Написать продавцу маркетплейса первым', '#outreach-2'],
+  ['Клиент ответил — что дальше', '#outreach-8'],
+  ['Пришёл клиент: оценить проект', '#estimation-1'],
+  ['Посчитать цену', 'calculator.html'],
+  ['Провести диагностику', '#sales-2'],
+  ['Клиент говорит «дорого»', '#sales-4'],
+  ['Отправить КП', '#kp'],
+  ['Начать проект после оплаты', '#process'],
+  ['Сдать магазин клиенту', '#qa'],
+  ['Продать абонемент после запуска', '#retention-1'],
+];
+
 const byFile = new Map();
 const groupOf = new Map();
 for (const [g, , items] of GROUPS) for (const [id, file] of items) { byFile.set(file, id); groupOf.set(id, g); }
@@ -172,7 +216,15 @@ for (const [, , items] of GROUPS) {
     }
     html = html.replace(/<table>/g, '<div class="tablewrap"><table>').replace(/<\/table>(?!<\/div>)/g, '</table></div>');
     const text = html.replace(/<details class="runlog">[\s\S]*$/, '').replace(/<[^>]+>/g, ' ').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/\s+/g, ' ');
-    docs.push({ id, file, title, html, text, toc });
+    // Поиск по разделам: текст до первого h2 — сам документ, дальше — каждый раздел со своим якорем
+    const parts = html.replace(/<details class="runlog">[\s\S]*$/, '').split(/(?=<h2 id=")/);
+    const plain = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/\s+/g, ' ').trim();
+    const secs = parts.map((part) => {
+      const m = part.match(/^<h2 id="([^"]+)">([\s\S]*?)<\/h2>/);
+      return m ? { a: m[1], s: plain(m[2]), t: plain(part.slice(m[0].length)) } : { a: id, s: '', t: plain(part) };
+    });
+    const minutes = Math.max(1, Math.round(text.split(' ').length / 180));
+    docs.push({ id, file, title, html, text, toc, secs, minutes });
   }
 }
 
@@ -183,8 +235,9 @@ const sections = docs.map((d, i) => {
   const prev = docs[i - 1], next = docs[i + 1];
   const pager = `<nav class="pager" aria-label="Соседние документы">${prev ? `<a href="#${prev.id}"><span>Назад</span>${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a class="next" href="#${next.id}"><span>Дальше</span>${esc(next.title)}</a>` : ''}</nav>`;
   const h1end = d.html.indexOf('</h1>');
-  const body = h1end > -1 ? d.html.slice(0, h1end + 5) + toc + d.html.slice(h1end + 5) : toc + d.html;
-  return `<article class="doc" id="doc-${d.id}" hidden><div class="eyebrow">${esc(groupOf.get(d.id))}</div>${body}${pager}<p class="docmeta">Файл: ${esc(d.file)}</p></article>`;
+  const desc = d.id === 'catalog' ? '' : `<p class="lead">${esc(DESCS[d.id] || '')}</p>`;
+  const body = h1end > -1 ? d.html.slice(0, h1end + 5) + desc + toc + d.html.slice(h1end + 5) : desc + toc + d.html;
+  return `<article class="doc" id="doc-${d.id}" hidden><div class="eyebrow">${esc(groupOf.get(d.id))} · ${d.minutes} мин чтения</div>${body}${pager}<p class="docmeta">Файл: ${esc(d.file)}</p></article>`;
 }).join('\n');
 
 // Главная: шаги владельца (§2) и вопросы агенту (§3) из 14-start.md
@@ -197,16 +250,17 @@ const qs = questions.map(([n, q, a, , change]) =>
   `<li class="${a ? 'done' : ''}"><span class="qs">${a ? 'ответ есть' : 'ждёт ответа'}</span><div><b>${inline(q)}</b><span class="gain">${a ? 'Ответ: ' + inline(a) : 'Изменится: ' + inline(change)}</span></div></li>`).join('');
 
 const nav = GROUPS.map(([g, , items]) => `<div class="navgroup"><div class="navtitle">${esc(g)}</div>${items.map(([id, , t]) => `<a href="#${id}" data-id="${id}">${esc(t)}</a>`).join('')}</div>`).join('');
-const index = JSON.stringify(docs.map((d) => ({ id: d.id, title: d.title, text: d.text }))).replace(/</g, '\\u003c');
+const index = JSON.stringify(docs.map((d) => ({ id: d.id, title: d.title, desc: DESCS[d.id] || '', secs: d.secs }))).replace(/</g, '\\u003c');
 const built = new Date().toISOString().slice(0, 10).split('-').reverse().join('.');
 const pkgCards = Object.values(PACKAGES).map((p) => `<div class="pkg"><b>${esc(p.name)}</b><span class="price">от ${rub(p.min)} ₽</span><span class="note">${esc(p.note)}</span></div>`).join('');
-const homeGroups = GROUPS.map(([g, key, items]) => `<div class="hg"><h3>${esc(g)}</h3><div class="group">${items.map(([id, , t]) => `<a class="row" href="#${id}">${icon(key)}<span class="rt">${esc(t)}</span><span class="chev" aria-hidden="true"></span></a>`).join('')}</div></div>`).join('');
+const homeGroups = GROUPS.map(([g, key, items]) => `<div class="hg"><h3>${esc(g)}</h3><div class="group">${items.map(([id, , t]) => `<a class="row" href="#${id}">${icon(key)}<span class="rt">${esc(t)}<small>${esc(DESCS[id] || '')}</small></span><span class="chev" aria-hidden="true"></span></a>`).join('')}</div></div>`).join('');
+const tasks = TASKS.map(([t, href]) => `<a class="row task" href="${href}"><span class="rt">${esc(t)}</span><span class="chev" aria-hidden="true"></span></a>`).join('');
 
 const tpl = fs.readFileSync(new URL('./page.template.html', import.meta.url), 'utf8');
 const page = tpl
   .replace('%NAV%', nav).replace('%DOCS%', sections).replace('%INDEX%', index)
   .replace('%STEPS%', steps).replace('%QUESTIONS%', qs).replace('%QOPEN%', String(open.length)).replace('%QALL%', String(questions.length))
-  .replace('%PKGS%', pkgCards).replace('%HOMEGROUPS%', homeGroups).replaceAll('%WORKS%', String(workCount))
+  .replace('%PKGS%', pkgCards).replace('%HOMEGROUPS%', homeGroups).replace('%TASKS%', tasks).replaceAll('%WORKS%', String(workCount))
   .replaceAll('%BUILT%', built).replace('%COUNT%', String(docs.length));
 fs.writeFileSync(path.join(OUT, 'index.html'), page);
 
