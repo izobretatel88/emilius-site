@@ -119,19 +119,20 @@ export const ORDER_SIZES = [
 }));
 
 // Типовые работы InSales (docs/insales-service/03-catalog.csv): модуль → работы
-export type Work = { id: string; module: string; title: string; hours: number };
+export type Work = { id: string; module: string; title: string; hours: number; perUnit: number; unit: string };
 export const WORKS: Work[] = catalogCsv
   .trim()
   .split('\n')
   .slice(1)
   .map((line) => {
     const c = line.split(';');
-    return { id: c[0], module: c[1], title: c[2], hours: +c[8] || 0 };
+    return { id: c[0], module: c[1], title: c[2], hours: +c[8] || 0, perUnit: +c[9] || 0, unit: c[7] };
   })
   .filter((w) => w.id && w.module);
 export const MODULES = [...new Set(WORKS.map((w) => w.module))].map((m) => ({
   name: m,
   works: WORKS.filter((w) => w.module === m),
+  hours: +WORKS.filter((w) => w.module === m).reduce((a, w) => a + w.hours, 0).toFixed(1),
 }));
 
 // Последние задачи человека (демо): работы из каталога InSales и коды проектов из учёта —

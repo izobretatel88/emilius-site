@@ -67,15 +67,25 @@ const insalesProjects = PROJECTS.filter((p) => ['alohagaia', 'geekboards'].inclu
     <!-- Типовые работы -->
     <section aria-labelledby="h-works">
       <h2 class="section-title" id="h-works">{WORKS.length} типовых работ</h2>
-      <p class="lead sub">Из них собирается любой проект — с нормой часов на каждую.</p>
+      <p class="lead sub">Из них собирается любой проект — с нормой часов на каждую. Откройте модуль, чтобы увидеть нормы.</p>
+      <!-- Модуль раскрывается: все работы с нормой часов (база + за единицу) -->
       <ul class="modules">
         {MODULES.map((m) => (
           <li class="card module">
-            <h3>{m.name} <span>{m.works.length}</span></h3>
-            <ul>
-              {m.works.slice(0, 4).map((w) => <li>{w.title}</li>)}
-              {m.works.length > 4 && <li class="more">и ещё {m.works.length - 4}</li>}
-            </ul>
+            <details>
+              <summary>
+                <span class="m-name">{m.name}</span>
+                <span class="m-meta">{m.works.length} {m.works.length === 1 ? 'работа' : m.works.length < 5 ? 'работы' : 'работ'} · от {fmt(m.hours)} ч</span>
+              </summary>
+              <ul>
+                {m.works.map((w) => (
+                  <li>
+                    <span>{w.title}</span>
+                    <span class="w-h">{[w.hours ? `${fmt(w.hours)} ч` : '', w.perUnit ? `${fmt(w.perUnit)} ч/${w.unit}` : ''].filter(Boolean).join(' + ')}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
           </li>
         ))}
       </ul>
@@ -237,32 +247,80 @@ const insalesProjects = PROJECTS.filter((p) => ['alohagaia', 'geekboards'].inclu
     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 16px;
   }
-  .module {
-    padding: 18px 20px;
+  .modules {
+    align-items: start;
   }
-  .module h3 {
+  .module {
+    padding: 0;
+    overflow: hidden;
+  }
+  .module summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    transition: background-color var(--hover);
+  }
+  .module summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Шеврон: спокойный поворот при раскрытии */
+  .module summary::after {
+    content: '';
+    position: absolute;
+    right: 20px;
+    top: 24px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--ink-3);
+    border-bottom: 2px solid var(--ink-3);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+  .module details[open] summary::after {
+    transform: rotate(-135deg);
+  }
+  .module summary:hover {
+    background: var(--well);
+  }
+  .module summary:focus-visible {
+    outline: 2px dashed var(--teal);
+    outline-offset: -4px;
+  }
+  .m-name {
     font-size: 18px;
     font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
+    padding-right: 24px;
   }
-  .module h3 span {
+  .m-meta {
     font-size: 14px;
     color: var(--teal-text);
+    font-variant-numeric: tabular-nums;
   }
   .module ul {
     list-style: none;
-    margin: 10px 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 0 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+  }
+  .module ul li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid var(--hair);
     font-size: 14px;
     color: var(--ink-2);
   }
-  .module .more {
-    color: var(--ink-3);
+  .w-h {
+    flex: none;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
   }
   .projects {
     list-style: none;
