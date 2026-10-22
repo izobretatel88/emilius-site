@@ -150,3 +150,10 @@ export const recentTasks = (p: Person, n = 5) => {
     return { title: w.title, module: w.module, project: PROJECT_CODES[(p.seed * 3 + i * 4) % PROJECT_CODES.length], hours };
   });
 };
+
+// Запас для «живой» ленты: последние 18 заказов с полезными часами, новые сверху
+export const FEED_POOL = [...ORDERS]
+  .reverse()
+  .filter((o) => o.useful > 0)
+  .slice(0, 18)
+  .map((o) => ({ project: o.project, direction: 'InSales', tasks: o.tasks, hours: +o.useful.toFixed(1) }));

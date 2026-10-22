@@ -9,7 +9,8 @@ import OsNav from '../../components/os/OsNav.astro';
 import '../../styles/os.css';
 import { PROJECTS } from '../../data/projects';
 import { LINKS } from '../../data/site';
-import { INSALES, DIRECTIONS, FEED, PROCESS, TEAM, activity, fmt } from '../../data/os';
+import { INSALES, DIRECTIONS, FEED_POOL, PROCESS, TEAM, activity, fmt } from '../../data/os';
+const FEED = FEED_POOL.slice(0, 6);
 
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
@@ -79,9 +80,9 @@ const PROJECT_DIRS: Record<string, string[]> = {
 
     <!-- 4. Лента принятых работ -->
     <section class="card feed" aria-labelledby="h-feed">
-      <h2 id="h-feed">Недавно принято клиентом</h2>
+      <h2 id="h-feed"><span class="live" aria-hidden="true"></span>Недавно принято клиентом</h2>
       <p class="lead">Последние заказы InSales: код проекта вместо названия, полезные часы — по учёту.</p>
-      <ul class="feed-list">
+      <ul class="feed-list" id="feedList" data-pool={JSON.stringify(FEED_POOL)}>
         {FEED.map((f) => (
           <li>
             <span class="f-proj">{f.project}</span>
@@ -92,6 +93,38 @@ const PROJECT_DIRS: Record<string, string[]> = {
         ))}
       </ul>
     </section>
+
+    <script>
+      // «Живая» лента: раз в 4 с сверху тихо появляется следующий заказ из учёта, нижний уходит.
+      // Пауза, когда ленты не видно; при «уменьшить движение» лента стоит.
+      const list = document.getElementById('feedList');
+      if (list && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        type Row = { project: string; direction: string; tasks: number; hours: number };
+        const pool: Row[] = JSON.parse(list.dataset.pool || '[]');
+        const shown = list.children.length;
+        let next = shown;
+        let visible = false;
+        new IntersectionObserver((e) => (visible = e.some((x) => x.isIntersecting))).observe(list);
+        const fmt = (n: number) => n.toLocaleString('ru-RU');
+        window.setInterval(() => {
+          if (!visible || document.hidden || pool.length <= shown) return;
+          const r = pool[next % pool.length];
+          next += 1;
+          const li = list.firstElementChild!.cloneNode(true) as HTMLLIElement;
+          li.classList.remove('is-new', 'is-gone');
+          const [proj, dir, tasks, hours] = Array.from(li.children) as HTMLElement[];
+          proj.textContent = r.project;
+          dir.textContent = r.direction;
+          tasks.textContent = `${r.tasks} задач`;
+          hours.textContent = `${fmt(r.hours)} ч`;
+          li.classList.add('is-new');
+          list.prepend(li);
+          const last = list.lastElementChild as HTMLElement;
+          last.classList.add('is-gone');
+          window.setTimeout(() => last.remove(), 400);
+        }, 4000);
+      }
+    </script>
 
     <!-- 5. Проекты -->
     <section aria-labelledby="h-projects">
@@ -383,6 +416,28 @@ const PROJECT_DIRS: Record<string, string[]> = {
     list-style: none;
     margin: 8px 0 0;
     padding: 0;
+  }
+  .live {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 12px;
+    border-radius: 50%;
+    background: var(--teal);
+    vertical-align: 0.15em;
+  }
+  .feed-list li.is-new {
+    animation: feed-in 0.4s ease-out;
+  }
+  .feed-list li.is-gone {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  @keyframes feed-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
   }
   .feed-list li {
     display: grid;
