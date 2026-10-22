@@ -18,7 +18,7 @@ cd "$(dirname "$0")/.."
 SITE_URL=https://emilius.agency BASE_PATH=/ YM_ID="${YM_ID:-68742100}" npm run build
 
 # Защита от выкладки превью: в продакшене не должно быть noindex и метки dev.
-if grep -rlq 'noindex' dist; then
+if grep -rlq --include='*.html' 'noindex' dist; then
   echo "В сборке есть noindex — это сборка превью, выкладку останавливаю." >&2
   exit 1
 fi
