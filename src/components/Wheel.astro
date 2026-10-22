@@ -179,18 +179,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       <path id="attnArc" d={`M${-(C - 12)} 0 A${C - 12} ${C - 12} 0 0 1 ${C - 12} 0`} fill="none"></path>
       <path id="attnArc2" d={`M${-(C - 26)} 0 A${C - 26} ${C - 26} 0 0 1 ${C - 26} 0`} fill="none"></path>
     </defs>
-    <!-- Вступление: сначала крупно и жирно «внимание» в центре, затем оно уходит в дугу сверху -->
-    <!-- Блик как «slide to unlock» на экране блокировки iPhone: пока слово стоит, по буквам
-         один раз проплывает полоса света. Обычный <text>, не textPath — градиент на тексте по дуге
-         Safari обрезает (см. HANDOFF, «Грабли»). -->
-    <linearGradient id="attnShine" gradientUnits="userSpaceOnUse" x1="-36" y1="0" x2="36" y2="0">
-      <stop offset="0" class="shine-base"></stop>
-      <stop offset="0.5" class="shine-light"></stop>
-      <stop offset="1" class="shine-base"></stop>
-      <animateTransform id="attnShineGo" attributeName="gradientTransform" type="translate"
-        from="-120 0" to="120 0" dur="1.7s" begin="indefinite" fill="freeze"></animateTransform>
-    </linearGradient>
-    <text class="attn" id="attn" x="0" y="7" text-anchor="middle" font-size="20" font-weight="800" fill="url(#attnShine)">внимание</text>
     <text class="attn-arc" id="attnArcText" font-size="12" font-weight="700">
       <textPath href="#attnArc" startOffset="50%" text-anchor="middle">внимание</textPath>
     </text>
@@ -199,6 +187,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     </text>
   </svg>
   <div class="center-q" id="centerQ" aria-hidden="true"><span class="cq-text" id="cqText"></span></div>
+  <!-- Вступление: сначала крупно и жирно «внимание» в центре, затем оно уходит в дугу сверху.
+       Блик как «slide to unlock» на экране блокировки iPhone — CSS-градиент по тексту (background-clip).
+       Обычный HTML, не SVG: Safari на iPhone не перерисовывает SVG-текст при анимации градиента. -->
+  <div class="attn" id="attn" aria-hidden="true">внимание</div>
   <!-- Превью (22.10.2026, вариант «обод из 52 дней»): плашка закрывает колесо, всё начинается по нажатию.
        Обод вращается, риски у курсора подсвечиваются; обод можно покрутить, как колесо. -->
   <button type="button" class="wheel-launch" id="wheelLaunch">
@@ -327,8 +319,6 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       };
       if (reduce) return finish();
       attn.classList.add('is-show');
-      // блик стартует, когда слово уже проявилось
-      window.setTimeout(() => (document.getElementById('attnShineGo') as unknown as SVGAnimationElement | null)?.beginElement(), 250);
       window.setTimeout(() => {
         attn.classList.add('is-up');
         onGo?.();
@@ -902,26 +892,46 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
      Меняется только строка «→ этап»; вопросы всплывают за 0,7 с, без пружин. */
   /* Крупное жирное «внимание»: проявляется, держится ~2 с, уходит вверх и гаснет —
      на его месте проявляется дуга «внимание». Без пружин. */
+  /* Размеры в единицах колеса (434) через cqw — как вопрос в центре */
   .attn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font);
+    font-size: calc(20 / 434 * 100cqw);
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
     opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
+    /* Полоса света — середина градиента втрое шире слова; сдвигом фона она проходит слева направо */
+    color: var(--shine-base);
+    background: linear-gradient(90deg, var(--shine-base) 0 38%, var(--shine) 50%, var(--shine-base) 62% 100%);
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     transition:
       opacity 0.6s ease,
       transform 0.8s cubic-bezier(0.45, 0, 0.2, 1);
   }
-  .shine-base {
-    stop-color: var(--shine-base);
-  }
-  .shine-light {
-    stop-color: var(--shine);
-  }
   .attn.is-show {
     opacity: 1;
+    animation: attn-shine 1.7s 0.25s ease-in-out both;
+  }
+  @keyframes attn-shine {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0 0;
+    }
   }
   .attn.is-up {
     opacity: 0;
-    transform: translateY(-46px) scale(0.6);
+    transform: translate(-50%, calc(-50% - 46 / 434 * 100cqw)) scale(0.6);
   }
   .attn-arc {
     fill: var(--ink-2);
@@ -995,7 +1005,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   /* На телефоне колесо ~0,7 от своего размера — шрифт центра крупнее (~12 px на экране 375) */
   @media (max-width: 520px) {
     .attn {
-      font-size: 25px;
+      font-size: calc(25 / 434 * 100cqw);
     }
     .attn-arc {
       font-size: 13px;
