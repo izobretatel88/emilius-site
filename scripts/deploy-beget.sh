@@ -5,7 +5,7 @@
 #
 # Вход — по SSH-ключу ~/.ssh/emilius_beget (пароль скрипт не спрашивает и не хранит).
 # Публичную часть ключа владелец один раз добавляет на Бегет.
-# Файл с токеном бота (emilius-telegram.php) лежит уровнем выше BEGET_DIR и скриптом не трогается.
+# Файл с токеном бота (emilius-telegram.php) лежит вне BEGET_DIR (в домашней папке аккаунта) и скриптом не трогается.
 set -euo pipefail
 
 : "${BEGET_SSH:?Укажите BEGET_SSH, например логин@логин.beget.tech}"
@@ -23,7 +23,8 @@ if grep -rlq 'noindex' dist; then
   exit 1
 fi
 
-# --delete убирает с сервера файлы, которых больше нет в сборке; .well-known нужен для SSL-сертификата.
-rsync -az --delete --exclude '.well-known/' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes" dist/ "$BEGET_SSH:$BEGET_DIR/"
+# --delete убирает с сервера файлы, которых больше нет в сборке; .well-known нужен для SSL-сертификата,
+# emilius-telegram.php — на случай, если файл с токеном положили в папку сайта.
+rsync -az --delete --exclude '.well-known/' --exclude 'emilius-telegram.php' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes" dist/ "$BEGET_SSH:$BEGET_DIR/"
 
 echo "Готово: https://emilius.agency"

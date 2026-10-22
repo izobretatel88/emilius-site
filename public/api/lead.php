@@ -3,7 +3,8 @@
 // Работает только на Бегете (на GitHub Pages PHP нет — форма там предлагает написать в Telegram).
 //
 // Токен бота и chat_id лежат ВНЕ папки сайта, в файле emilius-telegram.php уровнем выше
-// корня сайта (на Бегете: ~/emilius.agency/emilius-telegram.php рядом с public_html):
+// корня сайта (~/emilius.agency/emilius-telegram.php рядом с public_html) или в домашней папке
+// аккаунта (~/emilius-telegram.php) — на Бегете папка домена принадлежит root и писать в неё нельзя:
 //
 //   <?php return ['token' => '123456:ABC…', 'chat_id' => '-100…'];
 //
@@ -80,7 +81,14 @@ if (count($hits) >= RATE_LIMIT) {
 $hits[] = $now;
 @file_put_contents($rateFile, implode("\n", $hits), LOCK_EX);
 
-$configFile = dirname((string)($_SERVER['DOCUMENT_ROOT'] ?? __DIR__)) . '/emilius-telegram.php';
+$docRoot = (string)($_SERVER['DOCUMENT_ROOT'] ?? __DIR__);
+$configFile = '';
+foreach ([dirname($docRoot), dirname($docRoot, 2)] as $dir) {
+    $configFile = $dir . '/emilius-telegram.php';
+    if (is_file($configFile)) {
+        break;
+    }
+}
 $config = is_file($configFile) ? include $configFile : null;
 if (!is_array($config) || empty($config['token']) || empty($config['chat_id'])) {
     error_log('lead.php: нет настроек Telegram в ' . $configFile);
