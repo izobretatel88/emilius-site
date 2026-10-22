@@ -120,7 +120,7 @@ const PROJECT_DIRS: Record<string, string[]> = {
       <ul class="team">
         {TEAM.map((t) => (
           <li class="card person">
-            <h3>{t.role}</h3>
+            <h3><a class="p-link" href={href(`os/team/#${t.id}`)}>{t.role}</a></h3>
             <p class="p-hours"><b>{fmt(t.hours)}</b> полезных часов</p>
             <p class="p-sub">{t.tasks} задач · {t.projects} проектов</p>
             <div class="split" role="img" aria-label={t.split.map(([n, v]) => `${n} ${v}%`).join(', ')}>
@@ -482,6 +482,13 @@ const PROJECT_DIRS: Record<string, string[]> = {
   .person h3 {
     font-size: 20px;
     font-weight: 600;
+  }
+  .p-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .p-link:hover {
+    color: var(--teal-text);
   }
   .p-hours {
     font-size: 15px;

@@ -89,11 +89,11 @@ export const FEED = [...ORDERS]
 export const PROCESS = ['запрос', 'направление', 'задача', 'исполнитель', 'работа', 'проверка', 'результат', 'следующая итерация'];
 
 // Команда — демо: роли без имён, цифры условные (публичные профили — после согласия сотрудников)
-export type Person = { role: string; hours: number; tasks: number; projects: number; split: [string, number][]; stack: string[]; seed: number };
+export type Person = { id: string; role: string; hours: number; tasks: number; projects: number; split: [string, number][]; stack: string[]; seed: number; since: string };
 export const TEAM: Person[] = [
-  { role: 'Фронтенд-разработчик', hours: 842, tasks: 164, projects: 11, split: [['InSales', 48], ['Front-end', 31], ['No-code', 14], ['Дизайн', 7]], stack: ['Liquid', 'JS', 'API'], seed: 3 },
-  { role: 'Сборщик магазинов InSales', hours: 615, tasks: 238, projects: 15, split: [['InSales', 82], ['Tilda', 12], ['No-code', 6]], stack: ['InSales', 'CSV', 'Метрика'], seed: 7 },
-  { role: 'Дизайнер интерфейсов', hours: 430, tasks: 91, projects: 9, split: [['Дизайн', 71], ['Tilda', 19], ['Front-end', 10]], stack: ['Figma', 'Pencil', 'касдев'], seed: 11 },
+  { id: 'frontend', since: '2021', role: 'Фронтенд-разработчик', hours: 842, tasks: 164, projects: 11, split: [['InSales', 48], ['Front-end', 31], ['No-code', 14], ['Дизайн', 7]], stack: ['Liquid', 'JS', 'API'], seed: 3 },
+  { id: 'builder', since: '2023', role: 'Сборщик магазинов InSales', hours: 615, tasks: 238, projects: 15, split: [['InSales', 82], ['Tilda', 12], ['No-code', 6]], stack: ['InSales', 'CSV', 'Метрика'], seed: 7 },
+  { id: 'designer', since: '2022', role: 'Дизайнер интерфейсов', hours: 430, tasks: 91, projects: 9, split: [['Дизайн', 71], ['Tilda', 19], ['Front-end', 10]], stack: ['Figma', 'Pencil', 'касдев'], seed: 11 },
 ];
 
 // Активность по 52 неделям — для графика вклада (демо, детерминированно от seed)
@@ -133,3 +133,20 @@ export const MODULES = [...new Set(WORKS.map((w) => w.module))].map((m) => ({
   name: m,
   works: WORKS.filter((w) => w.module === m),
 }));
+
+// Последние задачи человека (демо): работы из каталога InSales и коды проектов из учёта —
+// детерминированно от seed, без клиентов и реальных назначений
+const MODULES_BY_ROLE: Record<string, string[]> = {
+  frontend: ['Модификации', 'Дизайн', 'Каталог', '1С', 'Маркетплейсы'],
+  builder: ['Каталог', 'Импорт', 'Контент', 'Оплата', 'Доставка', 'Тестирование'],
+  designer: ['Дизайн', 'Страницы', 'Контент'],
+};
+const PROJECT_CODES = [...new Set(ORDERS.map((o) => o.project))];
+export const recentTasks = (p: Person, n = 5) => {
+  const pool = WORKS.filter((w) => (MODULES_BY_ROLE[p.id] ?? []).includes(w.module));
+  return Array.from({ length: n }, (_, i) => {
+    const w = pool[(p.seed * 7 + i * 5) % pool.length];
+    const hours = Math.max(0.5, Math.round((w.hours || 1) * (0.8 + ((p.seed + i) % 5) * 0.15) * 2) / 2);
+    return { title: w.title, module: w.module, project: PROJECT_CODES[(p.seed * 3 + i * 4) % PROJECT_CODES.length], hours };
+  });
+};
