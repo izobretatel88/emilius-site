@@ -564,7 +564,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     let boost = false; // наведение или фокус
     let light = 0; // сила подсветки у курсора, 0..1
     let pointerAt: number | null = null; // угол указателя на экране
-    let ringDrag: { id: number; last: number; t: number; moved: boolean } | null = null;
+    let ringDrag: { id: number; last: number; t: number; x: number; y: number; moved: boolean } | null = null;
     let lastT = performance.now();
     const pointerAngle = (e: PointerEvent) => {
       const r = launch.getBoundingClientRect();
@@ -611,16 +611,24 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (launch.matches(':focus-visible')) boost = true;
     });
     launch.addEventListener('blur', () => (boost = false));
+    // Нажатие и «покрутить» различаем по сдвигу в пикселях: угол у центра круга скачет от сдвига
+    // пальца на 1–2 px — так на iPhone каждое нажатие на надпись считалось перетаскиванием.
+    // Крутить обод можно только за край, центр с надписью — всегда нажатие.
+    const MOVE_PX = 10;
     launch.addEventListener('pointerdown', (e) => {
       pointerAt = pointerAngle(e);
-      ringDrag = { id: e.pointerId, last: pointerAt, t: performance.now(), moved: false };
+      const r = launch.getBoundingClientRect();
+      const dist = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+      ringDrag = dist > r.width * 0.3
+        ? { id: e.pointerId, last: pointerAt, t: performance.now(), x: e.clientX, y: e.clientY, moved: false }
+        : null;
     });
     launch.addEventListener('pointermove', (e) => {
       const p = pointerAngle(e);
       pointerAt = p;
       if (!ringDrag || e.pointerId !== ringDrag.id) return;
+      if (!ringDrag.moved && Math.hypot(e.clientX - ringDrag.x, e.clientY - ringDrag.y) < MOVE_PX) return;
       const d = wrap(p - ringDrag.last);
-      if (!ringDrag.moved && Math.abs(d) < 4) return;
       if (!ringDrag.moved) {
         ringDrag.moved = true;
         try {
@@ -676,20 +684,23 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     // отпустил — спокойное вращение продолжается с этого места. Короткое касание остаётся кликом.
     if (!reduce) {
       box.classList.add('can-spin');
-      let drag: { id: number; start: number; from: number; moved: boolean } | null = null;
+      let drag: { id: number; start: number; from: number; x: number; y: number; moved: boolean } | null = null;
       const angleAt = (e: PointerEvent) => {
         const r = box.getBoundingClientRect();
         return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
       };
       box.addEventListener('pointerdown', (e) => {
         if (idle) return;
-        drag = { id: e.pointerId, start: angleAt(e), from: currentAngle(), moved: false };
+        // за центр не крутим: там угол скачет от малейшего сдвига пальца
+        const r = box.getBoundingClientRect();
+        if (Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2)) < r.width * 0.18) return;
+        drag = { id: e.pointerId, start: angleAt(e), from: currentAngle(), x: e.clientX, y: e.clientY, moved: false };
       });
       box.addEventListener('pointermove', (e) => {
         if (!drag || e.pointerId !== drag.id) return;
         let d = angleAt(e) - drag.start;
         d = ((d + 540) % 360) - 180;
-        if (!drag.moved && Math.abs(d) < 4) return;
+        if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 10) return;
         if (!drag.moved) {
           drag.moved = true;
           try {
