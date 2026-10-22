@@ -32,6 +32,13 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
       if (!frame.src) frame.src = frame.dataset.src!;
     };
     card.addEventListener('pointerenter', load, { once: true });
+    // Человек нажал в виджет Эми (фокус ушёл в iframe) — сообщаем странице: фоновая музыка затихает,
+    // чтобы не звучать вместе с голосом. Кросс-доменный iframe по-другому не выдаёт нажатие.
+    addEventListener('blur', () => {
+      window.setTimeout(() => {
+        if (document.activeElement === frame) dispatchEvent(new CustomEvent('emi:active'));
+      }, 0);
+    });
     card.addEventListener('focusin', load, { once: true });
     const idle = (cb: () => void) =>
       'requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 2500);

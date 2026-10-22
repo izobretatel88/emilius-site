@@ -202,6 +202,14 @@ const music = `${root}brand/music.mp3`;
         }
         setToggle();
       });
+      // Включили Эми — музыка затихает и выключается (кнопкой можно вернуть)
+      addEventListener('emi:active', () => {
+        if (!music || !musicOn) return;
+        musicOn = false;
+        fadeTo(0, 0.5);
+        window.setTimeout(() => !musicOn && music?.pause(), 520);
+        setToggle();
+      });
       // Вкладку свернули — пауза; вернулись — играет дальше, если её не выключали
       document.addEventListener('visibilitychange', () => {
         if (!music || !musicOn) return;
