@@ -10,7 +10,7 @@
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
-// Выбрали «Да» — после заставки тихо (30%) и по кругу играет мелодия public/brand/music.mp3
+// Выбрали «Да» — после заставки тихо (25%) и по кругу играет мелодия public/brand/music.mp3
 // (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
@@ -144,7 +144,7 @@ const music = `${root}brand/music.mp3`;
     // Фоновая мелодия: громкость через Web Audio — на iPhone громкость <audio> не меняется.
     // Запускаем в обработчике нажатия (иначе браузер не даст играть) с нулевой громкостью,
     // а слышна она становится, когда заставка закрылась, — не накладывается на звук заставки.
-    const MUSIC_VOLUME = 0.3;
+    const MUSIC_VOLUME = 0.25;
     const toggle = document.getElementById('musicToggle') as HTMLButtonElement | null;
     let music: HTMLAudioElement | null = null;
     let gain: GainNode | null = null;
