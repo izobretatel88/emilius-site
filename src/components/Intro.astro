@@ -4,13 +4,13 @@
 //   нажатие → знак за 1–2 кадра наклоняется (~45°), надписи пропадают мгновенно;
 //   1,8 с знак медленно выпрямляется до ~31°;
 //   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
-// Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026).
+// Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026), громкость 10% (22.10.2026).
 // Сначала вопрос «Удобно сейчас со звуком?» — «Да» / «Нет»; не нажали за T.wait — без звука.
 // Знак плоский, как в PNG владельца (объём и блик убраны 21.10.2026 — «криво» на тонких линиях).
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
-// Выбрали «Да» — после заставки тихо (20%) и по кругу играет мелодия public/brand/music.mp3
+// Выбрали «Да» — после заставки тихо (10%) и по кругу играет мелодия public/brand/music.mp3
 // (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
@@ -88,6 +88,7 @@ const music = `${root}brand/music.mp3`;
     fade: 600,
     wait: 5000, // кольцо на «Нет»: сколько ждём выбора
   };
+  const INTRO_VOLUME = 0.1; // громкость звука заставки
   // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
   const TILT_FROM = -45;
   const TILT_TO = -31;
@@ -136,7 +137,10 @@ const music = `${root}brand/music.mp3`;
           if (!buf || !ctx) return;
           const src = ctx.createBufferSource();
           src.buffer = buf;
-          src.connect(ctx.destination);
+          // Громкость звука заставки — 10% (правка владельца 22.10.2026)
+          const vol = ctx.createGain();
+          vol.gain.value = INTRO_VOLUME;
+          src.connect(vol).connect(ctx.destination);
           src.start(Math.max(at, ctx.currentTime));
         });
       } catch {
@@ -147,7 +151,7 @@ const music = `${root}brand/music.mp3`;
     // Фоновая мелодия: громкость через Web Audio — на iPhone громкость <audio> не меняется.
     // Запускаем в обработчике нажатия (иначе браузер не даст играть) с нулевой громкостью,
     // а слышна она становится, когда заставка закрылась, — не накладывается на звук заставки.
-    const MUSIC_VOLUME = 0.2;
+    const MUSIC_VOLUME = 0.1;
     const toggle = document.getElementById('musicToggle') as HTMLButtonElement | null;
     let music: HTMLAudioElement | null = null;
     let gain: GainNode | null = null;
@@ -200,6 +204,14 @@ const music = `${root}brand/music.mp3`;
           fadeTo(0, 0.3);
           window.setTimeout(() => !musicOn && music?.pause(), 320);
         }
+        setToggle();
+      });
+      // Включили Эми — музыка затихает и выключается (кнопкой можно вернуть)
+      addEventListener('emi:active', () => {
+        if (!music || !musicOn) return;
+        musicOn = false;
+        fadeTo(0, 0.5);
+        window.setTimeout(() => !musicOn && music?.pause(), 520);
         setToggle();
       });
       // Вкладку свернули — пауза; вернулись — играет дальше, если её не выключали

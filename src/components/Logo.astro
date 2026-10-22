@@ -30,6 +30,34 @@ const logo = `${base}${base.endsWith('/') ? '' : '/'}brand/logo.png`;
     width: 25px;
     height: 38px;
     flex: none;
+    transform-origin: 50% 60%;
+  }
+  /* При наведении знак слегка потряхивает — один раз, мелко (правка владельца 22.10.2026) */
+  .pill:hover .mark {
+    animation: mark-shake 0.6s ease-in-out;
+  }
+  @keyframes mark-shake {
+    0%,
+    100% {
+      transform: none;
+    }
+    20% {
+      transform: rotate(-7deg);
+    }
+    40% {
+      transform: rotate(6deg);
+    }
+    60% {
+      transform: rotate(-4deg);
+    }
+    80% {
+      transform: rotate(2deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pill:hover .mark {
+      animation: none;
+    }
   }
   @media (max-width: 480px) {
     .pill {
