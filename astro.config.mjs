@@ -11,5 +11,6 @@ export default defineConfig({
   trailingSlash: 'ignore',
   // Весь CSS сайта ~6 КБ — встраиваем в страницу, чтобы не ждать отдельных файлов перед отрисовкой
   build: { format: 'directory', inlineStylesheets: 'always' },
-  integrations: [sitemap({ filter: (page) => !page.includes('/404') })],
+  // /os/ — эксперимент «Emilius как операционная система» (docs/concept), в карту сайта не попадает
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/os/') })],
 });

@@ -1,0 +1,577 @@
+---
+// Эксперимент: главная «Emilius как операционная система агентства» (docs/concept/emilius-os-v0.1.md).
+// Нынешняя главная не тронута — сравнивать рядом. Раздел закрыт от поиска и не попадает в карту сайта.
+import Base from '../../layouts/Base.astro';
+import Logo from '../../components/Logo.astro';
+import Wheel from '../../components/Wheel.astro';
+import Footer from '../../components/Footer.astro';
+import { PROJECTS } from '../../data/projects';
+import { LINKS } from '../../data/site';
+import { INSALES, DIRECTIONS, FEED, PROCESS, TEAM, activity, fmt } from '../../data/os';
+
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+
+// Направления проектов — для тегов на карточках
+const PROJECT_DIRS: Record<string, string[]> = {
+  alohagaia: ['InSales', 'Front-end'],
+  wizzu: ['Front-end', 'No-code'],
+  duman: ['Front-end', 'Дизайн'],
+  geekboards: ['InSales', 'Front-end'],
+  navalishenskoe: ['Tilda'],
+};
+---
+
+<Base title="Эмилиус Эдженси — опыт, который растёт с каждой задачей" description="Эксперимент: агентство как система, которая накапливает подтверждённый опыт." noindex>
+  <header class="top">
+    <Logo />
+    <p class="lab">эксперимент · раздел /os/</p>
+  </header>
+
+  <main class="os">
+    <!-- 1. Первый экран: формула и капитал опыта -->
+    <section class="hero" aria-labelledby="h-hero">
+      <h1 id="h-hero">Создаём и развиваем digital-продукты.</h1>
+      <p class="hero-sub">Каждая выполненная задача делает нашу команду сильнее.</p>
+      <dl class="capital">
+        <div><dt>полезных часов</dt><dd>{fmt(INSALES.usefulHours)}</dd></div>
+        <div><dt>задач принято</dt><dd>{fmt(INSALES.tasks)}</dd></div>
+        <div><dt>проектов</dt><dd>{INSALES.projects}</dd></div>
+      </dl>
+      <p class="note">Настоящие цифры по направлению InSales, обезличенно. Остальные направления подключим следующими.</p>
+    </section>
+
+    <!-- 2. Колесо — модель процесса -->
+    <section class="card process" aria-labelledby="h-process">
+      <h2 id="h-process">Как мы работаем</h2>
+      <p class="lead">Любая работа проходит один и тот же круг — и каждая итерация оставляет опыт.</p>
+      <Wheel />
+      <ol class="chain">
+        {PROCESS.map((step, i) => <li><span class="n">{String(i + 1).padStart(2, '0')}</span>{step}</li>)}
+      </ol>
+    </section>
+
+    <!-- 3. Направления с цифрами -->
+    <section aria-labelledby="h-dirs">
+      <h2 class="section-title" id="h-dirs">Направления</h2>
+      <ul class="dirs">
+        {DIRECTIONS.map((d) => (
+          <li class="card dir">
+            <div class="dir-head">
+              <h3>{d.name}</h3>
+              {d.demo && <span class="demo">демо-цифры</span>}
+            </div>
+            <p class="dir-line">{d.line}</p>
+            <dl class="dir-stats">
+              <div><dt>задач</dt><dd>{fmt(d.tasks)}</dd></div>
+              <div><dt>полезных часов</dt><dd>{fmt(d.hours)}</dd></div>
+              <div><dt>проектов</dt><dd>{d.projects}</dd></div>
+              <div><dt>специалистов</dt><dd>{d.people}</dd></div>
+            </dl>
+            <p class="stack">{d.stack.join(' · ')}</p>
+            {d.href ? <a class="more" href={href(d.href)}>Посмотреть опыт →</a> : <span class="more is-soon">Опыт — скоро</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 4. Лента принятых работ -->
+    <section class="card feed" aria-labelledby="h-feed">
+      <h2 id="h-feed">Недавно принято клиентом</h2>
+      <p class="lead">Последние заказы InSales: код проекта вместо названия, полезные часы — по учёту.</p>
+      <ul class="feed-list">
+        {FEED.map((f) => (
+          <li>
+            <span class="f-proj">{f.project}</span>
+            <span class="f-dir">{f.direction}</span>
+            <span class="f-tasks">{f.tasks} задач</span>
+            <span class="f-hours">{fmt(f.hours)} ч</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 5. Проекты -->
+    <section aria-labelledby="h-projects">
+      <h2 class="section-title" id="h-projects">Проекты</h2>
+      <ul class="projects">
+        {PROJECTS.map((p) => (
+          <li class="card proj">
+            <img src={href(p.shot)} alt={`Первый экран сайта ${p.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+            <div class="proj-body">
+              <h3>{p.name}</h3>
+              <p>{p.did}</p>
+              <p class="tags">{(PROJECT_DIRS[p.id] ?? []).map((t) => <span>{t}</span>)}</p>
+              <a href={p.url} target="_blank" rel="noopener">{p.domain} ↗</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 6. Команда: накопленный опыт -->
+    <section aria-labelledby="h-team">
+      <div class="section-head">
+        <h2 class="section-title" id="h-team">Команда</h2>
+        <span class="demo">демо: имена и цифры — после согласия сотрудников</span>
+      </div>
+      <ul class="team">
+        {TEAM.map((t) => (
+          <li class="card person">
+            <h3>{t.role}</h3>
+            <p class="p-hours"><b>{fmt(t.hours)}</b> полезных часов</p>
+            <p class="p-sub">{t.tasks} задач · {t.projects} проектов</p>
+            <div class="split" role="img" aria-label={t.split.map(([n, v]) => `${n} ${v}%`).join(', ')}>
+              {t.split.map(([n, v], i) => <span style={`flex:${v};--i:${i}`} title={`${n} ${v}%`}></span>)}
+            </div>
+            <p class="split-legend">{t.split.map(([n, v]) => `${n} ${v}%`).join(' · ')}</p>
+            <div class="graph" aria-hidden="true">
+              {activity(t.seed).map((lvl) => <span data-l={lvl}></span>)}
+            </div>
+            <p class="stack">{t.stack.join(' · ')}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 7. Призыв -->
+    <section class="card cta" aria-labelledby="h-cta">
+      <h2 id="h-cta">Дайте нам следующую задачу</h2>
+      <p class="lead">Оценим по нормам из {fmt(INSALES.tasks)} выполненных задач и скажем срок до старта.</p>
+      <a class="btn" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram</a>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .lab {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .os {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-block: 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 72px;
+  }
+  .card {
+    background: var(--card);
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  h2,
+  .section-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .section-title {
+    margin-bottom: 20px;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .section-head .section-title {
+    margin: 0;
+  }
+  .lead {
+    font-size: clamp(17px, 1.8vw, 20px);
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  .demo {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--well);
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  /* 1. Первый экран */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    padding-top: 32px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7.2vw, 92px);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    max-width: 17ch;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    font-size: clamp(19px, 2.4vw, 26px);
+    color: var(--ink-2);
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+  .capital {
+    display: flex;
+    gap: clamp(20px, 6vw, 72px);
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .capital div {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .capital dd {
+    margin: 0;
+    font-size: clamp(36px, 5.4vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--teal-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .capital dt {
+    font-size: 15px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--ink-3);
+    max-width: 46ch;
+  }
+
+  /* 2. Процесс */
+  .process {
+    padding: 28px clamp(16px, 4vw, 40px) 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    text-align: center;
+  }
+  .process :global(.wheel-stage) {
+    width: min(100%, 520px);
+    margin-inline: auto;
+  }
+  .chain {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .chain li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--well);
+    font-size: 15px;
+  }
+  .chain .n {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-text);
+  }
+
+  /* 3. Направления */
+  .dirs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .dir {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dir-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .dir h3 {
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .dir-line {
+    color: var(--ink-2);
+    font-size: 15px;
+    min-height: 2.8em;
+  }
+  .dir-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+    margin: 4px 0;
+  }
+  .dir-stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .dir-stats dd {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .dir-stats dt {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .stack {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .more {
+    margin-top: auto;
+    font-weight: 600;
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  .more:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .more.is-soon {
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  /* 4. Лента */
+  .feed {
+    padding: 28px clamp(16px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .feed-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+  .feed-list li {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-top: 1px solid var(--hair);
+    font-variant-numeric: tabular-nums;
+  }
+  .f-proj {
+    font-weight: 700;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px;
+  }
+  .f-dir,
+  .f-tasks {
+    color: var(--ink-2);
+  }
+  .f-hours {
+    font-weight: 700;
+    color: var(--teal-text);
+  }
+
+  /* 5. Проекты */
+  .projects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .proj {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .proj img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    background: var(--well);
+  }
+  .proj-body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .proj h3 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .proj p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tags span {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--well);
+    color: var(--teal-text);
+  }
+  .proj a {
+    margin-top: auto;
+    font-weight: 600;
+    color: var(--teal-text);
+  }
+
+  /* 6. Команда */
+  .team {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .person {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .person h3 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .p-hours {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .p-hours b {
+    display: block;
+    font-size: 44px;
+    line-height: 1.05;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .p-sub {
+    font-size: 15px;
+    color: var(--ink-3);
+  }
+  .split {
+    display: flex;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    gap: 2px;
+    margin-top: 4px;
+  }
+  .split span {
+    background: var(--teal);
+    opacity: calc(1 - var(--i) * 0.22);
+  }
+  .split-legend {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  /* График вклада: 52 недели — как 52 деления колеса */
+  .graph {
+    display: grid;
+    grid-template-columns: repeat(26, 1fr);
+    gap: 3px;
+    margin-top: 6px;
+  }
+  .graph span {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--teal);
+    opacity: 0.1;
+  }
+  .graph span[data-l='1'] {
+    opacity: 0.3;
+  }
+  .graph span[data-l='2'] {
+    opacity: 0.5;
+  }
+  .graph span[data-l='3'] {
+    opacity: 0.75;
+  }
+  .graph span[data-l='4'] {
+    opacity: 1;
+  }
+
+  /* 7. Призыв */
+  .cta {
+    padding: clamp(28px, 5vw, 56px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 54px;
+    padding-inline: 28px;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: var(--on-teal);
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: none;
+    margin-top: 8px;
+    transition: background-color var(--hover);
+  }
+
+  @media (max-width: 640px) {
+    .os {
+      gap: 48px;
+    }
+    .feed-list li {
+      grid-template-columns: 1fr auto;
+    }
+    .f-dir,
+    .f-tasks {
+      font-size: 14px;
+    }
+  }
+</style>
