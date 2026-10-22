@@ -20,6 +20,13 @@ ErrorDocument 404 /404.html
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://emilius.agency%{REQUEST_URI} [L,R=301]
 
+  # robots.txt выбирается по адресу: технический адрес Бегета (и любой не свой домен) закрыт целиком.
+  # Статичного robots.txt на сервере нет (скрипт выкладки переименовывает его в robots-main.txt):
+  # статику Бегет отдаёт nginx мимо этих правил, а отсутствующий файл доходит до Apache.
+  RewriteCond %{HTTP_HOST} !^emilius\.agency$ [NC]
+  RewriteRule ^robots\.txt$ /robots-noindex.txt [L]
+  RewriteRule ^robots\.txt$ /robots-main.txt [L]
+
   # --- Старые адреса Tilda (до 10.2026): страницы вида /page36898459.html — на главную ---
   RewriteRule ^page[0-9]+\.html$ / [L,R=301]
   # Поисковики знают карту сайта Tilda по адресу /sitemap.xml

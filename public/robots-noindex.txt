@@ -1,0 +1,3 @@
+# Технический адрес: не индексировать. Основной сайт — https://emilius.agency
+User-agent: *
+Disallow: /

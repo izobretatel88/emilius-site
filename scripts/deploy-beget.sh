@@ -23,6 +23,9 @@ if grep -rlq --include='*.html' 'noindex' dist; then
   exit 1
 fi
 
+# robots.txt выбирается в .htaccess по адресу (свой домен / технический адрес Бегета)
+mv dist/robots.txt dist/robots-main.txt
+
 # --delete убирает с сервера файлы, которых больше нет в сборке; .well-known нужен для SSL-сертификата,
 # emilius-telegram.php — на случай, если файл с токеном положили в папку сайта.
 rsync -az --delete --exclude '.well-known/' --exclude 'emilius-telegram.php' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes" dist/ "$BEGET_SSH:$BEGET_DIR/"
