@@ -45,7 +45,24 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
   .stack {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
+  }
+  /* Телефон и планшет: «Связь» и «Спросить Эми» — отдельными ячейками сетки, рядом и одной высоты */
+  @media (max-width: 860px) {
+    .stack {
+      display: contents;
+    }
+    .col-card {
+      padding-inline: 10px;
+    }
+    .btn {
+      padding-inline: 12px 10px;
+      font-size: 16px;
+    }
+    iframe {
+      width: 100%;
+      max-width: 170px;
+    }
   }
   .col-card {
     padding: 14px 14px 18px;
