@@ -7,6 +7,7 @@
 //  - остальные направления, лента и команда — демо (`demo: true`), пока нет выгрузки.
 //    Репозиторий публичный: имён сотрудников, клиентов и сырых часов здесь нет.
 import ordersCsv from '../../docs/insales-service/data/orders-hours.csv?raw';
+import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
 
 export type Order = { project: string; order: string; tasks: number; plan: number; fact: number; useful: number };
 
@@ -36,6 +37,10 @@ export const INSALES = {
   factHours: Math.round(sum(ORDERS.map((o) => o.fact))),
   // Насколько факт совпадает с планом: медиана отношения факт/план по заказам с оценкой
   planFactMedian: +median(planned.map((o) => o.fact / o.plan)).toFixed(2),
+  planned: planned.length,
+  sumPlan: Math.round(sum(planned.map((o) => o.plan))),
+  sumFact: Math.round(sum(planned.map((o) => o.fact))),
+  medianOrderHours: +median(ORDERS.map((o) => o.useful)).toFixed(1),
   // Доля заказов, уложившихся в оценку с запасом ±25%
   withinQuarter: Math.round((planned.filter((o) => Math.abs(o.fact / o.plan - 1) <= 0.25).length / planned.length) * 100),
 };
@@ -99,3 +104,32 @@ export const activity = (seed: number) =>
   });
 
 export const fmt = (n: number) => n.toLocaleString('ru-RU');
+
+// Размеры заказов InSales по полезным часам — для гистограммы
+export const ORDER_SIZES = [
+  [0, 2, 'до 2 ч'],
+  [2, 5, '2–5 ч'],
+  [5, 10, '5–10 ч'],
+  [10, 20, '10–20 ч'],
+  [20, 50, '20–50 ч'],
+  [50, Infinity, '50+ ч'],
+].map(([lo, hi, label]) => ({
+  label: label as string,
+  count: ORDERS.filter((o) => o.useful >= (lo as number) && o.useful < (hi as number)).length,
+}));
+
+// Типовые работы InSales (docs/insales-service/03-catalog.csv): модуль → работы
+export type Work = { id: string; module: string; title: string; hours: number };
+export const WORKS: Work[] = catalogCsv
+  .trim()
+  .split('\n')
+  .slice(1)
+  .map((line) => {
+    const c = line.split(';');
+    return { id: c[0], module: c[1], title: c[2], hours: +c[8] || 0 };
+  })
+  .filter((w) => w.id && w.module);
+export const MODULES = [...new Set(WORKS.map((w) => w.module))].map((m) => ({
+  name: m,
+  works: WORKS.filter((w) => w.module === m),
+}));

@@ -5,6 +5,8 @@ import Base from '../../layouts/Base.astro';
 import Logo from '../../components/Logo.astro';
 import Wheel from '../../components/Wheel.astro';
 import Footer from '../../components/Footer.astro';
+import OsNav from '../../components/os/OsNav.astro';
+import '../../styles/os.css';
 import { PROJECTS } from '../../data/projects';
 import { LINKS } from '../../data/site';
 import { INSALES, DIRECTIONS, FEED, PROCESS, TEAM, activity, fmt } from '../../data/os';
@@ -23,9 +25,9 @@ const PROJECT_DIRS: Record<string, string[]> = {
 ---
 
 <Base title="Эмилиус Эдженси — опыт, который растёт с каждой задачей" description="Эксперимент: агентство как система, которая накапливает подтверждённый опыт." noindex>
-  <header class="top">
+  <header class="os-top">
     <Logo />
-    <p class="lab">эксперимент · раздел /os/</p>
+    <OsNav current="overview" />
   </header>
 
   <main class="os">

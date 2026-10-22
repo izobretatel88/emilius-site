@@ -1,0 +1,62 @@
+/* Общие стили эксперимента /os/ (docs/concept/emilius-os-v0.1.md). Цвета и размеры — из tokens.css. */
+.os {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-block: 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+.os .card {
+  background: var(--card);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.os h2,
+.os .section-title {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.os .section-title {
+  margin-bottom: 20px;
+}
+.os .lead {
+  font-size: clamp(17px, 1.8vw, 20px);
+  color: var(--ink-2);
+  max-width: 56ch;
+}
+.os .demo {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--well);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.os .btn {
+  display: inline-flex;
+  align-items: center;
+  height: 54px;
+  padding-inline: 28px;
+  border-radius: var(--radius-btn);
+  background: var(--teal-btn);
+  color: var(--on-teal);
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+}
+.os-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .os {
+    gap: 48px;
+  }
+}

@@ -1,0 +1,333 @@
+---
+// Эксперимент /os/: направление InSales на реальных обезличенных данных
+// (docs/insales-service/data/orders-hours.csv, каталог работ — 03-catalog.csv).
+import Base from '../../layouts/Base.astro';
+import Logo from '../../components/Logo.astro';
+import OsNav from '../../components/os/OsNav.astro';
+import Footer from '../../components/Footer.astro';
+import { PROJECTS } from '../../data/projects';
+import { LINKS } from '../../data/site';
+import { INSALES, ORDER_SIZES, MODULES, WORKS, DIRECTIONS, fmt } from '../../data/os';
+import '../../styles/os.css';
+
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const dir = DIRECTIONS.find((d) => d.id === 'insales')!;
+const maxSize = Math.max(...ORDER_SIZES.map((s) => s.count));
+const over = Math.round((INSALES.sumFact / INSALES.sumPlan - 1) * 100);
+const insalesProjects = PROJECTS.filter((p) => ['alohagaia', 'geekboards'].includes(p.id));
+---
+
+<Base title="InSales — опыт Эмилиус Эдженси" description="Направление InSales: задачи, полезные часы, проекты и типовые работы." noindex>
+  <header class="os-top">
+    <Logo />
+    <OsNav current="insales" />
+  </header>
+
+  <main class="os">
+    <section class="hero" aria-labelledby="h-ins">
+      <p class="eyebrow">Направление</p>
+      <h1 id="h-ins">InSales</h1>
+      <p class="lead">{dir.line}.</p>
+      <dl class="stats">
+        <div><dt>задач принято</dt><dd>{fmt(INSALES.tasks)}</dd></div>
+        <div><dt>полезных часов</dt><dd>{fmt(INSALES.usefulHours)}</dd></div>
+        <div><dt>проектов</dt><dd>{INSALES.projects}</dd></div>
+        <div><dt>заказов</dt><dd>{INSALES.orders}</dd></div>
+      </dl>
+      <p class="stack">{dir.stack.join(' · ')}</p>
+    </section>
+
+    <!-- Размеры заказов -->
+    <section class="card block" aria-labelledby="h-sizes">
+      <h2 id="h-sizes">Какие бывают заказы</h2>
+      <p class="lead">{INSALES.orders} заказов по полезным часам. Половина — меньше {fmt(INSALES.medianOrderHours)} ч: от правки темы до запуска магазина.</p>
+      <ul class="bars">
+        {ORDER_SIZES.map((s) => (
+          <li>
+            <span class="bar-label">{s.label}</span>
+            <span class="bar-track"><span class="bar" style={`width:${(s.count / maxSize) * 100}%`}></span></span>
+            <span class="bar-n">{s.count}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- План и факт — честно -->
+    <section class="card block honest" aria-labelledby="h-plan">
+      <h2 id="h-plan">План и факт — честно</h2>
+      <div class="pf">
+        <div><b>{fmt(INSALES.sumPlan)} ч</b><span>заложили в оценки</span></div>
+        <div><b>{fmt(INSALES.sumFact)} ч</b><span>ушло на деле</span></div>
+        <div><b>+{over}%</b><span>разница по {INSALES.planned} заказам</span></div>
+      </div>
+      <p class="lead">Раньше мы недооценивали работу. Поэтому нормы в каталоге пересчитаны по этим же заказам — следующая оценка точнее. Так и растёт опыт: каждая задача правит норму.</p>
+    </section>
+
+    <!-- Типовые работы -->
+    <section aria-labelledby="h-works">
+      <h2 class="section-title" id="h-works">{WORKS.length} типовых работ</h2>
+      <p class="lead sub">Из них собирается любой проект — с нормой часов на каждую.</p>
+      <ul class="modules">
+        {MODULES.map((m) => (
+          <li class="card module">
+            <h3>{m.name} <span>{m.works.length}</span></h3>
+            <ul>
+              {m.works.slice(0, 4).map((w) => <li>{w.title}</li>)}
+              {m.works.length > 4 && <li class="more">и ещё {m.works.length - 4}</li>}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Проекты -->
+    <section aria-labelledby="h-proj">
+      <h2 class="section-title" id="h-proj">Проекты на InSales</h2>
+      <ul class="projects">
+        {insalesProjects.map((p) => (
+          <li class="card proj">
+            <img src={href(p.shot)} alt={`Первый экран сайта ${p.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+            <div>
+              <h3>{p.name}</h3>
+              <p>{p.did}</p>
+              <a href={p.url} target="_blank" rel="noopener">{p.domain} ↗</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="note">Остальные {INSALES.projects - insalesProjects.length} проектов — в учёте под кодами: показываем, когда клиент согласен на кейс.</p>
+    </section>
+
+    <section class="card cta" aria-labelledby="h-cta">
+      <h2 id="h-cta">Магазин на InSales — следующая задача</h2>
+      <p class="lead">Посчитаем по каталогу работ и скажем срок до старта.</p>
+      <div class="cta-actions">
+        <a class="btn" href={href('services/insales-shop/')}>Посчитать магазин</a>
+        <a class="alt" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 24px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal-text);
+  }
+  .hero h1 {
+    font-size: clamp(56px, 10vw, 120px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .stats dd {
+    margin: 0;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--teal-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats dt {
+    font-size: 15px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .stack,
+  .note {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .note {
+    margin-top: 14px;
+  }
+  .block {
+    padding: 28px clamp(16px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .bars {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .bars li {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) 32px;
+    align-items: center;
+    gap: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bar-label {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .bar-track {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--well);
+    overflow: hidden;
+  }
+  .bar {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--teal);
+  }
+  .bar-n {
+    font-weight: 700;
+    text-align: right;
+  }
+  .pf {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .pf div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+  }
+  .pf b {
+    font-size: clamp(26px, 3.6vw, 40px);
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+  }
+  .pf span {
+    font-size: 14px;
+    color: var(--ink-3);
+  }
+  .sub {
+    margin: -8px 0 20px;
+  }
+  .modules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .module {
+    padding: 18px 20px;
+  }
+  .module h3 {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .module h3 span {
+    font-size: 14px;
+    color: var(--teal-text);
+  }
+  .module ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .module .more {
+    color: var(--ink-3);
+  }
+  .projects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .proj {
+    overflow: hidden;
+  }
+  .proj img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    background: var(--well);
+  }
+  .proj div {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .proj h3 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .proj p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .proj a {
+    font-weight: 600;
+    color: var(--teal-text);
+  }
+  .cta {
+    padding: clamp(28px, 5vw, 56px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .alt {
+    font-weight: 600;
+    color: var(--teal-text);
+  }
+  @media (max-width: 640px) {
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pf {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
