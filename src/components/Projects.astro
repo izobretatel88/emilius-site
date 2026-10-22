@@ -4,7 +4,7 @@ const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 ---
 
-<section class="card col-card" aria-labelledby="t-projects">
+<section class="card col-card projects-card" aria-labelledby="t-projects">
   <h2 class="card-title" id="t-projects">Проекты</h2>
   <ul class="projects">
     {PROJECTS.map((p) => (
@@ -119,11 +119,26 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
       width: min(280px, 62vw);
     }
   }
-  @media (max-width: 560px) {
+  /* Телефон и планшет: блок во всю ширину, логотипы в строку; кейс открывается под строкой
+     по ширине блока — у крайних логотипов не уезжает за край экрана */
+  @media (max-width: 860px) {
+    .projects {
+      position: relative;
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 8px;
+    }
+    .proj {
+      position: static;
+    }
     .case {
-      left: -6px;
-      top: 60px;
-      width: min(280px, 78vw);
+      left: 0;
+      right: 0;
+      top: calc(100% + 8px);
+      width: auto;
+      max-width: 420px;
+      margin-inline: auto;
       transform: translateY(-4px);
     }
     .proj:hover .case,

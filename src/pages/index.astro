@@ -8,6 +8,10 @@ import Feedback from '../components/Feedback.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { MISSION_LINES } from '../data/site';
+
+// Миссия: на компьютере перенос после «создавать», на телефоне — после «людям»,
+// чтобы шрифт был крупнее (самая длинная строка короче)
+const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].split(' ').at(-1)];
 ---
 
 <Base
@@ -19,7 +23,7 @@ import { MISSION_LINES } from '../data/site';
     <Logo />
     <div class="mission">
       <p class="eyebrow">Наша миссия</p>
-      <h1><span class="line">{MISSION_LINES[0]}</span> <span class="line">{MISSION_LINES[1]}</span></h1>
+      <h1><span class="m-a">{head}</span> <span class="m-b">{verb}</span> <span class="m-c">{MISSION_LINES[1]}</span></h1>
     </div>
   </header>
 
@@ -41,7 +45,8 @@ import { MISSION_LINES } from '../data/site';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 22px;
+    gap: 26px;
+    margin-bottom: 12px;
   }
   .mission {
     text-align: center;
@@ -49,28 +54,41 @@ import { MISSION_LINES } from '../data/site';
     flex-direction: column;
     gap: 8px;
   }
+  /* Eyebrow — тихая подпись, главное — сама миссия (правки владельца 22.10.2026) */
   .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
-    font-size: 19px;
-    letter-spacing: 0.04em;
+    font-size: 14px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   .mission h1 {
-    font-size: clamp(22px, 3.4vw, 38px);
-    line-height: 1.15;
+    font-size: clamp(26px, 4.2vw, 48px);
+    font-weight: 600;
+    line-height: 1.12;
     margin-inline: auto;
   }
-  /* Всегда две строки, перенос после «создавать» (решение владельца 22.10.2026: и на телефоне тоже).
-     На узком экране шрифт уменьшается вместе с шириной, чтобы первая строка влезала целиком. */
-  .mission h1 .line {
+  /* Всегда две строки. Компьютер: перенос после «создавать».
+     Телефон: после «людям» — строки короче, шрифт крупнее; ширина строки не выходит за экран. */
+  .mission h1 .m-c {
     display: block;
   }
   @media (max-width: 640px) {
-    .mission h1 {
-      font-size: clamp(14px, 4.7vw, 24px);
+    .eyebrow {
+      font-size: 12px;
     }
-    .mission h1 .line {
+    .mission h1 {
+      font-size: clamp(15px, 5.4vw, 30px);
+    }
+    .mission h1 .m-a {
+      display: block;
+      white-space: nowrap;
+    }
+    .mission h1 .m-c {
+      display: inline;
+    }
+    .mission h1 .m-b,
+    .mission h1 .m-c {
       white-space: nowrap;
     }
   }
@@ -92,16 +110,23 @@ import { MISSION_LINES } from '../data/site';
   @media (max-width: 1040px) {
     .bento {
       grid-template-columns: 150px minmax(0, 1fr) 190px;
-      gap: 18px;
+      gap: 24px;
     }
   }
+  /* Телефон и планшет: колесо, под ним «Проекты» во всю ширину,
+     «Связь» и «Спросить Эми» — двумя блоками рядом одной высоты (правки владельца 22.10.2026) */
   @media (max-width: 860px) {
     .bento {
-      grid-template-columns: minmax(96px, 1fr) minmax(0, 2fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: stretch;
+      gap: 20px;
     }
     .wheel-card {
       grid-column: 1 / -1;
       order: -1;
+    }
+    .bento > :global(.projects-card) {
+      grid-column: 1 / -1;
     }
   }
 </style>
