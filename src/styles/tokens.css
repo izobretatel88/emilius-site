@@ -58,6 +58,9 @@
   --tick-op: 0.75;
   --cross-op: 0.5;
   --center-fill: #ffffff;
+  /* Блик по слову «внимание»: светлая полоса проплывает по тёмным буквам */
+  --shine-base: #000000;
+  --shine: #b8c4c4;
 
   /* Тени: без смещения, объект «парит» */
   --shadow-card: 0 0 10px 2px rgba(210, 210, 210, 0.25);
@@ -109,6 +112,8 @@
     --tick-op: 0.85;
     --cross-op: 0.55;
     --center-fill: #151c1b;
+    --shine-base: #9aa6a5;
+    --shine: #ffffff;
     --sec-custdev: #2c1a23;
     --sec-design: #112b2b;
     --sec-dev: #16301b;
@@ -154,6 +159,8 @@
   --tick-op: 0.85;
   --cross-op: 0.55;
   --center-fill: #151c1b;
+  --shine-base: #9aa6a5;
+  --shine: #ffffff;
   --sec-custdev: #2c1a23;
   --sec-design: #112b2b;
   --sec-dev: #16301b;
