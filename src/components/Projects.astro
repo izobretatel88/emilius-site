@@ -119,8 +119,9 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
       width: min(280px, 62vw);
     }
   }
-  /* Телефон и планшет: блок во всю ширину, логотипы в строку; кейс открывается под строкой
-     по ширине блока — у крайних логотипов не уезжает за край экрана */
+  /* Телефон и планшет: блок во всю ширину, логотипы в строку; кейс открывается НАД строкой
+     (снизу его не видно — правка владельца 22.10.2026) по ширине блока — у крайних логотипов
+     не уезжает за край экрана */
   @media (max-width: 860px) {
     .projects {
       position: relative;
@@ -135,11 +136,12 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     .case {
       left: 0;
       right: 0;
-      top: calc(100% + 8px);
+      top: auto;
+      bottom: calc(100% + 8px);
       width: auto;
       max-width: 420px;
       margin-inline: auto;
-      transform: translateY(-4px);
+      transform: translateY(4px);
     }
     .proj:hover .case,
     .proj:focus-within .case {
