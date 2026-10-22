@@ -10,13 +10,16 @@
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
+// Выбрали «Да» — после заставки тихо (50%) и по кругу играет мелодия public/brand/music.mp3
+// (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
 const mark = `${root}brand/logo.png`; // знак-молния — PNG владельца
 const sound = `${root}brand/intro.mp3`;
+const music = `${root}brand/music.mp3`;
 ---
 
-<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} hidden>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} data-music={music} hidden>
   <!-- Знак появляется только после выбора звука -->
   <div class="logo" id="introLogo" hidden>
   <div class="stage">
@@ -49,6 +52,16 @@ const sound = `${root}brand/intro.mp3`;
     </div>
   </div>
 </div>
+
+<!-- Фоновая музыка: кнопка появляется, только если выбрали звук -->
+<button class="music-toggle" id="musicToggle" type="button" aria-pressed="true" aria-label="Выключить музыку" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M9 17.5V6.2l10-2.2v11.3"></path>
+    <circle cx="6.5" cy="17.5" r="2.5"></circle>
+    <circle cx="16.5" cy="15.3" r="2.5"></circle>
+    <path class="mute-line" d="M4 4l16 16"></path>
+  </svg>
+</button>
 
 <!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
 <script is:inline>
@@ -128,6 +141,72 @@ const sound = `${root}brand/intro.mp3`;
       }
     };
 
+    // Фоновая мелодия: громкость через Web Audio — на iPhone громкость <audio> не меняется.
+    // Запускаем в обработчике нажатия (иначе браузер не даст играть) с нулевой громкостью,
+    // а слышна она становится, когда заставка закрылась, — не накладывается на звук заставки.
+    const MUSIC_VOLUME = 0.5;
+    const toggle = document.getElementById('musicToggle') as HTMLButtonElement | null;
+    let music: HTMLAudioElement | null = null;
+    let gain: GainNode | null = null;
+    let musicOn = false;
+    const fadeTo = (v: number, sec: number) => {
+      if (gain && ctx) {
+        gain.gain.cancelScheduledValues(ctx.currentTime);
+        gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(v, ctx.currentTime + sec);
+      } else if (music) {
+        music.volume = v;
+      }
+    };
+    const startMusic = () => {
+      try {
+        music = new Audio(intro.dataset.music!);
+        music.loop = true;
+        if (ctx) {
+          gain = ctx.createGain();
+          gain.gain.value = 0;
+          ctx.createMediaElementSource(music).connect(gain).connect(ctx.destination);
+        } else {
+          music.volume = 0;
+        }
+        void music.play().catch(() => (music = null));
+        musicOn = true;
+      } catch {
+        music = null;
+      }
+    };
+    const setToggle = () => {
+      if (!toggle) return;
+      toggle.setAttribute('aria-pressed', String(musicOn));
+      toggle.setAttribute('aria-label', musicOn ? 'Выключить музыку' : 'Включить музыку');
+      toggle.classList.toggle('is-muted', !musicOn);
+    };
+    const musicUp = () => {
+      if (!music || !toggle) return;
+      fadeTo(MUSIC_VOLUME, 1.5);
+      toggle.hidden = false;
+      setToggle();
+      toggle.addEventListener('click', () => {
+        if (!music) return;
+        musicOn = !musicOn;
+        if (musicOn) {
+          if (ctx?.state === 'suspended') void ctx.resume();
+          void music.play();
+          fadeTo(MUSIC_VOLUME, 0.6);
+        } else {
+          fadeTo(0, 0.3);
+          window.setTimeout(() => !musicOn && music?.pause(), 320);
+        }
+        setToggle();
+      });
+      // Вкладку свернули — пауза; вернулись — играет дальше, если её не выключали
+      document.addEventListener('visibilitychange', () => {
+        if (!music || !musicOn) return;
+        if (document.hidden) music.pause();
+        else void music.play();
+      });
+    };
+
     const running: Animation[] = [];
     const run = (el: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) => {
       const a = el.animate(frames, { fill: 'forwards', ...opts });
@@ -188,6 +267,7 @@ const sound = `${root}brand/intro.mp3`;
       removeEventListener('wheel', skip);
       removeEventListener('touchmove', skip);
       removeEventListener('keydown', onKey);
+      musicUp();
       intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
         reset();
         intro.remove();
@@ -207,7 +287,10 @@ const sound = `${root}brand/intro.mp3`;
       if (done || pressed) return;
       pressed = true;
       countdown.cancel();
-      if (sound) unlock();
+      if (sound) {
+        unlock();
+        startMusic();
+      }
       choice.hidden = true;
       logo.hidden = false;
       press(sound); // без паузы: знак появляется уже наклонённым
@@ -231,6 +314,52 @@ const sound = `${root}brand/intro.mp3`;
 </script>
 
 <style>
+  /* Кнопка музыки: в левом нижнем углу, как остальные плавающие элементы — карточка с тенью */
+  .music-toggle {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 50;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    color: var(--teal-text);
+    cursor: pointer;
+    transition: color var(--hover);
+  }
+  .music-toggle[hidden] {
+    display: none;
+  }
+  .music-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .music-toggle .mute-line {
+    opacity: 0;
+    transition: opacity var(--hover);
+  }
+  .music-toggle.is-muted {
+    color: var(--ink-3);
+  }
+  .music-toggle.is-muted .mute-line {
+    opacity: 1;
+  }
+  .music-toggle:focus-visible {
+    outline: 2px dashed var(--teal);
+    outline-offset: 3px;
+  }
+
   .intro {
     position: fixed;
     inset: 0;
