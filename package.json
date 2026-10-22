@@ -9,10 +9,14 @@
     "preview": "astro preview",
     "brand": "node scripts/build-brand.mjs",
     "insales:check": "node scripts/insales-lint.mjs && node scripts/insales-calc.mjs > /dev/null && node scripts/insales-calc.mjs --quick > /dev/null && node scripts/insales-unit.mjs > /dev/null && node scripts/insales-funnel.mjs docs/insales-service/data/leads-example.csv --today 2026-10-20 > /dev/null",
-    "deploy:prod": "bash scripts/deploy-beget.sh"
+    "deploy:prod": "bash scripts/deploy-beget.sh",
+    "insales:handbook": "node scripts/insales-handbook/build.mjs docs/insales-service handbook-out"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "marked": "^12.0.2"
   }
 }
