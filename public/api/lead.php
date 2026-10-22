@@ -101,20 +101,27 @@ $text = "✉️ Обратная связь с сайта\n\n"
     . '👤 ' . ($contact !== '' ? $contact : 'контакт не оставили')
     . ($page !== '' ? "\n🔗 " . $page : '');
 
-$ch = curl_init('https://api.telegram.org/bot' . $config['token'] . '/sendMessage');
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => http_build_query([
-        'chat_id' => $config['chat_id'],
-        'text' => $text,
-        'disable_web_page_preview' => 'true',
-    ]),
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 10,
-]);
-$response = curl_exec($ch);
-$status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+// Соединение с Telegram с Бегета изредка обрывается (код 0) — одна повторная попытка, чтобы не терять заявку
+for ($attempt = 1; $attempt <= 2; $attempt++) {
+    $ch = curl_init('https://api.telegram.org/bot' . $config['token'] . '/sendMessage');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => http_build_query([
+            'chat_id' => $config['chat_id'],
+            'text' => $text,
+            'disable_web_page_preview' => 'true',
+        ]),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT => 10,
+    ]);
+    $response = curl_exec($ch);
+    $status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($status !== 0) {
+        break;
+    }
+}
 
 $sent = $status === 200 && is_string($response) && (json_decode($response, true)['ok'] ?? false);
 if (!$sent) {
