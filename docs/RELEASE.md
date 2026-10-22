@@ -34,10 +34,10 @@
 
 - [x] Владелец: аккаунт на Бегете (`emilso`, сервер spectre), в панели «Сайты» добавить `emilius.agency` (без переноса DNS).
 - [x] Владелец: включить SSH-доступ, добавить ключ Claude (Claude создаст ключ и пришлёт публичную часть).
-- [ ] Владелец: PHP 8.1+ для сайта (по умолчанию на Бегете — проверить).
+- [x] Владелец: PHP 8.1+ для сайта — на сайте PHP 8.1.34.
 - [ ] Владелец: бот Telegram уже есть (22.10.2026). Осталось: `chat_id` и файл `emilius-telegram.php` с токеном уровнем выше `public_html` — владелец создаёт сам в файловом менеджере Бегета (README), токен в чат не присылать.
-- [x] Claude: `BEGET_SSH=emilso@emilso.beget.tech BEGET_DIR=emilius.agency/public_html npm run deploy:prod` (22.10.2026). Файл с токеном — `~/emilius-telegram.php` (папка домена принадлежит root).
-- [ ] Claude: проверить сайт на техническом адресе Бегета до переключения DNS: страницы, форма → сообщение в Telegram, 404. Технический адрес — http://emilso.bget.ru/ (прикреплён к `emilius.agency/public_html`, закрыт от индексации). 22.10.2026: страницы, 404, редиректы Tilda, сжатие, Метрика — ок; форма — ждёт тестовой заявки.
+- [x] Claude: `BEGET_SSH=emilso@emilso.beget.tech BEGET_DIR=emilius.agency/public_html npm run deploy:prod` (22.10.2026). Файл с токеном — `~/emilius.agency/emilius-telegram.php` (рядом с `public_html`; папка домена принадлежит root, но emilso может писать по ACL).
+- [ ] Claude: проверить сайт на техническом адресе Бегета до переключения DNS: страницы, форма → сообщение в Telegram, 404. Технический адрес — http://emilso.bget.ru/ (прикреплён к `emilius.agency/public_html`, закрыт от индексации). 22.10.2026: страницы, 404, редиректы Tilda, сжатие, Метрика — ок; форма → Telegram (группа, бот @zayavkiemiliusagency_bot) — ок, тестовая заявка дошла. robots.txt на техническом адресе — Disallow.
 
 ## 4. Переключение (владелец, ~15 минут + ожидание DNS)
 
