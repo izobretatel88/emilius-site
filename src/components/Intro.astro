@@ -118,13 +118,18 @@ const music = `${root}brand/music.mp3`;
     // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
     let ctx: AudioContext | null = null;
     let buffer: Promise<AudioBuffer | null> | null = null;
-    const raw = fetch(intro.dataset.sound!).then((r) => r.arrayBuffer()).catch(() => null);
+    // Звук (72 КБ) качаем не сразу, а когда человек тянется к «Да» или через 1,5 с —
+    // первый экран не ждёт файла, который нужен только со звуком
+    let raw: Promise<ArrayBuffer | null> | null = null;
+    const getRaw = () => (raw ??= fetch(intro.dataset.sound!).then((r) => r.arrayBuffer()).catch(() => null));
+    ['pointerenter', 'pointerdown', 'focus'].forEach((t) => withSound.addEventListener(t, getRaw, { once: true }));
+    window.setTimeout(getRaw, 1500);
     // Вызывать прямо в обработчике нажатия: так браузер разрешает звук, который сыграет позже
     const unlock = () => {
       try {
         ctx ??= new AudioContext();
         if (ctx.state === 'suspended') void ctx.resume();
-        buffer ??= raw.then((b) => (b && ctx ? ctx.decodeAudioData(b) : null)).catch(() => null);
+        buffer ??= getRaw().then((b) => (b && ctx ? ctx.decodeAudioData(b) : null)).catch(() => null);
       } catch {
         /* без звука — анимация всё равно идёт */
       }

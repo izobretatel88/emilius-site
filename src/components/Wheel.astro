@@ -552,6 +552,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       w: Number(el.dataset.w),
       cos: Math.cos((Number(el.dataset.a) * Math.PI) / 180),
       sin: Math.sin((Number(el.dataset.a) * Math.PI) / 180),
+      f: 0, // текущая подсветка — перерисовываем риску, только когда она меняется
     }));
     const BASE = 360 / PERIOD; // градусов в миллисекунду
     let ringAngle = 0;
@@ -578,12 +579,21 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       }
       light += ((pointerAt !== null ? 1 : 0) - light) * Math.min(1, dt / 200);
       ring.style.transform = `rotate(${ringAngle}deg)`;
+      // Без курсора риски не трогаем: раньше 52 риски переписывались каждый кадр
+      // и занимали основной поток — страница позже показывала первый экран
+      if (pointerAt === null && light <= 0.01 && ticks.every((k) => k.f === 0)) {
+        requestAnimationFrame(ringFrame);
+        return;
+      }
       for (const k of ticks) {
         let f = 0;
         if (pointerAt !== null || light > 0.01) {
           const d = Math.abs(wrap((pointerAt ?? 0) - (k.a + ringAngle)));
           f = Math.max(0, 1 - d / 40) ** 2 * light;
         }
+        if (f < 0.003) f = 0;
+        if (Math.abs(f - k.f) < 0.003 && !(f === 0 && k.f !== 0)) continue;
+        k.f = f;
         // у курсора риска ярче, толще и длиннее внутрь
         const r1 = k.r - 16 * f;
         k.el.style.opacity = String(0.45 + 0.55 * f);
@@ -1105,6 +1115,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   }
   .wheel-box .launch-ring {
     pointer-events: none;
+  }
+  /* Базовая яркость рисок — в CSS, скрипт трогает только подсвеченные */
+  .launch-ring line {
+    opacity: 0.45;
   }
   .launch-core {
     display: flex;
