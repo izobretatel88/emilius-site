@@ -433,11 +433,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     document.addEventListener('pointermove', (e) => {
       if (e.pointerType === 'mouse' && (e.movementX || e.movementY)) keyboard = false;
     }, true);
+    // После нажатия «Запустить» курсор остаётся над колесом — наведение включаем,
+    // только когда он хоть раз уйдёт с колеса, иначе колесо сразу встаёт на этапе под мышью
+    let hoverArmed = true;
     links.forEach((link) => {
       const i = Number(link.dataset.sector);
       link.addEventListener('pointerdown', (e) => (lastPointer = e.pointerType));
       link.addEventListener('pointerenter', (e) => {
-        if (e.pointerType !== 'mouse' || keyboard) return;
+        if (e.pointerType !== 'mouse' || keyboard || !hoverArmed) return;
         hovered = i;
         ambient?.pause();
         render();
@@ -455,6 +458,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     });
 
     box.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse') hoverArmed = true;
       if (e.pointerType !== 'mouse' || hovered === null) return;
       hovered = null;
       render();
@@ -632,9 +636,11 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     launch.addEventListener('pointerup', ringRelease);
     launch.addEventListener('pointercancel', ringRelease);
 
-    launch.addEventListener('click', () => {
+    launch.addEventListener('click', (e) => {
       if (!idle) return;
       idle = false;
+      // запуск мышью — курсор над колесом; с клавиатуры (detail 0) наведение не мешает
+      if (e.detail > 0) hoverArmed = false;
       stage.classList.remove('is-idle');
       rotorSvg.removeAttribute('inert');
       launch.classList.add('is-gone');
