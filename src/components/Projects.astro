@@ -25,6 +25,18 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 </section>
 
 <style>
+  /* Узкие телефоны: пять кружков логотипов помещаются в строку целиком */
+  @media (max-width: 360px) {
+    .proj-btn.proj-btn {
+      width: 44px;
+      height: 44px;
+    }
+    .proj-btn.proj-btn img {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
   .col-card {
     padding: 14px 14px 18px;
     display: flex;

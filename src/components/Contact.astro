@@ -49,6 +49,19 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
 </script>
 
 <style>
+  /* Узкие телефоны (320–360 px): колонки ~140 px — кнопки и иконки мельче, текст в одну строку */
+  @media (max-width: 360px) {
+    .btn.btn {
+      height: 48px;
+      font-size: 15px;
+      padding-inline: 10px 8px;
+    }
+    .btn.btn svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
   .stack {
     display: flex;
     flex-direction: column;
@@ -66,7 +79,13 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
       padding-inline: 12px 10px;
       font-size: 16px;
     }
-    iframe {
+    .btn {
+      white-space: nowrap;
+      gap: 6px;
+    }
+    /* .col-card — чтобы перебить базовое правило ширины 170 px ниже по файлу:
+       на экране 320 px колонка уже, и виджет выталкивал страницу вбок */
+    .col-card iframe {
       width: 100%;
       max-width: 170px;
     }
