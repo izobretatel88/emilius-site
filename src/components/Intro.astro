@@ -10,7 +10,7 @@
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
 // Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
 // ?intro — показать снова.
-// Выбрали «Да» — после заставки тихо (25%) и по кругу играет мелодия public/brand/music.mp3
+// Выбрали «Да» — после заставки тихо (20%) и по кругу играет мелодия public/brand/music.mp3
 // (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
@@ -109,7 +109,10 @@ const music = `${root}brand/music.mp3`;
     } catch {
       /* приватный режим — не страшно */
     }
-    withSound.focus({ preventScroll: true });
+    // Фокус — на саму заставку, не на «Да»: рамка фокуса не перетягивает внимание с вопроса.
+    // С клавиатуры кнопки — по Tab.
+    intro.tabIndex = -1;
+    intro.focus({ preventScroll: true });
 
     // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
     let ctx: AudioContext | null = null;
@@ -144,7 +147,7 @@ const music = `${root}brand/music.mp3`;
     // Фоновая мелодия: громкость через Web Audio — на iPhone громкость <audio> не меняется.
     // Запускаем в обработчике нажатия (иначе браузер не даст играть) с нулевой громкостью,
     // а слышна она становится, когда заставка закрылась, — не накладывается на звук заставки.
-    const MUSIC_VOLUME = 0.25;
+    const MUSIC_VOLUME = 0.2;
     const toggle = document.getElementById('musicToggle') as HTMLButtonElement | null;
     let music: HTMLAudioElement | null = null;
     let gain: GainNode | null = null;
@@ -450,63 +453,76 @@ const music = `${root}brand/music.mp3`;
   }
 
   /* Выбор звука: кнопки как на сайте — залитая и с рамкой */
+  /* Первый акцент — вопрос, второй — кнопки (правка владельца 22.10.2026) */
   .choice {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 28px;
+    padding-inline: 16px;
         animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
   }
+  .intro:focus {
+    outline: none;
+  }
   .ask {
-    font-size: clamp(20px, 2.6vw, 24px);
-    font-weight: 600;
+    font-size: clamp(32px, 4.6vw, 52px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
     color: var(--ink);
     text-align: center;
+    text-wrap: balance;
+    max-width: 16ch;
   }
   .picks {
     display: flex;
     justify-content: center;
     gap: 12px;
   }
+  /* Кнопки — второй акцент: обе контурные, ниже и тоньше; «Да» выделена только цветом */
   .pick {
-    height: 50px;
-    min-width: 120px;
+    height: 44px;
+    min-width: 104px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding-inline: 18px 20px;
+    gap: 8px;
+    padding-inline: 16px 18px;
     border-radius: var(--radius-btn);
-    font: 600 16px var(--font);
+    font: 500 15px var(--font);
     cursor: pointer;
     transition: background-color var(--hover), color var(--hover), border-color var(--hover);
   }
   .pick svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     flex: none;
   }
   .pick-sound {
-    background: var(--teal-btn);
-    color: #fff;
-    border: 0;
+    background: transparent;
+    color: var(--teal-text);
+    border: 1.5px solid var(--teal);
+    font-weight: 600;
   }
   .pick-sound:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
     color: var(--on-teal);
   }
   .pick-sound svg {
-    fill: #000;
+    fill: currentColor;
   }
   .pick-sound .wave {
     fill: none;
-    stroke: #000;
+    stroke: currentColor;
     stroke-width: 2;
     stroke-linecap: round;
   }
   .pick-quiet {
-    background: var(--card);
-    color: var(--ink);
-    border: 1px solid var(--teal);
+    background: transparent;
+    color: var(--ink-2);
+    border: 1.5px solid var(--hair);
   }
   .pick-quiet:hover {
     background: var(--teal-btn);
