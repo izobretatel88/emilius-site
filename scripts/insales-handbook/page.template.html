@@ -1,238 +1,281 @@
 <title>Справочник услуги InSales</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Раскладка: меню разделов слева (на телефоне — выпадает сверху), справа один документ для чтения. Цвета — фирменные Emilius. */
+/* Раскладка в духе Apple: полупрозрачная боковая панель, крупные заголовки, сгруппированные списки на светлом фоне.
+   Акцент — фирменный бирюзовый Emilius. На телефоне меню — отдельный лист поверх страницы. */
 :root{
-  --page:#f7f7f7; --card:#fefefe; --hair:#e6eaea; --well:#eef4f4;
-  --ink:#111414; --ink-2:#4f5655; --ink-3:#656b6a;
-  --teal:#00999b; --teal-text:#007476; --teal-soft:#dff2f2; --on-teal:#fff; --teal-btn:#008385;
-  --warn:#8a5200; --warn-soft:#fff2df;
-  --font:'Manrope','Glober',Arial,sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --page:#f5f5f7; --card:#ffffff; --card-2:#fbfbfd; --sep:rgba(60,60,67,.16); --fill:rgba(118,118,128,.12);
+  --glass:rgba(245,245,247,.78); --glass-card:rgba(255,255,255,.72);
+  --ink:#1d1d1f; --ink-2:#5e5e63; --ink-3:#6e6e73;
+  --teal:#00999b; --teal-text:#007476; --teal-soft:rgba(0,153,155,.12); --on-teal:#fff; --teal-btn:#008385; --nav-on:#008385; --on-nav:#fff;
+  --warn:#8a5200; --warn-soft:rgba(255,159,10,.16);
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.05);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   --r:14px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --page:#121616; --card:#181e1e; --hair:#2a3333; --well:#1c2626;
-  --ink:#eef3f2; --ink-2:#b5c0be; --ink-3:#97a4a2;
-  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:#123536; --on-teal:#061414; --teal-btn:#3cc6c6;
-  --warn:#f0b35c; --warn-soft:#352812; color-scheme:dark}}
+  --page:#000000; --card:#1c1c1e; --card-2:#232325; --sep:rgba(84,84,88,.55); --fill:rgba(118,118,128,.24);
+  --glass:rgba(22,22,24,.78); --glass-card:rgba(28,28,30,.72);
+  --ink:#f5f5f7; --ink-2:#aeaeb2; --ink-3:#98989d;
+  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:rgba(45,188,189,.18); --on-teal:#061414; --teal-btn:#3cc6c6; --nav-on:#0b6667; --on-nav:#fff;
+  --warn:#ffb340; --warn-soft:rgba(255,159,10,.2); --shadow:none; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --page:#121616; --card:#181e1e; --hair:#2a3333; --well:#1c2626;
-  --ink:#eef3f2; --ink-2:#b5c0be; --ink-3:#97a4a2;
-  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:#123536; --on-teal:#061414; --teal-btn:#3cc6c6;
-  --warn:#f0b35c; --warn-soft:#352812; color-scheme:dark}
+  --page:#000000; --card:#1c1c1e; --card-2:#232325; --sep:rgba(84,84,88,.55); --fill:rgba(118,118,128,.24);
+  --glass:rgba(22,22,24,.78); --glass-card:rgba(28,28,30,.72);
+  --ink:#f5f5f7; --ink-2:#aeaeb2; --ink-3:#98989d;
+  --teal:#2dbcbd; --teal-text:#5fd0d0; --teal-soft:rgba(45,188,189,.18); --on-teal:#061414; --teal-btn:#3cc6c6; --nav-on:#0b6667; --on-nav:#fff;
+  --warn:#ffb340; --warn-soft:rgba(255,159,10,.2); --shadow:none; color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-padding-top:16px}
-body{background:var(--page);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--page)}
-a{color:var(--teal-text)}
-:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:4px}
+html{scroll-padding-top:20px;-webkit-text-size-adjust:100%}
+body{background:var(--page);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.47;letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 72px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--page)}
+a{color:var(--teal-text);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:3px solid var(--teal-soft);outline-offset:1px;box-shadow:0 0 0 1px var(--teal);border-radius:8px}
 
-.shell{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:270px minmax(0,1fr);gap:40px;align-items:start}
-.side{position:sticky;top:env(safe-area-inset-top,0px);max-height:100vh;overflow-y:auto;padding-block:28px 28px;display:flex;flex-direction:column;gap:20px}
-.brand{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink)}
-.brand b{font-size:18px;font-weight:800;line-height:1.2}
-.brand span{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-text)}
-.search{width:100%;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--hair);border-radius:10px;background:var(--card);color:var(--ink)}
-.search:focus{border-color:var(--teal);outline:none}
-nav#nav{display:flex;flex-direction:column;gap:18px}
+/* Каркас */
+.shell{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:264px minmax(0,1fr);gap:56px;align-items:start}
+.side{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto;padding-block:28px;display:flex;flex-direction:column;gap:18px;scrollbar-width:thin}
+.brand{display:flex;flex-direction:column;gap:2px;color:var(--ink);padding:0 10px}
+.brand:hover{text-decoration:none}
+.brand span{font-size:12px;font-weight:600;color:var(--ink-3)}
+.brand b{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.2;letter-spacing:-.02em}
+.searchbox{position:relative}
+.searchbox svg{position:absolute;left:10px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:var(--ink-3);pointer-events:none}
+.search{width:100%;font:inherit;font-size:16px;padding:8px 12px 8px 33px;border:0;border-radius:10px;background:var(--fill);color:var(--ink);-webkit-appearance:none;appearance:none}
+.search::placeholder{color:var(--ink-3)}
+.search:focus{outline:none;box-shadow:0 0 0 3px var(--teal-soft)}
+nav#nav{display:flex;flex-direction:column;gap:16px}
 .navgroup{display:flex;flex-direction:column;gap:1px}
-.navtitle{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:0 10px 4px}
-nav#nav a{display:block;padding:5px 10px;border-radius:8px;text-decoration:none;color:var(--ink-2);font-size:15px;line-height:1.35;transition:background .2s,color .2s}
-nav#nav a:hover{background:var(--well);color:var(--ink)}
-nav#nav a.on{background:var(--teal-soft);color:var(--teal-text);font-weight:700}
-.extra{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--hair);padding-top:16px}
-.extra a{font-size:15px;font-weight:600;text-decoration:none}
+.navtitle{font-size:12px;font-weight:600;color:var(--ink-3);padding:0 10px 4px}
+nav#nav a{display:block;padding:6px 10px;border-radius:8px;color:var(--ink);font-size:15px;line-height:1.3;transition:background .2s,color .2s}
+nav#nav a:hover{background:var(--fill);text-decoration:none}
+nav#nav a.on{background:var(--nav-on);color:var(--on-nav);font-weight:600}
+.extra{display:flex;flex-direction:column;gap:1px;padding-top:12px;border-top:.5px solid var(--sep)}
+.extra a{padding:6px 10px;font-size:15px;border-radius:8px}
+.extra a:hover{background:var(--fill);text-decoration:none}
+.sheethead{display:none}
 
 .topbar{display:none}
-main{min-width:0;padding-block:28px 0}
-.doc,.view{max-width:820px;display:flex;flex-direction:column;gap:14px}
-.docmeta{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+main{min-width:0;padding-block:44px 0}
+.doc,.view{max-width:740px;display:flex;flex-direction:column;gap:16px}
+#doc-home{max-width:980px;gap:20px}
+.eyebrow{font-size:14px;font-weight:600;color:var(--teal-text)}
+.docmeta{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin:8px 0 0}
 
-/* Типографика документов */
-.doc h1,.view h1{font-size:clamp(26px,4.4vw,36px);font-weight:800;line-height:1.15;letter-spacing:-.01em;text-wrap:balance;margin:0 0 4px}
-.doc h2,.view h2{font-size:23px;font-weight:800;line-height:1.25;text-wrap:balance;margin:26px 0 0;padding-top:18px;border-top:1px solid var(--hair)}
-.doc h3{font-size:18px;font-weight:700;line-height:1.3;margin:14px 0 0}
-.doc h4{font-size:16px;font-weight:700;margin:8px 0 0}
-.doc p,.doc li{max-width:70ch}
+/* Типографика */
+.doc h1,.view h1{font-family:var(--display);font-size:clamp(30px,4.6vw,44px);font-weight:700;line-height:1.08;letter-spacing:-.025em;text-wrap:balance;margin:0 0 6px}
+.doc h2,.view h2{font-family:var(--display);font-size:clamp(23px,3vw,28px);font-weight:700;line-height:1.15;letter-spacing:-.02em;text-wrap:balance;margin:36px 0 0}
+.doc h3{font-size:19px;font-weight:600;line-height:1.3;letter-spacing:-.015em;margin:16px 0 0}
+.doc h4{font-size:17px;font-weight:600;margin:8px 0 0}
+.doc p,.doc li{max-width:68ch}
 .doc p{margin:0}
-.doc ul,.doc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:5px}
-.doc blockquote{margin:0;padding:12px 16px;background:var(--well);border-radius:10px;color:var(--ink-2)}
+.doc ul,.doc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.doc li::marker{color:var(--ink-3)}
+.doc strong{font-weight:600}
+.doc blockquote{margin:0;padding:14px 18px;background:var(--card);border-radius:12px;color:var(--ink-2);box-shadow:var(--shadow)}
 .doc blockquote p{margin:0}
-.doc hr{border:0;border-top:1px solid var(--hair);margin:8px 0;width:100%}
-code{font-family:var(--mono);font-size:.84em;background:var(--well);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
-pre{margin:0;background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5}
+.doc hr{border:0;border-top:.5px solid var(--sep);margin:8px 0;width:100%}
+code{font-family:var(--mono);font-size:.82em;background:var(--fill);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--card);border-radius:12px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.5;box-shadow:var(--shadow)}
 pre code{background:none;padding:0;overflow-wrap:normal}
-a.doclink{text-decoration:none}
 a.doclink code{color:var(--teal-text);background:var(--teal-soft)}
-.lead{font-size:18px;color:var(--ink-2)}
-.small{font-size:13.5px;color:var(--ink-3);line-height:1.5}
-mark{background:var(--teal-soft);color:var(--ink);padding:0 2px;border-radius:3px;box-shadow:0 0 0 1px var(--teal)}
+a.doclink:hover{text-decoration:none}
+.lead{font-size:clamp(19px,2.2vw,22px);line-height:1.38;color:var(--ink-2);letter-spacing:-.015em;max-width:40ch}
+.small{font-size:13px;color:var(--ink-3);line-height:1.5}
+mark{background:rgba(255,214,10,.45);color:inherit;padding:0 1px;border-radius:3px}
+
+/* Сгруппированные списки, как в «Настройках» */
+.group{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.row{display:flex;align-items:center;gap:12px;padding:11px 16px;color:var(--ink);position:relative;transition:background .2s}
+.row:hover{background:var(--card-2);text-decoration:none}
+.row + .row::before{content:"";position:absolute;top:0;right:0;left:56px;border-top:.5px solid var(--sep)}
+.rt{flex:1;min-width:0;line-height:1.3}
+.chev{width:8px;height:8px;border-top:2px solid var(--ink-3);border-right:2px solid var(--ink-3);transform:rotate(45deg);opacity:.6;flex-shrink:0;margin-right:4px}
+.ico{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;background:var(--teal-btn);color:var(--on-teal);flex-shrink:0}
+.ico svg{width:18px;height:18px}
 
 /* Оглавление документа */
-details.toc{border:1px solid var(--hair);border-radius:12px;background:var(--card);padding:10px 16px}
-details.toc summary{cursor:pointer;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-details.toc ol{margin:8px 0 2px;padding-left:1.4em;columns:2 260px;column-gap:28px}
-details.toc li{break-inside:avoid;padding:2px 0;font-size:15px;line-height:1.4}
-details.toc a{text-decoration:none}
+details.toc{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 18px}
+details.toc summary{cursor:pointer;font-size:15px;font-weight:600;color:var(--ink-2);list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.toc summary::-webkit-details-marker{display:none}
+details.toc summary::after{content:"";width:7px;height:7px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
+details.toc[open] summary::after{transform:rotate(-135deg)}
+details.toc ol{margin:10px 0 2px;padding-left:1.5em;columns:2 250px;column-gap:28px}
+details.toc li{break-inside:avoid;padding:3px 0;font-size:15px;line-height:1.35}
+details.toc li::marker{color:var(--ink-3);font-variant-numeric:tabular-nums}
 
 /* Соседние документы */
-.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px}
-.pager a{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid var(--hair);border-radius:12px;background:var(--card);text-decoration:none;font-weight:700;color:var(--ink);transition:border-color .2s}
-.pager a:hover{border-color:var(--teal)}
-.pager a span{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:40px}
+.pager a{display:flex;flex-direction:column;gap:2px;padding:14px 18px;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);font-weight:600;color:var(--teal-text);transition:background .2s}
+.pager a:hover{background:var(--card-2);text-decoration:none}
+.pager a span{font-size:13px;font-weight:400;color:var(--ink-3)}
 .pager a.next{text-align:right;grid-column:2}
 
-.tablewrap{overflow-x:auto;border:1px solid var(--hair);border-radius:12px;background:var(--card);max-width:100%}
-table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
-th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--hair)}
-th{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);background:var(--well)}
+/* Таблицы */
+.tablewrap{overflow-x:auto;border-radius:var(--r);background:var(--card);max-width:100%;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.42}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:.5px solid var(--sep)}
+th{font-size:13px;font-weight:600;color:var(--ink-3);background:var(--card-2)}
 tr:last-child td{border-bottom:0}
-td{min-width:90px}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:inherit;font-size:14px;padding:5px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--card);color:var(--ink-2);cursor:pointer;transition:background .2s,color .2s}
-.chip.on{background:var(--teal-btn);border-color:var(--teal-btn);color:var(--on-teal);font-weight:700}
+td{min-width:96px}
 
-details.runlog{margin-top:28px;border:1px solid var(--hair);border-radius:12px;background:var(--card)}
-details.runlog summary{cursor:pointer;padding:12px 16px;font-weight:700;color:var(--ink-2)}
-details.runlog > :not(summary){margin:0 16px 12px;font-size:14px;color:var(--ink-2)}
+/* Сегментный переключатель */
+.segmented{display:inline-flex;flex-wrap:wrap;gap:2px;padding:2px;border-radius:9px;background:var(--fill);align-self:flex-start;max-width:100%}
+.segmented button{font:inherit;font-size:14px;font-weight:500;padding:5px 14px;border:0;border-radius:7px;background:none;color:var(--ink);cursor:pointer;transition:background .2s,box-shadow .2s}
+.segmented button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04);font-weight:600}
+
+details.runlog{margin-top:32px;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow)}
+details.runlog summary{cursor:pointer;padding:12px 18px;font-size:15px;font-weight:600;color:var(--ink-2)}
+details.runlog > :not(summary){margin:0 18px 12px;font-size:14px;color:var(--ink-2)}
 
 /* Конструктор работ */
-.cfilter{display:flex;flex-direction:column;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--page);padding-block:10px;border-bottom:1px solid var(--hair)}
-.module h2 .count{font-size:14px;font-weight:700;color:var(--ink-3);vertical-align:middle;margin-left:6px}
+.cfilter{display:flex;flex-direction:column;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:3;padding-block:12px;margin-inline:-12px;padding-inline:12px;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-radius:0 0 var(--r) var(--r)}
 .module{display:flex;flex-direction:column;gap:10px}
-.works{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:12px;background:var(--card);overflow:hidden}
-.work + .work{border-top:1px solid var(--hair)}
-.work summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:76px minmax(0,1fr) auto;grid-template-areas:"id t h" "id p p";gap:2px 14px;padding:11px 14px;align-items:baseline;transition:background .2s}
+.module h2{margin-top:24px}
+.module h2 .count{font-family:var(--font);font-size:15px;font-weight:500;color:var(--ink-3);margin-left:6px;letter-spacing:0}
+.works{display:flex;flex-direction:column;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.work{position:relative}
+.work + .work::before{content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--sep)}
+.work summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:72px minmax(0,1fr) auto;grid-template-areas:"id t h" "id p p";gap:4px 14px;padding:12px 16px;align-items:baseline;transition:background .2s}
 .work summary::-webkit-details-marker{display:none}
-.work summary:hover{background:var(--well)}
-.work[open] summary{background:var(--well)}
-.wid{grid-area:id;background:none;padding:0;color:var(--teal-text);font-size:12.5px}
-.wt{grid-area:t;font-weight:700;line-height:1.35}
-.wh{grid-area:h;font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.work summary:hover,.work[open] summary{background:var(--card-2)}
+.wid{grid-area:id;background:none;padding:0;color:var(--ink-3);font-size:12.5px}
+.wt{grid-area:t;font-weight:600;line-height:1.3}
+.wh{grid-area:h;font-size:15px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .wp{grid-area:p;display:flex;flex-wrap:wrap;gap:4px}
-.pk{font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-text)}
+.pk{font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-text)}
 .pk-opt{background:var(--warn-soft);color:var(--warn)}
-.work dl{margin:0;padding:6px 14px 14px 104px;display:flex;flex-direction:column;gap:8px}
-.wf{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px}
-.wf dt{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
-.wf dd{margin:0;font-size:15px;line-height:1.5;max-width:62ch}
+.work dl{margin:0;padding:4px 16px 16px 102px;display:flex;flex-direction:column;gap:10px;background:var(--card-2)}
+.wf{display:grid;grid-template-columns:132px minmax(0,1fr);gap:12px}
+.wf dt{font-size:13px;font-weight:500;color:var(--ink-3);padding-top:2px}
+.wf dd{margin:0;font-size:15px;line-height:1.47;max-width:60ch}
 
 /* Главная */
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.tile{display:flex;flex-direction:column;gap:4px;padding:16px 18px;border:1px solid var(--hair);border-radius:var(--r);background:var(--card);text-decoration:none;color:var(--ink);transition:border-color .2s}
-.tile:hover{border-color:var(--teal)}
-.tile b{font-size:17px;font-weight:800;line-height:1.3}
-.tile span{font-size:14px;color:var(--ink-2);line-height:1.45}
-.facts{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:15px;color:var(--ink-2)}
-.facts b{color:var(--ink)}
-.todo{display:flex;flex-direction:column;gap:14px;padding:20px 22px;border-radius:var(--r);background:var(--teal-soft)}
-.todo h2{border:0;padding:0;margin:0;font-size:20px}
-.todo .sub{font-size:15px;color:var(--ink-2);margin:0}
-ol.steps{margin:0;padding-left:1.6em;display:flex;flex-direction:column;gap:12px}
-ol.steps li::marker{font-weight:800;color:var(--teal-text)}
-.st{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline}
-.st b{font-weight:700;line-height:1.4}
-.time{font-size:13px;font-weight:700;color:var(--teal-text);white-space:nowrap}
-.gain{display:block;font-size:14px;color:var(--ink-2);line-height:1.45}
-ul.qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
-ul.qlist li{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:baseline}
-.qs{font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:2px 9px;justify-self:start;white-space:nowrap}
-ul.qlist li.done .qs{color:var(--teal-text);background:var(--card)}
-ul.qlist b{font-weight:700;line-height:1.4}
-.homegroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px 24px}
-.homegroups h3{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px}
-.homegroups a{display:block;padding:3px 0;text-decoration:none;font-weight:600}
+.hero{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.hero h1{font-size:clamp(34px,5.6vw,56px);letter-spacing:-.03em;line-height:1.05}
+.pkgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.pkg{display:flex;flex-direction:column;gap:4px;padding:20px 22px;border-radius:18px;background:var(--card);box-shadow:var(--shadow)}
+.pkg b{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.02em}
+.pkg .price{font-size:17px;font-weight:600;color:var(--teal-text);font-variant-numeric:tabular-nums}
+.pkg .note{font-size:14px;color:var(--ink-2);line-height:1.42;margin-top:4px}
+.sectionhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:28px}
+.sectionhead h2{margin:0;font-family:var(--display);font-size:clamp(23px,3vw,28px);font-weight:700;letter-spacing:-.02em}
+.sectionhead a{font-size:15px}
+.sub{font-size:15px;color:var(--ink-2);margin:-8px 0 0;max-width:62ch}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:2px 14px;padding:13px 16px}
+ol.steps li + li::after{content:"";position:absolute;top:0;right:0;left:58px;border-top:.5px solid var(--sep)}
+ol.steps li::before{content:counter(s);grid-row:span 2;width:26px;height:26px;border-radius:50%;background:var(--teal-soft);color:var(--teal-text);font-size:14px;font-weight:700;display:grid;place-items:center;margin-top:-1px}
+.st{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;justify-content:space-between}
+.st b{font-weight:600;line-height:1.35;flex:1 1 300px}
+.time{font-size:14px;color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.gain{display:block;font-size:14px;color:var(--ink-2);line-height:1.42}
+ul.qlist{list-style:none;margin:0;padding:0}
+ul.qlist li{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:13px 16px;align-items:start}
+ul.qlist li + li::before{content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--sep)}
+ul.qlist li > div{grid-column:1;grid-row:1}
+.qs{grid-column:2;grid-row:1;font-size:12px;font-weight:600;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:2px 10px;white-space:nowrap}
+ul.qlist li.done .qs{color:var(--teal-text);background:var(--teal-soft)}
+ul.qlist b{font-weight:600;line-height:1.35;display:block}
+.homegroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px;align-items:start}
+.hg h3{font-size:13px;font-weight:600;color:var(--ink-3);margin:0 0 8px 16px;text-transform:uppercase;letter-spacing:.02em}
 
 /* Поиск */
-.hits{display:flex;flex-direction:column;gap:10px}
-.hit{display:block;padding:12px 16px;border:1px solid var(--hair);border-radius:12px;background:var(--card);text-decoration:none;color:var(--ink)}
-.hit b{display:block;font-weight:700}
+.hits{display:flex;flex-direction:column}
+.hit{display:block;padding:13px 16px;color:var(--ink);position:relative;transition:background .2s}
+.hit:hover{background:var(--card-2);text-decoration:none}
+.hit + .hit::before{content:"";position:absolute;top:0;right:0;left:16px;border-top:.5px solid var(--sep)}
+.hit b{display:block;font-weight:600}
 .hit span{font-size:14px;color:var(--ink-2)}
 
-@media (max-width:860px){
+@media (max-width:900px){
   .shell{grid-template-columns:minmax(0,1fr);gap:0}
-  .topbar{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;background:var(--page);border-bottom:1px solid var(--hair)}
-  .topbar b{font-size:16px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-  .menubtn{font:inherit;font-size:15px;font-weight:700;padding:7px 14px;border-radius:10px;border:1px solid var(--hair);background:var(--card);color:var(--ink);flex-shrink:0}
-  .side{position:static;max-height:none;padding-block:16px;display:none}
-  .side.open{display:flex}
+  .topbar{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:6;align-items:center;justify-content:space-between;gap:12px;
+    margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+    background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep)}
+  .topbar b{font-size:17px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .menubtn{font:inherit;font-size:17px;padding:4px 0;border:0;background:none;color:var(--teal-text);flex-shrink:0;cursor:pointer}
+  .side{position:fixed;inset:0;z-index:30;height:auto;background:var(--page);
+    padding:calc(env(safe-area-inset-top,0px) + 8px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px));
+    opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+  .side.open{opacity:1;visibility:visible}
   .side .brand{display:none}
-  main{padding-block:20px 0}
-  .cfilter{top:calc(env(safe-area-inset-top,0px) + 61px)}
+  .sheethead{display:flex;justify-content:space-between;align-items:center;padding:6px 2px}
+  .sheethead b{font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.02em}
+  .sheethead button{font:inherit;font-size:17px;font-weight:600;border:0;background:none;color:var(--teal-text);cursor:pointer;padding:4px 0}
+  nav#nav a{font-size:17px;padding:9px 12px}
+  main{padding-block:24px 0}
+  .cfilter{top:calc(env(safe-area-inset-top,0px) + 50px)}
 }
-/* Телефон: строки таблиц — карточки «подпись: значение», без прокрутки вбок */
+/* Телефон: строки таблиц — карточки «подпись: значение» */
 @media (max-width:640px){
-  .tablewrap{border:0;background:none;overflow:visible}
+  .tablewrap{background:none;overflow:visible;box-shadow:none;border-radius:0}
   .tablewrap table,.tablewrap tbody,.tablewrap tr,.tablewrap td{display:block;width:100%}
   .tablewrap thead{display:none}
-  .tablewrap tr{border:1px solid var(--hair);border-radius:12px;background:var(--card);padding:8px 14px;margin-bottom:10px}
+  .tablewrap tr{border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);padding:10px 16px;margin-bottom:10px}
   .tablewrap td{border:0;padding:5px 0;min-width:0}
-  .tablewrap td[data-label]::before{content:attr(data-label);display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+  .tablewrap td[data-label]::before{content:attr(data-label);display:block;font-size:13px;font-weight:500;color:var(--ink-3)}
   .tablewrap td:empty{display:none}
   .work summary{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"id h" "t t" "p p"}
-  .work dl{padding:6px 14px 14px}
+  .work dl{padding:4px 16px 16px}
   .wf{grid-template-columns:minmax(0,1fr);gap:0}
-  ul.qlist li{grid-template-columns:minmax(0,1fr);gap:4px}
   .pager{grid-template-columns:minmax(0,1fr)}
   .pager a.next{grid-column:1}
-  .todo{padding:16px}
+  ul.qlist li{grid-template-columns:minmax(0,1fr)}
+  .qs{grid-column:1;grid-row:auto;justify-self:start;order:-1}
+  ul.qlist li > div{grid-row:auto}
+  .homegroups{grid-template-columns:minmax(0,1fr)}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="shell">
   <div class="topbar"><b id="toptitle">Справочник InSales</b><button class="menubtn" id="menubtn" aria-expanded="false" aria-controls="side">Разделы</button></div>
   <aside class="side" id="side">
+    <div class="sheethead"><b>Разделы</b><button id="sheetclose" type="button">Готово</button></div>
     <a class="brand" href="#home"><span>Emilius Agency</span><b>Магазин на шаблоне InSales</b></a>
-    <input class="search" id="q" type="search" placeholder="Поиск по всем документам" aria-label="Поиск по всем документам">
+    <div class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+      <input class="search" id="q" type="search" placeholder="Поиск" aria-label="Поиск по всем документам"></div>
     <nav id="nav"><div class="navgroup"><a href="#home" data-id="home">Главная</a></div>%NAV%</nav>
     <div class="extra">
       <a href="calculator.html">Калькулятор сметы ↗</a>
-      <a href="summary.html">Короткий итог на одной странице ↗</a>
+      <a href="summary.html">Итог на одной странице ↗</a>
       <a href="https://github.com/izobretatel88/emilius-site/tree/main/docs/insales-service">Исходники на GitHub ↗</a>
     </div>
   </aside>
 
   <main id="main">
     <section class="view" id="doc-home">
-      <h1>Магазин на шаблоне InSales</h1>
-      <p class="lead">Вся система услуги в одном месте: продукт, цены, конструктор работ, продажи, производство и шаблоны документов.</p>
-      <div class="facts">%PKGS%<span><b>%WORKS%</b> типовых работ с нормами часов</span></div>
-
-      <div class="todo">
-        <h2>Что сделать до первой продажи</h2>
-        <p class="sub">Шаги владельца из «Старта продаж». Дни 1–2 — шаги 1–5, около 2 часов. Дни 3–10 — шаг 6 каждый день.</p>
-        <ol class="steps">%STEPS%</ol>
-        <a href="#start-2">План целиком →</a>
+      <div class="hero">
+        <div class="eyebrow">Emilius Agency · справочник услуги</div>
+        <h1>Магазин на шаблоне InSales.</h1>
+        <p class="lead">Всё, чтобы продавать и делать эту услугу: цены, состав, работы с нормами часов, тексты для клиентов и шаблоны документов.</p>
       </div>
+      <div class="pkgs">%PKGS%</div>
+      <p class="small">%WORKS% типовых работ с нормами часов. Точную цену проекта считает <a href="calculator.html">калькулятор</a>.</p>
 
-      <div class="todo">
-        <h2>Вопросы к вам: без ответа %QOPEN% из %QALL%</h2>
-        <p class="sub">Ответ можно вписать в таблицу §3 файла <code>14-start.md</code> или написать агенту одной строкой.</p>
-        <ul class="qlist">%QUESTIONS%</ul>
-        <a href="#start-3">Таблица вопросов →</a>
-      </div>
+      <div class="sectionhead"><h2>Что сделать до первой продажи</h2><a href="#start-2">План целиком</a></div>
+      <p class="sub">Дни 1–2 — шаги 1–5, около двух часов. Дни 3–10 — шаг 6 каждый день.</p>
+      <ol class="steps group">%STEPS%</ol>
 
-      <h2>Быстрые переходы</h2>
-      <div class="tiles">
-        <a class="tile" href="calculator.html"><b>Калькулятор сметы ↗</b><span>Ответы клиента → пакет, часы, цена и срок</span></a>
-        <a class="tile" href="#card"><b>Карточка услуги</b><span>Кому подходит, состав, сроки, цены, ограничения</span></a>
-        <a class="tile" href="#catalog"><b>Конструктор работ</b><span>%WORKS% работ: что делаем, когда нужно, сколько часов</span></a>
-        <a class="tile" href="#outreach"><b>Первые сообщения</b><span>Письма по сегментам, follow-up, ответы на отказ</span></a>
-        <a class="tile" href="#sales"><b>Диалог и возражения</b><span>«Дорого», «у нас уже есть сайт», «сделаю сам»</span></a>
-        <a class="tile" href="summary.html"><b>Короткий итог ↗</b><span>Вся система на одной странице</span></a>
-      </div>
-      <h2>Все разделы</h2>
-      <div class="homegroups" id="homegroups"></div>
+      <div class="sectionhead"><h2>Вопросы к вам</h2><a href="#start-3">Таблица вопросов</a></div>
+      <p class="sub">Без ответа %QOPEN% из %QALL%. Ответ можно вписать в §3 файла <code>14-start.md</code> или написать агенту одной строкой.</p>
+      <ul class="qlist group">%QUESTIONS%</ul>
+
+      <div class="sectionhead"><h2>Все разделы</h2></div>
+      <div class="homegroups">%HOMEGROUPS%</div>
       <p class="small">Собрано %BUILT% из папки <code>docs/insales-service</code>: %COUNT% документов. Журналы запусков агента свёрнуты в конце документов. Пересобрать: <code>npm run insales:handbook</code>.</p>
     </section>
     <section class="view" id="doc-search" hidden>
+      <div class="eyebrow">Поиск</div>
       <h1 id="searchtitle">Поиск</h1>
-      <div class="hits" id="hits"></div>
+      <div class="hits group" id="hits"></div>
     </section>
     %DOCS%
   </main>
@@ -248,11 +291,6 @@ const q = document.getElementById('q');
 const titles = Object.fromEntries(INDEX.map(d => [d.id, d.title]));
 const views = () => document.querySelectorAll('main > .doc, main > .view');
 let pendingTerm = '';
-
-// Разделы на главной — из того же меню
-document.getElementById('homegroups').innerHTML = [...nav.querySelectorAll('.navgroup')].slice(1).map(g =>
-  '<div><h3>' + g.querySelector('.navtitle').textContent + '</h3>' +
-  [...g.querySelectorAll('a')].map(a => '<a href="' + a.getAttribute('href') + '">' + a.textContent + '</a>').join('') + '</div>').join('');
 
 // Подписи для строк таблиц на телефоне
 document.querySelectorAll('.tablewrap table').forEach(t => {
@@ -271,7 +309,7 @@ function highlight(root, term) {
     n.parentElement.closest('script,style,.runlog') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
   const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
   for (const node of nodes) {
-    let i = node.nodeValue.toLowerCase().indexOf(low);
+    const i = node.nodeValue.toLowerCase().indexOf(low);
     if (i === -1) continue;
     const m = document.createElement('mark'); m.className = 'hl';
     const after = node.splitText(i); after.splitText(term.length);
@@ -280,6 +318,11 @@ function highlight(root, term) {
   return found;
 }
 
+function setMenu(open) {
+  side.classList.toggle('open', open);
+  menubtn.setAttribute('aria-expanded', String(open));
+  document.documentElement.style.overflow = open && matchMedia('(max-width:900px)').matches ? 'hidden' : '';
+}
 function show(token) {
   let id = token, target = null;
   if (!document.getElementById('doc-' + id)) {
@@ -294,7 +337,7 @@ function show(token) {
   views().forEach(el => { el.hidden = el !== view; });
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', a.dataset.id === id));
   toptitle.textContent = id === 'home' ? 'Справочник InSales' : titles[id] || '';
-  side.classList.remove('open'); menubtn.setAttribute('aria-expanded', 'false');
+  setMenu(false);
   clearMarks(view);
   if (pendingTerm) {
     const marks = highlight(view, pendingTerm); pendingTerm = '';
@@ -312,10 +355,9 @@ document.addEventListener('click', e => {
   const id = a.getAttribute('href').slice(1);
   if (id === (location.hash || '#home').slice(1)) { e.preventDefault(); show(id); }
 });
-menubtn.addEventListener('click', () => {
-  const open = side.classList.toggle('open');
-  menubtn.setAttribute('aria-expanded', String(open));
-});
+menubtn.addEventListener('click', () => setMenu(!side.classList.contains('open')));
+document.getElementById('sheetclose').addEventListener('click', () => setMenu(false));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
 // Конструктор: поиск по работам и фильтр по пакету
 const cq = document.getElementById('cq');
@@ -333,12 +375,12 @@ if (cq) {
       w.hidden = !ok; if (ok) shown++;
     });
     box.querySelectorAll('.module').forEach(m => { m.hidden = !m.querySelector('.work:not([hidden])'); });
-    document.getElementById('ccount').textContent = shown === total ? 'Показаны все ' + total + ' работ' : 'Показано ' + shown + ' из ' + total;
+    document.getElementById('ccount').textContent = shown === total ? 'Все ' + total + ' работ' : 'Показано ' + shown + ' из ' + total;
   };
   cq.addEventListener('input', apply);
-  box.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
+  box.querySelectorAll('.segmented button').forEach(btn => btn.addEventListener('click', () => {
     pkg = btn.dataset.pkg;
-    box.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === btn));
+    box.querySelectorAll('.segmented button').forEach(c => { c.classList.toggle('on', c === btn); c.setAttribute('aria-pressed', String(c === btn)); });
     apply();
   }));
   apply();
@@ -360,7 +402,8 @@ q.addEventListener('input', () => {
   hits.sort((a, b) => b.n - a.n);
   views().forEach(el => { el.hidden = el.id !== 'doc-search'; });
   nav.querySelectorAll('a').forEach(a => a.classList.remove('on'));
-  document.getElementById('searchtitle').textContent = hits.length ? 'Найдено в ' + hits.length + ' док.' : 'Ничего не найдено';
+  document.getElementById('searchtitle').textContent = hits.length ? '«' + q.value.trim() + '» в ' + hits.length + ' док.' : 'Ничего не найдено';
+  document.getElementById('hits').hidden = !hits.length;
   document.getElementById('hits').innerHTML = hits.map(({ d, n, first }) => {
     const from = Math.max(0, first - 70), snip = d.text.slice(from, first + term.length + 110);
     const marked = escHtml(snip).replace(new RegExp(escRe(escHtml(term)), 'ig'), m => '<mark>' + m + '</mark>');
