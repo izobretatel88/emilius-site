@@ -9,8 +9,9 @@ interface Props {
   title: string;
   description: string;
   eyebrow: string;
+  date?: string; // своя дата редакции (документы приложения Emilius Meetings)
 }
-const { title, description, eyebrow } = Astro.props;
+const { title, description, eyebrow, date = LEGAL_DATE } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -19,10 +20,12 @@ const base = import.meta.env.BASE_URL;
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
   </header>
 
+  <slot name="nav" />
+
   <main class="card doc">
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
-    <p class="date">Редакция от {LEGAL_DATE}</p>
+    <p class="date">Редакция от {date}</p>
     <slot />
   </main>
 
