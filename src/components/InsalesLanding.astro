@@ -6,7 +6,7 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW } from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -77,6 +77,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
     <section class="card block" aria-labelledby="t-examples">
       <h2 id="t-examples">Магазины, которые мы сделали</h2>
+      <a class="shop fresh" href={FRESH_SHOP.url} target="_blank" rel="noopener">
+        <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${FRESH_SHOP.id}.webp`} alt={`Первый экран сайта ${FRESH_SHOP.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+        <span class="shop-body">
+          <span class="fresh-tag">Свежая работа</span>
+          <span class="shop-name">{FRESH_SHOP.name}</span>
+          <span class="shop-what">{FRESH_SHOP.what}</span>
+          <span class="shop-link">{FRESH_SHOP.domain} ↗</span>
+        </span>
+      </a>
       <p class="sub-lead">На шаблоне InSales — как в этой услуге:</p>
       <ul class="shops">
         {TEMPLATE_SHOPS.map((x) => (
@@ -420,6 +429,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
   .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  /* Свежая работа — широкая карточка: картинка слева, текст справа */
+  .shop.fresh { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; height: auto; }
+  .shop.fresh .shop-body { padding: 20px 24px; gap: 6px; }
+  .shop.fresh .shop-name { font-size: clamp(22px, 2.6vw, 28px); }
+  .shop.fresh .shop-what { font-size: 15px; }
+  .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
@@ -570,7 +585,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
-    .plans, .shops, .review-grid { grid-template-columns: 1fr; }
+    .plans, .shops, .review-grid, .shop.fresh { grid-template-columns: 1fr; }
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {

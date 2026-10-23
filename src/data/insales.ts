@@ -103,6 +103,14 @@ export const FAQ = [
 
 // Примеры работ — из публикации владельца «#нашиработы» (23.10.2026). Описания — по самим сайтам,
 // без цифр: цифры по проектам появятся только с согласия клиентов (07-landing.md, блок 9).
+// Свежая работа — первой в примерах (решение владельца 23.10.2026). Описание — по сайту магазина.
+export const FRESH_SHOP = {
+  id: 'happyanimal',
+  name: 'Happy Animal',
+  what: 'Зоомагазин в Гольяново: два магазина, самовывоз и доставка, груминг-салон',
+  url: 'https://happyanimal.pet/',
+  domain: 'happyanimal.pet',
+};
 export const TEMPLATE_SHOPS = [
   { id: 'ss-sk', name: 'СС-СК', what: 'Системы безопасности в Сочи: оборудование, монтаж и обслуживание', url: 'https://ss-sk.ru/', domain: 'ss-sk.ru' },
   { id: 'almatennis', name: 'Almatennis', what: 'Теннисный интернет-магазин в Москве', url: 'https://almatennis.ru/', domain: 'almatennis.ru' },
