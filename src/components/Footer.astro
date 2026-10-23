@@ -7,12 +7,13 @@ const year = new Date().getFullYear();
 ---
 
 <footer>
-  <a href={LINKS.arda} target="_blank" rel="noopener" class="arda">
-    <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств" width="122" height="58" loading="lazy" />
-  </a>
   <p>© {year} | Emilius Agency</p>
   <p class="legal">{OPERATOR.short} · ИНН {OPERATOR.inn} · <a href={href('privacy/')}>Политика конфиденциальности</a></p>
   <p>Итерация {ITERATION.current} из {ITERATION.total} до великолепного состояния</p>
+  <!-- Ассоциация ARDA — в самом низу и мельче (решение владельца 23.10.2026) -->
+  <a href={LINKS.arda} target="_blank" rel="noopener" class="arda">
+    <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств" width="104" height="49" loading="lazy" />
+  </a>
 </footer>
 
 <style>
@@ -31,13 +32,13 @@ const year = new Date().getFullYear();
   }
   .arda {
     display: block;
-    margin-bottom: 6px;
+    margin-top: 10px;
   }
   /* Логотип ARDA — чёрный контур на белом. В светлой теме белый фон растворяется,
      в тёмной картинка инвертируется и фон уходит в чёрный. */
   .arda img {
     display: block;
-    width: 122px;
+    width: 104px; /* на 15% меньше прежних 122 px */
     height: auto;
     mix-blend-mode: multiply;
   }

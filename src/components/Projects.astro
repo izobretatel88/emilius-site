@@ -24,6 +24,24 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
   </ul>
 </section>
 
+<script>
+  // Кейс — над логотипом; если сверху не помещается, — туда, где места больше
+  document.querySelectorAll<HTMLElement>('.proj').forEach((proj) => {
+    const card = proj.querySelector<HTMLElement>('.case');
+    if (!card) return;
+    const place = () => {
+      const r = proj.getBoundingClientRect();
+      const need = card.offsetHeight + 12;
+      const above = r.top;
+      const below = innerHeight - r.bottom;
+      // сверху — если помещается; иначе туда, где места больше
+      proj.classList.toggle('is-down', above < need && below > above);
+    };
+    proj.addEventListener('pointerenter', place);
+    proj.addEventListener('focusin', place);
+  });
+</script>
+
 <style>
   /* Узкие телефоны: пять кружков логотипов помещаются в строку целиком */
   @media (max-width: 360px) {
@@ -83,10 +101,12 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     object-fit: contain;
     border-radius: 50%;
   }
+  /* Кейс открывается над логотипом (справа его съедал край экрана — решение владельца 23.10.2026);
+     если сверху не хватает места, скрипт ставит .is-down — тогда под логотипом */
   .case {
     position: absolute;
-    left: 66px;
-    top: -12px;
+    left: -60px;
+    bottom: calc(100% + 10px);
     width: 260px;
     z-index: 5;
     background: var(--card);
@@ -104,6 +124,10 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     /* Кейс плавно въезжает сверху (правка владельца 22.10.2026) */
     transform: translateY(-12px);
     transition: opacity 0.25s ease, transform 0.25s ease-out, visibility 0.25s;
+  }
+  .proj.is-down .case {
+    bottom: auto;
+    top: calc(100% + 10px);
   }
   .proj:hover .case,
   .proj:focus-within .case {
@@ -126,10 +150,9 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     font-weight: 600;
     text-underline-offset: 3px;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1040px) {
     .case {
-      left: 62px;
-      width: min(280px, 62vw);
+      left: -48px;
     }
   }
   /* Телефон и планшет: блок во всю ширину, логотипы в строку; кейс открывается НАД строкой
@@ -146,7 +169,8 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     .proj {
       position: static;
     }
-    .case {
+    .case,
+    .proj.is-down .case {
       left: 0;
       right: 0;
       top: auto;
