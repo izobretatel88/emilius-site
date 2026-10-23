@@ -7,8 +7,9 @@ import glober600 from '../styles/fonts/glober-600.woff2?url';
 interface Props {
   title: string;
   description: string;
+  noindex?: boolean; // эксперименты (раздел /os/) не индексируются и в продакшене
 }
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -31,7 +32,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <link rel="preload" href={glober400} as="font" type="font/woff2" crossorigin />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {preview && <meta name="robots" content="noindex, nofollow" />}
+    {(preview || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={href('favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href={href('apple-touch-icon.png')} />

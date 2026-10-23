@@ -48,8 +48,9 @@ for (const [name, url] of docs) {
   const text = readFileSync(url, 'utf8');
   for (const m of text.matchAll(/«Интернет-магазин»\)?\s*(\d)\s?(\d{3})\s*₽/g))
     if (Number(m[1] + m[2]) !== shop) problems.push(`${name}: «Интернет-магазин» ${m[1]} ${m[2]} ₽, в калькуляторе ${shop}`);
-  for (const m of text.matchAll(/«Комбо»\)?\s*(\d)\s?(\d{3})\s*₽/g))
-    if (Number(m[1] + m[2]) !== combo) problems.push(`${name}: «Комбо» ${m[1]} ${m[2]} ₽, в калькуляторе ${combo}`);
+  // Тариф «Комбо» с 2026 называется «Сайт из маркетплейса» — проверяем оба названия
+  for (const m of text.matchAll(/«(?:Комбо|Сайт из маркетплейса)»\)?\s*(\d)\s?(\d{3})\s*₽/g))
+    if (Number(m[1] + m[2]) !== combo) problems.push(`${name}: «Сайт из маркетплейса» ${m[1]} ${m[2]} ₽, в калькуляторе ${combo}`);
 }
 
 // 4. calculator.html собран из текущих CSV и estimate.js.

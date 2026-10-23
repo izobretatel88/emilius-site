@@ -6,8 +6,7 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ,
-} from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -73,6 +72,66 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block" aria-labelledby="t-result">
       <h2 id="t-result">Что получите</h2>
       <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+    </section>
+
+    <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
+    <section class="card block" aria-labelledby="t-examples">
+      <h2 id="t-examples">Магазины, которые мы сделали</h2>
+      <a class="shop fresh" href={FRESH_SHOP.url} target="_blank" rel="noopener">
+        <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${FRESH_SHOP.id}.webp`} alt={`Первый экран сайта ${FRESH_SHOP.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+        <span class="shop-body">
+          <span class="fresh-tag">Свежая работа</span>
+          <span class="shop-name">{FRESH_SHOP.name}</span>
+          <span class="shop-what">{FRESH_SHOP.what}</span>
+          <span class="shop-link">{FRESH_SHOP.domain} ↗</span>
+        </span>
+      </a>
+      <p class="sub-lead">На шаблоне InSales — как в этой услуге:</p>
+      <ul class="shops">
+        {TEMPLATE_SHOPS.map((x) => (
+          <li>
+            <a class="shop" href={x.url} target="_blank" rel="noopener">
+              <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${x.id}.webp`} alt={`Первый экран сайта ${x.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+              <span class="shop-body">
+                <span class="shop-name">{x.name}</span>
+                <span class="shop-what">{x.what}</span>
+                <span class="shop-link">{x.domain} ↗</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="sub-lead">Ещё магазины и интеграции на InSales:</p>
+      <ul class="more-shops">
+        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a></li>)}
+        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
+      </ul>
+      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text} ↗</a></>)}</p>
+    </section>
+
+    <!-- Видеоотзыв: как клиент нашёл нас и почему выбрал -->
+    <section class="card block review" aria-labelledby="t-review">
+      <h2 id="t-review">Отзыв клиента</h2>
+      <div class="review-grid">
+        <video
+          controls
+          playsinline
+          preload="none"
+          width="640"
+          height="362"
+          poster={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.poster}`}
+        >
+          <source src={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.src}`} type="video/mp4" />
+          <track kind="captions" srclang="ru" label="Русский" src={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.captions}`} default />
+        </video>
+        <figure class="quote">
+          <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
+          <figcaption>
+            <b>{VIDEO_REVIEW.who}</b>
+            <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="block plain" aria-labelledby="t-plans">
@@ -290,13 +349,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .logo-link { color: inherit; text-decoration: none; border-radius: var(--radius-card); }
   .page {
     width: 100%;
-    max-width: 860px;
+    max-width: 880px;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 28px; /* воздух между разделами, как на главной (23.10.2026) */
   }
-  .hero { padding: 30px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .hero { padding: clamp(26px, 4.4vw, 48px); display: flex; flex-direction: column; gap: 16px; }
   .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
@@ -304,10 +363,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
-  h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
-  .lead { font-size: 18px; line-height: 1.5; color: var(--ink-2); max-width: 60ch; }
-  h2 { font-size: 22px; line-height: 1.2; }
-  h2.sub { font-size: 20px; margin-top: 8px; }
+  /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
+  h1 { font-size: clamp(32px, 5.6vw, 54px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
+  h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
+  h2.sub { font-size: clamp(20px, 2.4vw, 24px); margin-top: 12px; }
   h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.25; }
   ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .ticks li, .dots li { position: relative; padding-left: 18px; }
@@ -344,20 +404,58 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
   .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .block { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 14px; }
-  .block.plain { padding: 4px 0 0; }
+  .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
+  .block.plain { padding: 8px 0 0; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
   .item { display: flex; flex-direction: column; gap: 6px; }
   .item p { color: var(--ink-2); }
+  .sub-lead { font-size: 15px; font-weight: 600; color: var(--ink-2); }
+  .shops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-direction: row; }
+  .shop {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--well);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color var(--hover);
+  }
+  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .shop-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; }
+  .shop-name { font-size: 18px; font-weight: 700; }
+  .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
+  .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  /* Свежая работа — широкая карточка: картинка слева, текст справа */
+  .shop.fresh { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; height: auto; }
+  .shop.fresh .shop-body { padding: 20px 24px; gap: 6px; }
+  .shop.fresh .shop-name { font-size: clamp(22px, 2.6vw, 28px); }
+  .shop.fresh .shop-what { font-size: 15px; }
+  .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
+  .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
+  .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .proof { font-size: 14px; color: var(--ink-3); }
+  .proof a { font-weight: 600; }
+  .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+  .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
+  .quote { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .quote blockquote { margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
+  .quote figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--ink-2); }
+  .quote figcaption b { font-size: 16px; color: var(--ink); }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .plan { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }
-  .plan h3 { font-size: 20px; }
+  .plan h3 { font-size: 22px; font-weight: 700; }
   .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
-  .price { font-size: 24px; font-weight: 700; }
+  .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
   .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
   .plan .dots { font-size: 15px; gap: 8px; }
-  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .nums { counter-reset: n; }
   .nums li { counter-increment: n; position: relative; padding-left: 30px; }
   .nums li::before {
@@ -392,11 +490,36 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .choice dt { color: var(--ink-2); }
   .choice dd { margin: 0; font-weight: 600; }
   .faq { display: flex; flex-direction: column; }
-  details { border-top: 1px solid var(--hair); padding: 12px 0; }
-  details:first-child { border-top: 0; padding-top: 0; }
-  summary { cursor: pointer; font-weight: 600; transition: color var(--hover); }
+  /* Частые вопросы — строки со стрелкой, как в настройках iPhone; стрелка поворачивается при раскрытии */
+  details { border-top: 1px solid var(--hair); }
+  details:first-child { border-top: 0; }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    padding: 14px 32px 14px 0;
+    font-weight: 600;
+    transition: color var(--hover);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin-top: -6px;
+    border-right: 2px solid var(--ink-3);
+    border-bottom: 2px solid var(--ink-3);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease, border-color var(--hover);
+  }
+  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
   summary:hover { color: var(--teal-text); }
-  details p { margin-top: 8px; color: var(--ink-2); }
+  summary:hover::after { border-color: var(--teal); }
+  summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
+  details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 24px; }
   form { display: flex; flex-direction: column; gap: 14px; }
   form > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
@@ -419,7 +542,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   input[type='text']:focus-visible { outline: none; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { position: relative; }
-  .chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; } /* весь чип — область нажатия */
   .chip span {
     display: inline-block;
     padding: 9px 14px;
@@ -462,12 +585,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
-    .plans { grid-template-columns: 1fr; }
+    .plans, .shops, .review-grid, .shop.fresh { grid-template-columns: 1fr; }
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {
-    .hero { padding: 24px 20px; }
-    .block { padding: 20px 18px 22px; }
+    .page, .cols { gap: 20px; }
+    .hero { padding: 26px 20px; }
+    .block { padding: 24px 20px; }
     .grid2, .cols { grid-template-columns: 1fr; }
     .choice div { grid-template-columns: 1fr; gap: 2px; }
     .weeks li { grid-template-columns: 1fr; }

@@ -5,6 +5,7 @@ import Wheel from '../components/Wheel.astro';
 import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
+import Services from '../components/Services.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { MISSION_LINES } from '../data/site';
@@ -33,6 +34,8 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
       <h2 class="card-title" id="t-wheel">Делаем по кругу</h2>
       <Wheel />
     </section>
+    <!-- Услуги — под колесом продукта: центральная колонка на компьютере, следом за колесом на телефоне -->
+    <div class="services-slot"><Services /></div>
     <Contact />
     <Feedback />
   </main>
@@ -100,6 +103,23 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
     align-items: start;
     gap: var(--col-gap);
   }
+  /* Компьютер: «Проекты» слева и «Связь» справа — на высоту колеса и услуг под ним */
+  .services-slot {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .wheel-card {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .bento > :global(.projects-card) {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .bento > :global(.stack) {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
   .wheel-card {
     padding: 14px 14px 16px;
     display: flex;
@@ -121,12 +141,22 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
       align-items: stretch;
       gap: 20px;
     }
+    .wheel-card,
+    .services-slot,
+    .bento > :global(.projects-card),
+    .bento > :global(.stack) {
+      grid-row: auto;
+    }
     .wheel-card {
       grid-column: 1 / -1;
       order: -1;
     }
     .bento > :global(.projects-card) {
       grid-column: 1 / -1;
+    }
+    .services-slot {
+      grid-column: 1 / -1;
+      order: -1;
     }
   }
 </style>
