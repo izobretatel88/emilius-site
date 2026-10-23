@@ -117,7 +117,7 @@
 
 ### Блок 9. Примеры
 
-**На лендинге с 23.10.2026** (`TEMPLATE_SHOPS`, `MORE_SHOPS`, `INTEGRATIONS` в `src/data/insales.ts`, список — из публикации владельца «#нашиработы»): три магазина на шаблоне InSales со скриншотами — ss-sk.ru, almatennis.ru, nsorganic.ru; ещё магазины на InSales — alohagaia.ru, zalina.me, duman.store, wizzu.ru, многолес.рф, geekboards.ru; интеграция mansen-store.com с Mindbox; ссылки на карточку в каталоге партнёров InSales и кейс в блоге Weeek. Без цифр — их добавим с согласия клиентов.
+**На лендинге с 23.10.2026** (`TEMPLATE_SHOPS`, `MORE_SHOPS`, `INTEGRATIONS` в `src/data/insales.ts`, список — из публикации владельца «#нашиработы»): три магазина на шаблоне InSales со скриншотами — ss-sk.ru, almatennis.ru, nsorganic.ru; ещё магазины на InSales — alohagaia.ru, zalina.me, duman.store, wizzu.ru, многолес.рф, geekboards.ru; интеграция mansen-store.com с Mindbox; ссылки на карточку в каталоге партнёров InSales и кейс в блоге Weeek. Без цифр — их добавим с согласия клиентов. Видеоотзыв Ислама (Wizzu, сервис доставки продуктов на InSales) — фрагмент 04:36–05:55 записи обратной связи 02.09: как нашёл в каталоге партнёров и почему выбрал; `public/video/review-wizzu.*`, субтитры из расшифровки.
 
 Заготовки с цифрами — заполнить после согласия клиентов:
 - **Зоомагазин, Москва (Happy Animal).** 2 000 товаров из 1С, две офлайн-точки, SEO-структура под район. *Цифры: срок, заказы за первый месяц — заполнить.*

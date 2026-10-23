@@ -6,7 +6,7 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS } from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -98,6 +98,31 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
       </ul>
       <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text} ↗</a></>)}</p>
+    </section>
+
+    <!-- Видеоотзыв: как клиент нашёл нас и почему выбрал -->
+    <section class="card block review" aria-labelledby="t-review">
+      <h2 id="t-review">Отзыв клиента</h2>
+      <div class="review-grid">
+        <video
+          controls
+          playsinline
+          preload="none"
+          width="640"
+          height="362"
+          poster={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.poster}`}
+        >
+          <source src={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.src}`} type="video/mp4" />
+          <track kind="captions" srclang="ru" label="Русский" src={`${base}${base.endsWith('/') ? '' : '/'}${VIDEO_REVIEW.captions}`} default />
+        </video>
+        <figure class="quote">
+          <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
+          <figcaption>
+            <b>{VIDEO_REVIEW.who}</b>
+            <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="block plain" aria-labelledby="t-plans">
@@ -401,6 +426,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .proof { font-size: 14px; color: var(--ink-3); }
   .proof a { font-weight: 600; }
+  .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+  .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
+  .quote { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .quote blockquote { margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
+  .quote figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--ink-2); }
+  .quote figcaption b { font-size: 16px; color: var(--ink); }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }
@@ -539,7 +570,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
-    .plans, .shops { grid-template-columns: 1fr; }
+    .plans, .shops, .review-grid { grid-template-columns: 1fr; }
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {

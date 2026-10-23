@@ -121,3 +121,15 @@ export const PROOF_LINKS = [
   { text: 'Мы в каталоге партнёров InSales', url: 'https://www.insales.ru/collection/partners-prodvizhenie/product/emiliusagency' },
   { text: 'О нас пишут в Weeek', url: 'https://weeek.net/ru/blog/case-emilius-agency' },
 ];
+
+// Видеоотзыв клиента: Wizzu — сервис доставки продуктов на InSales (созвон обратной связи 02.09).
+// Фрагмент 04:36–05:55 полной записи; субтитры — public/video/review-wizzu.vtt.
+export const VIDEO_REVIEW = {
+  src: 'video/review-wizzu.mp4',
+  poster: 'video/review-wizzu.jpg',
+  captions: 'video/review-wizzu.vtt',
+  who: 'Ислам, Wizzu',
+  project: 'Сервис доставки продуктов на InSales',
+  url: 'https://wizzu.ru/',
+  quote: 'Узнал о вас в разделе партнёров InSales. Выбрал не только по цене — по отзывчивости: вы откликнулись с контрпредложением, с решением моей задачи.',
+};
