@@ -3,7 +3,8 @@
 //   node scripts/insales-unit.mjs --plan 600000         — план выручки в месяц, ₽ (по умолчанию 500 000)
 //   node scripts/insales-unit.mjs --letters 20         — сколько холодных писем в рабочий день уже в плане (08-lead-gen.md §6)
 //   node scripts/insales-unit.mjs --pay 0.5 --overrun 1.3 --keep 0.2 --mgr 1000
-// --pay      доля ставки клиента, которую получает исполнитель (по умолчанию 0,55 — гипотеза, заменить фактом выплат)
+// --pay      доля ставки клиента, которая уходит команде на проекте (по умолчанию 0,62 — факт по «Вним-номике»,
+//            AFFiNE «Руководство по методологии»: исполнитель 34% + ПМ 18% + тестировщик 10%; агентству 38%)
 // --overrun  факт/смета по часам (1 — нормы v2 откалиброваны; 1,3 — верх коридора ФИКС, худший случай)
 // --keep     доля цены проекта, которая должна остаться агентству после исполнителей, продаж и привлечения (0,2)
 // --mgr      стоимость часа менеджера продаж, ₽ (1 000)
@@ -15,7 +16,7 @@ import { SCENARIOS } from './insales-calc.mjs';
 const isMain = import.meta.url === `file://${process.argv[1]}`;
 const a = Object.fromEntries((isMain ? process.argv.slice(2) : []).reduce((r, x, i, arr) => (x.startsWith('--') ? [...r, [x.slice(2), Number(arr[i + 1])]] : r), []));
 const letters = a.letters ?? 20;
-const pay = a.pay ?? 0.55, overrun = a.overrun ?? 1, keep = a.keep ?? 0.2, mgr = a.mgr ?? 1000, plan = a.plan ?? 500000;
+const pay = a.pay ?? 0.62, overrun = a.overrun ?? 1, keep = a.keep ?? 0.2, mgr = a.mgr ?? 1000, plan = a.plan ?? 500000;
 const catalog = parseCatalog(readFileSync(new URL('../docs/insales-service/03-catalog.csv', import.meta.url), 'utf8'));
 const rub = (n) => Math.round(n).toLocaleString('ru-RU') + ' ₽';
 const pct = (x) => Math.round(x * 100) + '%';

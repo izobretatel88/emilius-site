@@ -223,8 +223,12 @@ function mergeQa(w) {
   return out;
 }
 
+// Сверка 23.10.2026 (insales.ru): встроенная работа с WB/Ozon — только на тарифах «Селлер»
+// и «Сайт из маркетплейса». Разовый перенос карточек без синхронизации делается файлом выгрузки
+// из кабинета площадки на «Интернет-магазине» — это «Магазин» (работа импорта), а не «Селлер».
 function pickPackage(b) {
-  if (b.marketplaces > 0 || b.source === 'marketplace') return 'P';
+  if (b.marketplaces > 0) return 'P';
+  if (b.source === 'marketplace') return 'M';
   if (b.sku > 50 || b.variants || b.carriers > 1 || b.source !== 'manual' || b.accounting !== 'none') return 'M';
   return 'S';
 }
@@ -280,12 +284,13 @@ function estimate(brief, catalog) {
 
 // Расходы клиента вне цены работ — показываем отдельно (тарифы InSales на 2026, проверять перед КП).
 function platformCosts(b) {
-  const seller = b.marketplaces > 0 || b.source === 'marketplace';
-  // Сверка 06.10.2026 (сниппеты insales.ru, сайт закрыт прокси — проверить в браузере перед КП):
-  // «Селлер» 4 800 ₽ — только кабинет маркетплейсов, без витрины. Сайт + площадки — «Комбо» 6 600 ₽.
+  const seller = b.marketplaces > 0;
+  // Сверка 23.10.2026 по insales.ru (страницы /page/site-im и /page/marketplace), помесячно:
+  // «Интернет-магазин» 2 700 ₽ (2 295 ₽ при оплате за год), «Селлер» 4 800 ₽ — только кабинет
+  // маркетплейсов без витрины, «Сайт из маркетплейса» (бывший «Комбо») 6 600 ₽ (5 610 ₽ за год).
   // Лимит товаров расширяется на любом тарифе: +1 000 товаров за 100 ₽/мес. Базовый лимит
   // «Интернет-магазина» в источниках 1 000 или 5 000 — берём 1 000, чтобы не занизить расходы клиента.
-  const base = seller ? { name: 'Комбо', month: 6600 } : { name: 'Интернет-магазин', month: 2700 };
+  const base = seller ? { name: 'Сайт из маркетплейса', month: 6600 } : { name: 'Интернет-магазин', month: 2700 };
   const extraK = Math.max(0, Math.ceil((b.sku - TARIFF_SKU_LIMIT) / 1000));
   const tariff = { name: base.name + (extraK ? ` + ${extraK} тыс. товаров` : ''), month: base.month + extraK * 100 };
   return {
