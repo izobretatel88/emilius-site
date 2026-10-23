@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import WriteButton from '../components/WriteButton.astro';
 // Основные начертания грузим заранее: заголовки (600) и текст (400) не перескакивают со шрифта на шрифт
 import glober400 from '../styles/fonts/glober-400.woff2?url';
 import glober600 from '../styles/fonts/glober-600.woff2?url';
@@ -66,6 +67,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
   <body>
     {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
     <slot />
+    <WriteButton />
   </body>
 </html>
 
