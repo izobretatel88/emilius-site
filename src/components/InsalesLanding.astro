@@ -6,8 +6,7 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ,
-} from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -73,6 +72,32 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block" aria-labelledby="t-result">
       <h2 id="t-result">Что получите</h2>
       <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+    </section>
+
+    <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
+    <section class="card block" aria-labelledby="t-examples">
+      <h2 id="t-examples">Магазины, которые мы сделали</h2>
+      <p class="sub-lead">На шаблоне InSales — как в этой услуге:</p>
+      <ul class="shops">
+        {TEMPLATE_SHOPS.map((x) => (
+          <li>
+            <a class="shop" href={x.url} target="_blank" rel="noopener">
+              <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${x.id}.webp`} alt={`Первый экран сайта ${x.domain}`} width="640" height="400" loading="lazy" decoding="async" />
+              <span class="shop-body">
+                <span class="shop-name">{x.name}</span>
+                <span class="shop-what">{x.what}</span>
+                <span class="shop-link">{x.domain} ↗</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="sub-lead">Ещё магазины и интеграции на InSales:</p>
+      <ul class="more-shops">
+        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a></li>)}
+        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
+      </ul>
+      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text} ↗</a></>)}</p>
     </section>
 
     <section class="block plain" aria-labelledby="t-plans">
@@ -350,6 +375,32 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
   .item { display: flex; flex-direction: column; gap: 6px; }
   .item p { color: var(--ink-2); }
+  .sub-lead { font-size: 15px; font-weight: 600; color: var(--ink-2); }
+  .shops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-direction: row; }
+  .shop {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--well);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color var(--hover);
+  }
+  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .shop-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; }
+  .shop-name { font-size: 18px; font-weight: 700; }
+  .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
+  .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
+  .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .proof { font-size: 14px; color: var(--ink-3); }
+  .proof a { font-weight: 600; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }
@@ -488,7 +539,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
-    .plans { grid-template-columns: 1fr; }
+    .plans, .shops { grid-template-columns: 1fr; }
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {

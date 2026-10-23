@@ -100,3 +100,24 @@ export const FAQ = [
   ['Можно потом доработать?', 'Да, по часам или абонементом. Первые 60 дней после запуска исправляем ошибки в наших работах бесплатно.'],
 ] as const;
 
+
+// Примеры работ — из публикации владельца «#нашиработы» (23.10.2026). Описания — по самим сайтам,
+// без цифр: цифры по проектам появятся только с согласия клиентов (07-landing.md, блок 9).
+export const TEMPLATE_SHOPS = [
+  { id: 'ss-sk', name: 'СС-СК', what: 'Системы безопасности в Сочи: оборудование, монтаж и обслуживание', url: 'https://ss-sk.ru/', domain: 'ss-sk.ru' },
+  { id: 'almatennis', name: 'Almatennis', what: 'Теннисный интернет-магазин в Москве', url: 'https://almatennis.ru/', domain: 'almatennis.ru' },
+  { id: 'nsorganic', name: 'NSOrganic', what: 'Грибы и травы: интернет-магазин с каталогом по направлениям', url: 'https://nsorganic.ru/', domain: 'nsorganic.ru' },
+];
+export const MORE_SHOPS = [
+  { name: 'Aloha Gaia', url: 'https://alohagaia.ru/', domain: 'alohagaia.ru' },
+  { name: 'Zalina Verkhovskaya', url: 'https://zalina.me/', domain: 'zalina.me' },
+  { name: 'Duman', url: 'https://duman.store/', domain: 'duman.store' },
+  { name: 'Wizzu', url: 'https://wizzu.ru/', domain: 'wizzu.ru' },
+  { name: 'Многолес', url: 'https://xn--c1aercfgb0a.xn--p1ai/', domain: 'многолес.рф' },
+  { name: 'Geekboards', url: 'https://geekboards.ru/', domain: 'geekboards.ru' },
+];
+export const INTEGRATIONS = [{ name: 'Mansen', what: 'интеграция InSales с Mindbox', url: 'https://mansen-store.com/', domain: 'mansen-store.com' }];
+export const PROOF_LINKS = [
+  { text: 'Мы в каталоге партнёров InSales', url: 'https://www.insales.ru/collection/partners-prodvizhenie/product/emiliusagency' },
+  { text: 'О нас пишут в Weeek', url: 'https://weeek.net/ru/blog/case-emilius-agency' },
+];
