@@ -1,0 +1,78 @@
+---
+// Переключатель страниц приложения Emilius Meetings: о приложении, политика, условия.
+// Google проверяет, что политика доступна со страницы приложения, — ссылки видны на каждой из трёх страниц.
+import { MEETINGS } from '../data/meetings';
+
+interface Props {
+  current: 'app' | 'privacy' | 'terms';
+}
+const { current } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const items = [
+  { id: 'app', label: MEETINGS.name, short: MEETINGS.name, path: 'meetings/' },
+  { id: 'privacy', label: 'Политика конфиденциальности', short: 'Политика', path: 'meetings/privacy/' },
+  { id: 'terms', label: 'Условия использования', short: 'Условия', path: 'meetings/terms/' },
+] as const;
+---
+
+<nav class="app-nav" aria-label={`Страницы ${MEETINGS.name}`}>
+  {items.map((i) => (
+    <a href={href(i.path)} class:list={['tab', { app: i.id === 'app' }]} aria-current={i.id === current ? 'page' : undefined}>
+      <span class="full">{i.label}</span><span class="short">{i.short}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .app-nav {
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--card);
+    border-radius: var(--radius-btn);
+    box-shadow: var(--shadow-card);
+  }
+  .tab {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--ink-2);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--hover), color var(--hover);
+  }
+  .tab.app {
+    color: var(--ink);
+  }
+  .tab:hover {
+    color: var(--teal-text);
+  }
+  .tab[aria-current='page'] {
+    background: var(--well);
+    color: var(--ink);
+  }
+  .short {
+    display: none;
+  }
+  /* На телефоне все три вкладки в одну строку: короткие подписи */
+  @media (max-width: 560px) {
+    .app-nav {
+      flex-wrap: nowrap;
+    }
+    .tab {
+      padding: 8px 11px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .full {
+      display: none;
+    }
+    .short {
+      display: inline;
+    }
+  }
+</style>
