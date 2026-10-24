@@ -77,15 +77,37 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
     <section class="card block" aria-labelledby="t-examples">
       <h2 id="t-examples">Магазины, которые мы сделали</h2>
-      <a class="shop fresh" href={FRESH_SHOP.url} target="_blank" rel="noopener">
-        <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${FRESH_SHOP.id}.webp`} alt={`Первый экран сайта ${FRESH_SHOP.domain}`} width="640" height="400" loading="lazy" decoding="async" />
-        <span class="shop-body">
-          <span class="fresh-tag">Свежая работа</span>
-          <span class="shop-name">{FRESH_SHOP.name}</span>
-          <span class="shop-what">{FRESH_SHOP.what}</span>
-          <span class="shop-link">{FRESH_SHOP.domain} ↗</span>
-        </span>
-      </a>
+      <!-- Свежая работа — кейс «магазин + SEO»: что сделали и позиции по местным запросам -->
+      <article class="case" id={`case-${FRESH_SHOP.id}`} aria-labelledby="t-case">
+        <div class="case-top">
+          <a class="case-shot" href={FRESH_SHOP.url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+            <img src={`${base}${base.endsWith('/') ? '' : '/'}cases/${FRESH_SHOP.id}.webp`} alt="" width="640" height="400" loading="lazy" decoding="async" />
+          </a>
+          <div class="case-body">
+            <span class="fresh-tag">{FRESH_SHOP.tag}</span>
+            <h3 class="case-name" id="t-case">{FRESH_SHOP.name}</h3>
+            <p class="shop-what">{FRESH_SHOP.what}</p>
+            <ul class="dots case-done">{FRESH_SHOP.done.map((d) => <li>{d}</li>)}</ul>
+            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} ↗</a>
+          </div>
+        </div>
+        <div class="case-pos">
+          <p class="case-pos-title">{FRESH_SHOP.positionsTitle}</p>
+          <table>
+            <thead><tr><th scope="col">Запрос</th><th scope="col">Яндекс</th><th scope="col">Google</th></tr></thead>
+            <tbody>
+              {FRESH_SHOP.positions.map(([q, ya, g]) => (
+                <tr>
+                  <th scope="row">{q}</th>
+                  <td><span class:list={['pos', { first: ya === 1 }]}>{ya}</span></td>
+                  <td><span class:list={['pos', { first: g === 1, none: g === null }]}>{g ?? '—'}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="small">{FRESH_SHOP.positionsNote}</p>
+        </div>
+      </article>
       <p class="sub-lead">На шаблоне InSales — как в этой услуге:</p>
       <ul class="shops">
         {TEMPLATE_SHOPS.map((x) => (
@@ -162,6 +184,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p>Аккаунт InSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши.</p>
         <h2 class="sub">Честно про трафик</h2>
         <p>Сайт — касса и витрина, а не поток покупателей. До оплаты разберём, откуда придут первые 100 покупателей: подписчики, база клиентов, офлайн-точка, реклама. Если источника нет, скажем и предложим, с чего начать.</p>
+        <p>Есть офлайн-точка — начнём с местного SEO, как <a href={`#case-${FRESH_SHOP.id}`}>у {FRESH_SHOP.name}</a>. Это отдельная работа, в пакеты не входит.</p>
       </section>
     </div>
 
@@ -430,10 +453,35 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
-  .shop.fresh { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; height: auto; }
-  .shop.fresh .shop-body { padding: 20px 24px; gap: 6px; }
-  .shop.fresh .shop-name { font-size: clamp(22px, 2.6vw, 28px); }
-  .shop.fresh .shop-what { font-size: 15px; }
+  /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
+  .case { border-radius: var(--radius-sm); overflow: hidden; background: var(--well); }
+  .case-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .case-shot img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; }
+  .case-body { display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; }
+  .case-name { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; line-height: 1.1; }
+  .case-body .shop-what { font-size: 15px; }
+  .case-done { gap: 6px; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+  .case-done li::before { top: 0.5em; width: 6px; height: 6px; }
+  .case-pos { display: flex; flex-direction: column; gap: 10px; padding: 20px 24px 22px; border-top: 1px solid var(--hair); }
+  .case-pos-title { font-size: clamp(18px, 2vw, 21px); font-weight: 700; line-height: 1.25; }
+  .case-pos table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .case-pos th, .case-pos td { padding: 7px 0; border-bottom: 1px solid var(--hair); text-align: left; font-weight: 400; }
+  .case-pos thead th { padding-top: 0; font-size: 13px; color: var(--ink-3); }
+  .case-pos thead th + th, .case-pos td { width: 76px; text-align: center; }
+  .case-pos tbody tr:last-child > * { border-bottom: 0; }
+  .pos {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--teal-num);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .pos.first { background: var(--teal-btn); color: var(--on-teal); }
+  .pos.none { background: none; color: var(--ink-3); font-weight: 400; }
   .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
@@ -585,7 +633,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
-    .plans, .shops, .review-grid, .shop.fresh { grid-template-columns: 1fr; }
+    .plans, .shops, .review-grid, .case-top { grid-template-columns: 1fr; }
+    .case-shot img { height: auto; }
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {
@@ -597,5 +646,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .weeks li { grid-template-columns: 1fr; }
     .wk { grid-row: auto; }
     .cta { width: 100%; }
+    .case-body, .case-pos { padding-inline: 16px; }
+    .case-pos thead th + th, .case-pos td { width: 60px; }
   }
 </style>
