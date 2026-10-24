@@ -52,19 +52,22 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <meta name="theme-color" content="#0e1413" media="(prefers-color-scheme: dark)" />
     {ymId > 0 && (
       <script is:inline define:vars={{ ymId }}>
+        // Код из кабинета Метрики (24.10.2026), номер счётчика подставляется из YM_ID
         (function (m, e, t, r, i, k, a) {
           m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
           m[i].l = 1 * new Date();
+          for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
           k = e.createElement(t); a = e.getElementsByTagName(t)[0];
           k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
         })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
-        ym(ymId, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
+        ym(ymId, 'init', { webvisor: true, clickmap: true, referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
         // Цели страниц вызывают window.emiGoal — без счётчика это просто отсутствие функции.
         window.emiGoal = (name, params) => ym(ymId, 'reachGoal', name, params);
       </script>
     )}
   </head>
   <body>
+    {ymId > 0 && <noscript><div><img src={`https://mc.yandex.ru/watch/${ymId}`} style="position:absolute; left:-9999px;" alt="" /></div></noscript>}
     {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
     <slot />
     <WriteButton />
