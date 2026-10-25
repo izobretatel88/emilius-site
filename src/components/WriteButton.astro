@@ -1,0 +1,84 @@
+---
+import { LINKS } from '../data/site';
+---
+
+<!-- Плавающая «Написать» на всех страницах: решился — сразу в личку в Telegram.
+     Вид — как вторичная кнопка «Написать» в карточке «Связь», плюс тень плавающих элементов. -->
+<a class="write-fab" href={LINKS.direct} target="_blank" rel="noopener" aria-label="Написать в Telegram">
+  Написать
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
+</a>
+
+<script>
+  const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
+  if (fab) {
+    // Пока на экране такая же кнопка страницы («Написать» в карточке «Связь», на 404) — плавающая не дублирует её.
+    const twins = [...document.querySelectorAll<HTMLAnchorElement>(`a.btn[href="${fab.getAttribute('href')}"]`)];
+    const seen = new Set<Element>();
+    let typing = false;
+    const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing);
+    if (twins.length) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));
+        update();
+      });
+      twins.forEach((t) => io.observe(t));
+    }
+    // На телефоне, пока человек заполняет форму, кнопка не лезет поверх поля и клавиатуры.
+    if (matchMedia('(pointer: coarse)').matches) {
+      const isField = (el: EventTarget | null) => el instanceof HTMLElement && el.matches('input, textarea, select');
+      addEventListener('focusin', (e) => { typing = isField(e.target); update(); });
+      addEventListener('focusout', () => { typing = false; update(); });
+    }
+  }
+</script>
+
+<style>
+  .write-fab {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 40; /* под заставкой и меткой dev */
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-inline: 18px 14px;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-btn);
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 17px;
+    text-decoration: none;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover);
+  }
+  .write-fab svg {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    fill: var(--ink);
+    transition: fill var(--hover);
+  }
+  .write-fab:hover {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: #fff;
+  }
+  .write-fab:hover svg {
+    fill: #000;
+  }
+  .write-fab:focus-visible {
+    outline: 2px dashed var(--teal);
+    outline-offset: 3px;
+  }
+  .write-fab.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* Низ страницы (футер) не уходит под кнопку */
+  :global(body) {
+    padding-bottom: 88px;
+  }
+</style>
