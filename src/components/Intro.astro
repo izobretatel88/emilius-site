@@ -70,7 +70,14 @@ const music = `${root}brand/music.mp3`;
     try { seen = sessionStorage.getItem('emilius-intro-seen') === '1'; } catch (e) {}
     var forced = /[?&]intro\b/.test(location.search);
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (forced || (!seen && !reduce)) {
+    // Пришли из поиска — сразу сайт: окно поверх страницы после перехода из выдачи поисковики
+    // считают навязчивым (решение владельца 25.10.2026). Отметка «видел» — чтобы заставка не всплыла позже за визит.
+    var fromSearch = false;
+    try { fromSearch = /(^|\.)(google|yandex|bing|duckduckgo)\.[a-z.]+$|(^|\.)(ya\.ru|go\.mail\.ru)$/.test(new URL(document.referrer).hostname); } catch (e) {}
+    if (fromSearch && !forced) {
+      try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (e) {}
+    }
+    if (forced || (!seen && !reduce && !fromSearch)) {
       document.getElementById('intro').hidden = false;
       document.documentElement.classList.add('intro-open');
     }
