@@ -135,6 +135,17 @@ export const TEMPLATE_SHOPS = [
   { id: 'almatennis', name: 'Almatennis', what: 'Теннисный интернет-магазин в Москве', url: 'https://almatennis.ru/', domain: 'almatennis.ru' },
   { id: 'nsorganic', name: 'NSOrganic', what: 'Грибы и травы: интернет-магазин с каталогом по направлениям', url: 'https://nsorganic.ru/', domain: 'nsorganic.ru' },
 ];
+// Лента мобильных версий: скрины владельца 27.10.2026, обрезаны по экрану телефона — public/cases/mobile/.
+export const MOBILE_SHOTS = [
+  { id: 'happyanimal', name: 'Happy Animal', what: 'Зоомагазин в Гольяново', url: 'https://happyanimal.pet/', domain: 'happyanimal.pet' },
+  { id: 'duman', name: 'Duman Store', what: 'Одежда, созданная в Сибири', url: 'https://duman.store/', domain: 'duman.store' },
+  { id: 'alohagaia', name: 'Aloha Gaia', what: 'Российский бренд ювелирных украшений', url: 'https://alohagaia.ru/', domain: 'alohagaia.ru' },
+  { id: 'zalina', name: 'Zalina Verkhovskaya', what: 'Российский бренд авторской одежды', url: 'https://zalina.me/', domain: 'zalina.me' },
+  { id: 'wizzu', name: 'Wizzu', what: 'Доставка продуктов в Грозном', url: 'https://vkusdom.wizzu.ru/', domain: 'vkusdom.wizzu.ru' },
+  { id: 'geekboards', name: 'Geekboards', what: 'Механические клавиатуры', url: 'https://geekboards.ru/', domain: 'geekboards.ru' },
+  { id: 'almatennis', name: 'Almatennis', what: 'Теннисный интернет-магазин', url: 'https://almatennis.ru/', domain: 'almatennis.ru' },
+  { id: 'nsorganic', name: 'NSOrganic', what: 'Функциональные грибы', url: 'https://nsorganic.ru/', domain: 'nsorganic.ru' },
+];
 export const MORE_SHOPS = [
   { name: 'Aloha Gaia', url: 'https://alohagaia.ru/', domain: 'alohagaia.ru' },
   { name: 'Zalina Verkhovskaya', url: 'https://zalina.me/', domain: 'zalina.me' },

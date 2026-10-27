@@ -6,7 +6,7 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP } from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP, MOBILE_SHOTS } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -119,6 +119,20 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
                 <span class="shop-what">{x.what}</span>
                 <span class="shop-link">{x.domain} ↗</span>
               </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <!-- Лента мобильных версий: листается вбок, на телефоне — свайпом -->
+      <p class="sub-lead" id="t-mobile">Так они выглядят в телефоне — там покупают чаще всего:</p>
+      <ul class="phones" aria-labelledby="t-mobile">
+        {MOBILE_SHOTS.map((x) => (
+          <li>
+            <a class="phone-card" href={x.url} target="_blank" rel="noopener">
+              <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="480" height="898" loading="lazy" decoding="async" /></span>
+              <span class="shop-name">{x.name}</span>
+              <span class="shop-what">{x.what}</span>
+              <span class="shop-link">{x.domain} ↗</span>
             </a>
           </li>
         ))}
@@ -483,6 +497,32 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .pos.first { background: var(--teal-btn); color: var(--on-teal); }
   .pos.none { background: none; color: var(--ink-3); font-weight: 400; }
   .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
+  /* Лента мобильных версий: телефоны в ряд, лишние уходят вправо за край карточки */
+  .phones {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 4px 2px 12px;
+    scrollbar-width: thin;
+  }
+  .phones li { flex: 0 0 196px; scroll-snap-align: start; }
+  .phone-card { display: flex; flex-direction: column; gap: 4px; color: var(--ink); text-decoration: none; }
+  .phone {
+    display: block;
+    margin-bottom: 10px;
+    border: 6px solid var(--phone-frame);
+    border-radius: var(--radius-phone);
+    overflow: hidden;
+    background: var(--card);
+  }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 690 / 1290; }
+  .phone-card .shop-name { font-size: 16px; }
+  .phone-card .shop-what { font-size: 13.5px; }
+  .phone-card .shop-link { margin-top: 0; font-size: 13.5px; }
+  .phone-card:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
+  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; border-radius: var(--radius-phone); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
@@ -647,6 +687,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .wk { grid-row: auto; }
     .cta { width: 100%; }
     .case-body, .case-pos { padding-inline: 16px; }
+    .phones li { flex-basis: 168px; }
     .case-pos thead th + th, .case-pos td { width: 60px; }
   }
 </style>
