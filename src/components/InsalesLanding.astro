@@ -29,6 +29,10 @@ const other = variant === 'shop'
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 // Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
 const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
+// Заголовок не рвётся на «интернет-|магазин» и «3–|5»: word joiner после дефиса и вокруг тире между цифрами.
+const nobreak = (t: string) => t.replace(/(\S)-(\S)/g, '$1-\u2060$2').replace(/(\d)–(\d)/g, '$1\u2060–\u2060$2');
+// Телефон на первом экране: общей версии — свежий кейс, селлеру — бренд одежды.
+const heroShop = MOBILE_SHOTS.find((x) => x.id === (variant === 'seller' ? 'duman' : 'happyanimal'))!;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
 const norms = JSON.stringify([...parseCatalog(catalogCsv).values()].map((c) => [c.id, c.base, c.per, c.role, c.packages]));
 // Селлеру сразу отмечены площадки, в общей версии — самый частый клиент: соцсети, товары с нуля.
@@ -45,8 +49,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
   <main class="page">
     <section class="card hero">
+      <div class="hero-main">
       <p class="eyebrow">{hero.eyebrow}</p>
-      <h1>{hero.title}</h1>
+      <h1>{nobreak(hero.title)}</h1>
       <p class="lead">{hero.lead}</p>
       <ul class="ticks">{hero.bullets.map((b) => <li>{b}</li>)}</ul>
       <div class="cta-row">
@@ -55,6 +60,16 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </div>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
+      </div>
+      <!-- Справа — живой магазин в телефоне: результат, а не обещание. На телефоне прячем, первый экран — текст и кнопка -->
+      <figure class="hero-phone">
+        <picture>
+          <!-- на узких экранах телефон спрятан — пустой пиксель вместо 50 КБ картинки -->
+          <source media="(max-width: 760px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />
+          <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
+        </picture>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+      </figure>
     </section>
 
     <section class="card block" aria-labelledby="t-extras">
@@ -437,7 +452,19 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     flex-direction: column;
     gap: 28px; /* воздух между разделами, как на главной (23.10.2026) */
   }
-  .hero { padding: clamp(26px, 4.4vw, 48px); display: flex; flex-direction: column; gap: 16px; }
+  .hero {
+    padding: clamp(26px, 4.4vw, 48px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(190px, 21vw, 240px);
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+  }
+  .hero-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
+  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; }
+  .hero-phone a { font-weight: 600; text-decoration: none; }
+  .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
@@ -446,7 +473,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     text-transform: uppercase;
   }
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
-  h1 { font-size: clamp(32px, 5.6vw, 54px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
   .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
   h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
   h2.sub { font-size: clamp(20px, 2.4vw, 24px); margin-top: 12px; }
@@ -738,6 +765,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-phone { display: none; }
     .plans, .shops, .review-grid, .case-top { grid-template-columns: 1fr; }
     .case-shot img { height: auto; }
     .who { min-height: 0; }
