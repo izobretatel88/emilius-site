@@ -13,6 +13,15 @@ interface Props {
 }
 const { title, description, eyebrow, date = LEGAL_DATE } = Astro.props;
 const base = import.meta.env.BASE_URL;
+// Оглавление из заголовков разделов: у длинных документов (от 4 разделов) — ссылки на каждый раздел.
+let html = await Astro.slots.render('default');
+const toc: { id: string; text: string }[] = [];
+html = html.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/g, (_m, attrs: string, inner: string) => {
+  const id = `s-${toc.length + 1}`;
+  toc.push({ id, text: inner.replace(/<[^>]+>/g, '').trim() });
+  return /\sid=/.test(attrs) ? `<h2${attrs}>${inner}</h2>` : `<h2 id="${id}"${attrs}>${inner}</h2>`;
+});
+const showToc = toc.length >= 4;
 ---
 
 <Base title={`${title} — Эмилиус Эдженси`} description={description}>
@@ -26,7 +35,13 @@ const base = import.meta.env.BASE_URL;
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     <p class="date">Редакция от {date}</p>
-    <slot />
+    {showToc && (
+      <nav class="toc" aria-label="Содержание">
+        <p class="toc-title">Содержание</p>
+        <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text.replace(/^\d+\.\s*/, '')}</a></li>)}</ol>
+      </nav>
+    )}
+    <Fragment set:html={html} />
   </main>
 
   <Footer />
@@ -66,14 +81,56 @@ const base = import.meta.env.BASE_URL;
     color: var(--ink-2);
   }
   .doc :global(h2) {
-    margin-top: 28px;
+    margin-top: 32px;
     font-size: 20px;
     line-height: 1.25;
+    scroll-margin-top: 24px;
   }
+  /* Документ читают, а не пролистывают: текст крупнее и свободнее, строка не шире ~70 знаков */
   .doc :global(p),
   .doc :global(ul) {
     margin-top: 10px;
     color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+  .toc {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+  }
+  .toc-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 22px;
+    columns: 2;
+    column-gap: 28px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .toc li {
+    break-inside: avoid;
+    margin: 0 0 4px;
+  }
+  .toc a {
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @media (max-width: 560px) {
+    .toc ol {
+      columns: 1;
+    }
   }
   .doc :global(ul) {
     padding-left: 20px;
