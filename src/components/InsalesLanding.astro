@@ -6,7 +6,8 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP } from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP, MOBILE_SHOTS,
+  SELLER_WHY, SELLER_MOVE, SELLER_MOVE_NOTE, SELLER_QUICK, SELLER_FAQ } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -26,6 +27,8 @@ const other = variant === 'shop'
   : { url: href('services/insales-shop/'), text: 'Общая версия: соцсети, офлайн, переезд со старого сайта →' };
 // Селлеру первым показываем его пакет.
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
+// Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
+const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
 const norms = JSON.stringify([...parseCatalog(catalogCsv).values()].map((c) => [c.id, c.base, c.per, c.role, c.packages]));
 // Селлеру сразу отмечены площадки, в общей версии — самый частый клиент: соцсети, товары с нуля.
@@ -50,6 +53,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
         <p class="note">{CTA_NOTE}</p>
       </div>
+      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
     </section>
 
@@ -59,6 +63,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {EXTRAS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
       </div>
     </section>
+
+    {variant === 'seller' && (
+      <section class="card block" aria-labelledby="t-why">
+        <h2 id="t-why">Зачем свой магазин, если есть WB и Ozon</h2>
+        <div class="grid2">
+          {SELLER_WHY.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+        </div>
+      </section>
+      <section class="card block" aria-labelledby="t-move">
+        <h2 id="t-move">Что переносим с площадок</h2>
+        <div class="grid2">
+          {SELLER_MOVE.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+        </div>
+        <p class="small">{SELLER_MOVE_NOTE}</p>
+      </section>
+    )}
 
     {variant === 'shop' && (
       <section class="card block" aria-labelledby="t-sit">
@@ -129,6 +149,31 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
       </ul>
       <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text} ↗</a></>)}</p>
+    </section>
+
+    <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
+    <section class="card block mobile" aria-labelledby="t-mobile">
+      <div class="mobile-head">
+        <div class="mobile-text">
+          <h2 id="t-mobile">Как эти магазины выглядят в телефоне</h2>
+          <p class="mobile-lead">С телефона покупают чаще всего. Поэтому первый пункт приёмки — заказ с телефона от каталога до чека.</p>
+        </div>
+        <div class="arrows">
+          <button type="button" class="arrow" data-dir="-1" aria-label="Листать назад" disabled>←</button>
+          <button type="button" class="arrow" data-dir="1" aria-label="Листать вперёд">→</button>
+        </div>
+      </div>
+      <ul class="phones">
+        {MOBILE_SHOTS.map((x) => (
+          <li>
+            <a class="phone-card" href={x.url} target="_blank" rel="noopener">
+              <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="520" height="1071" loading="lazy" decoding="async" /></span>
+              <span class="phone-name">{x.name} <span aria-hidden="true">↗</span></span>
+              <span class="phone-what">{x.what}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <!-- Видеоотзыв: как клиент нашёл нас и почему выбрал -->
@@ -212,7 +257,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
-        {FAQ.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
       </div>
     </section>
 
@@ -275,6 +320,20 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       return 'не определён';
     }
   })();
+
+  // Лента мобильных версий: стрелка листает на ширину видимой части, на краях гаснет.
+  const phones = document.querySelector<HTMLElement>('.phones');
+  const arrows = document.querySelectorAll<HTMLButtonElement>('.arrow');
+  if (phones) {
+    const sync = () => {
+      arrows[0].disabled = phones.scrollLeft <= 2;
+      arrows[1].disabled = phones.scrollLeft + phones.clientWidth >= phones.scrollWidth - 2;
+    };
+    arrows.forEach((b) => b.addEventListener('click', () => phones.scrollBy({ left: Number(b.dataset.dir) * phones.clientWidth * 0.8 })));
+    phones.addEventListener('scroll', sync, { passive: true });
+    addEventListener('resize', sync);
+    sync();
+  }
 
   document.querySelectorAll<HTMLElement>('[data-goal]').forEach((el) => el.addEventListener('click', () => goal(el.dataset.goal!)));
   document.querySelectorAll<HTMLAnchorElement>('a[href^="https://t.me/"]').forEach((a) => a.addEventListener('click', () => goal('tg-click')));
@@ -426,6 +485,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
   .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
+  .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+  .quick a { font-weight: 600; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
@@ -483,6 +544,50 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .pos.first { background: var(--teal-btn); color: var(--on-teal); }
   .pos.none { background: none; color: var(--ink-3); font-weight: 400; }
   .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
+  /* Мобильные версии: лента выходит под края карточки, полоса прокрутки скрыта — листают стрелками или свайпом */
+  .mobile { --pad: clamp(24px, 3.6vw, 38px); }
+  .mobile-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .mobile-text { display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
+  .mobile-lead { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+  .arrows { display: flex; gap: 8px; flex: none; }
+  .arrow {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--hair);
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover);
+  }
+  .arrow:hover:not(:disabled) { background: var(--well); }
+  .arrow:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .arrow:disabled { opacity: 0.35; cursor: default; }
+  .phones {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin: 6px calc(-1 * var(--pad)) 0;
+    padding: 4px var(--pad) 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--pad);
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .phones::-webkit-scrollbar { display: none; }
+  .phones li { flex: 0 0 188px; scroll-snap-align: start; }
+  .phone-card { display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
+  /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
+  .phone { display: block; margin-bottom: 10px; }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
+  .phone-name { font-size: 16px; font-weight: 700; transition: color var(--hover); }
+  .phone-name span { font-weight: 400; color: var(--ink-3); }
+  .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .phone-card:hover .phone-name { color: var(--teal-text); }
+  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
@@ -647,6 +752,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .wk { grid-row: auto; }
     .cta { width: 100%; }
     .case-body, .case-pos { padding-inline: 16px; }
+    .mobile { --pad: 20px; }
+    .arrows { display: none; }
+    .phones li { flex-basis: 158px; }
     .case-pos thead th + th, .case-pos td { width: 60px; }
   }
 </style>
