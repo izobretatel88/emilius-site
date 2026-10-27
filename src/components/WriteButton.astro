@@ -12,8 +12,9 @@ import { LINKS } from '../data/site';
 <script>
   const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
   if (fab) {
-    // Пока на экране такая же кнопка страницы («Написать» в карточке «Связь», на 404) — плавающая не дублирует её.
-    const twins = [...document.querySelectorAll<HTMLAnchorElement>(`a.btn[href="${fab.getAttribute('href')}"]`)];
+    // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
+    // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её.
+    const twins = [...document.querySelectorAll<HTMLAnchorElement>(`main a[href="${fab.getAttribute('href')}"]`)];
     const seen = new Set<Element>();
     let typing = false;
     const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing);
