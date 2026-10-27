@@ -31,6 +31,12 @@ const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
 // Заголовок не рвётся на «интернет-|магазин» и «3–|5»: word joiner после дефиса и вокруг тире между цифрами.
 const nobreak = (t: string) => t.replace(/(\S)-(\S)/g, '$1-\u2060$2').replace(/(\d)–(\d)/g, '$1\u2060–\u2060$2');
+// «Посчитать» под пакетом заполняет калькулятор типичными ответами этого пакета — человек сразу видит его цену.
+const PLAN_PRESETS: Record<string, Record<string, string>> = {
+  Старт: { channel: 'social', sku: '30', where: 'head', variants: 'no', carriers: '1', crm: 'no' },
+  Магазин: { channel: 'offline', sku: '150', where: 'excel', variants: 'yes', carriers: '2', crm: 'no' },
+  Селлер: { channel: 'mp', sku: '150', where: 'mp', variants: 'yes', carriers: '2', crm: 'no' },
+};
 // Телефон на первом экране: общей версии — свежий кейс, селлеру — бренд одежды.
 const heroShop = MOBILE_SHOTS.find((x) => x.id === (variant === 'seller' ? 'duman' : 'happyanimal'))!;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
@@ -226,6 +232,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <p class="price num">{p.price}</p>
             <p class="term">{p.term} · тариф {p.tariff}</p>
             <ul class="dots">{p.items.map((it) => <li>{it}</li>)}</ul>
+            <a class="plan-cta" href="#lead" data-goal="calc-click" data-preset={JSON.stringify(PLAN_PRESETS[p.name] ?? {})}>Посчитать «{p.name}»</a>
           </article>
         ))}
       </div>
@@ -386,6 +393,16 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
       box.hidden = false;
     };
+    // Кнопка под пакетом: отмечаем его типичные ответы, якорь #lead прокрутит к расчёту.
+    document.querySelectorAll<HTMLAnchorElement>('[data-preset]').forEach((a) =>
+      a.addEventListener('click', () => {
+        Object.entries(JSON.parse(a.dataset.preset!) as Record<string, string>).forEach(([k, v]) => {
+          const r = form.querySelector<HTMLInputElement>(`input[name="${k}"][value="${v}"]`);
+          if (r) r.checked = true;
+        });
+        update();
+      }),
+    );
     form.addEventListener('change', (e) => {
       update();
       // Первое изменение ответа — человек начал считать.
@@ -635,6 +652,24 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
   .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
   .plan .dots { font-size: 15px; gap: 8px; }
+  /* Кнопка под пакетом — вторичная, прижата к низу: у всех трёх карточек на одной линии */
+  .plan-cta {
+    margin-top: auto;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-btn);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+  }
+  .plan .dots { margin-bottom: 12px; }
+  .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .nums { counter-reset: n; }
   .nums li { counter-increment: n; position: relative; padding-left: 30px; }
