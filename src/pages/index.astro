@@ -103,7 +103,8 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
     align-items: start;
     gap: var(--col-gap);
   }
-  /* Компьютер: «Проекты» слева и «Связь» справа — на высоту колеса и услуг под ним */
+  /* Компьютер: «Проекты» слева и «Связь» + «Эми» справа — ровно на высоту колеса, низ трёх карточек
+     на одной линии (дизайн-система §5.1). Услуги — под колесом, боковые колонки их не ждут. */
   .services-slot {
     grid-column: 2;
     grid-row: 2;
@@ -114,11 +115,13 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
   }
   .bento > :global(.projects-card) {
     grid-column: 1;
-    grid-row: 1 / span 2;
+    grid-row: 1;
+    align-self: stretch;
   }
   .bento > :global(.stack) {
     grid-column: 3;
-    grid-row: 1 / span 2;
+    grid-row: 1;
+    align-self: stretch;
   }
   .wheel-card {
     padding: 14px 14px 16px;
