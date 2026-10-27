@@ -67,6 +67,18 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     flex-direction: column;
     gap: 32px;
   }
+  /* Компьютер: колонка на высоту колеса — «Эми» забирает остаток, виджет с подсказкой по центру карточки */
+  @media (min-width: 861px) {
+    #emiCard {
+      flex: 1;
+    }
+    #emiCard iframe {
+      margin-top: auto;
+    }
+    #emiCard .micro {
+      margin-bottom: auto;
+    }
+  }
   /* Телефон и планшет: «Связь» и «Спросить Эми» — отдельными ячейками сетки, рядом и одной высоты */
   @media (max-width: 860px) {
     .stack {
@@ -74,6 +86,13 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     }
     .col-card {
       padding-inline: 10px;
+    }
+    /* «Связь» тянется на высоту соседней «Эми» — кнопки по центру свободного места, а не прижаты к заголовку */
+    .btn-primary {
+      margin-top: auto;
+    }
+    .btn-secondary {
+      margin-bottom: auto;
     }
     .btn {
       padding-inline: 12px 10px;
