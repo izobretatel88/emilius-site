@@ -126,7 +126,7 @@
 
 ### 27.10.2026
 
-- (dev) Лендинг InSales: лента мобильных версий в блоке «Магазины, которые мы сделали» — восемь магазинов в рамке телефона (Happy Animal, Duman, Aloha Gaia, Zalina Verkhovskaya, Wizzu, Geekboards, Almatennis, NSOrganic). Листается вбок, на телефоне свайпом. Скрины владельца обрезаны по экрану и сжаты в webp ~10–38 КБ (`public/cases/mobile/`). Рамка и её радиус — новые токены `--phone-frame` и `--radius-phone`, в тёмной теме рамка светлее.
+- (dev) Лендинг InSales: отдельный блок «Как эти магазины выглядят в телефоне» после кейсов — восемь магазинов в тонкой графитовой рамке телефона (Happy Animal, Duman, Aloha Gaia, Zalina Verkhovskaya, Wizzu, Geekboards, Almatennis, NSOrganic). Лента идёт до краёв карточки, без полосы прокрутки: на компьютере листается стрелками, на телефоне свайпом. Скрины владельца обрезаны по экрану и сжаты в webp ~10–38 КБ (`public/cases/mobile/`). Новые токены `--phone-frame` и `--radius-phone`.
 
 ### Дальше
 
