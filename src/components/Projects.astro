@@ -71,6 +71,13 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     gap: 22px;
     align-items: center;
   }
+  /* Компьютер: карточка растянута на высоту колеса — логотипы делят её поровну */
+  @media (min-width: 861px) {
+    .projects {
+      flex: 1;
+      justify-content: space-evenly;
+    }
+  }
   .proj {
     position: relative;
   }

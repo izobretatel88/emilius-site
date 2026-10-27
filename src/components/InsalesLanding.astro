@@ -29,6 +29,18 @@ const other = variant === 'shop'
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 // Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
 const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
+// Заголовок не рвётся на «интернет-|магазин» и «3–|5»: word joiner после дефиса и вокруг тире между цифрами.
+const nobreak = (t: string) => t.replace(/(\S)-(\S)/g, '$1-\u2060$2').replace(/(\d)–(\d)/g, '$1\u2060–\u2060$2');
+// «Посчитать» под пакетом заполняет калькулятор типичными ответами этого пакета — человек сразу видит его цену.
+const PLAN_PRESETS: Record<string, Record<string, string>> = {
+  Старт: { channel: 'social', sku: '30', where: 'head', variants: 'no', carriers: '1', crm: 'no' },
+  Магазин: { channel: 'offline', sku: '150', where: 'excel', variants: 'yes', carriers: '2', crm: 'no' },
+  Селлер: { channel: 'mp', sku: '150', where: 'mp', variants: 'yes', carriers: '2', crm: 'no' },
+};
+// Разделы для навигации по странице: id заголовка → подпись.
+const JUMPS = [['t-examples', 'Примеры'], ['t-plans', 'Цены'], ['t-weeks', 'Этапы'], ['t-faq', 'Вопросы']] as const;
+// Телефон на первом экране: общей версии — свежий кейс, селлеру — бренд одежды.
+const heroShop = MOBILE_SHOTS.find((x) => x.id === (variant === 'seller' ? 'duman' : 'happyanimal'))!;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
 const norms = JSON.stringify([...parseCatalog(catalogCsv).values()].map((c) => [c.id, c.base, c.per, c.role, c.packages]));
 // Селлеру сразу отмечены площадки, в общей версии — самый частый клиент: соцсети, товары с нуля.
@@ -43,10 +55,17 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
   </header>
 
+  <!-- Навигация по длинной странице: таблетка как у логотипа, появляется, когда первый экран ушёл вверх -->
+  <nav class="jump" aria-label="Разделы страницы" data-jump>
+    {JUMPS.map(([id, text]) => <a href={`#${id}`} data-jump-to={id}>{text}</a>)}
+    <a class="jump-cta" href="#lead" data-goal="calc-click">Посчитать</a>
+  </nav>
+
   <main class="page">
     <section class="card hero">
+      <div class="hero-main">
       <p class="eyebrow">{hero.eyebrow}</p>
-      <h1>{hero.title}</h1>
+      <h1>{nobreak(hero.title)}</h1>
       <p class="lead">{hero.lead}</p>
       <ul class="ticks">{hero.bullets.map((b) => <li>{b}</li>)}</ul>
       <div class="cta-row">
@@ -55,6 +74,16 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </div>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
+      </div>
+      <!-- Справа — живой магазин в телефоне: результат, а не обещание. На телефоне прячем, первый экран — текст и кнопка -->
+      <figure class="hero-phone">
+        <picture>
+          <!-- на узких экранах телефон спрятан — пустой пиксель вместо 50 КБ картинки -->
+          <source media="(max-width: 760px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />
+          <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
+        </picture>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+      </figure>
     </section>
 
     <section class="card block" aria-labelledby="t-extras">
@@ -211,6 +240,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <p class="price num">{p.price}</p>
             <p class="term">{p.term} · тариф {p.tariff}</p>
             <ul class="dots">{p.items.map((it) => <li>{it}</li>)}</ul>
+            <a class="plan-cta" href="#lead" data-goal="calc-click" data-preset={JSON.stringify(PLAN_PRESETS[p.name] ?? {})}>Посчитать «{p.name}»</a>
           </article>
         ))}
       </div>
@@ -266,6 +296,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
       <form method="post" action={action} novalidate data-norms={norms} data-variant={variant}>
         <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
+        <!-- Компьютер: вопросы слева, справа цена и контакты — закреплены, цена видна при каждом ответе -->
+        <div class="quiz">
         {questions.map((q) => (
           <fieldset>
             <legend>{q.label}</legend>
@@ -276,6 +308,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             </div>
           </fieldset>
         ))}
+        </div>
+        <div class="side">
         <div class="estimate" aria-live="polite" hidden>
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
@@ -296,6 +330,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="status" data-fail role="alert" hidden>
           Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
         </p>
+        </div>
       </form>
     </section>
   </main>
@@ -305,6 +340,23 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <script>
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
+
+  // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
+  const jump = document.querySelector<HTMLElement>('[data-jump]');
+  const heroCard = document.querySelector('.hero');
+  if (jump && heroCard) {
+    new IntersectionObserver(([e]) => jump.classList.toggle('is-on', !e.isIntersecting)).observe(heroCard);
+    const links = new Map([...jump.querySelectorAll<HTMLAnchorElement>('[data-jump-to]')].map((a) => [a.dataset.jumpTo!, a]));
+    const sections = [...links.keys()].map((id) => document.getElementById(id)?.closest('section')).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        const id = e.target.querySelector('h2')?.id;
+        if (id && e.isIntersecting) links.forEach((a, k) => a.classList.toggle('is-here', k === id));
+      }),
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
 
   // Цели Метрики (список — docs/insales-service/07-landing.md §4). Без счётчика emiGoal нет — вызовы ничего не делают.
   const goal = (name: string, params: Record<string, unknown> = {}) => (window as any).emiGoal?.(name, params);
@@ -371,6 +423,16 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
       box.hidden = false;
     };
+    // Кнопка под пакетом: отмечаем его типичные ответы, якорь #lead прокрутит к расчёту.
+    document.querySelectorAll<HTMLAnchorElement>('[data-preset]').forEach((a) =>
+      a.addEventListener('click', () => {
+        Object.entries(JSON.parse(a.dataset.preset!) as Record<string, string>).forEach(([k, v]) => {
+          const r = form.querySelector<HTMLInputElement>(`input[name="${k}"][value="${v}"]`);
+          if (r) r.checked = true;
+        });
+        update();
+      }),
+    );
     form.addEventListener('change', (e) => {
       update();
       // Первое изменение ответа — человек начал считать.
@@ -437,7 +499,19 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     flex-direction: column;
     gap: 28px; /* воздух между разделами, как на главной (23.10.2026) */
   }
-  .hero { padding: clamp(26px, 4.4vw, 48px); display: flex; flex-direction: column; gap: 16px; }
+  .hero {
+    padding: clamp(26px, 4.4vw, 48px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(190px, 21vw, 240px);
+    gap: clamp(24px, 4vw, 48px);
+    align-items: center;
+  }
+  .hero-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
+  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; }
+  .hero-phone a { font-weight: 600; text-decoration: none; }
+  .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
@@ -446,7 +520,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     text-transform: uppercase;
   }
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
-  h1 { font-size: clamp(32px, 5.6vw, 54px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
   .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
   h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
   h2.sub { font-size: clamp(20px, 2.4vw, 24px); margin-top: 12px; }
@@ -608,6 +682,24 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
   .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
   .plan .dots { font-size: 15px; gap: 8px; }
+  /* Кнопка под пакетом — вторичная, прижата к низу: у всех трёх карточек на одной линии */
+  .plan-cta {
+    margin-top: auto;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-btn);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+  }
+  .plan .dots { margin-bottom: 12px; }
+  .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .nums { counter-reset: n; }
   .nums li { counter-increment: n; position: relative; padding-left: 30px; }
@@ -673,9 +765,55 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   summary:hover::after { border-color: var(--teal); }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
   details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
-  .lead-form { scroll-margin-top: 24px; }
+  .lead-form { scroll-margin-top: 76px; }
+  /* Переход по навигации: заголовок раздела не уходит под таблетку */
+  h2[id] { scroll-margin-top: 96px; }
+  .jump {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: calc(100% - 24px);
+    padding: 5px;
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--hover), visibility var(--hover);
+  }
+  .jump.is-on { opacity: 1; visibility: visible; }
+  .jump a {
+    padding: 8px 12px;
+    border-radius: var(--radius-btn);
+    color: var(--ink-2);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--hover), color var(--hover);
+  }
+  .jump a:hover { color: var(--ink); background: var(--well); }
+  .jump a.is-here { color: var(--teal-text); }
+  .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
+  .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
+  @media (max-width: 480px) {
+    .jump a { padding: 8px 9px; font-size: 14px; }
+    .jump [data-jump-to='t-weeks'] { display: none; }
+  }
   form { display: flex; flex-direction: column; gap: 14px; }
-  form > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  @media (min-width: 900px) {
+    form { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+    .side { position: sticky; top: 24px; }
+  }
+  .side > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   legend { padding: 0; margin-bottom: 8px; }
   input[type='text'] {
@@ -708,9 +846,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .chip input:checked + span { border-color: var(--teal); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
-  form .cta { align-self: flex-start; }
-  /* form > .agree — сильнее общего «form > label» (поля в столбик) */
-  form > .agree {
+  .side .cta { align-self: stretch; text-align: center; }
+  /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
+  .side > .agree {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -738,6 +876,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .est-price { font-size: 26px; font-weight: 700; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-phone { display: none; }
     .plans, .shops, .review-grid, .case-top { grid-template-columns: 1fr; }
     .case-shot img { height: auto; }
     .who { min-height: 0; }
