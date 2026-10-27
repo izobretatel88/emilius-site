@@ -2,9 +2,11 @@
 import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import Footer from '../components/Footer.astro';
-import { LINKS } from '../data/site';
+import { LINKS, SECTORS } from '../data/site';
+import { SERVICE_ROWS } from '../data/services-list';
 
 const home = import.meta.env.BASE_URL;
+const href = (p: string) => `${home}${home.endsWith('/') ? '' : '/'}${p}`;
 ---
 
 <Base title="Страница не найдена — Эмилиус Эдженси" description="Такой страницы нет. Вернитесь на главную или напишите нам в Telegram.">
@@ -20,6 +22,16 @@ const home = import.meta.env.BASE_URL;
       <a class="btn btn-primary" href={home}>На главную</a>
       <a class="btn btn-secondary" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram</a>
     </div>
+    <!-- Куда ещё можно пойти: услуги и четыре этапа цикла с цветом своего сектора колеса -->
+    <nav class="paths" aria-label="Разделы сайта">
+      <p class="paths-title">Или сразу туда, куда шли</p>
+      <ul class="paths-list">
+        {SERVICE_ROWS.map((r) => <li><a class="path service" href={href(r.href)}><b>{r.title}</b><span>{r.note}</span></a></li>)}
+        {SECTORS.map((s, i) => (
+          <li><a class="path" href={href(`services/${s.id}/`)} style={`--dot: linear-gradient(135deg, ${s.c1}, ${s.c2})`}><i aria-hidden="true"></i>{i + 1}. {s.name}</a></li>
+        ))}
+      </ul>
+    </nav>
   </main>
 
   <Footer />
@@ -37,7 +49,7 @@ const home = import.meta.env.BASE_URL;
   }
   .lost {
     width: 100%;
-    max-width: 560px;
+    max-width: 620px;
     margin-inline: auto;
     padding: 36px 28px 32px;
     display: flex;
@@ -67,6 +79,73 @@ const home = import.meta.env.BASE_URL;
     justify-content: center;
     gap: 12px;
     margin-top: 12px;
+  }
+  .paths {
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hair);
+  }
+  .paths-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .paths-list {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .paths-list li:first-child {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 520px) {
+    .paths-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .path {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: var(--radius-btn);
+    white-space: nowrap;
+    background: var(--well);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--hover), color var(--hover);
+  }
+  .path:hover {
+    color: var(--teal-text);
+  }
+  .path:focus-visible {
+    outline: 2px dashed var(--teal);
+    outline-offset: 2px;
+  }
+  .path i {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--dot);
+  }
+  .path.service {
+    width: 100%;
+    white-space: normal;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .path.service span {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-2);
   }
   .btn {
     min-height: 54px;
