@@ -147,7 +147,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MOBILE_SHOTS.map((x) => (
           <li>
             <a class="phone-card" href={x.url} target="_blank" rel="noopener">
-              <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="480" height="898" loading="lazy" decoding="async" /></span>
+              <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="520" height="1071" loading="lazy" decoding="async" /></span>
               <span class="phone-name">{x.name} <span aria-hidden="true">↗</span></span>
               <span class="phone-what">{x.what}</span>
             </a>
@@ -558,27 +558,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phones::-webkit-scrollbar { display: none; }
   .phones li { flex: 0 0 188px; scroll-snap-align: start; }
   .phone-card { display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
-  .phone {
-    display: block;
-    margin-bottom: 12px;
-    padding: 5px;
-    border-radius: var(--radius-phone);
-    background: var(--phone-frame);
-    box-shadow: var(--shadow-card);
-  }
-  .phone img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 480 / 898;
-    border-radius: calc(var(--radius-phone) - 5px);
-    background: var(--well);
-  }
+  /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
+  .phone { display: block; margin-bottom: 10px; }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
   .phone-name { font-size: 16px; font-weight: 700; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
   .phone-card:hover .phone-name { color: var(--teal-text); }
-  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-phone); }
+  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
