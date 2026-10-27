@@ -14,7 +14,8 @@ import { LINKS } from '../data/site';
   if (fab) {
     // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её.
-    const twins = [...document.querySelectorAll<HTMLAnchorElement>(`main a[href="${fab.getAttribute('href')}"]`)];
+    // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
+    const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
     const seen = new Set<Element>();
     let typing = false;
     const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing);

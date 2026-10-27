@@ -288,6 +288,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
       <form method="post" action={action} novalidate data-norms={norms} data-variant={variant}>
         <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
+        <!-- Компьютер: вопросы слева, справа цена и контакты — закреплены, цена видна при каждом ответе -->
+        <div class="quiz">
         {questions.map((q) => (
           <fieldset>
             <legend>{q.label}</legend>
@@ -298,6 +300,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             </div>
           </fieldset>
         ))}
+        </div>
+        <div class="side">
         <div class="estimate" aria-live="polite" hidden>
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
@@ -318,6 +322,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="status" data-fail role="alert" hidden>
           Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
         </p>
+        </div>
       </form>
     </section>
   </main>
@@ -737,7 +742,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 24px; }
   form { display: flex; flex-direction: column; gap: 14px; }
-  form > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  @media (min-width: 900px) {
+    form { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+    .side { position: sticky; top: 24px; }
+  }
+  .side > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   legend { padding: 0; margin-bottom: 8px; }
   input[type='text'] {
@@ -770,9 +780,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .chip input:checked + span { border-color: var(--teal); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
-  form .cta { align-self: flex-start; }
-  /* form > .agree — сильнее общего «form > label» (поля в столбик) */
-  form > .agree {
+  .side .cta { align-self: stretch; text-align: center; }
+  /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
+  .side > .agree {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
