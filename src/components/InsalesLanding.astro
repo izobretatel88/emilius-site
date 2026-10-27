@@ -37,6 +37,8 @@ const PLAN_PRESETS: Record<string, Record<string, string>> = {
   Магазин: { channel: 'offline', sku: '150', where: 'excel', variants: 'yes', carriers: '2', crm: 'no' },
   Селлер: { channel: 'mp', sku: '150', where: 'mp', variants: 'yes', carriers: '2', crm: 'no' },
 };
+// Разделы для навигации по странице: id заголовка → подпись.
+const JUMPS = [['t-examples', 'Примеры'], ['t-plans', 'Цены'], ['t-weeks', 'Этапы'], ['t-faq', 'Вопросы']] as const;
 // Телефон на первом экране: общей версии — свежий кейс, селлеру — бренд одежды.
 const heroShop = MOBILE_SHOTS.find((x) => x.id === (variant === 'seller' ? 'duman' : 'happyanimal'))!;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
@@ -52,6 +54,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   <header class="top">
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
   </header>
+
+  <!-- Навигация по длинной странице: таблетка как у логотипа, появляется, когда первый экран ушёл вверх -->
+  <nav class="jump" aria-label="Разделы страницы" data-jump>
+    {JUMPS.map(([id, text]) => <a href={`#${id}`} data-jump-to={id}>{text}</a>)}
+    <a class="jump-cta" href="#lead" data-goal="calc-click">Посчитать</a>
+  </nav>
 
   <main class="page">
     <section class="card hero">
@@ -332,6 +340,23 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <script>
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
+
+  // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
+  const jump = document.querySelector<HTMLElement>('[data-jump]');
+  const heroCard = document.querySelector('.hero');
+  if (jump && heroCard) {
+    new IntersectionObserver(([e]) => jump.classList.toggle('is-on', !e.isIntersecting)).observe(heroCard);
+    const links = new Map([...jump.querySelectorAll<HTMLAnchorElement>('[data-jump-to]')].map((a) => [a.dataset.jumpTo!, a]));
+    const sections = [...links.keys()].map((id) => document.getElementById(id)?.closest('section')).filter(Boolean) as HTMLElement[];
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        const id = e.target.querySelector('h2')?.id;
+        if (id && e.isIntersecting) links.forEach((a, k) => a.classList.toggle('is-here', k === id));
+      }),
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
 
   // Цели Метрики (список — docs/insales-service/07-landing.md §4). Без счётчика emiGoal нет — вызовы ничего не делают.
   const goal = (name: string, params: Record<string, unknown> = {}) => (window as any).emiGoal?.(name, params);
@@ -740,7 +765,48 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   summary:hover::after { border-color: var(--teal); }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
   details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
-  .lead-form { scroll-margin-top: 24px; }
+  .lead-form { scroll-margin-top: 76px; }
+  /* Переход по навигации: заголовок раздела не уходит под таблетку */
+  h2[id] { scroll-margin-top: 96px; }
+  .jump {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: calc(100% - 24px);
+    padding: 5px;
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--hover), visibility var(--hover);
+  }
+  .jump.is-on { opacity: 1; visibility: visible; }
+  .jump a {
+    padding: 8px 12px;
+    border-radius: var(--radius-btn);
+    color: var(--ink-2);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--hover), color var(--hover);
+  }
+  .jump a:hover { color: var(--ink); background: var(--well); }
+  .jump a.is-here { color: var(--teal-text); }
+  .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
+  .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
+  @media (max-width: 480px) {
+    .jump a { padding: 8px 9px; font-size: 14px; }
+    .jump [data-jump-to='t-weeks'] { display: none; }
+  }
   form { display: flex; flex-direction: column; gap: 14px; }
   .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   @media (min-width: 900px) {
