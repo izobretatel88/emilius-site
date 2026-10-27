@@ -8,7 +8,8 @@
 // Сначала вопрос «Удобно сейчас со звуком?» — «Да» / «Нет»; не нажали за T.wait — без звука.
 // Знак плоский, как в PNG владельца (объём и блик убраны 21.10.2026 — «криво» на тонких линиях).
 // После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
-// Esc или прокрутка — пропустить заставку. Один раз за визит; при «уменьшить движение» — нет.
+// Esc или прокрутка — пропустить заставку. Не чаще раза в неделю (владелец 27.10.2026: «не постоянно») —
+// время показа в localStorage; при «уменьшить движение» — нет.
 // ?intro — показать снова.
 // Выбрали «Да» — после заставки тихо (5%, владелец 25.10.2026: «громко на максимуме») и по кругу играет
 // мелодия public/brand/music.mp3 (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
@@ -66,8 +67,12 @@ const music = `${root}brand/music.mp3`;
 <!-- Показываем заставку сразу, до отрисовки сайта, чтобы он не мелькнул перед ней -->
 <script is:inline>
   (function () {
+    // Видел заставку за последние 7 дней или уже в этом визите — не показываем.
+    var WEEK = 7 * 24 * 60 * 60 * 1000;
     var seen = false;
-    try { seen = sessionStorage.getItem('emilius-intro-seen') === '1'; } catch (e) {}
+    try {
+      seen = sessionStorage.getItem('emilius-intro-seen') === '1' || Date.now() - Number(localStorage.getItem('emilius-intro-at') || 0) < WEEK;
+    } catch (e) {}
     var forced = /[?&]intro\b/.test(location.search);
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Пришли из поиска — сразу сайт: окно поверх страницы после перехода из выдачи поисковики
@@ -114,6 +119,7 @@ const music = `${root}brand/music.mp3`;
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
+      localStorage.setItem('emilius-intro-at', String(Date.now()));
     } catch {
       /* приватный режим — не страшно */
     }
