@@ -6,7 +6,8 @@ import Footer from './Footer.astro';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
-  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP, MOBILE_SHOTS } from '../data/insales';
+  ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP, MOBILE_SHOTS,
+  SELLER_WHY, SELLER_MOVE, SELLER_MOVE_NOTE, SELLER_QUICK, SELLER_FAQ } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
 import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
@@ -26,6 +27,8 @@ const other = variant === 'shop'
   : { url: href('services/insales-shop/'), text: 'Общая версия: соцсети, офлайн, переезд со старого сайта →' };
 // Селлеру первым показываем его пакет.
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
+// Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
+const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
 // Для расчёта в браузере хватает норм и ролей — тексты каталога не тащим на страницу.
 const norms = JSON.stringify([...parseCatalog(catalogCsv).values()].map((c) => [c.id, c.base, c.per, c.role, c.packages]));
 // Селлеру сразу отмечены площадки, в общей версии — самый частый клиент: соцсети, товары с нуля.
@@ -50,6 +53,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
         <p class="note">{CTA_NOTE}</p>
       </div>
+      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
     </section>
 
@@ -59,6 +63,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {EXTRAS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
       </div>
     </section>
+
+    {variant === 'seller' && (
+      <section class="card block" aria-labelledby="t-why">
+        <h2 id="t-why">Зачем свой магазин, если есть WB и Ozon</h2>
+        <div class="grid2">
+          {SELLER_WHY.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+        </div>
+      </section>
+      <section class="card block" aria-labelledby="t-move">
+        <h2 id="t-move">Что переносим с площадок</h2>
+        <div class="grid2">
+          {SELLER_MOVE.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
+        </div>
+        <p class="small">{SELLER_MOVE_NOTE}</p>
+      </section>
+    )}
 
     {variant === 'shop' && (
       <section class="card block" aria-labelledby="t-sit">
@@ -237,7 +257,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
-        {FAQ.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
       </div>
     </section>
 
@@ -465,6 +485,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
   .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
+  .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+  .quick a { font-weight: 600; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
