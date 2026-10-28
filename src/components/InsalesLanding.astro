@@ -50,7 +50,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 }));
 ---
 
-<Base title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`} description={hero.lead}>
+<!-- Своя миниатюра для пересылки ссылки (Телеграм, VK): public/og/*.jpg рисует `npm run brand` -->
+<Base
+  title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`}
+  description={hero.lead}
+  ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
+  ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на InSales' : 'Свой интернет-магазин на InSales за 3–5 недель: телефон с живым магазином'}
+>
   <header class="top">
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
   </header>

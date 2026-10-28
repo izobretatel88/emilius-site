@@ -1,15 +1,16 @@
 // Собирает фирменные картинки из PNG логотипа владельца (public/brand/logo.png,
 // готовится scripts/logo-from-png.py — знак не перерисовываем):
 //   public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png,
-//   public/brand/logo-mark.png, public/og.jpg
+//   public/brand/logo-mark.png, public/og.jpg, public/og/insales.jpg, public/og/insales-seller.jpg
 //
 // Запуск: npm run build && npm run brand
 // Картинки рисует установленный Google Chrome в headless-режиме,
 // OG-картинка берёт колесо из собранного dist/index.html.
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const PUB = join(ROOT, 'public');
@@ -64,8 +65,11 @@ if (!existsSync(dist)) {
   const end = html.indexOf('<div class="center-q"', start);
   const wheel = html
     .slice(start, end)
-    .concat('</div>')
-    // крупное «внимание» вступления на картинке не нужно — остаётся дуга
+    // в центре круга — знак агентства, вместо пустого белого круга
+    .concat(`<img class="mid" src="${logoUrl}" alt=""></div>`)
+    // «внимание», стрелка и подпись «итерация N» живут в наложении поверх колеса: на неподвижной картинке
+    // они только мешают (подпись налезала на цифру 52), поэтому наложение убираем целиком
+    .replace(/<svg class="wheel-overlay"[\s\S]*?<\/svg>/, '')
     .replace(/<text class="attn"[\s\S]*?<\/text>/, '')
     .replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '')
     // названия этапов в центре видны только при наведении — на картинке их не нужно
@@ -85,6 +89,7 @@ if (!existsSync(dist)) {
     .sub{font-size:22px;color:var(--ink-2)}
     .wheel-box{position:relative;width:500px;height:500px}
     .wheel-box svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+    .wheel-box .mid{position:absolute;left:50%;top:50%;width:62px;height:auto;transform:translate(-50%,-50%)}
     /* стили колеса из Wheel.astro, которые нужны неподвижной картинке */
     .sector-fill{fill:var(--f);opacity:var(--disc-op)}
     .sector-fill.is-now{fill:var(--f);opacity:var(--disc-op)}
@@ -110,4 +115,61 @@ if (!existsSync(dist)) {
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og.jpg')]);
 }
 
-console.log('Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg');
+// 6. Миниатюры страниц услуги «Магазин на шаблоне InSales»: public/og/insales.jpg и public/og/insales-seller.jpg.
+//    Их показывают Телеграм, ВКонтакте и мессенджеры, когда ссылку пересылают. Заголовки повторяют первый экран
+//    лендинга (HERO в src/data/insales.ts), цены берутся из калькулятора, телефон — тот же живой магазин, что на странице.
+const { PACKAGES } = await import(pathToFileURL(join(ROOT, 'docs', 'insales-service', 'calc', 'estimate.js')).href);
+const from = (n) => `от ${Math.round(n / 1000)} 000 ₽`;
+const CARDS = [
+  {
+    file: 'insales.jpg',
+    eyebrow: 'Интернет-магазин на InSales',
+    title: 'Свой интернет-магазин за 3–5 недель',
+    sub: 'Сдаём, когда проходит настоящий заказ с телефона',
+    chips: [from(PACKAGES.S.min), 'цена фиксируется до старта'],
+    phone: 'happyanimal',
+  },
+  {
+    file: 'insales-seller.jpg',
+    eyebrow: 'Магазин для продавцов WB и Ozon',
+    title: 'Свой магазин рядом с Wildberries и Ozon',
+    sub: 'Остатки на сайте и на площадках — общие',
+    chips: [from(PACKAGES.P.min), '3–5 недель', 'площадки работают как раньше'],
+    phone: 'duman',
+  },
+];
+mkdirSync(join(PUB, 'og'), { recursive: true });
+const fontFace = (w) =>
+  `@font-face{font-family:Glober;font-weight:${w};src:url('file://${ROOT}/src/styles/fonts/glober-${w}.woff2') format('woff2')}`;
+const cardCss = `
+  ${[400, 600, 700, 800].map(fontFace).join('')}
+  body{width:1200px;height:630px;font-family:Glober,sans-serif;color:var(--ink);background:
+    linear-gradient(var(--veil-a),var(--veil-b)),conic-gradient(from 200deg at 70% 45%,var(--ray-1),var(--ray-2),var(--ray-3),var(--ray-4),var(--ray-1));
+    background-color:var(--page);display:grid;grid-template-columns:1fr 292px;gap:56px;align-items:center;padding:0 88px 0 72px;box-sizing:border-box}
+  .left{display:flex;flex-direction:column;gap:22px}
+  .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 24px;font-weight:600;font-size:24px}
+  .pill img{width:27px;height:40px;display:block}
+  .eyebrow{color:var(--teal-text);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:14px}
+  h1{margin:6px 0 0;font-weight:600;font-size:58px;line-height:1.08;text-wrap:balance}
+  .sub{font-size:26px;color:var(--ink-2);line-height:1.3}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .chip{background:var(--card);border:1px solid var(--hair);border-radius:13px;padding:9px 18px;font-weight:600;font-size:21px}
+  .chip.price{background:var(--teal-btn);border-color:var(--teal-btn);color:var(--on-teal)}
+  .phone{width:292px;height:594px;border-radius:50px;background:#16181a;padding:12px;box-sizing:border-box;box-shadow:var(--shadow-pop)}
+  .phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:39px;background:#fff}`;
+for (const c of CARDS) {
+  const body = `
+    <div class="left">
+      <div class="pill"><span>Эмилиус</span><img src="${logoUrl}" alt=""><span>Эдженси</span></div>
+      <div><div class="eyebrow">${c.eyebrow}</div><h1>${c.title}</h1></div>
+      <div class="sub">${c.sub}</div>
+      <div class="chips">${c.chips.map((x, i) => `<span class="chip${i === 0 ? ' price' : ''}">${x}</span>`).join('')}</div>
+    </div>
+    <div class="phone"><img src="file://${join(PUB, 'cases', 'mobile', `${c.phone}.webp`)}" alt=""></div>`;
+  const html = page(body, cardCss).replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
+  const png = join(TMP, `${c.file}.png`);
+  shoot(html, png, 1200, 630);
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og', c.file)]);
+}
+
+console.log('Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg, og/insales.jpg, og/insales-seller.jpg');
