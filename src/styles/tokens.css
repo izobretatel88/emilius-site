@@ -75,6 +75,8 @@
 
   /* Типографика: Glober (src/styles/fonts.css) */
   --font: 'Glober', Arial, sans-serif;
+  /* Блоки кода в статьях блога: промпты и артикулы */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Сетка первого экрана */
   --col-side: 185px;

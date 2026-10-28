@@ -1,0 +1,26 @@
+---
+// Блог: одна страница-маршрут и для списка (/blog/), и для статей (/blog/<адрес>/).
+// Если публикуемых статей нет, не создаётся ничего — ни пустого /blog/, ни записи в карте сайта.
+import { render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+import BlogIndex from '../../components/BlogIndex.astro';
+import { getPosts, type Post } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  if (posts.length === 0) return [];
+  return [
+    { params: { slug: undefined }, props: { posts, post: undefined } },
+    ...posts.map((post) => ({ params: { slug: post.id }, props: { posts, post } })),
+  ];
+}
+
+const { posts, post } = Astro.props as { posts: Post[]; post?: Post };
+const Content = post ? (await render(post)).Content : null;
+---
+
+{post && Content ? (
+  <Article post={post}><Content /></Article>
+) : (
+  <BlogIndex posts={posts} />
+)}

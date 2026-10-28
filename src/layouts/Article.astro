@@ -1,0 +1,355 @@
+---
+// Раскладка статьи блога по образцу LegalDoc: логотип, карточка с текстом, оглавление из заголовков, футер.
+// Разметка для поисковиков (BlogPosting, FAQPage, BreadcrumbList) собирается здесь из шапки статьи.
+import Base from './Base.astro';
+import Logo from '../components/Logo.astro';
+import Footer from '../components/Footer.astro';
+import { ruDate, type Post } from '../lib/blog';
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const d = post.data;
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const abs = (p: string) => new URL(href(p.replace(/^\//, '')), Astro.site).href;
+
+// Оглавление из заголовков h2: у Astro они уже получили id из текста заголовка
+let html = await Astro.slots.render('default');
+const toc: { id: string; text: string }[] = [];
+for (const m of html.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/g)) {
+  toc.push({ id: m[1], text: m[2].replace(/<[^>]+>/g, '').trim() });
+}
+
+const showUpdated = d.updated && d.updated.getTime() !== d.date.getTime();
+const org = { '@type': 'Organization', name: 'Эмилиус Эдженси', url: abs('') };
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: d.h1,
+    description: d.description,
+    image: [abs(d.cover)],
+    datePublished: d.date.toISOString().slice(0, 10),
+    dateModified: (d.updated ?? d.date).toISOString().slice(0, 10),
+    inLanguage: 'ru',
+    mainEntityOfPage: canonical,
+    keywords: d.tags.join(', '),
+    author: org,
+    publisher: { ...org, logo: { '@type': 'ImageObject', url: abs('brand/logo.png') } },
+  },
+  d.faq.length > 0 && {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: abs('') },
+      { '@type': 'ListItem', position: 2, name: 'Блог', item: abs('blog/') },
+      { '@type': 'ListItem', position: 3, name: d.h1, item: canonical },
+    ],
+  },
+].filter(Boolean);
+---
+
+<Base
+  title={d.title}
+  description={d.description}
+  ogType="article"
+  ogImage={d.cover.replace(/^\//, '')}
+  ogImageAlt={d.coverAlt}
+  publishedTime={d.date.toISOString()}
+  modifiedTime={(d.updated ?? d.date).toISOString()}
+  jsonLd={jsonLd}
+  noindex={d.draft}
+>
+  <header class="top">
+    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
+  </header>
+
+  <main class="card article">
+    <nav class="crumbs" aria-label="Хлебные крошки"><a href={href('blog/')}>Блог</a></nav>
+    <h1>{d.h1}</h1>
+    <p class="meta">
+      {d.draft && <span class="draft">черновик</span>}
+      <span>{ruDate(d.date)}</span>
+      {showUpdated && <span>обновлено {ruDate(d.updated!)}</span>}
+      <span>{d.readingMinutes} мин чтения</span>
+    </p>
+    {toc.length >= 4 && (
+      <nav class="toc" aria-label="Содержание">
+        <p class="toc-title">Содержание</p>
+        <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+      </nav>
+    )}
+    <div class="body" data-post={post.id}>
+      <Fragment set:html={html} />
+    </div>
+  </main>
+
+  <Footer />
+</Base>
+
+<script is:inline>
+  // Кнопка «Скопировать» у блоков кода (промпты, ТЗ): без скрипта блок остаётся обычным текстом
+  (function () {
+    document.querySelectorAll('.article pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy';
+      btn.textContent = 'Скопировать';
+      btn.addEventListener('click', function () {
+        var text = pre.innerText;
+        var done = function () {
+          btn.textContent = 'Скопировано';
+          setTimeout(function () { btn.textContent = 'Скопировать'; }, 2000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () {});
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(ta);
+        }
+        if (window.emiGoal) window.emiGoal('blog-copy-prompt');
+      });
+      pre.appendChild(btn);
+    });
+    // Переход из статьи на лендинг услуги: ссылки с utm_source=blog
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="utm_source=blog"]');
+      if (a && window.emiGoal) window.emiGoal('blog-to-landing', { post: (document.querySelector('.body') || {}).dataset.post });
+    });
+  })();
+</script>
+
+<style>
+  .top {
+    display: flex;
+    justify-content: center;
+  }
+  .logo-link {
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+  }
+  .article {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 28px clamp(18px, 4vw, 40px) 40px;
+  }
+  .crumbs {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .crumbs a {
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  h1 {
+    margin-top: 8px;
+    font-size: clamp(28px, 4.4vw, 38px);
+    line-height: 1.15;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .draft {
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+    font-weight: 700;
+  }
+  .toc {
+    margin-top: 22px;
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+  }
+  .toc-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 22px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .toc li {
+    margin: 0 0 4px;
+  }
+  .toc a {
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Текст статьи: читают подряд, поэтому крупнее и свободнее, строка не шире ~68 знаков */
+  .body :global(h2) {
+    margin-top: 44px;
+    font-size: clamp(22px, 3.2vw, 26px);
+    line-height: 1.22;
+    scroll-margin-top: 24px;
+  }
+  .body :global(h3) {
+    margin: 30px 0 0;
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .body :global(p),
+  .body :global(ul),
+  .body :global(ol) {
+    margin: 14px 0 0;
+    max-width: 68ch;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .body :global(ul),
+  .body :global(ol) {
+    padding-left: 22px;
+  }
+  .body :global(li + li) {
+    margin-top: 6px;
+  }
+  .body :global(strong) {
+    font-weight: 700;
+  }
+  .body :global(a) {
+    text-underline-offset: 3px;
+  }
+  .body :global(hr) {
+    margin: 36px 0 0;
+    border: 0;
+    border-top: 1px solid var(--hair);
+  }
+  /* Призыв агентства в тексте: спокойная врезка, без кнопок и давления */
+  .body :global(blockquote) {
+    margin: 24px 0 0;
+    padding: 16px 20px;
+    border-left: 4px solid var(--teal);
+    border-radius: var(--radius-sm);
+    background: var(--well);
+  }
+  .body :global(blockquote p) {
+    margin: 0;
+  }
+  .body :global(img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 22px 0 0;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--hair);
+  }
+  /* Подпись под картинкой — абзац сразу после неё */
+  .body :global(p:has(> img:only-child) + p) {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .body :global(p:has(> img:only-child)) {
+    max-width: none;
+  }
+  .body :global(code) {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--well);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    overflow-wrap: anywhere;
+  }
+  .body :global(pre) {
+    position: relative;
+    margin: 18px 0 0;
+    padding: 54px 18px 18px; /* сверху место под кнопку «Скопировать» */
+    border-radius: var(--radius-sm);
+    background: var(--well);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .body :global(pre code) {
+    padding: 0;
+    background: none;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .body :global(.copy) {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: var(--on-teal);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--hover);
+  }
+  .body :global(.copy:hover) {
+    background: var(--teal);
+  }
+  .body :global(.table-wrap) {
+    margin-top: 18px;
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--hair);
+    /* Тени по краям показывают, что таблицу можно листать: пропадают, когда край достигнут */
+    background:
+      linear-gradient(to right, var(--card) 30%, transparent) left center / 36px 100% no-repeat local,
+      linear-gradient(to left, var(--card) 30%, transparent) right center / 36px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.16), transparent) left center / 12px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.16), transparent) right center / 12px 100% no-repeat scroll;
+  }
+  .body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  /* От четырёх колонок текст не сжимаем в узкие столбцы, а даём таблице листаться */
+  .body :global(table:has(th:nth-child(4))) {
+    min-width: 640px;
+  }
+  .body :global(th) {
+    padding: 10px 14px;
+    background: var(--well);
+    text-align: left;
+    font-weight: 700;
+  }
+  .body :global(td) {
+    padding: 10px 14px;
+    border-top: 1px solid var(--hair);
+    vertical-align: top;
+  }
+  .body :global(.table-wrap:focus-visible) {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+</style>
