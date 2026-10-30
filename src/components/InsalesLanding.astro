@@ -81,11 +81,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
       </div>
-      <!-- Справа — живой магазин в телефоне: результат, а не обещание. На телефоне прячем, первый экран — текст и кнопка -->
+      <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
       <figure class="hero-phone">
         <picture>
-          <!-- на узких экранах телефон спрятан — пустой пиксель вместо 50 КБ картинки -->
-          <source media="(max-width: 760px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
         <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
@@ -527,9 +525,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
   h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  .block p, .item p, .shop-what, .lead { text-wrap: pretty; }
   .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
   h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
-  h2.sub { font-size: clamp(20px, 2.4vw, 24px); margin-top: 12px; }
+  h2.sub {
+    font-size: clamp(20px, 2.4vw, 24px);
+    margin-top: 6px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hair);
+  }
   h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.25; }
   ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .ticks li, .dots li { position: relative; padding-left: 18px; }
@@ -562,6 +566,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--teal);
   }
   .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 6px; }
+  .cta-row .note { flex-basis: 100%; }
   .cta {
     min-height: 54px;
     display: inline-flex;
@@ -579,15 +584,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     cursor: pointer;
     transition: background-color var(--hover), color var(--hover), opacity var(--hover);
   }
-  .cta:hover { background: var(--teal-btn-hover); color: var(--on-teal); }
+  .cta:hover, .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
-  .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
+  .switch {
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    padding-top: 12px;
+    border-top: 1px solid var(--hair);
+  }
   .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
   .quick a { font-weight: 600; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
+  .block.plain > .small { max-width: 68ch; line-height: 1.5; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
   .item {
@@ -643,6 +655,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .case-pos thead th { padding-top: 0; font-size: 13px; color: var(--ink-3); }
   .case-pos thead th + th, .case-pos td { width: 76px; text-align: center; }
   .case-pos tbody tr:last-child > * { border-bottom: 0; }
+  .case-pos tbody tr { transition: background-color var(--hover); }
+  .case-pos tbody tr:hover { background: var(--card); }
+  .case-pos tbody th { font-weight: 600; }
+  .case-pos tbody tr:hover .pos:not(.first):not(.none) { background: var(--well); }
   .pos {
     display: inline-grid;
     place-items: center;
@@ -698,7 +714,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
   .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
-  .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
   .phone-card:hover .phone-name { color: var(--teal-text); }
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
@@ -706,7 +722,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li:hover { background: var(--card); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .proof { font-size: 14px; color: var(--ink-3); }
+  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+  .proof a:hover { text-underline-offset: 3px; }
   .proof a { font-weight: 600; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
   .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
@@ -722,15 +739,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-color: var(--teal-btn);
     color: var(--on-teal);
   }
-  .plan.main .plan-cta:hover {
+  .plan.main .plan-cta:hover, .plan.main .plan-cta:active {
     background: var(--teal-btn-hover);
     border-color: var(--teal-btn-hover);
     color: var(--on-teal);
   }
+  .plan.main .price { color: var(--teal-text); }
   .plan h3 { font-size: 22px; font-weight: 700; }
   .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
   .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
-  .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
+  .term {
+    font-size: 13.5px;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hair);
+  }
   .plan .dots { font-size: 15px; gap: 8px; }
   /* Кнопка под пакетом — вторичная, прижата к низу: у всех трёх карточек на одной линии */
   .plan-cta {
@@ -748,16 +772,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover), color var(--hover), border-color var(--hover);
   }
   .plan .dots { margin-bottom: 12px; }
-  .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .plan-cta:hover, .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .nums { counter-reset: n; }
-  .nums li { counter-increment: n; position: relative; padding-left: 30px; }
+  .nums { counter-reset: n; gap: 0; }
+  .nums li {
+    counter-increment: n;
+    position: relative;
+    padding: 12px 0 12px 30px;
+    border-top: 1px solid var(--hair);
+  }
+  .nums li:first-child { padding-top: 0; border-top: 0; }
   .nums li::before {
     content: counter(n);
     position: absolute;
     left: 0;
-    top: 0.05em;
+    top: 0.12em;
     width: 21px;
     height: 21px;
     border-radius: 50%;
@@ -768,12 +798,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     display: grid;
     place-items: center;
   }
+  .nums li:not(:first-child)::before { top: calc(12px + 0.12em); }
   .weeks { gap: 0; }
   .weeks li {
     display: grid;
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 112px 1fr;
     gap: 2px 16px;
-    padding: 12px 0;
+    padding: 14px 0;
     border-top: 1px solid var(--hair);
     align-items: center;
   }
@@ -805,6 +836,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     min-height: 48px;
     padding: 14px 32px 14px 0;
     font-weight: 600;
+    line-height: 1.35;
     transition: color var(--hover);
   }
   summary::-webkit-details-marker { display: none; }
@@ -826,7 +858,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   summary:hover { color: var(--teal-text); }
   summary:hover::after { border-color: var(--teal); }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
-  details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
+  details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
   h2[id] { scroll-margin-top: 96px; }
@@ -873,11 +905,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   @media (min-width: 900px) {
     form { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-    .side { position: sticky; top: 24px; }
+    .side { position: sticky; top: 76px; }
   }
   .side > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-  legend { padding: 0; margin-bottom: 8px; }
+  legend { padding: 0; margin-bottom: 8px; color: var(--ink); }
+  .side > label { color: var(--ink); }
   input[type='text'] {
     width: 100%;
     height: 50px;
@@ -908,7 +941,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
-  .side .cta { align-self: stretch; text-align: center; }
+  .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }
   /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
   .side > .agree {
     display: flex;
@@ -921,7 +954,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     color: var(--ink-2);
     cursor: pointer;
   }
-  .agree input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--teal-btn); cursor: pointer; }
+  .agree input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--teal-btn); cursor: pointer; }
   .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .status { font-size: 15px; }
   .estimate {
@@ -935,11 +968,30 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .estimate[hidden] { display: none; }
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }
-  .est-price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+  .est-price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin: 2px 0 6px; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+  .estimate .small { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--hair); }
   @media (max-width: 760px) {
     .hero { grid-template-columns: 1fr; }
-    .hero-phone { display: none; }
+    .hero-phone {
+      display: flex;
+      align-items: center;
+      width: min(100%, 260px);
+      margin-inline: auto;
+    }
+    .hero-phone picture {
+      display: block;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+    }
+    .hero-phone img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      object-fit: cover;
+      object-position: top center;
+    }
     .plans, .shops, .review-grid, .case-top { grid-template-columns: 1fr; }
     .case-shot img { height: auto; }
     .who { min-height: 0; }
