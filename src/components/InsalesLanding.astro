@@ -126,7 +126,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
     <section class="card block" aria-labelledby="t-result">
       <h2 id="t-result">Что получите</h2>
-      <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+      <ul class="dots got">{RESULT.map((r) => <li>{r}</li>)}</ul>
     </section>
 
     <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
@@ -239,8 +239,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="block plain" aria-labelledby="t-plans">
       <h2 id="t-plans">Пакеты и цены</h2>
       <div class="plans">
-        {plans.map((p, i) => (
-          <article class:list={['card', 'plan', { main: i === 0 && variant === 'seller' }]}>
+        {plans.map((p) => (
+          <article class:list={['card', 'plan', { main: p.name === (variant === 'seller' ? 'Селлер' : 'Магазин') }]}>
             <h3>{p.name}</h3>
             <p class="who">{p.who}</p>
             <p class="price num">{p.price}</p>
@@ -286,7 +286,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block" aria-labelledby="t-choice">
       <h2 id="t-choice">InSales, Tilda, Яндекс KIT или самому?</h2>
       <dl class="choice">
-        {CHOICE.map(([c, a]) => <div><dt>{c}</dt><dd>{a}</dd></div>)}
+        {CHOICE.map(([c, a]) => <div class:list={[{ fit: a === 'InSales' }]}><dt>{c}</dt><dd>{a}</dd></div>)}
       </dl>
     </section>
 
@@ -508,14 +508,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .hero {
     padding: clamp(26px, 4.4vw, 48px);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(190px, 21vw, 240px);
+    grid-template-columns: minmax(0, 1fr) clamp(210px, 24vw, 280px);
     gap: clamp(24px, 4vw, 48px);
     align-items: center;
   }
   .hero-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
   .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
-  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; }
+  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; text-wrap: balance; }
   .hero-phone a { font-weight: 600; text-decoration: none; }
   .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .eyebrow {
@@ -533,6 +533,24 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.25; }
   ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .ticks li, .dots li { position: relative; padding-left: 18px; }
+  /* «Что получите» — две колонки: восемь пунктов не столбиком в пустой карточке */
+  .block ul.got {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 32px;
+    row-gap: 0;
+  }
+  .got li {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-top: 1px solid var(--hair);
+  }
+  .got li::before { top: calc(12px + 0.62em); }
+  .got li:nth-child(-n + 2) {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .got li:nth-child(-n + 2)::before { top: 0.62em; }
   .ticks li::before, .dots li::before {
     content: '';
     position: absolute;
@@ -559,9 +577,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-size: 17px;
     text-decoration: none;
     cursor: pointer;
-    transition: color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), color var(--hover), opacity var(--hover);
   }
-  .cta:hover { color: var(--on-teal); }
+  .cta:hover { background: var(--teal-btn-hover); color: var(--on-teal); }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
   .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
@@ -570,8 +588,21 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
-  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
-  .item { display: flex; flex-direction: column; gap: 6px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+  /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--hair);
+  }
+  .item:nth-child(-n + 2) {
+    padding-top: 0;
+    margin-top: 0;
+    border-top: 0;
+  }
   .item p { color: var(--ink-2); }
   .sub-lead { font-size: 15px; font-weight: 600; color: var(--ink-2); }
   .shops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-direction: row; }
@@ -587,10 +618,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover);
   }
   .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-  .shop-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; }
+  .shop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 14px 16px 16px; }
   .shop-name { font-size: 18px; font-weight: 700; }
   .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
   .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  .shop .shop-link { margin-top: auto; }
+  .shop:hover { background: var(--card); }
   .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
@@ -663,13 +696,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
   .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
-  .phone-name { font-size: 16px; font-weight: 700; transition: color var(--hover); }
+  .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
   .phone-card:hover .phone-name { color: var(--teal-text); }
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
+  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
+  .more-shops li:hover { background: var(--card); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .proof { font-size: 14px; color: var(--ink-3); }
@@ -678,11 +712,21 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
   .quote { margin: 0; display: flex; flex-direction: column; gap: 14px; }
   .quote blockquote { margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
-  .quote figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--ink-2); }
+  .quote figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); }
   .quote figcaption b { font-size: 16px; color: var(--ink); }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }
+  .plan.main .plan-cta {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: var(--on-teal);
+  }
+  .plan.main .plan-cta:hover {
+    background: var(--teal-btn-hover);
+    border-color: var(--teal-btn-hover);
+    color: var(--on-teal);
+  }
   .plan h3 { font-size: 22px; font-weight: 700; }
   .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
   .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
@@ -731,15 +775,23 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     gap: 2px 16px;
     padding: 12px 0;
     border-top: 1px solid var(--hair);
+    align-items: center;
   }
   .weeks li:first-child { border-top: 0; padding-top: 0; }
-  .wk { color: var(--teal-text); font-weight: 600; font-size: 14px; grid-row: span 2; padding-top: 1px; }
-  .you { font-size: 14px; color: var(--ink-2); }
+  .wk { color: var(--teal-text); font-weight: 600; font-size: 14px; grid-row: span 2; align-self: center; }
+  .you { font-size: 14px; color: var(--ink-3); }
   .choice { margin: 0; display: flex; flex-direction: column; }
   .choice div { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 10px 0; border-top: 1px solid var(--hair); }
   .choice div:first-child { border-top: 0; padding-top: 0; }
   .choice dt { color: var(--ink-2); }
-  .choice dd { margin: 0; font-weight: 600; }
+  .choice dd { margin: 0; font-weight: 600; color: var(--teal-text); }
+  .choice .fit {
+    border-top-color: transparent;
+    border-radius: var(--radius-sm);
+    margin-inline: -12px;
+    padding: 12px;
+    background: var(--well);
+  }
   .faq { display: flex; flex-direction: column; }
   /* Частые вопросы — строки со стрелкой, как в настройках iPhone; стрелка поворачивается при раскрытии */
   details { border-top: 1px solid var(--hair); }
@@ -748,6 +800,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     list-style: none;
     cursor: pointer;
     position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
     padding: 14px 32px 14px 0;
     font-weight: 600;
     transition: color var(--hover);
@@ -766,7 +821,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transform: rotate(45deg);
     transition: transform 0.2s ease, border-color var(--hover);
   }
-  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
+  details[open] summary { color: var(--teal-text); }
+  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; border-color: var(--teal); }
   summary:hover { color: var(--teal-text); }
   summary:hover::after { border-color: var(--teal); }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
@@ -805,7 +861,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover), color var(--hover);
   }
   .jump a:hover { color: var(--ink); background: var(--well); }
-  .jump a.is-here { color: var(--teal-text); }
+  .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
   .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
@@ -848,9 +904,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--input-bg);
     font-size: 15px;
     color: var(--ink);
-    transition: border-color var(--hover), color var(--hover);
+    transition: border-color var(--hover), background-color var(--hover), color var(--hover);
   }
-  .chip input:checked + span { border-color: var(--teal); color: var(--teal-text); font-weight: 600; }
+  .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
   .side .cta { align-self: stretch; text-align: center; }
   /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
@@ -879,7 +935,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .estimate[hidden] { display: none; }
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }
-  .est-price { font-size: 26px; font-weight: 700; }
+  .est-price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
   @media (max-width: 760px) {
     .hero { grid-template-columns: 1fr; }
@@ -893,6 +949,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .hero { padding: 26px 20px; }
     .block { padding: 24px 20px; }
     .grid2, .cols { grid-template-columns: 1fr; }
+    .item:nth-child(2) { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hair); }
+    .block ul.got { grid-template-columns: 1fr; }
+    .got li:nth-child(2) { padding-top: 12px; border-top: 1px solid var(--hair); }
+    .got li:nth-child(2)::before { top: calc(12px + 0.62em); }
     .choice div { grid-template-columns: 1fr; gap: 2px; }
     .weeks li { grid-template-columns: 1fr; }
     .wk { grid-row: auto; }
