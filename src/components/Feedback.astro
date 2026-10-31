@@ -17,9 +17,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       name="message"
       required
       maxlength="3000"
-      aria-describedby="fb-message-hint"
+      aria-describedby="fb-message-hint fb-message-error"
       placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
     <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений.</p>
+    <p class="field-error" id="fb-message-error" role="alert" hidden></p>
     </div>
     <div class="field">
     <label class="field-label" for="fb-contact">Как с вами связаться</label>
@@ -39,9 +40,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     </div>
     <!-- Согласие по 152-ФЗ — отдельной галочкой, по умолчанию не отмечена -->
     <label class="agree">
-      <input type="checkbox" name="consent" value="1" required />
+      <input type="checkbox" name="consent" value="1" required aria-describedby="fb-consent-error" />
       <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
     </label>
+    <p class="field-error" id="fb-consent-error" role="alert" hidden></p>
     <button class="btn-send" type="submit">
       <span class="label">Отправить</span>
       <!-- Облачко сообщения: значок Telegram — только у кнопок, которые ведут в Telegram -->
@@ -63,6 +65,15 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     const label = button.querySelector('.label')!;
     const ok = form.querySelector<HTMLElement>('.status:not(.status-error)')!;
     const fail = form.querySelector<HTMLElement>('.status-error')!;
+    const messageError=form.querySelector<HTMLElement>('#fb-message-error')!;
+    const consentError=form.querySelector<HTMLElement>('#fb-consent-error')!;
+    const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
+      field.setAttribute('aria-invalid',String(Boolean(text)));
+      el.textContent=text;
+      el.hidden=!text;
+    };
+    message.addEventListener('input',()=>{if(message.value.trim())fieldError(message,messageError);});
+    agree.addEventListener('change',()=>{if(agree.checked)fieldError(agree,consentError);});
 
     const show = (el: HTMLElement | null, text?: string) => {
       ok.hidden = fail.hidden = true;
@@ -73,24 +84,32 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if(button.disabled)return;
+      show(null);
+      fieldError(message,messageError);
+      fieldError(agree,consentError);
       if (!message.value.trim()) {
-        show(ok, 'Напишите пару слов — и отправим.');
+        fieldError(message,messageError,'Напишите, с какой задачей нужна помощь.');
         message.focus();
         return;
       }
       if (!agree.checked) {
-        show(ok, 'Отметьте согласие на обработку данных — без него не можем принять сообщение.');
+        fieldError(agree,consentError,'Чтобы отправить сообщение, отметьте согласие на обработку данных.');
         agree.focus();
         return;
       }
       button.disabled = true;
       label.textContent = 'Отправляем…';
       show(null);
+      form.setAttribute('aria-busy','true');
+      const controller=new AbortController();
+      const timeout=window.setTimeout(()=>controller.abort(),15000);
       try {
         const res = await fetch(form.action, {
           method: 'POST',
           body: new FormData(form),
           headers: { Accept: 'application/json' },
+          signal:controller.signal,
         });
         const data = await res.json().catch(() => ({ ok: false }));
         if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
@@ -100,6 +119,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         // Текст не стираем — его можно скопировать и отправить в Telegram.
         show(fail);
       } finally {
+        clearTimeout(timeout);
+        form.removeAttribute('aria-busy');
         button.disabled = false;
         label.textContent = 'Отправить';
       }
@@ -132,6 +153,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   .field{display:grid;gap:7px;min-width:0}
   .field-label{font-size:15px;font-weight:600}
   .field-hint{font-size:13px;line-height:1.45;color:var(--ink-2)}
+  .field-error{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}
+  [aria-invalid='true']{outline:2px solid var(--ink);outline-offset:2px}
   textarea,
   input[type='text'] {
     width: 100%;
