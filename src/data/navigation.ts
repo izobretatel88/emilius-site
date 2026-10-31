@@ -1,7 +1,8 @@
 import { SERVICES } from './services';
+import { SECTORS } from './site';
 
 export const DIRECTIONS = ['custdev', 'design', 'dev', 'marketing'].map(id => ({
-  id, title: SERVICES[id].title, description: SERVICES[id].lead, href: `services/${id}/`,
+  id, title: SERVICES[id].title, description: SECTORS.find(sector=>sector.id===id)!.text, href: `services/${id}/`,
 }));
 export const MATERIALS = [
   { title: 'Какую платформу выбрать для магазина', description: 'Восемь платформ: сценарии, ограничения и стоимость. Данные на 30 октября 2026.', href: 'compare/ecommerce-platforms/', label: 'Сравнение' },

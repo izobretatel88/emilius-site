@@ -58,6 +58,26 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'<a class="skip".*?</a>', '', body)
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
+    if name == 'insales-kit':
+        body = body.replace('Emilius Agency · данные на ', 'Данные на ')
+        body = body.replace('InSales и Яндекс KIT.<br>Сравнение функций', 'InSales и Яндекс KIT: сравнение функций')
+        body = body.replace('<form class="panel"', '<a class="table-jump" href="#comparison">Перейти к таблице 348 функций ↓</a><form class="panel"', 1)
+        body = body.replace('<span>Ссылки на источники — в ячейках</span>', '<a href="#filters">Изменить поиск и фильтры ↑</a>')
+        body = body.replace('<p class="mobile-hint">Прокрутите таблицу вправо → Название функции останется слева.</p>', '<p class="mobile-hint">На телефоне оговорки открываются под строкой функции.</p>')
+        def mobile_note(match):
+            row = match[0]
+            note = re.search(r'<td class="note">(.*?)</td>', row, re.S)
+            if note and 'Дополнительных оговорок нет' not in note[1]:
+                row_id = re.search(r'id="(F\d+)"', row)[1]
+                row += f'<tr class="mobile-note-row" data-note-for="{row_id}"><td colspan="4"><details><summary>Оговорки и различия</summary><p>{note[1]}</p></details></td></tr>'
+            return row
+        body = re.sub(r'<tr id="F\d+".*?</tr>', mobile_note, body, flags=re.S)
+        body = body.replace('<span class="muted">Дополнительных оговорок нет</span>', '<span class="muted"><span class="sr-only">Дополнительных оговорок нет</span><span aria-hidden="true">—</span></span>')
+        scripts = scripts.replace('row.hidden = !visible;', "row.hidden = !visible;\n        const noteRow = row.nextElementSibling;\n        if (noteRow?.matches('[data-note-for]')) noteRow.hidden = !visible;")
+    else:
+        body = body.replace('Emilius Agency · проверено ', 'Данные на ')
+        body = body.replace('<div class="panel">', '<a class="table-jump" href="#comparison">Перейти к таблице платформ ↓</a><div class="panel">', 1)
+        body = body.replace('<section class="card" aria-label="Сравнение платформ по параметрам">', '<section id="comparison" class="card" aria-label="Сравнение платформ по параметрам">')
     if name == 'ecommerce-platforms':
         # Reconcile the older overview with the subsequently audited feature registry.
         body = body.replace('7 шаблонов, свои блоки нельзя', 'Редактор и кастомные HTML/CSS/Handlebars-секции; полный код темы не подтверждён')

@@ -41,4 +41,24 @@ const related=[
   .platform-comparison :global(.foot){max-width:95ch}
   .platform-comparison :global(#comparison){min-width:0}
   .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
+  .platform-comparison :global(.table-jump){width:fit-content;font-size:14px;text-underline-offset:4px}
+  .platform-comparison :global(h1){font-size:clamp(30px,4.3vw,46px);line-height:1.1;max-width:24ch}
+  .platform-comparison :global(.mobile-note-row){display:none}
+  .platform-comparison :global(#comparison){scroll-margin-top:16px}
+  @media(max-width:760px){
+    .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
+    .platform-comparison :global(.feature-col){width:38%}
+    .platform-comparison :global(.platform-col){width:31%}
+    .platform-comparison :global(.note-col){width:0}
+    .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
+    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere}
+    .platform-comparison :global(.status){display:block;font-size:12px}
+    .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
+    .platform-comparison :global(.source){font-size:11px}
+    .platform-comparison :global(.source span){display:none}
+    .platform-comparison :global(.mobile-note-row){display:table-row}
+    .platform-comparison :global(.mobile-note-row td){padding:0 10px 12px;color:var(--ink-2);font-size:12px}
+    .platform-comparison :global(.mobile-note-row summary){font-size:12px;font-weight:400;min-height:32px}
+    .platform-comparison :global(.mobile-note-row p){padding:6px 0;line-height:1.5}
+  }
 </style>

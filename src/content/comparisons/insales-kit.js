@@ -23,6 +23,8 @@
           && (mode === 'all' || row.dataset[mode] === 'true')
           && terms.every(term => row.searchText.includes(term));
         row.hidden = !visible;
+        const noteRow = row.nextElementSibling;
+        if (noteRow?.matches('[data-note-for]')) noteRow.hidden = !visible;
         if (visible) sectionCount++;
       }
       section.hidden = sectionCount === 0;
