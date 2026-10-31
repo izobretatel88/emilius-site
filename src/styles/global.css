@@ -37,6 +37,9 @@ body::before {
     conic-gradient(from 200deg at 48% 32%, var(--ray-1), var(--ray-2), var(--ray-3), var(--ray-4), var(--ray-1));
 }
 
+/* Public pages: a neutral stage keeps attention on the main object. */
+body:has(> .site-nav)::before { display:none; }
+
 h1,
 h2 {
   margin: 0;
