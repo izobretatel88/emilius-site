@@ -10,21 +10,29 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 <section class="card feedback" id="feedback" aria-labelledby="t-feedback">
   <h2 id="t-feedback">Обратная связь</h2>
   <form method="post" action={action} novalidate>
-    <label class="visually-hidden" for="fb-message">Сообщение</label>
+    <div class="field">
+    <label class="field-label" for="fb-message">Ваш проект или вопрос</label>
     <textarea
       id="fb-message"
       name="message"
       required
       maxlength="3000"
-      placeholder="Любая обратная связь будет очень полезна. Заранее благодарим!"></textarea>
-    <label class="visually-hidden" for="fb-contact">Как с вами связаться</label>
+      aria-describedby="fb-message-hint"
+      placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
+    <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений.</p>
+    </div>
+    <div class="field">
+    <label class="field-label" for="fb-contact">Как с вами связаться</label>
     <input
       id="fb-contact"
       name="contact"
       type="text"
       maxlength="200"
+      aria-describedby="fb-contact-hint"
       placeholder="Telegram, телефон или почта"
     />
+    <p class="field-hint" id="fb-contact-hint">Необязательно. Оставьте контакт, если хотите получить ответ.</p>
+    </div>
     <!-- Ловушка для ботов: человек это поле не видит -->
     <div class="trap" aria-hidden="true">
       <input name="website" type="text" tabindex="-1" autocomplete="off" />
@@ -121,6 +129,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     flex-direction: column;
     gap: 12px;
   }
+  .field{display:grid;gap:7px;min-width:0}
+  .field-label{font-size:15px;font-weight:600}
+  .field-hint{font-size:13px;line-height:1.45;color:var(--ink-2)}
   textarea,
   input[type='text'] {
     width: 100%;
