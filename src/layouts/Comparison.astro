@@ -3,6 +3,7 @@ import Base from './Base.astro';
 import Footer from '../components/Footer.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LinkList from '../components/LinkList.astro';
+import ComparisonPicker from '../components/ComparisonPicker.astro';
 import {href} from '../lib/urls';
 import '../styles/architecture.css';
 import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
@@ -27,7 +28,7 @@ const related=[
 ---
 <Base title={`${title} — Emilius Agency`} description={description}>
   <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
-    <div class="platform-comparison"><Fragment set:html={html} /></div>
+    <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
     <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на InSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
   </main><Footer />
   <style is:global set:html={css} />
