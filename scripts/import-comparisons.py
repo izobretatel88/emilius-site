@@ -85,6 +85,11 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
         body = body.replace('<div class="panel">', '<a class="table-jump" href="#comparison">Перейти к таблице платформ ↓</a><div class="panel">', 1)
         body = body.replace('<section class="card" aria-label="Сравнение платформ по параметрам">', '<section id="comparison" class="card" aria-label="Сравнение платформ по параметрам">')
     if name == 'ecommerce-platforms':
+        scripts = scripts.replace('"Не подходит: "', '"Ограничения: "')
+        scripts = scripts.replace('count.replaceChildren();', 'count.replaceChildren();\n  count.append("Без отмеченных ограничений: ", Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` }));')
+        scripts = scripts.replace('reset.addEventListener("click", () => {', 'reset.addEventListener("click", () => {\n      const returnTo=[...active][0];')
+        scripts = scripts.replace('      apply();\n    });', '      apply();\n      document.getElementById(returnTo)?.focus();\n    });')
+        scripts = scripts.replace('count.append("Подходят: ", Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` }), " · ", reset);', 'count.append(" · ", reset);')
         # Reconcile the older overview with the subsequently audited feature registry.
         body = body.replace('7 шаблонов, свои блоки нельзя', 'Редактор и кастомные HTML/CSS/Handlebars-секции; полный код темы не подтверждён')
         body = body.replace('заказы с сайта на маркетплейс не уходят', 'обратный обмен и управление заказами площадок не подтверждены')

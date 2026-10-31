@@ -35,19 +35,22 @@ function apply() {
       c.classList.toggle("out", out);
       c.classList.toggle("best", name === BEST && !out);
     });
-    document.querySelector(`thead [data-p="${i}"] .why`).textContent = out ? "Не подходит: " + reasons.join("; ") : "";
+    document.querySelector(`thead [data-p="${i}"] .why`).textContent = out ? "Ограничения: " + reasons.join("; ") : "";
   });
 
   const count = document.getElementById("count");
   count.replaceChildren();
+  count.append("Без отмеченных ограничений: ", Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` }));
   if (active.size) {
     const reset = Object.assign(document.createElement("button"), { type: "button", className: "reset", textContent: "Сбросить" });
     reset.addEventListener("click", () => {
+      const returnTo=[...active][0];
       active.clear();
       document.querySelectorAll(".chips button").forEach(b => b.setAttribute("aria-pressed", "false"));
       apply();
+      document.getElementById(returnTo)?.focus();
     });
-    count.append("Подходят: ", Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` }), " · ", reset);
+    count.append(" · ", reset);
   }
   try { localStorage.setItem("emilius-platform-mode-v1", mode); } catch (e) {}
 }
