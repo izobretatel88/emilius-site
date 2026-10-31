@@ -59,6 +59,9 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
     if name == 'insales-kit':
+        body = body.replace('placeholder="Например, 1С, остатки или промокоды" autocomplete="off">', 'placeholder="Например, 1С, остатки или промокоды" autocomplete="off" aria-describedby="search-hint"><p class="search-hint" id="search-hint">По названию или коду функции, например F010. 1С и 1C найдутся одинаково.</p>')
+        scripts = scripts.replace(".replaceAll('ё', 'е')", ".replaceAll('ё', 'е').replaceAll('1c', '1с')")
+        scripts = scripts.replace('empty.hidden = shown !== 0;', "empty.hidden = shown !== 0;\n    scroll.querySelector('table').hidden = shown === 0;\n    document.querySelector('.mobile-hint').hidden = shown === 0;")
         body = body.replace('Таблица сравнения. На узком экране прокручивается вправо', 'Таблица функций InSales и Яндекс KIT; оговорки раскрываются под строками на телефоне')
         body = body.replace('Emilius Agency · данные на ', 'Данные на ')
         body = body.replace('InSales и Яндекс KIT.<br>Сравнение функций', 'InSales и Яндекс KIT: сравнение функций')

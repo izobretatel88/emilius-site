@@ -9,7 +9,7 @@
   const count = document.querySelector('#count');
   const empty = document.querySelector('#empty');
   const scroll = document.querySelector('.scroll');
-  const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е');
+  const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е').replaceAll('1c', '1с');
   let mode = 'all';
   rows.forEach(row => { row.searchText = normalize(row.dataset.search); });
 
@@ -34,6 +34,8 @@
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
     count.textContent = shown === rows.length ? `Показаны все ${rows.length} пунктов` : `Показано ${shown} из ${rows.length} пунктов`;
     empty.hidden = shown !== 0;
+    scroll.querySelector('table').hidden = shown === 0;
+    document.querySelector('.mobile-hint').hidden = shown === 0;
     if (writeURL) {
       const url = new URL(location.href);
       for (const [key, value] of [['q', search.value.trim()], ['group', group.value], ['mode', mode === 'all' ? '' : mode]]) {
