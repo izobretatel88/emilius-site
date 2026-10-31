@@ -59,6 +59,7 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
     if name == 'insales-kit':
+        body = body.replace('Таблица сравнения. На узком экране прокручивается вправо', 'Таблица функций InSales и Яндекс KIT; оговорки раскрываются под строками на телефоне')
         body = body.replace('Emilius Agency · данные на ', 'Данные на ')
         body = body.replace('InSales и Яндекс KIT.<br>Сравнение функций', 'InSales и Яндекс KIT: сравнение функций')
         body = body.replace('<form class="panel"', '<a class="table-jump" href="#comparison">Перейти к таблице 348 функций ↓</a><form class="panel"', 1)
