@@ -18,7 +18,8 @@ import { LINKS } from '../data/site';
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
     const seen = new Set<Element>();
     let typing = false;
-    const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing);
+    const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing || !!document.querySelector('.mobile-menu[open]'));
+    document.addEventListener('emi:menu', update);
     if (twins.length) {
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));

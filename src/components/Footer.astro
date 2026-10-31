@@ -12,12 +12,10 @@ const hasBlog = (await getPosts()).length > 0;
 
 <footer>
   <nav class="footer-links" aria-label="Разделы сайта">
-    {DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}
-    <a href={href('services/insales-shop/')}>Магазин на InSales</a>
-    <a href={href('projects/')}>Проекты</a><a href={href('resources/')}>Полезное</a>
-    <a href={href('compare/')}>Сравнения</a><a href={href('tools/insales-calculator/')}>Калькулятор</a>
-    {hasBlog && <a href={href('blog/')}>Блог</a>}
-    <a href={href('#t-contact')}>Контакты</a>
+    <div><h2>Направления</h2>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}</div>
+    <div><h2>Готовые решения</h2><a href={href('services/insales-shop/')}>Магазин на InSales</a><a href={href('services/insales-shop/seller/')}>Для селлеров WB и Ozon</a><a href={href('services/')}>Все услуги</a></div>
+    <div><h2>Полезное</h2><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}<a href={href('resources/')}>Все материалы</a></div>
+    <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={href('#t-wheel')}>Как работаем</a><a href={href('#t-contact')}>Контакты</a></div>
   </nav>
   <p>© {year} | Emilius Agency</p>
   <p class="legal">{OPERATOR.short} · ИНН {OPERATOR.inn} · <a href={href('privacy/')}>Конфиденциальность</a> · <a href={href('consent/')}>Согласие</a> · <a href={href('meetings/')}>Emilius Meetings</a></p>
@@ -29,7 +27,7 @@ const hasBlog = (await getPosts()).length > 0;
 </footer>
 
 <style>
-  .footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 20px;max-width:960px;margin:18px auto 22px;font-size:14px}.footer-links a{text-decoration:none;padding:5px 0}.footer-links a:hover{text-decoration:underline}
+  .footer-links{width:100%;max-width:var(--site-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2)}.footer-links a:hover{color:var(--teal-text);text-decoration:underline}@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px;font-size:13px}}
   footer {
     display: flex;
     flex-direction: column;

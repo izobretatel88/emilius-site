@@ -25,9 +25,9 @@ const showToc = toc.length >= 4;
 ---
 
 <Base title={`${title} — Эмилиус Эдженси`} description={description}>
-  <header class="top">
+  {Astro.url.pathname.includes('/meetings/') && <header class="top">
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
-  </header>
+  </header>}
 
   <slot name="nav" />
 

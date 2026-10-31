@@ -2,7 +2,6 @@
 // Раскладка статьи блога по образцу LegalDoc: логотип, карточка с текстом, оглавление из заголовков, футер.
 // Разметка для поисковиков (BlogPosting, FAQPage, BreadcrumbList) собирается здесь из шапки статьи.
 import Base from './Base.astro';
-import Logo from '../components/Logo.astro';
 import Footer from '../components/Footer.astro';
 import LinkList from '../components/LinkList.astro';
 import { ruDate, type Post } from '../lib/blog';
@@ -69,9 +68,6 @@ const jsonLd = [
   jsonLd={jsonLd}
   noindex={d.draft}
 >
-  <header class="top">
-    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
-  </header>
 
   <main class="card article">
     <nav class="crumbs" aria-label="Хлебные крошки"><a href={href('blog/')}>Блог</a></nav>

@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Logo from '../components/Logo.astro';
 import Wheel from '../components/Wheel.astro';
 import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
@@ -25,7 +24,6 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
 >
   <Intro />
   <header class="hero">
-    <Logo />
     <div class="mission">
       <p class="eyebrow">Наша миссия</p>
       <h1><span class="m-a">{head}</span> <span class="m-b">{verb}</span> <span class="m-c">{MISSION_LINES[1]}</span></h1>

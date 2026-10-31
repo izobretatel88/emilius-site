@@ -27,6 +27,7 @@ const ogImage = new URL(href(ogImagePath ?? 'og.jpg'), Astro.site);
 const preview = process.env.PREVIEW === '1';
 // Сборка ветки dev лежит в подпапке /dev — помечаем её, чтобы не путать с рабочим превью.
 const devBuild = /\/dev\/?$/.test(base);
+const hasSiteNav = !/\/(os|meetings)(\/|$)/.test(Astro.url.pathname);
 // Яндекс Метрика: номер счётчика задаётся при сборке продакшена (YM_ID=…). В превью счётчика нет, чтобы не мешать данные.
 const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
 ---
@@ -81,8 +82,8 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     {ymId > 0 && <noscript><div><img src={`https://mc.yandex.ru/watch/${ymId}`} style="position:absolute; left:-9999px;" alt="" /></div></noscript>}
     <!-- С клавиатуры первая остановка — «К содержанию»: мимо шапки сразу к главному блоку страницы. Видна только в фокусе. -->
     <a class="skip" href="#content">К содержанию</a>
-    {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
-    {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <SiteNav />}
+    {devBuild && !hasSiteNav && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
+    {hasSiteNav && <SiteNav />}
     <slot />
     <script is:inline>
       // Цель ссылки — первый <main> страницы; id и фокус даём ему здесь, чтобы не размечать каждую страницу
@@ -96,7 +97,6 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
 </html>
 
 <style>
-  :global(body:has(.dev-badge) .site-nav) { padding-top: 26px; }
   .skip {
     position: fixed;
     top: 12px;

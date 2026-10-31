@@ -1,7 +1,6 @@
 ---
 // Лендинг услуги «Магазин на шаблоне InSales». Две версии первого экрана: общая и для селлеров.
 import Base from '../layouts/Base.astro';
-import Logo from './Logo.astro';
 import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import LinkList from './LinkList.astro';
@@ -61,9 +60,6 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
   ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на InSales' : 'Свой интернет-магазин на InSales за 3–5 недель: телефон с живым магазином'}
 >
-  <header class="top">
-    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
-  </header>
 
   <!-- Навигация по длинной странице: таблетка как у логотипа, появляется, когда первый экран ушёл вверх -->
   <nav class="jump" aria-label="Разделы страницы" data-jump>

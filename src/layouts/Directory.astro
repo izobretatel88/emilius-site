@@ -1,6 +1,5 @@
 ---
 import Base from './Base.astro';
-import Logo from '../components/Logo.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import {href} from '../lib/urls';
@@ -11,7 +10,6 @@ const abs=(p:string)=>new URL(href(p),Astro.site).href;
 const jsonLd={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{name:'Главная',item:abs('')},...parents.map(i=>({name:i.title,item:abs(i.href)})),{name:title,item:new URL(Astro.url.pathname,Astro.site).href}].map((i,index)=>({'@type':'ListItem',position:index+1,...i}))};
 ---
 <Base title={`${title} — Emilius Agency`} description={description} jsonLd={jsonLd}>
-  <div class="directory-logo"><a href={href()} aria-label="Emilius Agency — главная"><Logo /></a></div>
   <main class="directory"><Breadcrumbs items={[...parents,{title}]} /><header class="directory-intro"><h1>{title}</h1><p>{description}</p></header><slot /></main>
   <Footer />
 </Base>

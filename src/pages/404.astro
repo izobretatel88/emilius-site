@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Logo from '../components/Logo.astro';
 import Footer from '../components/Footer.astro';
 import { LINKS, SECTORS } from '../data/site';
 import { SERVICE_ROWS } from '../data/services-list';
@@ -10,9 +9,6 @@ const href = (p: string) => `${home}${home.endsWith('/') ? '' : '/'}${p}`;
 ---
 
 <Base title="Страница не найдена — Эмилиус Эдженси" description="Такой страницы нет. Вернитесь на главную или напишите нам в Telegram.">
-  <header class="top">
-    <a href={home} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
-  </header>
 
   <main class="card lost">
     <p class="eyebrow">Ошибка 404</p>

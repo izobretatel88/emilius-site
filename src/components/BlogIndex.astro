@@ -1,7 +1,6 @@
 ---
 // Список статей блога: карточка с обложкой, заголовком, описанием, датой и временем чтения.
 import Base from '../layouts/Base.astro';
-import Logo from './Logo.astro';
 import Footer from './Footer.astro';
 import { ruDate, type Post } from '../lib/blog';
 
@@ -18,9 +17,6 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
   title="Блог — Эмилиус Эдженси"
   description="Как запускать и вести интернет-магазины на InSales: тарифы, маркетплейсы, остатки, доставка, оплата — на примерах из работы агентства."
 >
-  <header class="top">
-    <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
-  </header>
 
   <main class="list">
     <h1>Блог</h1>
