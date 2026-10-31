@@ -61,7 +61,11 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    background:transparent;
+    border-color:transparent;
+    box-shadow:none;
   }
+  .card-title{font-size:16px;font-weight:400;color:var(--ink-2)}
   .projects {
     list-style: none;
     margin: 0;
@@ -82,12 +86,12 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     position: relative;
   }
   .proj-btn {
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     border: 0;
     border-radius: 50%;
-    background: var(--proj-bg);
-    box-shadow: var(--shadow-icon);
+    background: transparent;
+    box-shadow: none;
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -103,8 +107,8 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     filter: invert(1);
   }
   .proj-btn img {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     object-fit: contain;
     border-radius: 50%;
   }
