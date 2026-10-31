@@ -37,6 +37,13 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Тема, выбранная в сравнении, сохраняется при переходах по сайту и применяется до отрисовки.
+      try {
+        var chosenTheme = localStorage.getItem('emilius-comparison-theme');
+        if (chosenTheme === 'light' || chosenTheme === 'dark') document.documentElement.dataset.theme = chosenTheme;
+      } catch {}
+    </script>
     <title>{title}</title>
     <link rel="preload" href={glober600} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={glober400} as="font" type="font/woff2" crossorigin />
