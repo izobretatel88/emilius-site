@@ -1,0 +1,26 @@
+<label class="theme-control">Оформление
+  <select id="site-theme"><option value="system">Как на устройстве</option><option value="light">Светлое</option><option value="dark">Тёмное</option></select>
+</label>
+<script>
+  const control=document.querySelector<HTMLSelectElement>('#site-theme');
+  if(control){
+    const sync=()=>{
+      let value='system';
+      try{value=localStorage.getItem('emilius-comparison-theme')||'system';}catch{}
+      control.value=['light','dark'].includes(value)?value:'system';
+    };
+    control.addEventListener('change',()=>{
+      const value=control.value;
+      if(value==='system')delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme=value;
+      try{localStorage.setItem('emilius-comparison-theme',value);}catch{}
+      document.dispatchEvent(new CustomEvent('emi:theme',{detail:value}));
+    });
+    document.addEventListener('emi:theme',sync);
+    sync();
+  }
+</script>
+<style>
+  .theme-control{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 12px;margin-block:12px;font-size:14px}
+  select{font:inherit;min-height:44px;padding:8px 12px;color:var(--ink);background:var(--card);border:1px solid var(--input-border);border-radius:var(--radius-sm);max-width:100%}
+</style>

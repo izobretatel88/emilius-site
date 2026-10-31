@@ -105,6 +105,8 @@
     selectedTheme = {system: 'light', light: 'dark', dark: 'system'}[selectedTheme];
     applyTheme();
     try { localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }
+    document.dispatchEvent(new CustomEvent('emi:theme',{detail:selectedTheme}));
   });
+  document.addEventListener('emi:theme',event=>{if(event.detail in themeNames){selectedTheme=event.detail;applyTheme();}});
   applyTheme();
 })();

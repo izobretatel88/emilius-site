@@ -59,6 +59,8 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
     if name == 'insales-kit':
+        scripts = scripts.replace('  applyTheme();\n})();', "  document.addEventListener('emi:theme',event=>{if(event.detail in themeNames){selectedTheme=event.detail;applyTheme();}});\n  applyTheme();\n})();")
+        scripts = scripts.replace("localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }", "localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }\n    document.dispatchEvent(new CustomEvent('emi:theme',{detail:selectedTheme}));")
         body = body.replace('placeholder="Например, 1С, остатки или промокоды" autocomplete="off">', 'placeholder="Например, 1С, остатки или промокоды" autocomplete="off" aria-describedby="search-hint"><p class="search-hint" id="search-hint">По названию или коду функции, например F010. 1С и 1C найдутся одинаково.</p>')
         scripts = scripts.replace(".replaceAll('ё', 'е')", ".replaceAll('ё', 'е').replaceAll('1c', '1с')")
         scripts = scripts.replace('empty.hidden = shown !== 0;', "empty.hidden = shown !== 0;\n    scroll.querySelector('table').hidden = shown === 0;\n    document.querySelector('.mobile-hint').hidden = shown === 0;")
