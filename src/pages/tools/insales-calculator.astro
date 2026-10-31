@@ -28,8 +28,9 @@ const initial=results[lookup[entries.map(([key])=>defaults[key]).join('|')]];
 const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 ---
 <Directory title="Калькулятор магазина на InSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
+  <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>
   <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина">{entries.map(([key,[label,options]])=><div class="calc-field"><label for={`calc-${key}`}>{label}</label><select id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
-  <section class="directory-callout calc-result" aria-label="Результат расчёта"><div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} недель</p></div><p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p></section></div>
+  <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title"><h2 id="calc-result-title">Бюджет и срок</h2><div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} недель</p></div><p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p><a class="calc-back" href="#public-calculator">Изменить параметры ↑</a></section></div>
   <noscript><p>Для пересчёта включите JavaScript. Начальный ориентир рассчитан для магазина до 50 товаров; обсудить состав можно в форме услуги.</p></noscript>
   <div class="directory-tags"><a href={href('services/insales-shop/')}>Что входит в запуск магазина</a><a href={href('compare/')}>Выбрать другую платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
   <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
@@ -37,6 +38,9 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 <script>
   const form=document.querySelector<HTMLFormElement>('#public-calculator');
   if(form){
+    form.tabIndex=-1;
+    document.querySelector('.calc-jump')?.addEventListener('click',()=>document.querySelector<HTMLElement>('#calc-result')?.focus({preventScroll:true}));
+    document.querySelector('.calc-back')?.addEventListener('click',()=>requestAnimationFrame(()=>form.querySelector('select')?.focus({preventScroll:true})));
     const data=JSON.parse(document.querySelector('#calc-data')!.textContent!);
     const rub=(n:number)=>n.toLocaleString('ru-RU')+'\u00a0₽';
     const update=()=>{
@@ -56,4 +60,12 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     update();
   }
 </script>
+<style>
+  .calc-jump{display:none;min-height:44px;align-items:center;margin-bottom:18px;text-underline-offset:4px}
+  .calc-back{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:14px;text-underline-offset:4px}
+  .calc-result h2{font-size:24px;margin-bottom:14px}
+  .calc-result:focus{outline:2px solid var(--teal-text);outline-offset:4px}
+  #calc-result,#public-calculator{scroll-margin-top:24px}
+  @media(max-width:700px){.calc-jump{display:inline-flex}}
+</style>
 <style>.calculator{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}.calc-field{display:grid;gap:8px;margin-bottom:20px}.calc-field label{font-weight:600}select{font:inherit;color:var(--ink);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:12px;width:100%;min-height:48px}.calc-result{margin:0;position:sticky;top:20px}.calc-result .calc-price{font-size:clamp(24px,3vw,34px);color:var(--ink);font-weight:700;line-height:1.25}.calc-result .calc-hint{font-size:13px;margin-bottom:0}button{font:inherit;padding:8px 0;border:0;background:none;color:var(--teal-text);text-decoration:underline;cursor:pointer}@media(max-width:700px){.calculator{grid-template-columns:minmax(0,1fr);gap:24px}.calc-result{position:static}}</style>
