@@ -1,0 +1,7 @@
+---
+import { href } from '../lib/urls';
+interface Props { items: {title:string;description:string;href:string;label?:string}[]; }
+const {items} = Astro.props;
+---
+<ul class="link-list">{items.map(item => <li><a href={href(item.href)}><span>{item.label && <small>{item.label}</small>}<strong>{item.title}</strong><span class="description">{item.description}</span></span><span class="arrow" aria-hidden="true">→</span></a></li>)}</ul>
+<style>.link-list{list-style:none;margin:0;padding:0}.link-list li+li{border-top:1px solid var(--hair)}a{display:flex;justify-content:space-between;gap:24px;padding:23px 0;text-decoration:none;color:var(--ink);border-radius:var(--radius-sm)}a:hover strong{color:var(--teal-text)}strong{display:block;font-size:22px;font-weight:600;line-height:1.25}.description{display:block;color:var(--ink-2);margin-top:7px;max-width:72ch;font-size:15px}small{display:block;color:var(--ink-3);font-size:12px;margin-bottom:7px}.arrow{color:var(--teal-text);font-size:24px;flex-shrink:0}@media(max-width:600px){strong{font-size:20px}a{padding:20px 0}.description{font-size:14px}}</style>

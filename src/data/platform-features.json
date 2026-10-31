@@ -1,0 +1,3941 @@
+{
+  "as_of": "2026-10-31",
+  "status_definitions": {
+    "Да": "Есть",
+    "НП": "Не подтверждено",
+    "Инт.": "Интеграция",
+    "Прил.": "Приложение",
+    "Код": "Через код/API",
+    "Опция": "Платная опция",
+    "Услуга": "Услуга поддержки",
+    "Анонс": "Анонс",
+    "Раздел": "Есть раздел справки",
+    "Нет": "Не поддерживается",
+    "Частично": "Частично",
+    "Заявлено": "Заявлено платформой"
+  },
+  "sources": {
+    "I1": {
+      "title": "InSales: обзор функций",
+      "url": "https://www.insales.ru/page/features",
+      "accessed": "2026-10-31"
+    },
+    "I2": {
+      "title": "InSales: Ультра",
+      "url": "https://www.insales.ru/page/ultra",
+      "accessed": "2026-10-31"
+    },
+    "I3": {
+      "title": "InSales: маркетинг и SEO",
+      "url": "https://www.insales.ru/seo",
+      "accessed": "2026-10-31"
+    },
+    "I4": {
+      "title": "InSales: маркетплейсы",
+      "url": "https://www.insales.ru/page/marketplace",
+      "accessed": "2026-10-31"
+    },
+    "I5": {
+      "title": "InSales: магазин приложений",
+      "url": "https://www.insales.ru/collection/apps",
+      "accessed": "2026-10-31"
+    },
+    "I6": {
+      "title": "InSales: доставка",
+      "url": "https://www.insales.ru/page/delivery",
+      "accessed": "2026-10-31"
+    },
+    "I7": {
+      "title": "InSales: редактор сайта",
+      "url": "https://www.insales.ru/collection/doc-dizayn/product/redaktor-sayta-new",
+      "accessed": "2026-10-31"
+    },
+    "I8": {
+      "title": "InSales: избранное",
+      "url": "https://www.insales.ru/collection/doc-js/product/izbrannoe",
+      "accessed": "2026-10-31"
+    },
+    "I9": {
+      "title": "InSales: JS-компоненты",
+      "url": "https://www.insales.ru/collection/doc-js",
+      "accessed": "2026-10-31"
+    },
+    "I10": {
+      "title": "InSales: ИИ-аналитик",
+      "url": "https://www.insales.ru/page/ai-analyst",
+      "accessed": "2026-10-31"
+    },
+    "I11": {
+      "title": "InSales: диалоги",
+      "url": "https://www.insales.ru/page/dialogues-plus",
+      "accessed": "2026-10-31"
+    },
+    "I12": {
+      "title": "InSales: тарифы",
+      "url": "https://www.insales.ru/signup",
+      "accessed": "2026-10-31"
+    },
+    "I13": {
+      "title": "InSales: виджеты",
+      "url": "https://www.insales.ru/collection/vidzhety/product/infojson",
+      "accessed": "2026-10-31"
+    },
+    "K1": {
+      "title": "KIT: возможности",
+      "url": "https://kit.yandex.ru/",
+      "accessed": "2026-10-31"
+    },
+    "K2": {
+      "title": "KIT: о платформе",
+      "url": "https://yandex.ru/support/kit/ru/",
+      "accessed": "2026-10-31"
+    },
+    "K3": {
+      "title": "KIT: товары",
+      "url": "https://yandex.ru/support/kit/ru/goods/",
+      "accessed": "2026-10-31"
+    },
+    "K4": {
+      "title": "KIT: способы добавления товаров",
+      "url": "https://yandex.ru/support/kit/ru/goods/addition/",
+      "accessed": "2026-10-31"
+    },
+    "K5": {
+      "title": "KIT: управление товарами",
+      "url": "https://yandex.ru/support/kit/ru/goods/management-goods/",
+      "accessed": "2026-10-31"
+    },
+    "K6": {
+      "title": "KIT: обмен товарами, ценами, остатками и заказами",
+      "url": "https://yandex.ru/support/kit/ru/settings/product/products-prices-discounts-orders",
+      "accessed": "2026-10-31"
+    },
+    "K7": {
+      "title": "KIT: 1С, работа с товарами",
+      "url": "https://yandex.ru/support/kit/ru/settings/product/data-source/1c/goods",
+      "accessed": "2026-10-31"
+    },
+    "K8": {
+      "title": "KIT: источники данных",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/product/data-source/",
+      "accessed": "2026-10-31"
+    },
+    "K9": {
+      "title": "KIT: редактор",
+      "url": "https://yandex.ru/support/kit/ru/site-editor/",
+      "accessed": "2026-10-31"
+    },
+    "K10": {
+      "title": "KIT: секции",
+      "url": "https://yandex.ru/support/kit/ru/site-editor/sections/",
+      "accessed": "2026-10-31"
+    },
+    "K11": {
+      "title": "KIT: кастомные секции",
+      "url": "https://yandex.ru/support/kit/ru/site-editor/custom-sections/",
+      "accessed": "2026-10-31"
+    },
+    "K12": {
+      "title": "KIT: страницы",
+      "url": "https://yandex.ru/support/kit/ru/site-editor/pages",
+      "accessed": "2026-10-31"
+    },
+    "K13": {
+      "title": "KIT: кабинет покупателя",
+      "url": "https://www.yandex.ru/support/kit/ru/site-editor/account",
+      "accessed": "2026-10-31"
+    },
+    "K14": {
+      "title": "KIT: список заказов",
+      "url": "https://www.yandex.ru/support/kit/ru/orders/list",
+      "accessed": "2026-10-31"
+    },
+    "K15": {
+      "title": "KIT: оформление заказа",
+      "url": "https://www.yandex.ru/support/kit/ru/orders/pay",
+      "accessed": "2026-10-31"
+    },
+    "K16": {
+      "title": "KIT: заказы",
+      "url": "https://yandex.ru/support/kit/ru/orders/",
+      "accessed": "2026-10-31"
+    },
+    "K17": {
+      "title": "KIT: импорт старых заказов",
+      "url": "https://www.yandex.ru/support/kit/ru/orders/import",
+      "accessed": "2026-10-31"
+    },
+    "K18": {
+      "title": "KIT: склады",
+      "url": "https://yandex.ru/support/kit/ru/settings/logistics/warehouses",
+      "accessed": "2026-10-31"
+    },
+    "K19": {
+      "title": "KIT: логистика",
+      "url": "https://yandex.ru/support/kit/ru/settings/logistics/",
+      "accessed": "2026-10-31"
+    },
+    "K20": {
+      "title": "KIT: акции",
+      "url": "https://yandex.ru/support/kit/ru/promo/",
+      "accessed": "2026-10-31"
+    },
+    "K21": {
+      "title": "KIT: скидки",
+      "url": "https://www.yandex.ru/support/kit/ru/promo/sale",
+      "accessed": "2026-10-31"
+    },
+    "K22": {
+      "title": "KIT: подарочные карты",
+      "url": "https://yandex.ru/support/kit/ru/promo/cards",
+      "accessed": "2026-10-31"
+    },
+    "K23": {
+      "title": "KIT: наборы",
+      "url": "https://www.yandex.ru/support/kit/ru/promo/set",
+      "accessed": "2026-10-31"
+    },
+    "K24": {
+      "title": "KIT: сравнение цен",
+      "url": "https://www.yandex.ru/support/kit/ru/goods/price",
+      "accessed": "2026-10-31"
+    },
+    "K25": {
+      "title": "KIT: стратегии цен",
+      "url": "https://www.yandex.ru/support/kit/ru/promo/strategies",
+      "accessed": "2026-10-31"
+    },
+    "K26": {
+      "title": "KIT: клиенты",
+      "url": "https://yandex.ru/support/kit/ru/clients",
+      "accessed": "2026-10-31"
+    },
+    "K27": {
+      "title": "KIT: интеграции",
+      "url": "https://yandex.ru/support/kit/ru/integration/",
+      "accessed": "2026-10-31"
+    },
+    "K28": {
+      "title": "KIT: RetailCRM",
+      "url": "https://www.yandex.ru/support/kit/ru/integration/retailcrm/retail-crm",
+      "accessed": "2026-10-31"
+    },
+    "K29": {
+      "title": "KIT: программа лояльности",
+      "url": "https://www.yandex.ru/support/kit/ru/site-editor/sections/prog-loyalty",
+      "accessed": "2026-10-31"
+    },
+    "K30": {
+      "title": "KIT: SEO",
+      "url": "https://yandex.ru/support/kit/ru/settings/seo/",
+      "accessed": "2026-10-31"
+    },
+    "K31": {
+      "title": "KIT: отзывы из маркетплейсов",
+      "url": "https://yandex.ru/support/kit/ru/settings/reviews",
+      "accessed": "2026-10-31"
+    },
+    "K32": {
+      "title": "KIT: ABC-анализ",
+      "url": "https://www.yandex.ru/support/kit/ru/goods/abc-analysis",
+      "accessed": "2026-10-31"
+    },
+    "K33": {
+      "title": "KIT: роли",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/roles",
+      "accessed": "2026-10-31"
+    },
+    "K34": {
+      "title": "KIT: услуги",
+      "url": "https://yandex.ru/support/kit/ru/services",
+      "accessed": "2026-10-31"
+    },
+    "K35": {
+      "title": "KIT: скиллы ИИ",
+      "url": "https://yandex.ru/support/kit/ru/skills",
+      "accessed": "2026-10-31"
+    },
+    "K36": {
+      "title": "KIT: фулфилмент Маркета",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/logistics/integration/fby",
+      "accessed": "2026-10-31"
+    },
+    "K37": {
+      "title": "KIT: релизы",
+      "url": "https://kit.yandex.ru/releases",
+      "accessed": "2026-10-31"
+    },
+    "I14": {
+      "title": "InSales: полный перечень возможностей",
+      "url": "https://www.insales.ru/collection/doc-obschaya-informatsiya/product/polnyy-spisok-vozmozhnostey-platformy",
+      "accessed": "2026-10-31"
+    },
+    "I15": {
+      "title": "InSales: платёжные сервисы",
+      "url": "https://www.insales.ru/collection/apps-platezhnye-servisy",
+      "accessed": "2026-10-31"
+    },
+    "I16": {
+      "title": "InSales: amoCRM",
+      "url": "https://www.insales.ru/collection/apps-crm/product/amocrm",
+      "accessed": "2026-10-31"
+    },
+    "I17": {
+      "title": "InSales: база клиентов",
+      "url": "https://www.insales.ru/collection/doc-klienty",
+      "accessed": "2026-10-31"
+    },
+    "I18": {
+      "title": "InSales: импорт и восстановление данных",
+      "url": "https://www.insales.ru/collection/doc-chasto-zadavaemye-voprosy/product/kak-sdelat-rezervnoe-kopirovanie-ili-vosstanovlenie-dannyh",
+      "accessed": "2026-10-31"
+    },
+    "I19": {
+      "title": "InSales: обмен с МоимСкладом",
+      "url": "https://www.insales.ru/collection/integratsiya-s-moysklad",
+      "accessed": "2026-10-31"
+    },
+    "I20": {
+      "title": "InSales: обмен заказами 1С",
+      "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/nastroyka-vzaimodeystviya-s-1s-novogo-magazina-na-primere-upravlenie-torgovley-11",
+      "accessed": "2026-10-31"
+    },
+    "I21": {
+      "title": "InSales: обмен статусами",
+      "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/obnovlenie-statusov-obrabotki-i-oplaty-zakazov-iz-1s",
+      "accessed": "2026-10-31"
+    },
+    "I22": {
+      "title": "InSales: прочие расширения",
+      "url": "https://www.insales.ru/collection/apps-prochee",
+      "accessed": "2026-10-31"
+    },
+    "I23": {
+      "title": "InSales: документация",
+      "url": "https://www.insales.ru/collection/documentation",
+      "accessed": "2026-10-31"
+    },
+    "I24": {
+      "title": "InSales: конверсия товаров",
+      "url": "https://www.insales.ru/collection/apps-prodazhi/product/konversiya-tovarov",
+      "accessed": "2026-10-31"
+    },
+    "K38": {
+      "title": "KIT: проверка функционала витрины",
+      "url": "https://www.yandex.ru/support/kit/ru/referralprogram/checklist",
+      "accessed": "2026-10-31"
+    },
+    "K39": {
+      "title": "KIT: домены",
+      "url": "https://yandex.ru/support/kit/ru/settings/domain/",
+      "accessed": "2026-10-31"
+    },
+    "K40": {
+      "title": "KIT: постоянный домен и сертификат",
+      "url": "https://yandex.ru/support/kit/ru/settings/domain/permanent",
+      "accessed": "2026-10-31"
+    },
+    "K41": {
+      "title": "KIT: SEO-описания",
+      "url": "https://yandex.ru/support/kit/ru/settings/seo/descriptions",
+      "accessed": "2026-10-31"
+    },
+    "K42": {
+      "title": "KIT: редиректы",
+      "url": "https://yandex.ru/support/kit/ru/settings/seo/redirects",
+      "accessed": "2026-10-31"
+    },
+    "K43": {
+      "title": "KIT: robots.txt",
+      "url": "https://yandex.ru/support/kit/ru/settings/seo/robots",
+      "accessed": "2026-10-31"
+    },
+    "K44": {
+      "title": "KIT: sitemap, индексация и разметка",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/seo/sitemap-markup-index",
+      "accessed": "2026-10-31"
+    },
+    "K45": {
+      "title": "KIT: создание товара",
+      "url": "https://www.yandex.ru/support/kit/ru/goods/addition/manually",
+      "accessed": "2026-10-31"
+    },
+    "K46": {
+      "title": "KIT: карточка товара",
+      "url": "https://www.yandex.ru/support/kit/ru/site-editor/sections/goods-card",
+      "accessed": "2026-10-31"
+    },
+    "K47": {
+      "title": "KIT: почта и брошенные корзины",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/email",
+      "accessed": "2026-10-31"
+    },
+    "K48": {
+      "title": "KIT: подарки",
+      "url": "https://www.yandex.ru/support/kit/ru/promo/gifts",
+      "accessed": "2026-10-31"
+    },
+    "K49": {
+      "title": "KIT: заказы в 1С",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/product/data-source/1c/orders",
+      "accessed": "2026-10-31"
+    },
+    "K50": {
+      "title": "KIT: настройки заказов",
+      "url": "https://www.yandex.ru/support/kit/ru/settings/orders",
+      "accessed": "2026-10-31"
+    },
+    "K51": {
+      "title": "KIT: экспресс-доставка",
+      "url": "https://yandex.ru/support/delivery-profile/ru/modules/kit-integration",
+      "accessed": "2026-10-31"
+    },
+    "K52": {
+      "title": "KIT: доставка, отмены и возвраты",
+      "url": "https://yandex.ru/support/kit/ru/orders/delivery",
+      "accessed": "2026-10-31"
+    },
+    "K53": {
+      "title": "KIT: редактирование товаров",
+      "url": "https://www.yandex.ru/support/kit/ru/goods/management-goods/update",
+      "accessed": "2026-10-31"
+    },
+    "K54": {
+      "title": "KIT: категории и шаблоны карточек",
+      "url": "https://www.yandex.ru/support/kit/ru/goods/management-goods/categories",
+      "accessed": "2026-10-31"
+    },
+    "K55": {
+      "title": "KIT: фильтры",
+      "url": "https://www.yandex.ru/support/kit/ru/site-editor/filteres",
+      "accessed": "2026-10-31"
+    },
+    "K56": {
+      "title": "KIT: баннеры и окна",
+      "url": "https://www.yandex.ru/support/kit/ru/site-editor/banners-modals",
+      "accessed": "2026-10-31"
+    },
+    "K57": {
+      "title": "KIT: YML-импорт",
+      "url": "https://yandex.ru/support/kit/ru/settings/product/data-source/yml",
+      "accessed": "2026-10-31"
+    },
+    "I25": {
+      "title": "InSales: кассы и платёжные интеграции",
+      "url": "https://www.insales.ru/collection/apps-platezhnye-sistemy",
+      "accessed": "2026-10-31"
+    },
+    "I26": {
+      "title": "InSales: цены и варианты обмена 1С",
+      "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/osnovnye-prichiny-pochemu-mogut-ne-sozdavatsya-tovary-prishedshie-iz-1s",
+      "accessed": "2026-10-31"
+    },
+    "I27": {
+      "title": "InSales: идентификация импорта",
+      "url": "https://www.insales.ru/collection/doc-import-export/product/sposoby-identifikatsii-tovarov-pri-importe-iz-csvxlsxlsx",
+      "accessed": "2026-10-31"
+    },
+    "I28": {
+      "title": "InSales: ИИ-инструменты товара",
+      "url": "https://www.insales.ru/collection/tovary/product/ai-instrumenty-v-kartochke-tovara",
+      "accessed": "2026-10-31"
+    },
+    "I29": {
+      "title": "InSales: корзина",
+      "url": "https://www.insales.ru/collection/nastrojki-vidzhetov/product/vidjeti-korzini",
+      "accessed": "2026-10-31"
+    },
+    "I30": {
+      "title": "InSales: языковые версии",
+      "url": "https://www.insales.ru/collection/doc-nastroyki-magazina/product/yazykovye-versii-magazina",
+      "accessed": "2026-10-31"
+    },
+    "I31": {
+      "title": "InSales: сопоставление существующего каталога 1С",
+      "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/nastroyka-sinhronizatsii-s-1s-uzhe-suschestvuyuschego-magazina-na-insales",
+      "accessed": "2026-10-31"
+    }
+  },
+  "features": [
+    {
+      "id": "F001",
+      "group": "Витрина",
+      "feature": "Собственный интернет-магазин",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F002",
+      "group": "Витрина",
+      "feature": "Адаптивные темы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F003",
+      "group": "Витрина",
+      "feature": "Визуальное редактирование",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K9",
+      "note": ""
+    },
+    {
+      "id": "F004",
+      "group": "Витрина",
+      "feature": "Цвета и шрифты бренда",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K9",
+      "note": ""
+    },
+    {
+      "id": "F005",
+      "group": "Витрина",
+      "feature": "Сборка страниц из блоков",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F006",
+      "group": "Витрина",
+      "feature": "Навигационное меню",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K9",
+      "note": ""
+    },
+    {
+      "id": "F007",
+      "group": "Витрина",
+      "feature": "Информационные страницы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K12",
+      "note": ""
+    },
+    {
+      "id": "F008",
+      "group": "Витрина",
+      "feature": "Блог и статьи",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K12",
+      "note": ""
+    },
+    {
+      "id": "F009",
+      "group": "Витрина",
+      "feature": "Баннеры и слайдшоу",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I13",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F010",
+      "group": "Витрина",
+      "feature": "Всплывающие окна",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K56",
+      "note": "KIT: есть настройки содержимого, аудитории и условий показа."
+    },
+    {
+      "id": "F011",
+      "group": "Витрина",
+      "feature": "Форма обратной связи",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I9",
+      "kit_source": "",
+      "note": "Конкретные формы KIT нужно проверить отдельно."
+    },
+    {
+      "id": "F012",
+      "group": "Витрина",
+      "feature": "Подписка на рассылку",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I4",
+      "kit_source": "K56",
+      "note": ""
+    },
+    {
+      "id": "F013",
+      "group": "Витрина",
+      "feature": "Блоки отзывов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I13",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F014",
+      "group": "Витрина",
+      "feature": "Блок вопросов и ответов",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F015",
+      "group": "Витрина",
+      "feature": "Товарные подборки на главной",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I13",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F016",
+      "group": "Витрина",
+      "feature": "Раздельные настройки мобильного вида",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K11",
+      "note": "У KIT подтверждены мобильные отступы и предпросмотр секций."
+    },
+    {
+      "id": "F017",
+      "group": "Витрина",
+      "feature": "Произвольные HTML/CSS-блоки",
+      "insales": "Код",
+      "kit": "Код",
+      "insales_source": "I2",
+      "kit_source": "K11",
+      "note": "KIT: кастомные секции HTML/CSS/Handlebars; не равны полному доступу к теме."
+    },
+    {
+      "id": "F018",
+      "group": "Витрина",
+      "feature": "Редактирование всей темы на уровне кода",
+      "insales": "Код",
+      "kit": "НП",
+      "insales_source": "I7",
+      "kit_source": "",
+      "note": "У InSales HTML/CSS/JS/Liquid; у KIT подтверждён код секций."
+    },
+    {
+      "id": "F019",
+      "group": "Витрина",
+      "feature": "Сторонние темы",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F020",
+      "group": "Витрина",
+      "feature": "Несколько языковых версий",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I30",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F021",
+      "group": "Витрина",
+      "feature": "Избранное",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I8",
+      "kit_source": "K13",
+      "note": "InSales сохраняет товары, а не выбранные варианты."
+    },
+    {
+      "id": "F022",
+      "group": "Витрина",
+      "feature": "Сравнение товаров покупателем",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I7",
+      "kit_source": "",
+      "note": "Не путать со сравнением цен продавцом."
+    },
+    {
+      "id": "F023",
+      "group": "Витрина",
+      "feature": "Недавно просмотренные товары",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I13",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F024",
+      "group": "Витрина",
+      "feature": "Живой поиск",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I9",
+      "kit_source": "",
+      "note": "Наличие обычного поиска KIT подтверждено отдельно."
+    },
+    {
+      "id": "F025",
+      "group": "Витрина",
+      "feature": "Поиск по сайту",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I9",
+      "kit_source": "K12",
+      "note": ""
+    },
+    {
+      "id": "F026",
+      "group": "Витрина",
+      "feature": "Фильтры в каталоге",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I13",
+      "kit_source": "K55",
+      "note": ""
+    },
+    {
+      "id": "F027",
+      "group": "Витрина",
+      "feature": "Быстрые фильтры отдельным блоком",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K10",
+      "note": ""
+    },
+    {
+      "id": "F028",
+      "group": "Витрина",
+      "feature": "Кнопка перехода к покупке на WB/Ozon",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I7",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F029",
+      "group": "Каталог",
+      "feature": "Ручное создание товаров",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K4",
+      "note": ""
+    },
+    {
+      "id": "F030",
+      "group": "Каталог",
+      "feature": "Категории и подкатегории",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K54",
+      "note": ""
+    },
+    {
+      "id": "F031",
+      "group": "Каталог",
+      "feature": "Автоматические категории по условиям",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F032",
+      "group": "Каталог",
+      "feature": "Коллекции товаров",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K3",
+      "note": "InSales: подборки через категории; механики наполнения различаются."
+    },
+    {
+      "id": "F033",
+      "group": "Каталог",
+      "feature": "Скрытие товаров",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K54",
+      "note": ""
+    },
+    {
+      "id": "F034",
+      "group": "Каталог",
+      "feature": "Скрытые категории",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K54",
+      "note": "KIT: скрытие категории в меню/публикации; не парольная защита."
+    },
+    {
+      "id": "F035",
+      "group": "Каталог",
+      "feature": "Архивация товаров",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K53",
+      "note": ""
+    },
+    {
+      "id": "F036",
+      "group": "Каталог",
+      "feature": "Массовые операции",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K53",
+      "note": "KIT: массовое изменение изображений, категорий, вариантов и архивация."
+    },
+    {
+      "id": "F037",
+      "group": "Каталог",
+      "feature": "Описание товара",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K45",
+      "note": ""
+    },
+    {
+      "id": "F038",
+      "group": "Каталог",
+      "feature": "Характеристики",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K3",
+      "note": ""
+    },
+    {
+      "id": "F039",
+      "group": "Каталог",
+      "feature": "Размеры, цвета, варианты",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K3",
+      "note": ""
+    },
+    {
+      "id": "F040",
+      "group": "Каталог",
+      "feature": "Индивидуальные цены и остатки вариантов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K7",
+      "note": "KIT: через данные обмена и характеристики."
+    },
+    {
+      "id": "F041",
+      "group": "Каталог",
+      "feature": "Фото товара",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F042",
+      "group": "Каталог",
+      "feature": "Видео товара",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K45",
+      "note": "KIT: одно видео до 100 МБ, файл или ссылка."
+    },
+    {
+      "id": "F043",
+      "group": "Каталог",
+      "feature": "Артикулы и штрихкоды",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I27",
+      "kit_source": "K6",
+      "note": "InSales: артикулы подтверждены; применение штрихкода как отдельного идентификатора требует проверки."
+    },
+    {
+      "id": "F044",
+      "group": "Каталог",
+      "feature": "Габариты и вес",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F045",
+      "group": "Каталог",
+      "feature": "Старая и действующая цена",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F046",
+      "group": "Каталог",
+      "feature": "Сопутствующие товары",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": "KIT: дополнительные товары в чекауте; место показа отличается."
+    },
+    {
+      "id": "F047",
+      "group": "Каталог",
+      "feature": "Аналогичные товары",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K38",
+      "note": "KIT: полка «Похожие товары» в официальном чек-листе."
+    },
+    {
+      "id": "F048",
+      "group": "Каталог",
+      "feature": "Сортировка каталога",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K38",
+      "note": "Подтверждена официальным чек-листом; набор сортировок не сопоставлен."
+    },
+    {
+      "id": "F049",
+      "group": "Каталог",
+      "feature": "Товарные бейджи",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I13",
+      "kit_source": "K53",
+      "note": ""
+    },
+    {
+      "id": "F050",
+      "group": "Каталог",
+      "feature": "Предзаказ при отсутствии",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I7",
+      "kit_source": "K18",
+      "note": "У KIT «Товары под заказ» влияет на сроки, не на самовывоз."
+    },
+    {
+      "id": "F051",
+      "group": "Каталог",
+      "feature": "Подписка на поступление",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F052",
+      "group": "Каталог",
+      "feature": "Скачиваемые цифровые товары",
+      "insales": "Да",
+      "kit": "Нет",
+      "insales_source": "I1",
+      "kit_source": "K2",
+      "note": "KIT позиционируется для физических товаров; заявки на услуги учитываются отдельно."
+    },
+    {
+      "id": "F053",
+      "group": "Каталог",
+      "feature": "Комплекты товаров",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K23",
+      "note": "KIT: скидочная механика набора; не подтверждает отдельный складской SKU комплекта."
+    },
+    {
+      "id": "F054",
+      "group": "Каталог",
+      "feature": "Приложение умного поиска",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F055",
+      "group": "Обмен",
+      "feature": "Импорт Excel",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K4",
+      "note": ""
+    },
+    {
+      "id": "F056",
+      "group": "Обмен",
+      "feature": "Импорт CSV",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F057",
+      "group": "Обмен",
+      "feature": "Импорт YML",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K8",
+      "note": ""
+    },
+    {
+      "id": "F058",
+      "group": "Обмен",
+      "feature": "Импорт XML",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": "YML не приравниваем к любому XML."
+    },
+    {
+      "id": "F059",
+      "group": "Обмен",
+      "feature": "Экспорт товаров в файл",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K5",
+      "note": ""
+    },
+    {
+      "id": "F060",
+      "group": "Обмен",
+      "feature": "Товарные фиды",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K5",
+      "note": ""
+    },
+    {
+      "id": "F061",
+      "group": "Обмен",
+      "feature": "Обновления по расписанию",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F062",
+      "group": "Обмен",
+      "feature": "Загрузка по URL",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K8",
+      "note": "KIT: YML-фид."
+    },
+    {
+      "id": "F063",
+      "group": "Обмен",
+      "feature": "Обновление цен из внешнего источника",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F064",
+      "group": "Обмен",
+      "feature": "Обновление остатков из внешнего источника",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F065",
+      "group": "Обмен",
+      "feature": "Сопоставление по артикулам/штрихкодам",
+      "insales": "Частично",
+      "kit": "Да",
+      "insales_source": "I27",
+      "kit_source": "K6",
+      "note": "InSales: имя, артикул товара/варианта, ID варианта. Штрихкод этим источником не подтверждён."
+    },
+    {
+      "id": "F066",
+      "group": "Обмен",
+      "feature": "Выбор источника отдельно для цен и товаров",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F067",
+      "group": "Обмен",
+      "feature": "История синхронизаций",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F068",
+      "group": "Обмен",
+      "feature": "Ручной запуск синхронизации",
+      "insales": "Инт.",
+      "kit": "Да",
+      "insales_source": "I26",
+      "kit_source": "K6",
+      "note": "InSales: ручной обмен запускается со стороны 1С."
+    },
+    {
+      "id": "F069",
+      "group": "Обмен",
+      "feature": "Импорт каталога Wildberries",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I4",
+      "kit_source": "K8",
+      "note": ""
+    },
+    {
+      "id": "F070",
+      "group": "Обмен",
+      "feature": "Импорт каталога Ozon",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I4",
+      "kit_source": "K8",
+      "note": ""
+    },
+    {
+      "id": "F071",
+      "group": "Обмен",
+      "feature": "Импорт каталога Яндекс Маркета",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I1",
+      "kit_source": "K8",
+      "note": ""
+    },
+    {
+      "id": "F072",
+      "group": "Обмен",
+      "feature": "Интеграция с 1С",
+      "insales": "Опция",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K8",
+      "note": "InSales показывает отдельную опцию 1С; у KIT требуется модуль."
+    },
+    {
+      "id": "F073",
+      "group": "Обмен",
+      "feature": "Интеграция с МоимСкладом",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K8",
+      "note": ""
+    },
+    {
+      "id": "F074",
+      "group": "Обмен",
+      "feature": "Каталог из 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F075",
+      "group": "Обмен",
+      "feature": "Цены из 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F076",
+      "group": "Обмен",
+      "feature": "Остатки из 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F077",
+      "group": "Обмен",
+      "feature": "Передача заказов в 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I20",
+      "kit_source": "K6",
+      "note": "Обмен настраивается с учётом конфигурации 1С."
+    },
+    {
+      "id": "F078",
+      "group": "Обмен",
+      "feature": "Передача заказов в МойСклад",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I19",
+      "kit_source": "K6",
+      "note": ""
+    },
+    {
+      "id": "F079",
+      "group": "Обмен",
+      "feature": "Сопоставление статусов с МоимСкладом",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I21",
+      "kit_source": "K6",
+      "note": "InSales: направление обмена зависит от версии интеграции; в новых аккаунтах возможен только InSales → МойСклад."
+    },
+    {
+      "id": "F080",
+      "group": "Обмен",
+      "feature": "Маппинг полей 1С",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K7",
+      "note": ""
+    },
+    {
+      "id": "F081",
+      "group": "Обмен",
+      "feature": "Выбор вида цены 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I26",
+      "kit_source": "K7",
+      "note": "InSales: сопоставление типа цены 1С с ценой магазина."
+    },
+    {
+      "id": "F082",
+      "group": "Обмен",
+      "feature": "Обмен вариантами 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I26",
+      "kit_source": "K7",
+      "note": "InSales распознаёт варианты по ID и свойствам. Одинаковые наборы свойств не создают разные варианты."
+    },
+    {
+      "id": "F083",
+      "group": "Обмен",
+      "feature": "Выбор складов для загрузки остатков",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K6",
+      "note": "KIT: документировано для МойСклад, Ozon и WB."
+    },
+    {
+      "id": "F084",
+      "group": "Учёт",
+      "feature": "Несколько складов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K18",
+      "note": ""
+    },
+    {
+      "id": "F085",
+      "group": "Учёт",
+      "feature": "Резервирование запасов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K28",
+      "note": "У KIT наличие резервов указано в документации RetailCRM; правила резерва требуют проверки."
+    },
+    {
+      "id": "F086",
+      "group": "Учёт",
+      "feature": "Разделение заказа по складам",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K18",
+      "note": "KIT формирует несколько посылок."
+    },
+    {
+      "id": "F087",
+      "group": "Учёт",
+      "feature": "Настройка времени подготовки к отгрузке",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K18",
+      "note": ""
+    },
+    {
+      "id": "F088",
+      "group": "Учёт",
+      "feature": "Маркированные товары на сайте",
+      "insales": "Да",
+      "kit": "Раздел",
+      "insales_source": "I2",
+      "kit_source": "K16",
+      "note": "Есть документация «Честный знак»; разрешительный режим и кассу проверять по конкретной схеме."
+    },
+    {
+      "id": "F089",
+      "group": "Учёт",
+      "feature": "Закупочная цена",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F090",
+      "group": "Учёт",
+      "feature": "Несколько типов цен",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": "Выбор источника цены KIT не означает оптовые цены по группам покупателей."
+    },
+    {
+      "id": "F091",
+      "group": "Учёт",
+      "feature": "Оптовые цены",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F092",
+      "group": "Учёт",
+      "feature": "Цена по группе клиента",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F093",
+      "group": "Учёт",
+      "feature": "Цена по количеству",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F094",
+      "group": "Учёт",
+      "feature": "Цена по способу оплаты",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F095",
+      "group": "Заказ",
+      "feature": "Корзина и чекаут",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F096",
+      "group": "Заказ",
+      "feature": "Быстрый заказ в один клик",
+      "insales": "Да",
+      "kit": "Частично",
+      "insales_source": "I1",
+      "kit_source": "K1",
+      "note": "InSales: быстрый заказ/заявка; KIT: автозаполнение чекаута. Это разные механики."
+    },
+    {
+      "id": "F097",
+      "group": "Заказ",
+      "feature": "Авторизация через Яндекс ID",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F098",
+      "group": "Заказ",
+      "feature": "Авторизация через Сбер ID",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F099",
+      "group": "Заказ",
+      "feature": "Авторизация по телефону/email",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F100",
+      "group": "Заказ",
+      "feature": "Настраиваемые поля оформления",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F101",
+      "group": "Заказ",
+      "feature": "Комментарий к заказу",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K14",
+      "note": "KIT показывает комментарий клиента в карточке заказа."
+    },
+    {
+      "id": "F102",
+      "group": "Заказ",
+      "feature": "Защита от автоматических заказов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F103",
+      "group": "Заказ",
+      "feature": "Определение города",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F104",
+      "group": "Заказ",
+      "feature": "Допродажа в чекауте",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": "У InSales подтверждены сопутствующие товары, но показ именно в чекауте здесь не подтверждён."
+    },
+    {
+      "id": "F105",
+      "group": "Заказ",
+      "feature": "Минимальная сумма заказа",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F106",
+      "group": "Заказ",
+      "feature": "Список и поиск заказов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K14",
+      "note": ""
+    },
+    {
+      "id": "F107",
+      "group": "Заказ",
+      "feature": "Редактирование заказа менеджером",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I4",
+      "kit_source": "K14",
+      "note": "KIT: правка после перехода в «Ожидает доставку»; не произвольная правка любой стадии."
+    },
+    {
+      "id": "F108",
+      "group": "Заказ",
+      "feature": "Статусы заказов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K14",
+      "note": ""
+    },
+    {
+      "id": "F109",
+      "group": "Заказ",
+      "feature": "Собственные статусы",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F110",
+      "group": "Заказ",
+      "feature": "Массовая обработка заказов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F111",
+      "group": "Заказ",
+      "feature": "Задачи и ответственные",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F112",
+      "group": "Заказ",
+      "feature": "Печатные документы",
+      "insales": "Да",
+      "kit": "Раздел",
+      "insales_source": "I2",
+      "kit_source": "K16",
+      "note": "KIT: маркировка и акт приёма-передачи. Полный набор бухгалтерских форм не подтверждён."
+    },
+    {
+      "id": "F113",
+      "group": "Заказ",
+      "feature": "Экспорт заказов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K14",
+      "note": ""
+    },
+    {
+      "id": "F114",
+      "group": "Заказ",
+      "feature": "Импорт старых заказов",
+      "insales": "Услуга",
+      "kit": "Да",
+      "insales_source": "I18",
+      "kit_source": "K17",
+      "note": "InSales: платная услуга поддержки с ограничениями данных; KIT: импорт Excel."
+    },
+    {
+      "id": "F115",
+      "group": "Заказ",
+      "feature": "Подтверждение заказов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I4",
+      "kit_source": "K16",
+      "note": ""
+    },
+    {
+      "id": "F116",
+      "group": "Заказ",
+      "feature": "Частичный выкуп",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K52",
+      "note": "KIT: зависит от доставки; для экспресс-доставки частичный выкуп не поддерживается."
+    },
+    {
+      "id": "F117",
+      "group": "Заказ",
+      "feature": "Разделение по коробкам",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K50",
+      "note": ""
+    },
+    {
+      "id": "F118",
+      "group": "Заказ",
+      "feature": "Статус по расписанию",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F119",
+      "group": "Заказ",
+      "feature": "Личный кабинет покупателя",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K13",
+      "note": ""
+    },
+    {
+      "id": "F120",
+      "group": "Заказ",
+      "feature": "История покупок в кабинете",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K13",
+      "note": ""
+    },
+    {
+      "id": "F121",
+      "group": "Заказ",
+      "feature": "Профиль и контакты покупателя",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K13",
+      "note": ""
+    },
+    {
+      "id": "F122",
+      "group": "Оплата",
+      "feature": "Онлайн-оплата картой",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F123",
+      "group": "Оплата",
+      "feature": "Оплата при получении",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": "У KIT зависит от способа доставки."
+    },
+    {
+      "id": "F124",
+      "group": "Оплата",
+      "feature": "Банковский перевод",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F125",
+      "group": "Оплата",
+      "feature": "Счёт для юрлица",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F126",
+      "group": "Оплата",
+      "feature": "СБП",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F127",
+      "group": "Оплата",
+      "feature": "ЮKassa",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F128",
+      "group": "Оплата",
+      "feature": "SberPay",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F129",
+      "group": "Оплата",
+      "feature": "T-Pay",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F130",
+      "group": "Оплата",
+      "feature": "ЮMoney",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F131",
+      "group": "Оплата",
+      "feature": "Яндекс Пэй",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I15",
+      "kit_source": "K15",
+      "note": "Подключение провайдера и условия договора проверяются отдельно."
+    },
+    {
+      "id": "F132",
+      "group": "Оплата",
+      "feature": "Яндекс Сплит",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I15",
+      "kit_source": "K1",
+      "note": "Подключение провайдера и условия договора проверяются отдельно."
+    },
+    {
+      "id": "F133",
+      "group": "Оплата",
+      "feature": "CloudPayments",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I15",
+      "kit_source": "K15",
+      "note": "Подключение провайдера и условия договора проверяются отдельно."
+    },
+    {
+      "id": "F134",
+      "group": "Оплата",
+      "feature": "Оплата частями",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K1",
+      "note": "Разные провайдеры, условия и доступность."
+    },
+    {
+      "id": "F135",
+      "group": "Оплата",
+      "feature": "Онлайн-касса и фискализация",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F136",
+      "group": "Оплата",
+      "feature": "CloudKassir",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I25",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F137",
+      "group": "Оплата",
+      "feature": "АТОЛ Онлайн",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I25",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F138",
+      "group": "Оплата",
+      "feature": "БИФИТ касса",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F139",
+      "group": "Оплата",
+      "feature": "Наценки/скидки на способ оплаты",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F140",
+      "group": "Оплата",
+      "feature": "Связь доступной оплаты с доставкой",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F141",
+      "group": "Доставка",
+      "feature": "Курьерская доставка",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F142",
+      "group": "Доставка",
+      "feature": "Самовывоз",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F143",
+      "group": "Доставка",
+      "feature": "ПВЗ на карте",
+      "insales": "Инт.",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F144",
+      "group": "Доставка",
+      "feature": "Расчёт стоимости доставки до оплаты",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": "Наличие расчёта стоимости не доказывает единый SLA доставки."
+    },
+    {
+      "id": "F145",
+      "group": "Доставка",
+      "feature": "Цена доставки в карточке товара",
+      "insales": "Да",
+      "kit": "Частично",
+      "insales_source": "I2",
+      "kit_source": "K46",
+      "note": "KIT: блок условий доставки в карточке. Персональный автоматический расчёт в нём не подтверждён."
+    },
+    {
+      "id": "F146",
+      "group": "Доставка",
+      "feature": "Зоны доставки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F147",
+      "group": "Доставка",
+      "feature": "Календарь и интервалы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F148",
+      "group": "Доставка",
+      "feature": "Собственная доставка",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F149",
+      "group": "Доставка",
+      "feature": "СДЭК",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F150",
+      "group": "Доставка",
+      "feature": "Почта России",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F151",
+      "group": "Доставка",
+      "feature": "DPD",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F152",
+      "group": "Доставка",
+      "feature": "Dalli",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F153",
+      "group": "Доставка",
+      "feature": "ПЭК",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F154",
+      "group": "Доставка",
+      "feature": "Яндекс Доставка",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K15",
+      "note": "У InSales в «Ультра» пометка «скоро», но в каталоге есть приложение; конкретный способ подключения уточнить."
+    },
+    {
+      "id": "F155",
+      "group": "Доставка",
+      "feature": "5Post",
+      "insales": "Анонс",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": "InSales: на странице тарифа «скоро», не считать доступной."
+    },
+    {
+      "id": "F156",
+      "group": "Доставка",
+      "feature": "Ozon Доставка",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F157",
+      "group": "Доставка",
+      "feature": "Фулфилмент Яндекс Маркета",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K36",
+      "note": ""
+    },
+    {
+      "id": "F158",
+      "group": "Доставка",
+      "feature": "СДЭК Фулфилмент",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F159",
+      "group": "Доставка",
+      "feature": "Сервис inSales Доставка",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I6",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F160",
+      "group": "Доставка",
+      "feature": "Один договор с несколькими перевозчиками",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I6",
+      "kit_source": "",
+      "note": "Сценарий inSales Доставки."
+    },
+    {
+      "id": "F161",
+      "group": "Доставка",
+      "feature": "Оформление отправлений",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I6",
+      "kit_source": "K16",
+      "note": ""
+    },
+    {
+      "id": "F162",
+      "group": "Доставка",
+      "feature": "Отслеживание посылок",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I6",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F163",
+      "group": "Доставка",
+      "feature": "Возврат отправления",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I6",
+      "kit_source": "K52",
+      "note": "KIT: отмены, невыкупы, возвраты; правила и суммы зависят от сценария."
+    },
+    {
+      "id": "F164",
+      "group": "Доставка",
+      "feature": "Учёт наложенных платежей",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I6",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F165",
+      "group": "Доставка",
+      "feature": "Настройка упаковки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I6",
+      "kit_source": "",
+      "note": "Разделение по коробкам KIT учтено отдельно; настройка справочника упаковок не подтверждена."
+    },
+    {
+      "id": "F166",
+      "group": "Доставка",
+      "feature": "Наценка на тариф доставки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I6",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F167",
+      "group": "Доставка",
+      "feature": "Отслеживание в Яндекс Go",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F168",
+      "group": "Доставка",
+      "feature": "Фильтр ПВЗ по примерке и постоплате",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F169",
+      "group": "Клиенты",
+      "feature": "База покупателей",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K26",
+      "note": ""
+    },
+    {
+      "id": "F170",
+      "group": "Клиенты",
+      "feature": "История и сумма заказов клиента",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K26",
+      "note": ""
+    },
+    {
+      "id": "F171",
+      "group": "Клиенты",
+      "feature": "Группы и сегменты покупателей",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I3",
+      "kit_source": "K28",
+      "note": "У KIT через CRM; встроенную сегментацию не подтвердили."
+    },
+    {
+      "id": "F172",
+      "group": "Клиенты",
+      "feature": "Заметки о клиенте",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K26",
+      "note": ""
+    },
+    {
+      "id": "F173",
+      "group": "Клиенты",
+      "feature": "Экспорт клиентской базы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I17",
+      "kit_source": "K26",
+      "note": ""
+    },
+    {
+      "id": "F174",
+      "group": "Клиенты",
+      "feature": "Импорт клиентов",
+      "insales": "Услуга",
+      "kit": "Да",
+      "insales_source": "I18",
+      "kit_source": "K26",
+      "note": "InSales: услуга поддержки с ограничениями и согласованием формата; KIT: встроенный Excel-импорт."
+    },
+    {
+      "id": "F175",
+      "group": "Клиенты",
+      "feature": "Учёт согласия на рассылку",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I17",
+      "kit_source": "K26",
+      "note": "InSales: признак подписки; KIT также экспортирует дату и время."
+    },
+    {
+      "id": "F176",
+      "group": "Лояльность",
+      "feature": "Скидки на товары",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K21",
+      "note": ""
+    },
+    {
+      "id": "F177",
+      "group": "Лояльность",
+      "feature": "Промокоды",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K20",
+      "note": ""
+    },
+    {
+      "id": "F178",
+      "group": "Лояльность",
+      "feature": "Скидка по сумме заказа",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I3",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F179",
+      "group": "Лояльность",
+      "feature": "Накопительные скидки",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I3",
+      "kit_source": "K28",
+      "note": ""
+    },
+    {
+      "id": "F180",
+      "group": "Лояльность",
+      "feature": "Бонусы: начисление и списание",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K29",
+      "note": "KIT: логика и параметры в RetailCRM."
+    },
+    {
+      "id": "F181",
+      "group": "Лояльность",
+      "feature": "Бонусы в кабинете покупателя",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I1",
+      "kit_source": "K13",
+      "note": "KIT: требуется подключённая программа."
+    },
+    {
+      "id": "F182",
+      "group": "Лояльность",
+      "feature": "Уровни программы лояльности",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K29",
+      "note": ""
+    },
+    {
+      "id": "F183",
+      "group": "Лояльность",
+      "feature": "Подарочные карты",
+      "insales": "Прил.",
+      "kit": "Да",
+      "insales_source": "I22",
+      "kit_source": "K22",
+      "note": "InSales: GetPrime — цифровые сертификаты; KIT: встроенные карты."
+    },
+    {
+      "id": "F184",
+      "group": "Лояльность",
+      "feature": "Отправка карты получателю в заданное время",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K22",
+      "note": ""
+    },
+    {
+      "id": "F185",
+      "group": "Лояльность",
+      "feature": "Скидочные наборы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K23",
+      "note": "У InSales комплекты с ценой; механики отличаются."
+    },
+    {
+      "id": "F186",
+      "group": "Лояльность",
+      "feature": "Подарок к покупке",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K48",
+      "note": "KIT: подарок за 1 ₽ по порогу суммы корзины."
+    },
+    {
+      "id": "F187",
+      "group": "Лояльность",
+      "feature": "Календарь скидок",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K21",
+      "note": ""
+    },
+    {
+      "id": "F188",
+      "group": "Лояльность",
+      "feature": "Сравнение своей цены с Ozon",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K24",
+      "note": "Только свои товары на Ozon, не цены конкурентов."
+    },
+    {
+      "id": "F189",
+      "group": "Лояльность",
+      "feature": "Автокоррекция цены относительно Ozon",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K25",
+      "note": "Ограничения актуальности данных описаны в источнике."
+    },
+    {
+      "id": "F190",
+      "group": "Коммуникации",
+      "feature": "Уведомления покупателю о заказе",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K15",
+      "note": ""
+    },
+    {
+      "id": "F191",
+      "group": "Коммуникации",
+      "feature": "Уведомления менеджеру",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K16",
+      "note": ""
+    },
+    {
+      "id": "F192",
+      "group": "Коммуникации",
+      "feature": "Telegram-бот уведомлений",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K16",
+      "note": ""
+    },
+    {
+      "id": "F193",
+      "group": "Коммуникации",
+      "feature": "Push в мобильное приложение",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F194",
+      "group": "Коммуникации",
+      "feature": "Мультиканальные диалоги",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I11",
+      "kit_source": "K28",
+      "note": "KIT: внешняя CRM."
+    },
+    {
+      "id": "F195",
+      "group": "Коммуникации",
+      "feature": "Онлайн-чат",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K27",
+      "note": "KIT: Jivo или CRM."
+    },
+    {
+      "id": "F196",
+      "group": "Коммуникации",
+      "feature": "WhatsApp/Telegram/Viber в CRM",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I11",
+      "kit_source": "K28",
+      "note": ""
+    },
+    {
+      "id": "F197",
+      "group": "Коммуникации",
+      "feature": "Вложения в чате",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F198",
+      "group": "Коммуникации",
+      "feature": "Шаблоны писем",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F199",
+      "group": "Коммуникации",
+      "feature": "Массовые email/SMS",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I3",
+      "kit_source": "K28",
+      "note": "KIT: штатные промо-email подтверждены; массовые SMS через CRM. Это не встроенные SMS."
+    },
+    {
+      "id": "F200",
+      "group": "Коммуникации",
+      "feature": "Триггерные сообщения",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I3",
+      "kit_source": "K28",
+      "note": "KIT: есть штатный триггер брошенной корзины; произвольные сценарии через CRM."
+    },
+    {
+      "id": "F201",
+      "group": "Коммуникации",
+      "feature": "Возврат брошенных корзин",
+      "insales": "Опция",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K47",
+      "note": "KIT: встроенные email, задержка, интервал и промокод; CRM не обязательна. InSales: платная опция."
+    },
+    {
+      "id": "F202",
+      "group": "Отзывы",
+      "feature": "Показ отзывов о товаре на сайте",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K46",
+      "note": "KIT: показ импортированных отзывов. Написание нового отзыва прямо на сайте не подтверждено."
+    },
+    {
+      "id": "F203",
+      "group": "Отзывы",
+      "feature": "Загрузка отзывов Ozon",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K31",
+      "note": ""
+    },
+    {
+      "id": "F204",
+      "group": "Отзывы",
+      "feature": "Загрузка отзывов Яндекс Маркета",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K31",
+      "note": ""
+    },
+    {
+      "id": "F205",
+      "group": "Отзывы",
+      "feature": "ИИ-суммаризация отзывов",
+      "insales": "НП",
+      "kit": "Частично",
+      "insales_source": "",
+      "kit_source": "K31",
+      "note": "Подтверждена суммаризация; применение именно ИИ данным источником прямо не доказано."
+    },
+    {
+      "id": "F206",
+      "group": "SEO",
+      "feature": "Метаописания страниц",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K41",
+      "note": "KIT: Title/Description товаров, категорий, коллекций и страниц."
+    },
+    {
+      "id": "F207",
+      "group": "SEO",
+      "feature": "SEO-шаблоны",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K41",
+      "note": "KIT: динамические переменные в шаблонах Title/Description."
+    },
+    {
+      "id": "F208",
+      "group": "SEO",
+      "feature": "Человекопонятные URL",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K54",
+      "note": "KIT: ссылка категории редактируется; другие типы URL отдельно не проверены."
+    },
+    {
+      "id": "F209",
+      "group": "SEO",
+      "feature": "301-редиректы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K42",
+      "note": "KIT: записи и импорт XLS; автоматические 301. Только домен магазина."
+    },
+    {
+      "id": "F210",
+      "group": "SEO",
+      "feature": "Robots.txt",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K43",
+      "note": "KIT: включение индексации и заполнение robots.txt."
+    },
+    {
+      "id": "F211",
+      "group": "SEO",
+      "feature": "Sitemap",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K44",
+      "note": "KIT: автоматический sitemap; ручное редактирование недоступно."
+    },
+    {
+      "id": "F212",
+      "group": "SEO",
+      "feature": "Микроразметка",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K44",
+      "note": "KIT: автоматическая разметка; произвольный JSON-LD и изменение схемы недоступны."
+    },
+    {
+      "id": "F213",
+      "group": "SEO",
+      "feature": "SEO-посадочные по фильтрам",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F214",
+      "group": "SEO",
+      "feature": "Подключение Метрики",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I3",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F215",
+      "group": "SEO",
+      "feature": "Google Analytics 4",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I3",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F216",
+      "group": "SEO",
+      "feature": "Яндекс Вебмастер",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F217",
+      "group": "SEO",
+      "feature": "Google Search Console",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F218",
+      "group": "SEO",
+      "feature": "Яндекс Товары",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F219",
+      "group": "Продвижение",
+      "feature": "Яндекс Директ",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F220",
+      "group": "Продвижение",
+      "feature": "VK Реклама",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F221",
+      "group": "Продвижение",
+      "feature": "СберТаргет",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F222",
+      "group": "Продвижение",
+      "feature": "Динамический ретаргетинг ВК",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I3",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F223",
+      "group": "Продвижение",
+      "feature": "Установка сторонних скриптов",
+      "insales": "Код",
+      "kit": "НП",
+      "insales_source": "I3",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F224",
+      "group": "Продвижение",
+      "feature": "Генератор UTM",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F225",
+      "group": "Продвижение",
+      "feature": "Admitad",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F226",
+      "group": "Продвижение",
+      "feature": "Roistat",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F227",
+      "group": "Продвижение",
+      "feature": "Convead",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F228",
+      "group": "Продвижение",
+      "feature": "Rookee",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I5",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F229",
+      "group": "Аналитика",
+      "feature": "Выручка и заказы",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K32",
+      "note": "KIT: оборот и количество в ABC-анализе."
+    },
+    {
+      "id": "F230",
+      "group": "Аналитика",
+      "feature": "Посещения и конверсия",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I1",
+      "kit_source": "K27",
+      "note": "KIT: Метрика."
+    },
+    {
+      "id": "F231",
+      "group": "Аналитика",
+      "feature": "ABC-анализ",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I4",
+      "kit_source": "K32",
+      "note": ""
+    },
+    {
+      "id": "F232",
+      "group": "Аналитика",
+      "feature": "XYZ-анализ",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F233",
+      "group": "Аналитика",
+      "feature": "Оборачиваемость",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F234",
+      "group": "Аналитика",
+      "feature": "Прибыли и убытки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F235",
+      "group": "Аналитика",
+      "feature": "Источники заказов",
+      "insales": "Да",
+      "kit": "Инт.",
+      "insales_source": "I2",
+      "kit_source": "K27",
+      "note": "KIT: веб-аналитика."
+    },
+    {
+      "id": "F236",
+      "group": "Аналитика",
+      "feature": "Отчёты по продажам",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K32",
+      "note": "Состав отчётов различается."
+    },
+    {
+      "id": "F237",
+      "group": "Аналитика",
+      "feature": "Время обработки заказов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F238",
+      "group": "Аналитика",
+      "feature": "Рекламные расходы маркетплейсов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F239",
+      "group": "Аналитика",
+      "feature": "Экспорт отчётов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F240",
+      "group": "Аналитика",
+      "feature": "Конверсия каждого товара",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I24",
+      "kit_source": "",
+      "note": "InSales: отдельное приложение. Наличие Метрики KIT не доказывает готовый отчёт конверсии каждого SKU."
+    },
+    {
+      "id": "F241",
+      "group": "Маркетплейсы",
+      "feature": "Управление заказами WB/Ozon/Маркета",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": "У KIT подтверждён импорт данных и отдельные логистические сценарии, не общий кабинет заказов маркетплейсов."
+    },
+    {
+      "id": "F242",
+      "group": "Маркетплейсы",
+      "feature": "Публикация товаров на площадках",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I1",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F243",
+      "group": "Маркетплейсы",
+      "feature": "Подключение Avito",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F244",
+      "group": "Маркетплейсы",
+      "feature": "FBS/FBO/DBS",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": "Для KIT логистические интеграции перечислены отдельно."
+    },
+    {
+      "id": "F245",
+      "group": "Маркетплейсы",
+      "feature": "Единый каталог разных площадок",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F246",
+      "group": "Маркетплейсы",
+      "feature": "Массовое изменение цен площадок",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F247",
+      "group": "Маркетплейсы",
+      "feature": "Общие остатки между площадками",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": "Загрузка остатков в KIT не доказывает обратную запись во все площадки."
+    },
+    {
+      "id": "F248",
+      "group": "Маркетплейсы",
+      "feature": "Сборка отгрузок WB/Ozon",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F249",
+      "group": "Маркетплейсы",
+      "feature": "Листы подбора и этикетки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I4",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F250",
+      "group": "Маркетплейсы",
+      "feature": "Автоответы на отзывы и вопросы WB",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F251",
+      "group": "Маркетплейсы",
+      "feature": "Витрина ВКонтакте и Одноклассников",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F252",
+      "group": "ИИ",
+      "feature": "Генерация описаний товаров",
+      "insales": "Да",
+      "kit": "Код",
+      "insales_source": "I28",
+      "kit_source": "K35",
+      "note": "InSales: встроенная генерация/редактирование текста. KIT: внешние скиллы; генерация SEO выделена отдельно."
+    },
+    {
+      "id": "F253",
+      "group": "ИИ",
+      "feature": "Помощник по данным продаж",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I10",
+      "kit_source": "K1",
+      "note": "InSales: маркетплейсы; KIT: заявленный помощник платформы."
+    },
+    {
+      "id": "F254",
+      "group": "ИИ",
+      "feature": "Графики и ответы на вопросы о продажах",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I10",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F255",
+      "group": "ИИ",
+      "feature": "Управление через Claude/Codex и скиллы",
+      "insales": "НП",
+      "kit": "Код",
+      "insales_source": "",
+      "kit_source": "K35",
+      "note": "Требует API и настройки; не полноценная ERP-синхронизация."
+    },
+    {
+      "id": "F256",
+      "group": "ИИ",
+      "feature": "Покупки в Алисе AI и Поиске",
+      "insales": "НП",
+      "kit": "Заявлено",
+      "insales_source": "",
+      "kit_source": "K1",
+      "note": "Официальная формулировка «покупатели смогут». Рабочая покупка в чате/выдаче не проверена; не учитывать как доступную по умолчанию."
+    },
+    {
+      "id": "F257",
+      "group": "Услуги",
+      "feature": "Карточки сопутствующих услуг",
+      "insales": "Частично",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K34",
+      "note": "InSales: продажа услуг в общем обзоре, привязка услуги к товару не доказана. KIT: заявка без включения стоимости в оплату."
+    },
+    {
+      "id": "F258",
+      "group": "Услуги",
+      "feature": "География показа услуг",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K34",
+      "note": ""
+    },
+    {
+      "id": "F259",
+      "group": "Услуги",
+      "feature": "Документы для скачивания в услуге",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K34",
+      "note": ""
+    },
+    {
+      "id": "F260",
+      "group": "Услуги",
+      "feature": "Статус обработки заявки на услугу",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K34",
+      "note": ""
+    },
+    {
+      "id": "F261",
+      "group": "Инфраструктура",
+      "feature": "Собственный домен",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K1",
+      "note": ""
+    },
+    {
+      "id": "F262",
+      "group": "Инфраструктура",
+      "feature": "SSL",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K40",
+      "note": "KIT автоматически выпускает сертификат при подключении домена."
+    },
+    {
+      "id": "F263",
+      "group": "Инфраструктура",
+      "feature": "Пользователи и права",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I1",
+      "kit_source": "K33",
+      "note": ""
+    },
+    {
+      "id": "F264",
+      "group": "Инфраструктура",
+      "feature": "Мобильное приложение управления",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F265",
+      "group": "Инфраструктура",
+      "feature": "API для интеграций",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K35",
+      "note": ""
+    },
+    {
+      "id": "F266",
+      "group": "Инфраструктура",
+      "feature": "Каталог приложений",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": "У KIT есть список готовых интеграций, но не подтверждён аналог открытого магазина приложений."
+    },
+    {
+      "id": "F267",
+      "group": "Инфраструктура",
+      "feature": "Хранилище файлов",
+      "insales": "Да",
+      "kit": "Частично",
+      "insales_source": "I1",
+      "kit_source": "K34",
+      "note": "KIT: документы в карточках услуг; не эквивалент произвольного файлового менеджера."
+    },
+    {
+      "id": "F268",
+      "group": "Инфраструктура",
+      "feature": "Неограниченный трафик",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F269",
+      "group": "Инфраструктура",
+      "feature": "Неограниченное хранилище",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F270",
+      "group": "Инфраструктура",
+      "feature": "Автообновления платформы",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F271",
+      "group": "Инфраструктура",
+      "feature": "Мониторинг сайта 24/7",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F272",
+      "group": "Инфраструктура",
+      "feature": "Поддержка 24/7",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I2",
+      "kit_source": "",
+      "note": "У KIT поддержка есть, круглосуточность не подтверждена."
+    },
+    {
+      "id": "F273",
+      "group": "Инфраструктура",
+      "feature": "Техподдержка",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I2",
+      "kit_source": "K2",
+      "note": ""
+    },
+    {
+      "id": "F274",
+      "group": "CRM",
+      "feature": "RetailCRM",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K28",
+      "note": "KIT: базовый обмен в документации обозначен как односторонний."
+    },
+    {
+      "id": "F275",
+      "group": "CRM",
+      "feature": "Битрикс24",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F276",
+      "group": "CRM",
+      "feature": "amoCRM",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I16",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F277",
+      "group": "CRM",
+      "feature": "Jivo",
+      "insales": "Прил.",
+      "kit": "Инт.",
+      "insales_source": "I5",
+      "kit_source": "K27",
+      "note": ""
+    },
+    {
+      "id": "F278",
+      "group": "Заказ",
+      "feature": "Создание заказа менеджером",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F279",
+      "group": "Заказ",
+      "feature": "Журнал действий сотрудников",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F280",
+      "group": "Заказ",
+      "feature": "Настройка колонок заказов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F281",
+      "group": "Каталог",
+      "feature": "Товар в нескольких категориях",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K53",
+      "note": "KIT: добавление и удаление категорий у выбранных товаров."
+    },
+    {
+      "id": "F282",
+      "group": "Каталог",
+      "feature": "Дополнительные поля товаров",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F283",
+      "group": "Каталог",
+      "feature": "Дополнительные поля вариантов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F284",
+      "group": "Каталог",
+      "feature": "Дополнительные поля категорий",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F285",
+      "group": "Каталог",
+      "feature": "Разные шаблоны карточек",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K54",
+      "note": ""
+    },
+    {
+      "id": "F286",
+      "group": "Каталог",
+      "feature": "Исключение товара из скидок",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F287",
+      "group": "Каталог",
+      "feature": "Массовое перемещение категорий товаров",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K53",
+      "note": ""
+    },
+    {
+      "id": "F288",
+      "group": "Каталог",
+      "feature": "Массовое изменение цен",
+      "insales": "Да",
+      "kit": "Частично",
+      "insales_source": "I14",
+      "kit_source": "K53",
+      "note": "KIT: правка цены в таблице по товару или через Excel. Массовая процентная переоценка интерфейса не подтверждена."
+    },
+    {
+      "id": "F289",
+      "group": "Каталог",
+      "feature": "Массовое изменение свойств",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F290",
+      "group": "Каталог",
+      "feature": "Массовое удаление фото",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F291",
+      "group": "Обмен",
+      "feature": "Экспорт категорий",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F292",
+      "group": "Отзывы",
+      "feature": "Модерация отзывов",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F293",
+      "group": "Отзывы",
+      "feature": "Фотографии в отзывах",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F294",
+      "group": "Отзывы",
+      "feature": "Ответ продавца на отзыв",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F295",
+      "group": "Клиенты",
+      "feature": "Ручное добавление клиента",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I17",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F296",
+      "group": "Клиенты",
+      "feature": "Тип покупателя: физлицо/организация",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I17",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F297",
+      "group": "Клиенты",
+      "feature": "RFM-сегментация",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I17",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F298",
+      "group": "Клиенты",
+      "feature": "Поля реквизитов организации",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F299",
+      "group": "Коммуникации",
+      "feature": "Персональные чат-боты",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F300",
+      "group": "Коммуникации",
+      "feature": "Логотип в письмах",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F301",
+      "group": "Витрина",
+      "feature": "RSS/Atom блога",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F302",
+      "group": "Учёт",
+      "feature": "Налоговые ставки",
+      "insales": "Да",
+      "kit": "Частично",
+      "insales_source": "I14",
+      "kit_source": "K50",
+      "note": "KIT: подтверждена ставка НДС на доставку; не весь набор налоговых настроек."
+    },
+    {
+      "id": "F303",
+      "group": "Учёт",
+      "feature": "Валюты и округление",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F304",
+      "group": "Учёт",
+      "feature": "Запрет покупки сверх наличия",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F305",
+      "group": "Учёт",
+      "feature": "Обновление статусов из 1С",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I21",
+      "kit_source": "",
+      "note": "Не означает произвольный двусторонний обмен всеми статусами."
+    },
+    {
+      "id": "F306",
+      "group": "Учёт",
+      "feature": "Обновление отметки оплаты из 1С",
+      "insales": "Инт.",
+      "kit": "НП",
+      "insales_source": "I21",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F307",
+      "group": "Инфраструктура",
+      "feature": "Редактор DNS",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K40",
+      "note": "KIT позволяет добавлять ресурсные DNS-записи."
+    },
+    {
+      "id": "F308",
+      "group": "Инфраструктура",
+      "feature": "CDN-домен изображений",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I14",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F309",
+      "group": "Инфраструктура",
+      "feature": "Резервная выгрузка данных",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I18",
+      "kit_source": "K5",
+      "note": "Экспорт отдельных сущностей, не полный бэкап магазина."
+    },
+    {
+      "id": "F310",
+      "group": "Инфраструктура",
+      "feature": "Восстановление через поддержку",
+      "insales": "Услуга",
+      "kit": "НП",
+      "insales_source": "I18",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F311",
+      "group": "Оплата",
+      "feature": "Альфа-Банк",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F312",
+      "group": "Оплата",
+      "feature": "Долями",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F313",
+      "group": "Оплата",
+      "feature": "МодульБанк",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F314",
+      "group": "Оплата",
+      "feature": "Точка банк",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F315",
+      "group": "Оплата",
+      "feature": "Robokassa",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F316",
+      "group": "Оплата",
+      "feature": "Т-Банк",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F317",
+      "group": "Оплата",
+      "feature": "PayBox",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F318",
+      "group": "Оплата",
+      "feature": "Покупай со Сбером",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I15",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F319",
+      "group": "Продвижение",
+      "feature": "Google Покупки",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F320",
+      "group": "Продвижение",
+      "feature": "Прайс-лист для Яндекс Карт",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F321",
+      "group": "Продвижение",
+      "feature": "Прайс-лист для 2ГИС",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F322",
+      "group": "Продвижение",
+      "feature": "Google Tag Manager",
+      "insales": "Код",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F323",
+      "group": "Продвижение",
+      "feature": "Яндекс Тег Менеджер",
+      "insales": "Код",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F324",
+      "group": "Маркетплейсы",
+      "feature": "Мегамаркет",
+      "insales": "Раздел",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": "Есть в текущей документации; актуальную доступность коннектора проверить."
+    },
+    {
+      "id": "F325",
+      "group": "Маркетплейсы",
+      "feature": "AliExpress",
+      "insales": "Раздел",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": "Есть в документации, но не в актуальном коротком списке Ультра."
+    },
+    {
+      "id": "F326",
+      "group": "Маркетплейсы",
+      "feature": "Выгрузка Kaspi.kz",
+      "insales": "Раздел",
+      "kit": "НП",
+      "insales_source": "I23",
+      "kit_source": "",
+      "note": "Требования к продавцу и доступность по стране отдельно."
+    },
+    {
+      "id": "F327",
+      "group": "ИИ",
+      "feature": "ИИ-анализ качества карточки товара",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I28",
+      "kit_source": "",
+      "note": "InSales: рекомендации по заполнению, повторная проверка и скрытие рекомендации."
+    },
+    {
+      "id": "F328",
+      "group": "ИИ",
+      "feature": "Перефразирование и сокращение описания",
+      "insales": "Да",
+      "kit": "Код",
+      "insales_source": "I28",
+      "kit_source": "K35",
+      "note": "InSales: встроенный инструмент; KIT: внешние скиллы/API."
+    },
+    {
+      "id": "F329",
+      "group": "ИИ",
+      "feature": "ИИ-генерация SEO-описаний",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K41",
+      "note": "KIT: для товаров, категорий/коллекций и статичных страниц."
+    },
+    {
+      "id": "F330",
+      "group": "SEO",
+      "feature": "Массовый импорт SEO-описаний",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K41",
+      "note": "KIT: XLS/XLSX."
+    },
+    {
+      "id": "F331",
+      "group": "SEO",
+      "feature": "Ручной canonical страницы",
+      "insales": "Раздел",
+      "kit": "Нет",
+      "insales_source": "I23",
+      "kit_source": "K44",
+      "note": "KIT формирует canonical автоматически, ручная правка запрещена; InSales: есть отдельная инструкция."
+    },
+    {
+      "id": "F332",
+      "group": "SEO",
+      "feature": "Произвольная JSON-LD разметка",
+      "insales": "Код",
+      "kit": "Нет",
+      "insales_source": "I3",
+      "kit_source": "K44",
+      "note": "KIT прямо запрещает добавлять и менять схему JSON-LD."
+    },
+    {
+      "id": "F333",
+      "group": "SEO",
+      "feature": "Импорт списка редиректов",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I14",
+      "kit_source": "K42",
+      "note": "InSales: загрузка из файла; KIT: XLS."
+    },
+    {
+      "id": "F334",
+      "group": "Каталог",
+      "feature": "Документы и инструкции к товару",
+      "insales": "Раздел",
+      "kit": "Да",
+      "insales_source": "I23",
+      "kit_source": "K45",
+      "note": "KIT: до 10 файлов по 100 МБ; InSales: размещение ссылок на файлы, не аналог штатного поля документов. InSales: в этом проходе подтверждено только соответствующим разделом документации."
+    },
+    {
+      "id": "F335",
+      "group": "Каталог",
+      "feature": "Размерная таблица",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K53",
+      "note": "KIT: изображение, применение к вариантам и категориям."
+    },
+    {
+      "id": "F336",
+      "group": "Каталог",
+      "feature": "Массовое добавление изображений",
+      "insales": "Раздел",
+      "kit": "Да",
+      "insales_source": "I23",
+      "kit_source": "K53",
+      "note": "KIT: добавить или заменить, с ограничением общего числа изображений. InSales: в этом проходе подтверждено только соответствующим разделом документации."
+    },
+    {
+      "id": "F337",
+      "group": "Заказ",
+      "feature": "Сохранение корзины между устройствами",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I29",
+      "kit_source": "",
+      "note": "InSales: для авторизованного покупателя; описана логика замены содержимого."
+    },
+    {
+      "id": "F338",
+      "group": "Заказ",
+      "feature": "Поделиться собранной корзиной",
+      "insales": "Да",
+      "kit": "НП",
+      "insales_source": "I29",
+      "kit_source": "",
+      "note": "InSales: актуальные темы 4-го поколения; ссылка существует 30 дней."
+    },
+    {
+      "id": "F339",
+      "group": "Коммуникации",
+      "feature": "Встроенные промо-email",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I3",
+      "kit_source": "K47",
+      "note": "Не доказывает наличие штатного массового SMS у KIT."
+    },
+    {
+      "id": "F340",
+      "group": "Коммуникации",
+      "feature": "Письма с домена магазина",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K47",
+      "note": "KIT: настройка адреса и имени отправителя."
+    },
+    {
+      "id": "F341",
+      "group": "Коммуникации",
+      "feature": "Промокод за подписку",
+      "insales": "НП",
+      "kit": "Да",
+      "insales_source": "",
+      "kit_source": "K56",
+      "note": "KIT: окно подписки и автоматическое письмо с выбранным промокодом."
+    },
+    {
+      "id": "F342",
+      "group": "Доставка",
+      "feature": "Экспресс-доставка день в день",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K51",
+      "note": "KIT: зона покрытия; только онлайн-оплата и полный выкуп."
+    },
+    {
+      "id": "F343",
+      "group": "Обмен",
+      "feature": "Журнал запросов модуля 1С",
+      "insales": "Инт.",
+      "kit": "Инт.",
+      "insales_source": "I26",
+      "kit_source": "K49",
+      "note": "InSales: состояния/отчёты обмена; KIT: лог запросов с идентификатором."
+    },
+    {
+      "id": "F344",
+      "group": "Обмен",
+      "feature": "Подтверждение заказа и маркировка из 1С",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K49",
+      "note": "KIT: действия модуля зависят от конфигурации."
+    },
+    {
+      "id": "F345",
+      "group": "Обмен",
+      "feature": "Настройка возвратов в модуле 1С",
+      "insales": "НП",
+      "kit": "Инт.",
+      "insales_source": "",
+      "kit_source": "K49",
+      "note": "KIT: блок создания возвратов; не универсальный двусторонний обмен возвратами."
+    },
+    {
+      "id": "F346",
+      "group": "Оплата",
+      "feature": "Эвотор",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I25",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F347",
+      "group": "Оплата",
+      "feature": "КОМТЕТ Касса",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I25",
+      "kit_source": "",
+      "note": ""
+    },
+    {
+      "id": "F348",
+      "group": "Оплата",
+      "feature": "ОФД Ferma",
+      "insales": "Прил.",
+      "kit": "НП",
+      "insales_source": "I25",
+      "kit_source": "",
+      "note": ""
+    }
+  ]
+}

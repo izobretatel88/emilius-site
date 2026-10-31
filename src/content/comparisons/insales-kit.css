@@ -1,0 +1,136 @@
+@media(prefers-color-scheme:dark){}
+.platform-comparison *{box-sizing:border-box}
+.platform-comparison{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+.platform-comparison button,.platform-comparison input,.platform-comparison select{font:inherit;color:inherit}
+.platform-comparison button,.platform-comparison a,.platform-comparison input,.platform-comparison select,.platform-comparison summary,.platform-comparison .scroll{outline-offset:4px}
+.platform-comparison button:focus-visible,.platform-comparison a:focus-visible,.platform-comparison input:focus-visible,.platform-comparison select:focus-visible,.platform-comparison summary:focus-visible,.platform-comparison .scroll:focus-visible{outline:2px solid var(--teal-text)}
+.platform-comparison a{color:var(--teal-text);text-underline-offset:3px}
+.platform-comparison button,.platform-comparison summary,.platform-comparison select{cursor:pointer}
+.platform-comparison [hidden]{display:none!important}
+.platform-comparison .wrap{max-width:1400px;margin:auto;padding:48px max(24px,env(safe-area-inset-right)) 64px;display:grid;gap:28px}
+.platform-comparison header{display:grid;gap:16px}
+.platform-comparison .topline{display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--ink-2);font-size:14px}
+.platform-comparison #theme{border:1px solid var(--hair);border-radius:var(--radius-sm);padding:8px 12px;background:var(--card);font-size:13px;flex-shrink:0}
+.platform-comparison h1{margin:8px 0 0;font-size:clamp(32px,4.6vw,50px);line-height:1.08;letter-spacing:-.015em;font-weight:700;text-wrap:balance}
+.platform-comparison .lead{margin:0;color:var(--ink-2);font-size:20px;line-height:1.4;max-width:65ch}
+.platform-comparison .scope{font-size:14px;color:var(--ink-2);max-width:95ch;margin:0}
+.platform-comparison .panel{background:var(--card);padding:20px;border-radius:var(--radius-card);display:grid;gap:18px}
+.platform-comparison .search-row{display:grid;grid-template-columns:minmax(240px,1fr) minmax(200px,320px);gap:20px}
+.platform-comparison .field{display:grid;gap:6px}
+.platform-comparison label{color:var(--ink-2);font-size:14px}
+.platform-comparison input,.platform-comparison select{width:100%;background:var(--well);border:1px solid var(--hair);border-radius:var(--radius-sm);padding:12px 14px;min-height:48px}
+.platform-comparison input::placeholder{color:var(--ink-2);opacity:1}
+.platform-comparison .filter-row{display:flex;align-items:center;gap:16px;justify-content:space-between}
+.platform-comparison .chips{display:flex;flex-wrap:wrap;gap:8px}
+.platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color 160ms ease-out,color 160ms ease-out}
+.platform-comparison .chips button:hover{border-color:var(--teal-text)}
+.platform-comparison .chips button[aria-pressed=true]{background:var(--teal-soft);color:var(--teal-text);border-color:var(--teal-text);font-weight:700}
+.platform-comparison .reset{padding:9px 0;border:0;background:none;color:var(--teal-text);font-size:14px;text-decoration:underline;white-space:nowrap}
+.platform-comparison .explanation{background:var(--teal-soft);border-radius:var(--radius-sm);padding:18px 20px;font-size:14px}
+.platform-comparison .explanation>p{margin:0 0 10px;max-width:110ch}
+.platform-comparison .explanation strong{color:var(--teal-text)}
+.platform-comparison summary{color:var(--teal-text);font-weight:700;width:fit-content;padding:4px 0}
+.platform-comparison dl{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin:20px 0}
+.platform-comparison dt{font-weight:700}
+.platform-comparison dd{margin:4px 0 0;color:var(--ink-2)}
+.platform-comparison .method-note{max-width:95ch;color:var(--ink-2);margin-bottom:0}
+.platform-comparison .table-meta{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--ink-2);font-size:14px;margin:0 0 12px}
+.platform-comparison .table-meta p{margin:0;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.platform-comparison .card{background:var(--card);border-radius:var(--radius-card);overflow:hidden;min-width:0}
+.platform-comparison .scroll{overflow:auto;max-height:78vh;max-height:78dvh;overscroll-behavior:contain;scroll-padding-top:100px}
+.platform-comparison table{width:100%;min-width:850px;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.platform-comparison .feature-col{width:27%}
+.platform-comparison .platform-col{width:21%}
+.platform-comparison .note-col{width:31%}
+.platform-comparison th,.platform-comparison td{text-align:left;vertical-align:top}
+.platform-comparison thead th{position:sticky;top:0;z-index:3;background:var(--card);padding:18px 22px 14px;border-bottom:1px solid var(--hair);font-size:22px;line-height:1.3}
+.platform-comparison thead th:first-child{left:0;z-index:4;box-shadow:inset -1px 0 var(--hair);font-size:17px}
+.platform-comparison thead th:last-child{font-size:17px}
+.platform-comparison .stage{display:block;color:var(--ink-2);font-size:12px;font-weight:400;margin-bottom:6px}
+.platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
+.platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
+.platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block}
+.platform-comparison .feature-link:hover{color:var(--teal-text)}
+.platform-comparison .feature-id{display:block;font-size:11px;color:var(--ink-2);margin-top:5px}
+.platform-comparison .section-row th{padding:28px 22px 12px;border-bottom:1px solid var(--hair);background:var(--card);font-size:23px;line-height:1.3}
+.platform-comparison .section-row th>span{position:sticky;left:22px}
+.platform-comparison .section-row small{color:var(--ink-2);font-size:13px;margin-left:8px;font-weight:400}
+.platform-comparison .status{display:flex;gap:7px;align-items:baseline;font-weight:700;line-height:1.35}
+.platform-comparison .status>span{min-width:14px}
+.platform-comparison .yes{color:var(--teal-text)}
+.platform-comparison .no{color:var(--negative)}
+.platform-comparison .unknown{color:var(--ink-2);font-weight:400}
+.platform-comparison .caution{color:var(--caution)}
+.platform-comparison .connection{color:var(--ink)}
+.platform-comparison .source{display:block;width:fit-content;color:var(--teal-text);font-size:12px;text-decoration:none;margin-top:9px}
+.platform-comparison .source:hover{text-decoration:underline}
+.platform-comparison .source span{font-size:10px;color:var(--ink-2);margin-left:4px}
+.platform-comparison .note{color:var(--ink-2);font-size:14px}
+.platform-comparison .muted{font-size:12px}
+.platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td{background:var(--teal-soft)}
+.platform-comparison .empty{padding:40px 24px;text-align:center}
+.platform-comparison .empty h2{font-size:24px;margin:0}
+.platform-comparison .empty p{color:var(--ink-2)}
+.platform-comparison .empty button{border:0;border-radius:var(--radius-sm);background:var(--teal-btn);color:var(--on-teal);padding:12px 18px}
+.platform-comparison .mobile-hint{display:none}
+.platform-comparison .foot{max-width:95ch;display:grid;gap:14px;color:var(--ink-2);font-size:14px}
+.platform-comparison .foot h2{font-size:25px;color:var(--ink);margin:12px 0 0;letter-spacing:-.01em}
+.platform-comparison .foot p{margin:0}
+.platform-comparison .sources{margin-top:4px}
+.platform-comparison .sources ul{list-style:none;padding:0;display:grid;gap:12px}
+.platform-comparison .sources li{display:flex;gap:20px;justify-content:space-between;border-bottom:1px solid var(--hair);padding-bottom:10px}
+.platform-comparison .sources li>span{font-size:12px;flex-shrink:0}
+.platform-comparison .signature{padding-top:16px;font-size:13px}
+.platform-comparison .sr-only,.platform-comparison .skip:not(:focus){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.platform-comparison .skip:focus{display:block;padding:12px;background:var(--card)}
+.platform-comparison .noscript{max-width:800px;margin:20px auto;padding:20px}
+@media(max-width:760px){.platform-comparison .wrap{padding:24px 16px 40px;gap:22px}
+.platform-comparison .topline{align-items:flex-start;font-size:12px;gap:10px}
+.platform-comparison #theme{font-size:11px;padding:7px 9px}
+.platform-comparison .lead{font-size:17px}
+.platform-comparison .scope{font-size:13px}
+.platform-comparison .panel{padding:16px}
+.platform-comparison .search-row{grid-template-columns:1fr;gap:14px}
+.platform-comparison .filter-row{align-items:flex-start;flex-direction:column;gap:6px}
+.platform-comparison .chips{gap:8px}
+.platform-comparison .chips button{font-size:13px;min-height:42px;padding:8px 12px}
+.platform-comparison .explanation{padding:16px;font-size:13px}
+.platform-comparison dl{grid-template-columns:1fr;gap:16px}
+.platform-comparison .table-meta{align-items:flex-start;flex-direction:column;gap:3px;font-size:12px}
+.platform-comparison .scroll{max-height:72vh;max-height:72dvh}
+.platform-comparison table{min-width:720px}
+.platform-comparison .feature-col{width:155px}
+.platform-comparison .platform-col{width:170px}
+.platform-comparison .note-col{width:225px}
+.platform-comparison thead th{font-size:18px;padding:15px 14px}
+.platform-comparison thead th:first-child,.platform-comparison thead th:last-child{font-size:14px}
+.platform-comparison .stage{font-size:11px}
+.platform-comparison tbody th[scope=row]{padding:15px 14px;font-size:13px}
+.platform-comparison tbody td{padding:15px 14px;font-size:13px}
+.platform-comparison .section-row th{font-size:20px;padding:24px 14px 10px}
+.platform-comparison .section-row th>span{left:14px}
+.platform-comparison .note{font-size:13px}
+.platform-comparison .mobile-hint{display:block;font-size:12px;color:var(--ink-2);margin:10px 0 0}
+.platform-comparison .foot h2{font-size:23px}}
+.platform-comparison .wrap{grid-template-columns:minmax(0,1fr)}
+.platform-comparison #comparison{min-width:0}
+.platform-comparison .scroll{scroll-margin-top:16px}
+@media screen and (min-width:761px){.platform-comparison .wrap{padding-top:32px;gap:24px}
+.platform-comparison header{gap:12px}
+.platform-comparison h1{font-size:46px}
+.platform-comparison .lead{font-size:18px}
+.platform-comparison .panel{padding:16px;gap:14px}
+.platform-comparison .explanation{padding:16px 20px}}
+@media(prefers-reduced-motion:reduce){.platform-comparison *{scroll-behavior:auto!important;transition:none!important}}
+@media print{.platform-comparison{background:var(--print-page);color:var(--print-ink)}
+.platform-comparison .wrap{max-width:none;padding:0}
+.platform-comparison .panel,.platform-comparison .topline button,.platform-comparison .mobile-hint,.platform-comparison .skip{display:none!important}
+.platform-comparison .card{overflow:visible}
+.platform-comparison .scroll{max-height:none;overflow:visible}
+.platform-comparison table{min-width:0}
+.platform-comparison thead{display:table-header-group}
+.platform-comparison thead th,.platform-comparison tbody th[scope=row],.platform-comparison .section-row th>span{position:static}
+.platform-comparison thead th,.platform-comparison tbody th[scope=row],.platform-comparison .section-row th{background:var(--print-page);color:var(--print-ink)}
+.platform-comparison tr{break-inside:avoid}
+.platform-comparison a{color:var(--print-ink)}
+.platform-comparison .foot{max-width:none}}

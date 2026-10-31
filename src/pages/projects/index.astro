@@ -1,0 +1,15 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import {PROJECTS} from '../../data/projects';
+import {FRESH_SHOP} from '../../data/insales';
+import {DIRECTIONS} from '../../data/navigation';
+import {SERVICES} from '../../data/services';
+import {href} from '../../lib/urls';
+const projects=[{id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',about:FRESH_SHOP.what,did:FRESH_SHOP.done.join('. '),url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},...PROJECTS];
+const dirs=(id:string)=>DIRECTIONS.filter(d=>SERVICES[d.id].cases.includes(id) || (id==='happyanimal' && ['dev','marketing'].includes(d.id)));
+---
+<Directory title="Проекты" description="Интернет-магазины, интерфейсы и развитие сайтов. В каждом проекте — конкретная работа команды и направление, с которым она связана.">
+  <div class="project-list">{projects.map(p=><article class="project" id={p.id}><a href={p.url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src={href(p.shot)} alt="" width="640" height="400" loading="lazy" /></a><div><h2>{p.name}</h2><p>{p.about}</p><p>{p.did}</p><a href={p.url} target="_blank" rel="noopener">{p.domain} ↗</a><nav class="directory-tags" aria-label={`Направления проекта ${p.name}`}>{dirs(p.id).map(d=><a href={href(d.href)}>{d.title}</a>)}{p.id==='happyanimal' && <a href={href('services/insales-shop/')}>Магазин на InSales</a>}</nav></div></article>)}</div>
+  <section class="directory-callout"><h2>Обсудим ваш продукт?</h2><p>Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
+</Directory>
+<style>.project{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;padding:30px 0;border-bottom:1px solid var(--hair)}.project:first-child{padding-top:0}.project img{width:100%;height:auto;display:block;border-radius:var(--radius-sm)}.project h2{font-size:28px;margin-bottom:12px}.project p{color:var(--ink-2);margin:10px 0;font-size:15px;max-width:65ch}.project-list{display:grid;gap:10px}@media(max-width:650px){.project{grid-template-columns:1fr;gap:20px}.project h2{font-size:25px}}</style>

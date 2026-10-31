@@ -1,0 +1,10 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import LinkList from '../../components/LinkList.astro';
+import {MATERIALS} from '../../data/navigation';
+import {href} from '../../lib/urls';
+---
+<Directory title="Инструменты" description="Предварительно оценить проект перед разговором с командой. Результат расчёта — ориентир; окончательный состав и смету согласуем до начала работ.">
+  <LinkList items={MATERIALS.filter(m=>m.label==='Инструмент')} />
+  <div class="directory-tags"><a href={href('compare/')}>Сначала выбрать платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
+</Directory>

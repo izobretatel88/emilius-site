@@ -1,0 +1,12 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import LinkList from '../../components/LinkList.astro';
+import {DIRECTIONS} from '../../data/navigation';
+import {SERVICE_ROWS} from '../../data/services-list';
+import {href} from '../../lib/urls';
+---
+<Directory title="Услуги" description="Исследуем потребности, проектируем интерфейсы, разрабатываем продукт и помогаем ему расти. Можно начать с того этапа, который нужен вашей команде сейчас.">
+  <LinkList items={DIRECTIONS} />
+  <section class="directory-section"><h2>Готовые решения</h2><p>Для задач, у которых уже понятны результат и состав работ.</p><LinkList items={SERVICE_ROWS.map(s=>({title:s.title,description:s.note,href:s.href}))} /></section>
+  <section class="directory-callout"><h2>Неясно, с чего начать?</h2><p>Опишите продукт, текущую ситуацию и желаемый результат. Разберём задачу и предложим следующий шаг.</p><a class="directory-button" href={href('#feedback')}>Обсудить задачу</a></section>
+</Directory>

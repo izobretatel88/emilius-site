@@ -5,6 +5,9 @@ import Footer from '../../components/Footer.astro';
 import { SECTORS, LINKS } from '../../data/site';
 import { SERVICES } from '../../data/services';
 import { PROJECTS } from '../../data/projects';
+import { RELATED } from '../../data/navigation';
+import LinkList from '../../components/LinkList.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 
 export function getStaticPaths() {
   return SECTORS.map((s) => ({ params: { id: s.id } }));
@@ -41,6 +44,7 @@ const arc = (i: number) => {
   </header>
 
   <main class="page">
+    <Breadcrumbs items={[{title:'Услуги',href:'services/'},{title:service.title}]} />
     <section class="card intro">
       <div class="stage">
         <svg viewBox="-42 -42 84 84" class="mini" aria-hidden="true">
@@ -100,6 +104,8 @@ const arc = (i: number) => {
         </ul>
       </section>
     )}
+
+    <section class="card block" aria-labelledby="t-related"><h2 id="t-related">Следующий шаг по вашей задаче</h2><LinkList items={RELATED[id!]} /><a href={href('projects/')}>Все проекты агентства →</a></section>
 
     <nav class="cycle" aria-label="Этапы цикла">
       <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
@@ -229,9 +235,10 @@ const arc = (i: number) => {
     color: #fff;
     font-weight: 600;
     text-decoration: none;
-    transition: color var(--hover);
+    transition: background-color var(--hover), color var(--hover);
   }
   .offer-cta:hover {
+    background: var(--teal-btn-hover);
     color: var(--on-teal);
   }
   .cases {
@@ -337,9 +344,10 @@ const arc = (i: number) => {
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: color var(--hover);
+    transition: background-color var(--hover), color var(--hover);
   }
   .cta:hover {
+    background: var(--teal-btn-hover);
     color: var(--on-teal);
   }
   .cta-secondary {

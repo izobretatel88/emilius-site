@@ -3,6 +3,9 @@
 import Base from '../layouts/Base.astro';
 import Logo from './Logo.astro';
 import Footer from './Footer.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import LinkList from './LinkList.astro';
+import { getPosts } from '../lib/blog';
 import { LINKS } from '../data/site';
 import {
   HERO, CTA_NOTE, EXTRAS, SITUATIONS, RESULT, PLANS, PLATFORM_NOTE, NOT_INCLUDED,
@@ -16,6 +19,7 @@ interface Props {
   variant: 'shop' | 'seller';
 }
 const { variant } = Astro.props;
+const hasStockArticle = (await getPosts()).some(p=>p.id==='edinye-ostatki-wb-ozon-insales');
 const hero = HERO[variant];
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
@@ -68,6 +72,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   </nav>
 
   <main class="page">
+    <Breadcrumbs items={variant==='shop' ? [{title:'Услуги',href:'services/'},{title:'Магазин на InSales'}] : [{title:'Услуги',href:'services/'},{title:'Магазин на InSales',href:'services/insales-shop/'},{title:'Для селлеров'}]} />
     <section class="card hero">
       <div class="hero-main">
       <p class="eyebrow">{hero.eyebrow}</p>
@@ -81,11 +86,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{other.text}</a>
       </div>
-      <!-- Справа — живой магазин в телефоне: результат, а не обещание. На телефоне прячем, первый экран — текст и кнопка -->
+      <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
       <figure class="hero-phone">
         <picture>
-          <!-- на узких экранах телефон спрятан — пустой пиксель вместо 50 КБ картинки -->
-          <source media="(max-width: 760px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
         <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
@@ -126,7 +129,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
     <section class="card block" aria-labelledby="t-result">
       <h2 id="t-result">Что получите</h2>
-      <ul class="dots">{RESULT.map((r) => <li>{r}</li>)}</ul>
+      <ul class="dots got">{RESULT.map((r) => <li>{r}</li>)}</ul>
     </section>
 
     <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
@@ -239,8 +242,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="block plain" aria-labelledby="t-plans">
       <h2 id="t-plans">Пакеты и цены</h2>
       <div class="plans">
-        {plans.map((p, i) => (
-          <article class:list={['card', 'plan', { main: i === 0 && variant === 'seller' }]}>
+        {plans.map((p) => (
+          <article class:list={['card', 'plan', { main: p.name === (variant === 'seller' ? 'Селлер' : 'Магазин') }]}>
             <h3>{p.name}</h3>
             <p class="who">{p.who}</p>
             <p class="price num">{p.price}</p>
@@ -285,8 +288,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
     <section class="card block" aria-labelledby="t-choice">
       <h2 id="t-choice">InSales, Tilda, Яндекс KIT или самому?</h2>
+      <LinkList items={[
+        {title:'Сравнить восемь платформ',description:'Сценарии, затраты и ограничения.',href:'compare/ecommerce-platforms/'},
+        {title:'InSales и Яндекс KIT подробно',description:'348 функций со статусами, оговорками и источниками.',href:'compare/insales-vs-yandex-kit/'},
+        {title:'Рассчитать состав проекта',description:'Предварительный бюджет и срок по семи ответам.',href:'tools/insales-calculator/'},
+        ...(variant==='seller' && hasStockArticle ? [{title:'Как устроены единые остатки',description:'Сайт, маркетплейсы и учётная система.',href:'blog/edinye-ostatki-wb-ozon-insales/'}] : []),
+      ]} />
       <dl class="choice">
-        {CHOICE.map(([c, a]) => <div><dt>{c}</dt><dd>{a}</dd></div>)}
+        {CHOICE.map(([c, a]) => <div class:list={[{ fit: a === 'InSales' }]}><dt>{c}</dt><dd>{a}</dd></div>)}
       </dl>
     </section>
 
@@ -339,6 +348,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         </div>
       </form>
     </section>
+    <section class="card block"><h2>Если задача шире запуска магазина</h2><LinkList items={[
+      {title:'Индивидуальный интерфейс',description:'Спроектировать свои сценарии и дизайн.',href:'services/design/'},
+      {title:'Разработка и интеграции',description:'Обсудить нестандартную логику и связку систем.',href:'services/dev/'},
+      {title:'Продвижение после запуска',description:'SEO, аналитика и развитие продукта.',href:'services/marketing/'},
+    ]} /></section>
   </main>
 
   <Footer />
@@ -416,6 +430,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     const label = (k: string, v: string) => (QUICK_QUESTIONS as any)[k][1].find(([x]: string[]) => x === v)?.[1] ?? '—';
 
     let last: ReturnType<typeof quickEstimate> | null = null;
+    // Переносим только допустимые ответы публичного калькулятора; контактные поля не заполняем.
+    const calcParams = new URLSearchParams(location.search);
+    for (const name of Object.keys(QUICK_QUESTIONS)) {
+      const value = calcParams.get(`calc_${name}`);
+      const input = [...form.querySelectorAll<HTMLInputElement>('input[type=radio]')].find(i=>i.name===name && i.value===value);
+      if (input) input.checked = true;
+    }
     const update = () => {
       try {
         last = quickEstimate(answers(), catalog);
@@ -508,14 +529,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .hero {
     padding: clamp(26px, 4.4vw, 48px);
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(190px, 21vw, 240px);
+    grid-template-columns: minmax(0, 1fr) clamp(210px, 24vw, 280px);
     gap: clamp(24px, 4vw, 48px);
     align-items: center;
   }
   .hero-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
   .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
-  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; }
+  .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; text-wrap: balance; }
   .hero-phone a { font-weight: 600; text-decoration: none; }
   .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .eyebrow {
@@ -527,12 +548,36 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
   h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  .block p, .item p, .shop-what, .lead { text-wrap: pretty; }
   .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
   h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
-  h2.sub { font-size: clamp(20px, 2.4vw, 24px); margin-top: 12px; }
+  h2.sub {
+    font-size: clamp(20px, 2.4vw, 24px);
+    margin-top: 6px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hair);
+  }
   h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.25; }
   ul, ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
   .ticks li, .dots li { position: relative; padding-left: 18px; }
+  /* «Что получите» — две колонки: восемь пунктов не столбиком в пустой карточке */
+  .block ul.got {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 32px;
+    row-gap: 0;
+  }
+  .got li {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-top: 1px solid var(--hair);
+  }
+  .got li::before { top: calc(12px + 0.62em); }
+  .got li:nth-child(-n + 2) {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .got li:nth-child(-n + 2)::before { top: 0.62em; }
   .ticks li::before, .dots li::before {
     content: '';
     position: absolute;
@@ -544,6 +589,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--teal);
   }
   .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 6px; }
+  .cta-row .note { flex-basis: 100%; }
   .cta {
     min-height: 54px;
     display: inline-flex;
@@ -559,19 +605,39 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-size: 17px;
     text-decoration: none;
     cursor: pointer;
-    transition: color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), color var(--hover), opacity var(--hover);
   }
-  .cta:hover { color: var(--on-teal); }
+  .cta:hover, .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
-  .switch { font-size: 15px; font-weight: 600; text-decoration: none; }
+  .switch {
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    padding-top: 12px;
+    border-top: 1px solid var(--hair);
+  }
   .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
   .quick a { font-weight: 600; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
-  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
-  .item { display: flex; flex-direction: column; gap: 6px; }
+  .block.plain > .small { max-width: 68ch; line-height: 1.5; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+  /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--hair);
+  }
+  .item:nth-child(-n + 2) {
+    padding-top: 0;
+    margin-top: 0;
+    border-top: 0;
+  }
   .item p { color: var(--ink-2); }
   .sub-lead { font-size: 15px; font-weight: 600; color: var(--ink-2); }
   .shops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-direction: row; }
@@ -587,10 +653,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover);
   }
   .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-  .shop-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; }
+  .shop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 14px 16px 16px; }
   .shop-name { font-size: 18px; font-weight: 700; }
   .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
   .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  .shop .shop-link { margin-top: auto; }
+  .shop:hover { background: var(--card); }
   .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
@@ -610,6 +678,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .case-pos thead th { padding-top: 0; font-size: 13px; color: var(--ink-3); }
   .case-pos thead th + th, .case-pos td { width: 76px; text-align: center; }
   .case-pos tbody tr:last-child > * { border-bottom: 0; }
+  .case-pos tbody tr { transition: background-color var(--hover); }
+  .case-pos tbody tr:hover { background: var(--card); }
+  .case-pos tbody th { font-weight: 600; }
+  .case-pos tbody tr:hover .pos:not(.first):not(.none) { background: var(--well); }
   .pos {
     display: inline-grid;
     place-items: center;
@@ -663,30 +735,49 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
   .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
-  .phone-name { font-size: 16px; font-weight: 700; transition: color var(--hover); }
+  .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
-  .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
   .phone-card:hover .phone-name { color: var(--teal-text); }
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); }
+  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
+  .more-shops li:hover { background: var(--card); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .proof { font-size: 14px; color: var(--ink-3); }
+  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+  .proof a:hover { text-underline-offset: 3px; }
   .proof a { font-weight: 600; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
   .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
   .quote { margin: 0; display: flex; flex-direction: column; gap: 14px; }
   .quote blockquote { margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
-  .quote figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--ink-2); }
+  .quote figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); }
   .quote figcaption b { font-size: 16px; color: var(--ink); }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }
+  .plan.main .plan-cta {
+    background: var(--teal-btn);
+    border-color: var(--teal-btn);
+    color: var(--on-teal);
+  }
+  .plan.main .plan-cta:hover, .plan.main .plan-cta:active {
+    background: var(--teal-btn-hover);
+    border-color: var(--teal-btn-hover);
+    color: var(--on-teal);
+  }
+  .plan.main .price { color: var(--teal-text); }
   .plan h3 { font-size: 22px; font-weight: 700; }
   .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
   .price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin-top: 4px; }
-  .term { font-size: 13.5px; color: var(--ink-3); margin-bottom: 4px; }
+  .term {
+    font-size: 13.5px;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hair);
+  }
   .plan .dots { font-size: 15px; gap: 8px; }
   /* Кнопка под пакетом — вторичная, прижата к низу: у всех трёх карточек на одной линии */
   .plan-cta {
@@ -704,16 +795,22 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover), color var(--hover), border-color var(--hover);
   }
   .plan .dots { margin-bottom: 12px; }
-  .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .plan-cta:hover, .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .nums { counter-reset: n; }
-  .nums li { counter-increment: n; position: relative; padding-left: 30px; }
+  .nums { counter-reset: n; gap: 0; }
+  .nums li {
+    counter-increment: n;
+    position: relative;
+    padding: 12px 0 12px 30px;
+    border-top: 1px solid var(--hair);
+  }
+  .nums li:first-child { padding-top: 0; border-top: 0; }
   .nums li::before {
     content: counter(n);
     position: absolute;
     left: 0;
-    top: 0.05em;
+    top: 0.12em;
     width: 21px;
     height: 21px;
     border-radius: 50%;
@@ -724,22 +821,31 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     display: grid;
     place-items: center;
   }
+  .nums li:not(:first-child)::before { top: calc(12px + 0.12em); }
   .weeks { gap: 0; }
   .weeks li {
     display: grid;
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 112px 1fr;
     gap: 2px 16px;
-    padding: 12px 0;
+    padding: 14px 0;
     border-top: 1px solid var(--hair);
+    align-items: center;
   }
   .weeks li:first-child { border-top: 0; padding-top: 0; }
-  .wk { color: var(--teal-text); font-weight: 600; font-size: 14px; grid-row: span 2; padding-top: 1px; }
-  .you { font-size: 14px; color: var(--ink-2); }
+  .wk { color: var(--teal-text); font-weight: 600; font-size: 14px; grid-row: span 2; align-self: center; }
+  .you { font-size: 14px; color: var(--ink-3); }
   .choice { margin: 0; display: flex; flex-direction: column; }
   .choice div { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 10px 0; border-top: 1px solid var(--hair); }
   .choice div:first-child { border-top: 0; padding-top: 0; }
   .choice dt { color: var(--ink-2); }
-  .choice dd { margin: 0; font-weight: 600; }
+  .choice dd { margin: 0; font-weight: 600; color: var(--teal-text); }
+  .choice .fit {
+    border-top-color: transparent;
+    border-radius: var(--radius-sm);
+    margin-inline: -12px;
+    padding: 12px;
+    background: var(--well);
+  }
   .faq { display: flex; flex-direction: column; }
   /* Частые вопросы — строки со стрелкой, как в настройках iPhone; стрелка поворачивается при раскрытии */
   details { border-top: 1px solid var(--hair); }
@@ -748,8 +854,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     list-style: none;
     cursor: pointer;
     position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
     padding: 14px 32px 14px 0;
     font-weight: 600;
+    line-height: 1.35;
     transition: color var(--hover);
   }
   summary::-webkit-details-marker { display: none; }
@@ -766,11 +876,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transform: rotate(45deg);
     transition: transform 0.2s ease, border-color var(--hover);
   }
-  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
+  details[open] summary { color: var(--teal-text); }
+  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; border-color: var(--teal); }
   summary:hover { color: var(--teal-text); }
   summary:hover::after { border-color: var(--teal); }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
-  details p { padding: 0 32px 16px 0; margin-top: -4px; color: var(--ink-2); }
+  details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
   h2[id] { scroll-margin-top: 96px; }
@@ -805,7 +916,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: background-color var(--hover), color var(--hover);
   }
   .jump a:hover { color: var(--ink); background: var(--well); }
-  .jump a.is-here { color: var(--teal-text); }
+  .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
   .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
@@ -817,11 +928,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   @media (min-width: 900px) {
     form { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-    .side { position: sticky; top: 24px; }
+    .side { position: sticky; top: 76px; }
   }
   .side > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-  legend { padding: 0; margin-bottom: 8px; }
+  legend { padding: 0; margin-bottom: 8px; color: var(--ink); }
+  .side > label { color: var(--ink); }
   input[type='text'] {
     width: 100%;
     height: 50px;
@@ -848,11 +960,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--input-bg);
     font-size: 15px;
     color: var(--ink);
-    transition: border-color var(--hover), color var(--hover);
+    transition: border-color var(--hover), background-color var(--hover), color var(--hover);
   }
-  .chip input:checked + span { border-color: var(--teal); color: var(--teal-text); font-weight: 600; }
+  .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
-  .side .cta { align-self: stretch; text-align: center; }
+  .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }
   /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
   .side > .agree {
     display: flex;
@@ -865,7 +977,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     color: var(--ink-2);
     cursor: pointer;
   }
-  .agree input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--teal-btn); cursor: pointer; }
+  .agree input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--teal-btn); cursor: pointer; }
   .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   .status { font-size: 15px; }
   .estimate {
@@ -879,11 +991,30 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .estimate[hidden] { display: none; }
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }
-  .est-price { font-size: 26px; font-weight: 700; }
+  .est-price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin: 2px 0 6px; }
   .est-meta { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+  .estimate .small { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--hair); }
   @media (max-width: 760px) {
     .hero { grid-template-columns: 1fr; }
-    .hero-phone { display: none; }
+    .hero-phone {
+      display: flex;
+      align-items: center;
+      width: min(100%, 260px);
+      margin-inline: auto;
+    }
+    .hero-phone picture {
+      display: block;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+    }
+    .hero-phone img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      object-fit: cover;
+      object-position: top center;
+    }
     .plans, .shops, .review-grid, .case-top { grid-template-columns: 1fr; }
     .case-shot img { height: auto; }
     .who { min-height: 0; }
@@ -893,6 +1024,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .hero { padding: 26px 20px; }
     .block { padding: 24px 20px; }
     .grid2, .cols { grid-template-columns: 1fr; }
+    .item:nth-child(2) { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hair); }
+    .block ul.got { grid-template-columns: 1fr; }
+    .got li:nth-child(2) { padding-top: 12px; border-top: 1px solid var(--hair); }
+    .got li:nth-child(2)::before { top: calc(12px + 0.62em); }
     .choice div { grid-template-columns: 1fr; gap: 2px; }
     .weeks li { grid-template-columns: 1fr; }
     .wk { grid-row: auto; }

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import WriteButton from '../components/WriteButton.astro';
+import SiteNav from '../components/SiteNav.astro';
 // Основные начертания грузим заранее: заголовки (600) и текст (400) не перескакивают со шрифта на шрифт
 import glober400 from '../styles/fonts/glober-400.woff2?url';
 import glober600 from '../styles/fonts/glober-600.woff2?url';
@@ -81,6 +82,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <!-- С клавиатуры первая остановка — «К содержанию»: мимо шапки сразу к главному блоку страницы. Видна только в фокусе. -->
     <a class="skip" href="#content">К содержанию</a>
     {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
+    {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <SiteNav />}
     <slot />
     <script is:inline>
       // Цель ссылки — первый <main> страницы; id и фокус даём ему здесь, чтобы не размечать каждую страницу
@@ -94,6 +96,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
 </html>
 
 <style>
+  :global(body:has(.dev-badge) .site-nav) { padding-top: 26px; }
   .skip {
     position: fixed;
     top: 12px;

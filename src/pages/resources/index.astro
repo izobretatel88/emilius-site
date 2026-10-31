@@ -1,0 +1,13 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import LinkList from '../../components/LinkList.astro';
+import {MATERIALS} from '../../data/navigation';
+import {getPosts} from '../../lib/blog';
+import {href} from '../../lib/urls';
+const posts=await getPosts();
+---
+<Directory title="Полезное" description="Выбрать платформу, оценить запуск магазина и разобраться в связке сайта с маркетплейсами. Сравнения, инструменты и материалы из работы агентства.">
+  <section><h2>Выбрать и посчитать</h2><LinkList items={MATERIALS} /></section>
+  {posts.length>0 && <section class="directory-section"><h2>Разобраться в задаче</h2><LinkList items={posts.slice(0,3).map(p=>({title:p.data.h1,description:p.data.description,href:`blog/${p.id}/`,label:p.data.draft?'Черновик · доступен в превью':'Статья'}))} /><a href={href('blog/')}>Все статьи →</a></section>}
+  <section class="directory-callout"><h2>Нужна помощь с вашим продуктом?</h2><p>Материалы помогают сориентироваться. Конкретное решение зависит от задачи, данных и процессов вашей команды.</p><a href={href('services/')}>Касдев, дизайн, разработка и маркетинг →</a></section>
+</Directory>

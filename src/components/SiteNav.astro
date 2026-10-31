@@ -1,0 +1,25 @@
+---
+import { DIRECTIONS } from '../data/navigation';
+import { getPosts } from '../lib/blog';
+import { href } from '../lib/urls';
+const hasBlog = (await getPosts()).length > 0;
+const primary = [{title:'Услуги',href:'services/'},{title:'Проекты',href:'projects/'},{title:'Полезное',href:'resources/'},{title:'Контакты',href:'#t-contact'}];
+const active = (path:string) => !path.startsWith('#') && Astro.url.pathname.startsWith(href(path));
+---
+<!-- Existing Emilius visual system; native disclosure on mobile, no new identity. -->
+<nav class="site-nav" aria-label="Основная навигация">
+  <a class="home" href={href()} aria-label="Emilius Agency — главная">Emilius Agency</a>
+  <div class="desktop">{primary.map(item => <a href={href(item.href)} aria-current={active(item.href) ? 'page' : undefined}>{item.title}</a>)}</div>
+  <a class="discuss" href={href('#feedback')}>Обсудить проект</a>
+  <details class="mobile-menu"><summary>Меню</summary><div class="mobile-links">
+    {primary.map(item => <a href={href(item.href)}>{item.title}</a>)}
+    <span>Направления</span>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}
+    <span>Готовое решение</span><a href={href('services/insales-shop/')}>Магазин на InSales</a>
+    <span>Полезное</span><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}
+  </div></details>
+</nav>
+<style>
+  .site-nav{width:100%;max-width:1120px;margin-inline:auto;display:flex;align-items:center;gap:24px;font-size:14px;position:relative;z-index:10}
+  a{color:var(--ink-2);text-decoration:none;padding-block:8px}a:hover,a[aria-current]{color:var(--teal-text)}.home{font-weight:700;color:var(--ink);margin-right:auto}.desktop{display:flex;gap:24px}.discuss{background:var(--teal-btn);color:var(--on-teal);border-radius:var(--radius-btn);padding:10px 15px;font-weight:600}.discuss:hover{background:var(--teal-btn-hover);color:var(--on-teal)}.mobile-menu{display:none}
+  @media(max-width:760px){.site-nav{flex-wrap:wrap;gap:12px}.desktop{display:none}.home{font-size:13px}.discuss{font-size:12px;padding:9px 11px}.mobile-menu{display:block}.mobile-menu summary{cursor:pointer;font-size:13px;padding:9px 0;color:var(--teal-text)}.mobile-links{position:absolute;top:100%;left:0;right:0;max-height:75svh;overflow:auto;display:grid;background:var(--card);padding:14px 20px;border-radius:var(--radius-card);box-shadow:var(--shadow-pop)}.mobile-links a{padding:11px 0;border-bottom:1px solid var(--hair)}.mobile-links span{font-size:12px;color:var(--ink-3);margin-top:16px}}
+</style>

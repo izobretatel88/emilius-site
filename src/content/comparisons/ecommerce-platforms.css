@@ -1,0 +1,99 @@
+@media (prefers-color-scheme: dark){}
+.platform-comparison{ background: var(--page); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+.platform-comparison .wrap{
+  max-width: 1400px; margin: 0 auto;
+  padding-block: 56px 64px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px;
+}
+.platform-comparison header{ display: grid; gap: 12px; max-width: 760px; }
+.platform-comparison .eyebrow{ color: var(--ink-2); font-size: 15px; }
+.platform-comparison .eyebrow a{ color: var(--teal-text); text-decoration: none; }
+.platform-comparison .eyebrow a:hover{ text-decoration: underline; }
+.platform-comparison .eyebrow a:focus-visible{ outline: 2px solid var(--teal); outline-offset: 2px; border-radius:var(--radius-sm); }
+.platform-comparison h1{ margin: 0; font-size: clamp(30px, 4.6vw, 46px); line-height: 1.06; letter-spacing: -0.015em; font-weight: 700; text-wrap: balance; }
+.platform-comparison .lead{ margin: 0; color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: 62ch; }
+.platform-comparison .card{ background: var(--card); border-radius:var(--radius-card); min-width: 0; overflow: hidden; }
+.platform-comparison .scroll{ overflow: auto; max-height: calc(100vh - 48px); overscroll-behavior: contain; }
+.platform-comparison table{ border-collapse: separate; border-spacing: 0; width: 100%; min-width: 1240px; table-layout: fixed; }
+.platform-comparison th,.platform-comparison td{ text-align: left; vertical-align: top; }
+.platform-comparison thead th{
+  position: sticky; top: 0; z-index: 2;
+  padding: 20px 14px 14px;
+  background: var(--card);
+  border-bottom: 1px solid var(--hair);
+  font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+}
+.platform-comparison thead th:first-child{ left: 0; z-index: 3; width: 200px; box-shadow: inset -1px 0 var(--hair); }
+.platform-comparison .stage{ display: block; margin-bottom: 4px; color: var(--ink-3); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.platform-comparison tbody th[scope="row"]{
+  position: sticky; left: 0; z-index: 1;
+  padding: 14px 16px 14px 24px;
+  box-shadow: inset -1px 0 var(--hair);
+  background: var(--card);
+  color: var(--ink-2); font-weight: 400; font-size: 14px;
+  border-bottom: 1px solid var(--hair);
+}
+.platform-comparison tbody td{ padding: 14px; border-bottom: 1px solid var(--hair); font-size: 14px; }
+.platform-comparison thead th:first-child{ padding-left: 24px; }
+.platform-comparison thead th:last-child,.platform-comparison tbody td:last-child{ padding-right: 24px; }
+.platform-comparison .sec th{ padding: 32px 24px 10px; background: var(--card); border-bottom: 1px solid var(--hair); }
+.platform-comparison .sec th span{ position: sticky; left: 24px; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+.platform-comparison .yes{ color: var(--teal-text); font-weight: 700; }
+.platform-comparison .no{ color: var(--ink-3); }
+.platform-comparison .est{ color: var(--ink); }
+.platform-comparison .sub{ display: block; margin-top: 2px; color: var(--ink-3); font-size: 13px; font-weight: 400; }
+.platform-comparison .est .sub:last-child{ color: var(--est); }
+.platform-comparison .v-mp{ display: none; }
+.platform-comparison.mp .v-site{ display: none; }
+.platform-comparison.mp .v-mp{ display: block; }
+.platform-comparison .v-site,.platform-comparison .v-mp{ font-weight: inherit; }
+.platform-comparison .v-site .sub,.platform-comparison .v-mp .sub{ font-weight: 400; }
+.platform-comparison .best-tag{ display: none; margin-top: 6px; padding: 2px 8px; border-radius:var(--radius-pill); width: fit-content;
+  background: var(--teal-btn); color: var(--on-teal); font-size: 11px; font-weight: 700; letter-spacing: 0; }
+.platform-comparison.mp [data-p].best{ background: var(--teal-soft); }
+.platform-comparison.mp thead th.best .best-tag{ display: block; }
+.platform-comparison [data-p].out{ color: var(--ink-3); }
+.platform-comparison td.out > *,.platform-comparison td.out{ opacity: 0.45; }
+.platform-comparison .why{ display: none; margin-top: 6px; color: var(--low-fg); font-size: 12px; font-weight: 700; letter-spacing: 0; line-height: 1.3; }
+.platform-comparison thead th.out .why{ display: block; }
+.platform-comparison thead th.out .best-tag{ display: none !important; }
+.platform-comparison .panel{ display: grid; gap: 14px; padding: 16px 20px; border-radius:var(--radius-card); background: var(--card); }
+.platform-comparison .row{ display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.platform-comparison .label{ flex: none; width: 170px; color: var(--ink-2); font-size: 14px; }
+.platform-comparison .seg{ display: inline-flex; padding: 4px; gap: 4px; border-radius:var(--radius-btn); background: var(--well); }
+.platform-comparison .seg button{ font: inherit; font-size: 15px; font-weight: 700; padding: 9px 16px; border: 0; border-radius:var(--radius-sm);
+  background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out; }
+.platform-comparison .seg button:hover{ color: var(--ink); background: var(--card); }
+.platform-comparison .seg button[aria-pressed="true"]{ background: var(--teal-btn); color: var(--on-teal); }
+.platform-comparison .chips{ display: flex; flex-wrap: wrap; gap: 8px; }
+.platform-comparison .chips button{ font: inherit; font-size: 14px; padding: 7px 13px; border: 1px solid var(--hair); border-radius:var(--radius-pill);
+  background: var(--card); color: var(--ink); cursor: pointer; transition: background-color 160ms ease-out, border-color 160ms ease-out; }
+.platform-comparison .chips button:hover{ border-color: var(--teal); }
+.platform-comparison .chips button[aria-pressed="true"]{ background: var(--teal-soft); border-color: var(--teal); color: var(--teal-text); font-weight: 700; }
+.platform-comparison .seg button:focus-visible,.platform-comparison .chips button:focus-visible,.platform-comparison .reset:focus-visible{ outline: 2px solid var(--teal); outline-offset: 2px; }
+.platform-comparison .count{ margin-left: auto; color: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.platform-comparison .count b{ color: var(--ink); }
+.platform-comparison .reset{ font: inherit; font-size: 14px; padding: 0; border: 0; background: none; color: var(--teal-text);
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.platform-comparison .takeaway{ margin: 0; max-width: 78ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
+.platform-comparison .takeaway b{ display: block; color: var(--teal-text); }
+@media (prefers-reduced-motion: reduce){.platform-comparison .seg button,.platform-comparison .chips button{ transition: none; }}
+.platform-comparison .foot{ display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; max-width: 86ch; }
+.platform-comparison .foot p{ margin: 0; }
+@media (max-width: 760px){.platform-comparison .wrap{ padding-block: 32px 44px; gap: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.platform-comparison .lead{ font-size: 16px; }
+.platform-comparison table{ min-width: 1170px; }
+.platform-comparison thead th{ font-size: 15px; padding: 16px 12px 12px; }
+.platform-comparison thead th:first-child{ width: 118px; }
+.platform-comparison thead th:first-child,.platform-comparison tbody th[scope="row"]{ padding-left: 14px; padding-right: 10px; }
+.platform-comparison tbody th[scope="row"]{ font-size: 13px; }
+.platform-comparison tbody td{ padding: 12px; font-size: 13px; }
+.platform-comparison .sec th{ padding: 24px 14px 8px; }
+.platform-comparison .sec th span{ left: 14px; font-size: 18px; }
+.platform-comparison .panel{ padding: 14px; }
+.platform-comparison .label{ width: auto; }
+.platform-comparison .seg{ width: 100%; }
+.platform-comparison .seg button{ flex: 1; padding: 10px 8px; }
+.platform-comparison .count{ margin-left: 0; }}

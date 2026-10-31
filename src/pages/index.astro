@@ -9,6 +9,10 @@ import Services from '../components/Services.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { MISSION_LINES } from '../data/site';
+import { DIRECTIONS, MATERIALS } from '../data/navigation';
+import LinkList from '../components/LinkList.astro';
+import { href } from '../lib/urls';
+import '../styles/architecture.css';
 
 // Миссия: на компьютере перенос после «создавать», на телефоне — после «людям»,
 // чтобы шрифт был крупнее (самая длинная строка короче)
@@ -35,10 +39,12 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
       <Wheel />
     </section>
     <!-- Услуги — под колесом продукта: центральная колонка на компьютере, следом за колесом на телефоне -->
-    <div class="services-slot"><Services /></div>
+    <div class="services-slot"><nav class="home-directions" aria-label="Направления агентства">{DIRECTIONS.map(item=><a href={href(item.href)}>{item.title}</a>)}</nav><Services /></div>
     <Contact />
     <Feedback />
   </main>
+
+  <section class="card home-resources" aria-labelledby="t-useful"><h2 id="t-useful">Полезное</h2><LinkList items={MATERIALS} /><a href={href('resources/')}>Все полезные материалы →</a></section>
 
   <Footer />
 </Base>

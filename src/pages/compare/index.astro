@@ -1,0 +1,11 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import LinkList from '../../components/LinkList.astro';
+import {MATERIALS} from '../../data/navigation';
+import {href} from '../../lib/urls';
+---
+<Directory title="Сравнения платформ" description="Сначала сравните платформы под свой сценарий. Если выбираете между InSales и Яндекс KIT, изучите функции, способы подключения и ограничения подробнее.">
+  <LinkList items={MATERIALS.filter(m=>m.label==='Сравнение')} />
+  <section class="directory-callout"><h2>Что означают результаты</h2><p>Сравнения основаны на публичных материалах с указанной датой. «Не подтверждено» означает, что доказательств недостаточно; это не равнозначно отсутствию функции.</p><a href={href('services/dev/')}>Обсудить платформу и разработку →</a></section>
+  <div class="directory-tags"><a href={href('resources/')}>Все полезные материалы</a><a href={href('tools/insales-calculator/')}>Калькулятор InSales</a></div>
+</Directory>

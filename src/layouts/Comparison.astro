@@ -1,0 +1,44 @@
+---
+import Base from './Base.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LinkList from '../components/LinkList.astro';
+import {href} from '../lib/urls';
+import '../styles/architecture.css';
+import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
+import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
+import generalScript from '../content/comparisons/ecommerce-platforms.js?raw';
+import detailHtml from '../content/comparisons/insales-kit.html?raw';
+import detailCss from '../content/comparisons/insales-kit.css?raw';
+import detailScript from '../content/comparisons/insales-kit.js?raw';
+interface Props {kind:'general'|'detail';}
+const {kind}=Astro.props;
+const detailed=kind==='detail';
+const title=detailed?'InSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
+const description=detailed?'348 функций InSales и Яндекс KIT: способы подключения, ограничения и официальные источники.':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
+const html=detailed?detailHtml:generalHtml;
+const css=detailed?detailCss:generalCss;
+const script=detailed?detailScript:generalScript;
+const related=[
+  detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'InSales и Яндекс KIT подробно',description:'348 функций, ограничения и источники.',href:'compare/insales-vs-yandex-kit/'},
+  {title:'Оценить запуск на InSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
+  {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
+];
+---
+<Base title={`${title} — Emilius Agency`} description={description}>
+  <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
+    <div class="platform-comparison"><Fragment set:html={html} /></div>
+    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на InSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
+  </main><Footer />
+  <style is:global set:html={css} />
+  <script is:inline set:html={script} />
+</Base>
+<style>
+  .comparison-page{width:100%;max-width:1400px;min-width:0;margin-inline:auto}
+  .platform-comparison{--est:var(--ink-2);--caution:var(--ink-2);--negative:var(--ink-2);--low-fg:var(--ink-2);min-width:0;font-family:var(--font);color:var(--ink)}
+  .platform-comparison :global(.wrap){padding:12px 0 20px;grid-template-columns:minmax(0,1fr)}
+  .platform-comparison :global(.card){border:0;box-shadow:none}
+  .platform-comparison :global(.foot){max-width:95ch}
+  .platform-comparison :global(#comparison){min-width:0}
+  .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
+</style>

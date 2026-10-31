@@ -7,6 +7,8 @@
   /* Заливка кнопок: чуть глубже фирменного, чтобы белый текст читался (4,58:1 по WCAG).
      Рамки, eyebrow и колесо остаются на --teal. */
   --teal-btn: #008385;
+  /* Наведение на залитую кнопку: чуть глубже, белый текст остаётся читаемым */
+  --teal-btn-hover: #006e70;
   --teal-num: #009090;
   --teal-text: #007476; /* мелкий бирюзовый текст: 5:1 и выше на сером фоне страницы (как в справочнике InSales) */
   --on-teal: #fffdfd;
@@ -42,6 +44,7 @@
   /* Текущий этап колеса — чуть насыщеннее обычного, мягко, видно без наведения */
   --sec-custdev-now: #f7e6ee;
   --sec-design-now: #e5f5f5;
+  --teal-soft: var(--sec-design-now);
   --sec-dev-now: #eafcec;
   --sec-marketing-now: #f3f3f3;
   /* Пройденные дни итерации — круг закрашивается цветом этапа */
@@ -72,6 +75,9 @@
   --radius-card: 20px;
   --radius-btn: 13px;
   --radius-sm: 10px;
+  --radius-pill: 999px;
+  --print-page: #ffffff;
+  --print-ink: #000000;
 
   /* Типографика: Glober (src/styles/fonts.css) */
   --font: 'Glober', Arial, sans-serif;

@@ -1,0 +1,7 @@
+---
+import { href } from '../lib/urls';
+interface Props { items: {title:string;href?:string}[]; }
+const {items} = Astro.props;
+---
+<nav class="breadcrumbs" aria-label="Хлебные крошки"><ol><li><a href={href()}>Главная</a></li>{items.map(item => <li>{item.href ? <a href={href(item.href)}>{item.title}</a> : <span aria-current="page">{item.title}</span>}</li>)}</ol></nav>
+<style>.breadcrumbs{font-size:13px;color:var(--ink-2);margin-bottom:20px}.breadcrumbs ol{display:flex;flex-wrap:wrap;gap:7px 10px;list-style:none;padding:0;margin:0}.breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}a{text-decoration:none}a:hover{text-decoration:underline}</style>

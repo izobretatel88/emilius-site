@@ -4,6 +4,7 @@
 import Base from './Base.astro';
 import Logo from '../components/Logo.astro';
 import Footer from '../components/Footer.astro';
+import LinkList from '../components/LinkList.astro';
 import { ruDate, type Post } from '../lib/blog';
 
 interface Props {
@@ -90,6 +91,11 @@ const jsonLd = [
     <div class="body" data-post={post.id}>
       <Fragment set:html={html} />
     </div>
+    {post.id==='edinye-ostatki-wb-ozon-insales' && <section class="article-next"><h2>Следующий шаг</h2><LinkList items={[
+      {title:'Магазин рядом с WB и Ozon',description:'Запуск своего сайта и настройка связки с площадками.',href:'services/insales-shop/seller/'},
+      {title:'Проверить функции InSales и KIT',description:'Способы обмена, учёт и ограничения платформ.',href:'compare/insales-vs-yandex-kit/'},
+      {title:'Обсудить сложную интеграцию',description:'Когда нужна своя логика обмена и работа с 1С.',href:'services/dev/'},
+    ]} /></section>}
   </main>
 
   <Footer />

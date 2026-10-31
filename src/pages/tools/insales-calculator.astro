@@ -1,0 +1,59 @@
+---
+import Directory from '../../layouts/Directory.astro';
+import {href} from '../../lib/urls';
+import {QUICK_QUESTIONS,quickEstimate} from '../../../docs/insales-service/calc/quick.js';
+import {parseCatalog} from '../../../docs/insales-service/calc/estimate.js';
+import csv from '../../../docs/insales-service/03-catalog.csv?raw';
+// Формулу и внутренние нормы используем только при сборке. В браузер уходят публичные результаты.
+const catalog=parseCatalog(csv);
+const entries=Object.entries(QUICK_QUESTIONS) as [string,[string,[string,string][]]][];
+const lookup:Record<string,number>={};
+const results:{packageName:string;from:number;to:number;weeks:number[]}[]=[];
+const dedup=new Map<string,number>();
+function combinations(index:number,answers:Record<string,string>) {
+  if(index===entries.length){
+    const e=quickEstimate(answers,catalog);
+    const result={packageName:e.packageName,from:e.from,to:e.to,weeks:e.weeks};
+    const serialized=JSON.stringify(result);
+    if(!dedup.has(serialized)){dedup.set(serialized,results.length);results.push(result);}
+    lookup[entries.map(([key])=>answers[key]).join('|')]=dedup.get(serialized)!;
+    return;
+  }
+  const [name,[,options]]=entries[index];
+  options.forEach(([value])=>combinations(index+1,{...answers,[name]:value}));
+}
+combinations(0,{});
+const defaults=Object.fromEntries(entries.map(([key,[,options]])=>[key,key==='channel'?'social':options[0][0]]));
+const initial=results[lookup[entries.map(([key])=>defaults[key]).join('|')]];
+const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
+---
+<Directory title="Калькулятор магазина на InSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
+  <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина">{entries.map(([key,[label,options]])=><div class="calc-field"><label for={`calc-${key}`}>{label}</label><select id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
+  <section class="directory-callout calc-result" aria-label="Результат расчёта"><div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} недель</p></div><p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p></section></div>
+  <noscript><p>Для пересчёта включите JavaScript. Начальный ориентир рассчитан для магазина до 50 товаров; обсудить состав можно в форме услуги.</p></noscript>
+  <div class="directory-tags"><a href={href('services/insales-shop/')}>Что входит в запуск магазина</a><a href={href('compare/')}>Выбрать другую платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
+  <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
+</Directory>
+<script>
+  const form=document.querySelector<HTMLFormElement>('#public-calculator');
+  if(form){
+    const data=JSON.parse(document.querySelector('#calc-data')!.textContent!);
+    const rub=(n:number)=>n.toLocaleString('ru-RU')+'\u00a0₽';
+    const update=()=>{
+      const answers=new FormData(form);
+      const result=data.results[data.lookup[data.keys.map((key:string)=>answers.get(key)).join('|')]];
+      document.querySelector('#calc-package')!.textContent=`«${result.packageName}»`;
+      document.querySelector('#calc-price')!.textContent=`${rub(result.from)} – ${rub(result.to)}`;
+      document.querySelector('#calc-weeks')!.textContent=`Ориентир: ${result.weeks.join('–')} недель`;
+      const link=document.querySelector<HTMLAnchorElement>('#calc-discuss')!;
+      const url=new URL(link.href);
+      data.keys.forEach((key:string)=>url.searchParams.set(`calc_${key}`,String(answers.get(key))));
+      link.href=url.href;
+    };
+    form.addEventListener('submit',event=>event.preventDefault());
+    form.addEventListener('change',update);
+    form.addEventListener('reset',()=>requestAnimationFrame(update));
+    update();
+  }
+</script>
+<style>.calculator{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}.calc-field{display:grid;gap:8px;margin-bottom:20px}.calc-field label{font-weight:600}select{font:inherit;color:var(--ink);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:12px;width:100%;min-height:48px}.calc-result{margin:0;position:sticky;top:20px}.calc-result .calc-price{font-size:clamp(24px,3vw,34px);color:var(--ink);font-weight:700;line-height:1.25}.calc-result .calc-hint{font-size:13px;margin-bottom:0}button{font:inherit;padding:8px 0;border:0;background:none;color:var(--teal-text);text-decoration:underline;cursor:pointer}@media(max-width:700px){.calculator{grid-template-columns:minmax(0,1fr);gap:24px}.calc-result{position:static}}</style>
