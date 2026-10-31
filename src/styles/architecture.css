@@ -1,7 +1,7 @@
-.directory { width:100%; max-width:920px; min-width:0; margin-inline:auto; }
-.directory-intro { max-width:760px; margin:0 auto 36px; text-align:center; }
+.directory { width:100%; max-width:var(--content-width); min-width:0; margin-inline:auto; }
+.directory-intro { max-width:800px; margin-bottom:28px; }
 .directory-intro h1 { font-size:clamp(32px,4.6vw,48px); line-height:1.1; letter-spacing:-.02em; font-weight:700; }
-.directory-intro p { font-size:18px; line-height:1.5; color:var(--ink-2); max-width:66ch; margin:14px auto 0; }
+.directory-intro p { font-size:18px; line-height:1.5; color:var(--ink-2); max-width:66ch; margin-top:14px; }
 .directory > .link-list, .directory > section:not(.directory-callout) > .link-list { background:var(--card); border-radius:var(--radius-card); padding:0 26px; margin-top:18px; }
 .directory-section { margin-top:36px; }
 .directory-section h2, .directory > section > h2 { font-size:26px; line-height:1.2; letter-spacing:-.01em; margin-bottom:10px; }
@@ -16,7 +16,7 @@
 .home-resources>a { margin-top:12px; }
 .directory-callout p { line-height:1.55; }
 .home-content { display:grid; gap:32px; min-width:0; }
-.home-resources { width:100%; max-width:var(--col-center); margin:0 auto; padding:28px; }
+.home-resources { width:100%; max-width:var(--content-width); margin:0 auto; padding:24px; }
 .home-resources h2 { font-size:26px; }
 @media(max-width:600px) {
   .directory-intro p { font-size:16px; }
