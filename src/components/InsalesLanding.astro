@@ -327,14 +327,17 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>
-        <label>Имя<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
-        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" /></label>
+        <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
+        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" aria-describedby="lead-contact-hint lead-contact-error" /></label>
+        <p class="small" id="lead-contact-hint">Укажите @имя в Telegram или номер, по которому можно ответить.</p>
+        <p class="field-error" id="lead-contact-error" role="alert" hidden></p>
         <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
         <!-- Согласие по 152-ФЗ отдельной галочкой: без него lead.php заявку не примет -->
         <label class="agree">
-          <input type="checkbox" name="consent" value="1" required />
+          <input type="checkbox" name="consent" value="1" required aria-describedby="lead-consent-error" />
           <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
         </label>
+        <p class="field-error" id="lead-consent-error" role="alert" hidden></p>
         <button class="cta" type="submit">Отправить расчёт и записаться на диагностику</button>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
@@ -415,6 +418,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     const fail = form.querySelector<HTMLElement>('[data-fail]')!;
     const contact = form.querySelector<HTMLInputElement>('[name=contact]')!;
     const agree = form.querySelector<HTMLInputElement>('[name=consent]')!;
+    const contactError=form.querySelector<HTMLElement>('#lead-contact-error')!;
+    const consentError=form.querySelector<HTMLElement>('#lead-consent-error')!;
+    const fieldError=(input:HTMLInputElement,output:HTMLElement,text='')=>{
+      input.setAttribute('aria-invalid',String(!!text));output.textContent=text;output.hidden=!text;
+    };
+    contact.addEventListener('input',()=>{if(contact.value.trim())fieldError(contact,contactError);});
+    agree.addEventListener('change',()=>{if(agree.checked)fieldError(agree,consentError);});
     const box = form.querySelector<HTMLElement>('.estimate')!;
     const out = (k: string) => box.querySelector<HTMLElement>(`[data-out=${k}]`)!;
     const catalog = new Map(
@@ -469,15 +479,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       ok.hidden = fail.hidden = true;
+      fieldError(contact,contactError);
+      fieldError(agree,consentError);
       if (!contact.value.trim()) {
-        ok.textContent = 'Оставьте Telegram или телефон — без него не ответим.';
-        ok.hidden = false;
+        fieldError(contact,contactError,'Оставьте Telegram или телефон, чтобы мы могли ответить.');
         contact.focus();
         return;
       }
       if (!agree.checked) {
-        ok.textContent = 'Отметьте согласие на обработку данных — без него не можем принять заявку.';
-        ok.hidden = false;
+        fieldError(agree,consentError,'Для отправки заявки отметьте согласие на обработку данных.');
         agree.focus();
         return;
       }
@@ -512,6 +522,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 </script>
 
 <style>
+  .field-error{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}
+  .lead-form [aria-invalid='true']{outline:2px solid var(--ink);outline-offset:2px}
   .top { display: flex; justify-content: center; }
   .logo-link { color: inherit; text-decoration: none; border-radius: var(--radius-card); }
   .page {
