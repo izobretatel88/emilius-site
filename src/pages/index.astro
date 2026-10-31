@@ -8,7 +8,7 @@ import Services from '../components/Services.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { MISSION_LINES } from '../data/site';
-import { DIRECTIONS, MATERIALS } from '../data/navigation';
+import { MATERIALS } from '../data/navigation';
 import LinkList from '../components/LinkList.astro';
 import { href } from '../lib/urls';
 import '../styles/architecture.css';
@@ -37,7 +37,7 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
       <Wheel />
     </section>
     <!-- Услуги — под колесом продукта: центральная колонка на компьютере, следом за колесом на телефоне -->
-    <div class="services-slot"><nav class="home-directions" aria-label="Направления агентства">{DIRECTIONS.map(item=><a href={href(item.href)}>{item.title}</a>)}</nav><Services /></div>
+    <div class="services-slot"><Services /></div>
     <Contact />
     <Feedback />
   </div>
