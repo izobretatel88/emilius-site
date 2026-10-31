@@ -413,7 +413,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   if (form) {
     const variant = form.dataset.variant;
     let touched = false;
-    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const buttonLabel=button.textContent!;
     const ok = form.querySelector<HTMLElement>('.status:not([data-fail])')!;
     const fail = form.querySelector<HTMLElement>('[data-fail]')!;
     const contact = form.querySelector<HTMLInputElement>('[name=contact]')!;
@@ -478,6 +479,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if(button.disabled)return;
       ok.hidden = fail.hidden = true;
       fieldError(contact,contactError);
       fieldError(agree,consentError);
@@ -504,8 +506,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         `Ответы: ${JSON.stringify(a)}`,
       ].join('\n'));
       button.disabled = true;
+      button.textContent='Отправляем расчёт…';
+      form.setAttribute('aria-busy','true');
+      const controller=new AbortController();
+      const timeout=window.setTimeout(()=>controller.abort(),15000);
       try {
-        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { Accept: 'application/json' },signal:controller.signal });
         const data = await res.json().catch(() => ({ ok: false }));
         if (!res.ok || !data.ok) throw new Error(String(res.status));
         ok.textContent = 'Спасибо! Расчёт у менеджера. Напишем в течение часа в рабочее время.';
@@ -515,6 +521,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         fail.hidden = false;
         goal('lead-fail', { variant });
       } finally {
+        clearTimeout(timeout);
+        form.removeAttribute('aria-busy');
+        button.textContent=buttonLabel;
         button.disabled = false;
       }
     });
