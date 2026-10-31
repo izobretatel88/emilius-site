@@ -17,10 +17,10 @@ const state=(item:typeof primary[number])=> current===normalize(href(item.href))
   <a class="discuss" href={href('#feedback')}>Обсудить проект</a>
   <details class="mobile-menu"><summary aria-label="Меню"><span>Меню</span><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="first" d="M4 6h16"/><path class="middle" d="M4 12h16"/><path class="last" d="M4 18h16"/></svg></summary><div class="mobile-links">
     <a class="mobile-discuss" href={href('#feedback')}>Обсудить проект →</a>
-    {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
-    <span>Направления</span>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}
+    <div class="mobile-primary">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
+    <span>Направления</span><div class="mobile-primary">{DIRECTIONS.map(item => <a href={href(item.href)} aria-current={current===normalize(href(item.href))?'page':undefined}>{item.title}</a>)}</div>
     <span>Готовое решение</span><a href={href('services/insales-shop/')}>Магазин на InSales</a>
-    <span>Полезное</span><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}
+    <span>Материалы и инструменты</span><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}
   </div></details>
 </nav>
 <script>
@@ -46,4 +46,10 @@ const state=(item:typeof primary[number])=> current===normalize(href(item.href))
   .desktop a{display:inline-flex;align-items:center;min-height:44px;padding-inline:6px}
   .desktop a[aria-current],.mobile-links a[aria-current]{font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
   .site-nav a:focus-visible,.mobile-menu summary:focus-visible{outline:2px solid var(--teal-text);outline-offset:4px}
+  @media(max-width:960px){
+    .mobile-menu summary::-webkit-details-marker{display:none}
+    .mobile-links{max-height:calc(100svh - 140px);overscroll-behavior:contain;scrollbar-gutter:stable}
+    .mobile-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
+    .mobile-links a{display:flex;align-items:center;min-height:44px}
+  }
 </style>
