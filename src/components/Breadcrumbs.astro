@@ -3,5 +3,17 @@ import { href } from '../lib/urls';
 interface Props { items: {title:string;href?:string}[]; }
 const {items} = Astro.props;
 ---
-<nav class="breadcrumbs" aria-label="Хлебные крошки"><ol><li><a href={href()}>Главная</a></li>{items.map(item => <li>{item.href ? <a href={href(item.href)}>{item.title}</a> : <span aria-current="page">{item.title}</span>}</li>)}</ol></nav>
-<style>.breadcrumbs{font-size:13px;color:var(--ink-2);margin-bottom:20px}.breadcrumbs ol{display:flex;flex-wrap:wrap;gap:7px 10px;list-style:none;padding:0;margin:0}.breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}a{text-decoration:none}a:hover{text-decoration:underline}</style>
+<nav class:list={['breadcrumbs', {'has-parent':items.some(item=>item.href)}]} aria-label="Хлебные крошки"><ol><li><a href={href()}>Главная</a></li>{items.map(item => <li class:list={{'current':!item.href}}>{item.href ? <a href={href(item.href)}>{item.title}</a> : <span aria-current="page">{item.title}</span>}</li>)}</ol></nav>
+<style>
+  .breadcrumbs{font-size:13px;color:var(--ink-2);margin-bottom:20px}
+  .breadcrumbs ol{display:flex;align-items:center;flex-wrap:wrap;gap:0 10px;list-style:none;padding:0;margin:0}
+  .breadcrumbs li{min-width:0;overflow-wrap:anywhere}
+  .breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}
+  a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
+  a:hover{text-decoration:underline;text-underline-offset:4px}
+  @media(max-width:600px){
+    .breadcrumbs{margin-bottom:12px}
+    /* The H1 names this page; keep the full trail available to screen readers. */
+    .has-parent .current{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  }
+</style>
