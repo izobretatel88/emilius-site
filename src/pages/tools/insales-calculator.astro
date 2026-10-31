@@ -30,7 +30,12 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 <Directory title="Калькулятор магазина на InSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
   <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>
   <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина">{entries.map(([key,[label,options]])=><div class="calc-field"><label for={`calc-${key}`}>{label}</label><select id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
-  <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title"><h2 id="calc-result-title">Бюджет и срок</h2><div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} недель</p></div><p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p><a class="calc-back" href="#public-calculator">Изменить параметры ↑</a></section></div>
+  <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title">
+    <h2 id="calc-result-title">Бюджет и срок</h2>
+    <div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} нед.</p></div>
+    <details class="calc-summary"><summary>Проверить параметры расчёта</summary><dl>{entries.map(([key,[label,options]])=><div><dt>{label}</dt><dd data-answer={key}>{options.find(([value])=>value===defaults[key])?.[1]}</dd></div>)}</dl></details>
+    <p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p><a class="calc-back" href="#public-calculator">Изменить параметры ↑</a>
+  </section></div>
   <noscript><p>Для пересчёта включите JavaScript. Начальный ориентир рассчитан для магазина до 50 товаров; обсудить состав можно в форме услуги.</p></noscript>
   <div class="directory-tags"><a href={href('services/insales-shop/')}>Что входит в запуск магазина</a><a href={href('compare/')}>Выбрать другую платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
   <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
@@ -45,10 +50,14 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     const rub=(n:number)=>n.toLocaleString('ru-RU')+'\u00a0₽';
     const update=()=>{
       const answers=new FormData(form);
+      form.querySelectorAll('select').forEach(select=>{
+        const output=document.querySelector(`[data-answer="${select.name}"]`);
+        if(output)output.textContent=select.selectedOptions[0].textContent;
+      });
       const result=data.results[data.lookup[data.keys.map((key:string)=>answers.get(key)).join('|')]];
       document.querySelector('#calc-package')!.textContent=`«${result.packageName}»`;
       document.querySelector('#calc-price')!.textContent=`${rub(result.from)} – ${rub(result.to)}`;
-      document.querySelector('#calc-weeks')!.textContent=`Ориентир: ${result.weeks.join('–')} недель`;
+      document.querySelector('#calc-weeks')!.textContent=`Ориентир: ${result.weeks.join('–')} нед.`;
       const link=document.querySelector<HTMLAnchorElement>('#calc-discuss')!;
       const url=new URL(link.href);
       data.keys.forEach((key:string)=>url.searchParams.set(`calc_${key}`,String(answers.get(key))));
@@ -65,6 +74,12 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   .calc-back{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:14px;text-underline-offset:4px}
   .calc-result h2{font-size:24px;margin-bottom:14px}
   .calc-result:focus{outline:2px solid var(--teal-text);outline-offset:4px}
+  .calc-summary{margin-block:16px;border-block:1px solid var(--hair);font-size:14px}
+  .calc-summary summary{min-height:48px;padding-block:12px;cursor:pointer;color:var(--teal-text);font-weight:600}
+  .calc-summary dl{margin:0 0 16px;display:grid;gap:12px}
+  .calc-summary dt{color:var(--ink-2)}
+  .calc-summary dd{margin:2px 0 0;font-weight:600}
+  #public-calculator button{min-height:44px;text-underline-offset:4px}
   #calc-result,#public-calculator{scroll-margin-top:24px}
   @media(max-width:700px){.calc-jump{display:inline-flex}}
 </style>
