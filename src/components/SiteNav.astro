@@ -15,7 +15,7 @@ const state=(item:typeof primary[number])=> current===normalize(href(item.href))
   <a class="home" href={href()} aria-label="Emilius Agency — главная"><Logo />{preview && <span class="environment">Черновик · dev</span>}</a>
   <div class="desktop">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
   <a class="discuss" href={href('#feedback')}>Обсудить проект</a>
-  <details class="mobile-menu"><summary>Меню</summary><div class="mobile-links">
+  <details class="mobile-menu"><summary aria-label="Меню"><span>Меню</span><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="first" d="M4 6h16"/><path class="middle" d="M4 12h16"/><path class="last" d="M4 18h16"/></svg></summary><div class="mobile-links">
     <a class="mobile-discuss" href={href('#feedback')}>Обсудить проект →</a>
     {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
     <span>Направления</span>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}
@@ -37,8 +37,10 @@ const state=(item:typeof primary[number])=> current===normalize(href(item.href))
   }
 </script>
 <style>
-  .site-nav{width:100%;max-width:var(--site-width);margin-inline:auto;display:flex;align-items:center;gap:24px;font-size:14px;position:relative;z-index:10}
-  a{color:var(--ink-2);text-decoration:none;padding-block:8px}a:hover,a[aria-current]{color:var(--teal-text)}.home{color:var(--ink);margin-right:auto;display:grid;gap:5px;padding:0;flex-shrink:0}.environment{font-size:11px;color:var(--ink-3);padding-left:18px}.desktop{display:flex;gap:24px}.discuss{background:var(--teal-btn);color:var(--on-teal);border-radius:var(--radius-btn);padding:12px 15px;font-weight:600;white-space:nowrap}.discuss:hover{background:var(--teal-btn-hover);color:var(--on-teal)}.mobile-menu{display:none}
+  .site-nav{width:100%;max-width:var(--site-width);margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px 24px;font-size:14px;position:relative;z-index:10}
+  a{color:var(--ink-2);text-decoration:none;padding-block:8px}a:hover,a[aria-current]{color:var(--teal-text)}.home{grid-column:2;grid-row:1;justify-self:center;color:var(--ink);display:grid;gap:5px;padding:0;text-align:center}.environment{font-size:11px;color:var(--ink-3)}.desktop{grid-column:1/-1;grid-row:2;display:flex;justify-content:center;gap:28px}.discuss{grid-column:3;grid-row:1;justify-self:end;background:var(--teal-btn);color:var(--on-teal);border-radius:var(--radius-btn);padding:12px 15px;font-weight:600;white-space:nowrap}.discuss:hover{background:var(--teal-btn-hover);color:var(--on-teal)}.mobile-menu,.menu-icon{display:none}
   @media(max-width:960px){.site-nav{gap:12px}.desktop,.discuss{display:none}.mobile-menu{display:block}.mobile-menu summary{cursor:pointer;font-size:15px;min-height:44px;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-radius:var(--radius-btn);color:var(--teal-text);list-style:none}.mobile-menu summary::after{content:'+';font-size:20px}.mobile-menu[open] summary::after{content:'−'}.mobile-links{position:absolute;top:calc(100% + 12px);left:0;right:0;max-height:70svh;overflow:auto;display:grid;background:var(--card);padding:14px 20px;border-radius:var(--radius-card);box-shadow:var(--shadow-pop)}.mobile-links a{padding:11px 0;border-bottom:1px solid var(--hair)}.mobile-links span{font-size:12px;color:var(--ink-3);margin-top:16px}.mobile-links .mobile-discuss{color:var(--teal-text);font-weight:700}}
-  @media(max-width:380px){.site-nav{gap:8px}.home :global(.pill){font-size:15px;gap:8px;padding:8px 12px}.home :global(.mark){width:20px;height:30px}.environment{padding-left:12px}.mobile-menu summary{font-size:14px;padding-inline:12px}}
+  @media(max-width:960px){.mobile-menu{grid-column:3;grid-row:1;justify-self:end}}
+  @media(max-width:600px){.site-nav{column-gap:8px}.mobile-menu summary{width:44px;height:44px;padding:10px;justify-content:center}.mobile-menu summary>span,.mobile-menu summary::after{display:none}.menu-icon{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}.menu-icon path{transform-origin:12px 12px}.mobile-menu[open] .first{transform:rotate(45deg) translateY(6px)}.mobile-menu[open] .middle{opacity:0}.mobile-menu[open] .last{transform:rotate(-45deg) translateY(-6px)}}
+  @media(max-width:380px){.home :global(.pill){font-size:15px;gap:8px;padding:8px 12px}.home :global(.mark){width:20px;height:30px}}
 </style>
