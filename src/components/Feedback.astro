@@ -19,7 +19,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       maxlength="3000"
       aria-describedby="fb-message-hint fb-message-error"
       placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
-    <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений.</p>
+    <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3 000.</span></p>
     <p class="field-error" id="fb-message-error" role="alert" hidden></p>
     </div>
     <div class="field">
@@ -67,6 +67,11 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     const fail = form.querySelector<HTMLElement>('.status-error')!;
     const messageError=form.querySelector<HTMLElement>('#fb-message-error')!;
     const consentError=form.querySelector<HTMLElement>('#fb-consent-error')!;
+    const length=form.querySelector<HTMLElement>('#fb-length')!;
+    const updateLength=()=>{length.textContent=`Осталось ${(message.maxLength-message.value.length).toLocaleString('ru-RU')}.`;};
+    message.addEventListener('input',updateLength);
+    form.addEventListener('reset',()=>requestAnimationFrame(updateLength));
+    updateLength();
     const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
       field.setAttribute('aria-invalid',String(Boolean(text)));
       el.textContent=text;
