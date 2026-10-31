@@ -53,6 +53,19 @@ const related=[
   .platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){display:inline-flex;align-items:center}
   .platform-comparison :global(.source){display:flex;align-items:center;min-height:44px;width:fit-content;text-underline-offset:3px}
   .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}
+  .platform-comparison :global(header){max-width:900px;width:100%;margin-inline:auto;text-align:center;justify-items:center}
+  .platform-comparison :global(h1){font-weight:600;max-width:30ch;margin-inline:auto}
+  .platform-comparison :global(.lead){font-size:18px;max-width:65ch;margin-inline:auto}
+  .platform-comparison :global(.topline){width:100%;font-size:13px}
+  .platform-comparison :global(#theme){background:transparent;border:0}
+  .platform-comparison :global(.scope-info summary){font-size:14px;font-weight:400;color:var(--ink-2);min-height:44px;padding-block:12px;margin:auto}
+  .platform-comparison :global(.scope-info .scope){max-width:72ch;margin:8px auto 0}
+  .platform-comparison :global(.panel){background:transparent;padding:0}
+  .platform-comparison :global(.explanation){background:transparent;padding:12px 0;font-size:13px;color:var(--ink-2)}
+  .platform-comparison :global(.explanation strong){color:var(--ink);font-weight:600}
+  .platform-comparison :global(.chips button){background:transparent;border:1px solid var(--hair);color:var(--ink-2);font-size:14px}
+  .platform-comparison :global(.chips button[aria-pressed=true]){background:var(--card);border-color:var(--ink-2);color:var(--ink);font-weight:600}
+  .platform-comparison :global(header .eyebrow){font-weight:400;color:var(--ink-2);letter-spacing:0;text-transform:none}
   @media(max-width:760px){
     .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
     .platform-comparison :global(.feature-col){width:38%}

@@ -59,6 +59,7 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
     if name == 'insales-kit':
+        body = re.sub(r'<p class="scope">.*?</p>', lambda m:'<details class="scope-info"><summary>348 пунктов · 19 разделов · 88 источников</summary>'+m[0]+'</details>', body, count=1)
         scripts = scripts.replace('  applyTheme();\n})();', "  document.addEventListener('emi:theme',event=>{if(event.detail in themeNames){selectedTheme=event.detail;applyTheme();}});\n  applyTheme();\n})();")
         scripts = scripts.replace("localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }", "localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }\n    document.dispatchEvent(new CustomEvent('emi:theme',{detail:selectedTheme}));")
         body = body.replace('placeholder="Например, 1С, остатки или промокоды" autocomplete="off">', 'placeholder="Например, 1С, остатки или промокоды" autocomplete="off" aria-describedby="search-hint"><p class="search-hint" id="search-hint">По названию или коду функции, например F010. 1С и 1C найдутся одинаково.</p>')
