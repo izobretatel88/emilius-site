@@ -171,6 +171,8 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     fill: #000;
   }
   iframe {
+    /* Страница виджета без своей темы: при тёмной теме сайта браузер подложил бы под неё сплошной фон */
+    color-scheme: normal;
     width: 170px;
     height: 144px;
     border: 0;

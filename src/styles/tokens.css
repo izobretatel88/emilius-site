@@ -2,6 +2,8 @@
    Источник значений: docs/EMILIUS-DESIGN-SYSTEM.md */
 
 :root {
+  /* Системные части — выпадающие списки, полосы прокрутки, галочки — следуют теме сайта */
+  color-scheme: light;
   --site-width: 1120px;
   --content-width: 1080px;
   /* Акцент */
@@ -104,6 +106,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
+    color-scheme: dark;
     --teal-num: #35b6b4;
     --teal-text: #3cc6c6;
     --ink: #f5f5f7;
@@ -156,6 +159,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --teal-num: #35b6b4;
   --teal-text: #3cc6c6;
   --ink: #f5f5f7;
