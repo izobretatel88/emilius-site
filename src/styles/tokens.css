@@ -26,7 +26,7 @@
   --well: #f2f2f4;
   --proj-bg: #ffffff; /* кружки логотипов проектов */
   --input-bg: #f2f2f4;
-  --input-border: #e0e0e5;
+  --input-border: #86868b;
 
   /* Фон: пастельные спектральные лучи под белой вуалью */
   --veil-a: rgba(245, 245, 247, 0.92);
@@ -110,7 +110,7 @@
     --well: #232325;
     --proj-bg: #2c2c2e;
     --input-bg: #2c2c2e;
-    --input-border: #3a3a3c;
+    --input-border: #77777e;
     --veil-a: rgba(0, 0, 0, 0.94);
     --veil-b: rgba(0, 0, 0, 0.9);
     --ray-1: #2c4a8a;
@@ -157,7 +157,7 @@
   --well: #232325;
   --proj-bg: #2c2c2e;
   --input-bg: #2c2c2e;
-  --input-border: #3a3a3c;
+  --input-border: #77777e;
   --veil-a: rgba(0, 0, 0, 0.94);
   --veil-b: rgba(0, 0, 0, 0.9);
   --ray-1: #2c4a8a;

@@ -9,6 +9,7 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const year = new Date().getFullYear();
 // Ссылка на блог появляется, когда в нём есть публикуемые статьи
 const hasBlog = (await getPosts()).length > 0;
+const preview=process.env.PREVIEW==='1';
 ---
 
 <footer>
@@ -22,7 +23,7 @@ const hasBlog = (await getPosts()).length > 0;
   <p>© {year} | Emilius Agency</p>
   <p class="legal">{OPERATOR.short} · ИНН {OPERATOR.inn}</p>
   <div class="legal-links"><a href={href('privacy/')}>Конфиденциальность</a><a href={href('consent/')}>Согласие</a><a href={href('meetings/')}>Emilius Meetings</a></div>
-  <p>Итерация {ITERATION.current} из {ITERATION.total} до великолепного состояния</p>
+  {preview && <p>Превью · итерация {ITERATION.current}</p>}
   <!-- Ассоциация ARDA — в самом низу и мельче (решение владельца 23.10.2026) -->
   <a href={LINKS.arda} target="_blank" rel="noopener" class="arda">
     <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств" width="104" height="49" loading="lazy" />

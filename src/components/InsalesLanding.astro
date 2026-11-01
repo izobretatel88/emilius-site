@@ -1,4 +1,5 @@
 ---
+import LiveEstimate from './LiveEstimate.astro';
 // Лендинг услуги «Магазин на шаблоне InSales». Две версии первого экрана: общая и для селлеров.
 import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
@@ -309,6 +310,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
         <!-- Компьютер: вопросы слева, справа цена и контакты — закреплены, цена видна при каждом ответе -->
         <div class="quiz">
+        <LiveEstimate target="#lead-estimate" landing />
         {questions.map((q) => (
           <fieldset>
             <legend>{q.label}</legend>
@@ -321,7 +323,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         ))}
         </div>
         <div class="side">
-        <div class="estimate" aria-live="polite" hidden>
+        <div class="estimate" id="lead-estimate" aria-live="polite" hidden>
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
           <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
@@ -358,6 +360,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 </Base>
 
 <script>
+  import {updateLiveEstimate} from '../lib/live-estimate';
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
   // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
@@ -449,10 +452,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         last = quickEstimate(answers(), catalog);
       } catch {
         box.hidden = true;
+        updateLiveEstimate(form,null);
         return;
       }
       out('pkg').textContent = `«${last.packageName}»`;
       out('price').textContent = `${rub(last.from)} – ${rub(last.to)}`;
+      updateLiveEstimate(form,`${rub(last.from)} – ${rub(last.to)}`);
       out('weeks').textContent = `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`;
       out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
       box.hidden = false;
@@ -923,6 +928,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .jump.is-on { opacity: 1; visibility: visible; }
   .jump a {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:44px;
+    min-width:44px;
     padding: 8px 12px;
     border-radius: var(--radius-btn);
     color: var(--ink-2);
@@ -938,7 +948,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
   @media (max-width: 480px) {
-    .jump a { padding: 8px 9px; font-size: 14px; }
+    .jump a { padding: 8px 5px; font-size: 14px; }
     .jump [data-jump-to='t-weeks'] { display: none; }
   }
   form { display: flex; flex-direction: column; gap: 14px; }
@@ -959,7 +969,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 400;
     color: var(--ink);
     background: var(--input-bg);
-    border: 2px solid var(--input-border);
+    border: 1px solid var(--input-border);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     transition: border-color var(--hover);
@@ -1006,6 +1016,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-radius: var(--radius-sm);
   }
   .estimate[hidden] { display: none; }
+  .estimate{scroll-margin-top:84px}
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }
   .est-price { font-size: clamp(28px, 3.2vw, 34px); font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; margin: 2px 0 6px; }

@@ -1,0 +1,18 @@
+---
+interface Props { target:string; landing?:boolean; }
+const {target,landing=false}=Astro.props;
+---
+<div class:list={['estimate-strip',{'landing':landing}]} data-live-estimate hidden>
+  <a href={target}><span><span class="caption">Текущая оценка</span><strong data-estimate-strip></strong></span><span class="more">К расчёту ↓</span></a>
+</div>
+<style>
+  .estimate-strip{display:none;position:sticky;top:12px;z-index:6;background:var(--card);border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
+  .estimate-strip[hidden]{display:none}
+  a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:10px 12px;color:var(--ink);text-decoration:none}
+  a>span:first-child{min-width:0}
+  .caption{display:block;font-size:12px;color:var(--ink-2);margin-bottom:2px}
+  strong{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+  .more{font-size:13px;color:var(--teal-text);flex-shrink:0}
+  @media(max-width:700px){.estimate-strip:not(.landing){display:block;margin-bottom:20px}.estimate-strip[hidden]{display:none}}
+  @media(max-width:899px){.estimate-strip.landing{display:block;top:76px}.estimate-strip.landing[hidden]{display:none}}
+</style>

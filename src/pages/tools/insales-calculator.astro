@@ -1,5 +1,6 @@
 ---
 import Directory from '../../layouts/Directory.astro';
+import LiveEstimate from '../../components/LiveEstimate.astro';
 import {href} from '../../lib/urls';
 import {QUICK_QUESTIONS,quickEstimate} from '../../../docs/insales-service/calc/quick.js';
 import {parseCatalog} from '../../../docs/insales-service/calc/estimate.js';
@@ -29,7 +30,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 ---
 <Directory title="Калькулятор магазина на InSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
   <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>
-  <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина">{entries.map(([key,[label,options]])=><div class="calc-field"><label for={`calc-${key}`}>{label}</label><select id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
+  <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина"><LiveEstimate target="#calc-result" />{entries.map(([key,[label,options]])=><div class="calc-field"><label for={`calc-${key}`}>{label}</label><select id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
   <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title">
     <h2 id="calc-result-title">Бюджет и срок</h2>
     <div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} нед.</p></div>
@@ -41,6 +42,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
 </Directory>
 <script>
+  import {updateLiveEstimate} from '../../lib/live-estimate';
   const form=document.querySelector<HTMLFormElement>('#public-calculator');
   if(form){
     form.tabIndex=-1;
@@ -57,6 +59,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
       const result=data.results[data.lookup[data.keys.map((key:string)=>answers.get(key)).join('|')]];
       document.querySelector('#calc-package')!.textContent=`«${result.packageName}»`;
       document.querySelector('#calc-price')!.textContent=`${rub(result.from)} – ${rub(result.to)}`;
+      updateLiveEstimate(form,`${rub(result.from)} – ${rub(result.to)}`);
       document.querySelector('#calc-weeks')!.textContent=`Ориентир: ${result.weeks.join('–')} нед.`;
       const link=document.querySelector<HTMLAnchorElement>('#calc-discuss')!;
       const url=new URL(link.href);

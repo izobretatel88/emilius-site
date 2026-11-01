@@ -12,6 +12,8 @@ import { MATERIALS } from '../data/navigation';
 import LinkList from '../components/LinkList.astro';
 import { href } from '../lib/urls';
 import '../styles/architecture.css';
+interface Props {reviewHierarchy?:boolean;}
+const {reviewHierarchy=false}=Astro.props;
 
 // Миссия: на компьютере перенос после «создавать», на телефоне — после «людям»,
 // чтобы шрифт был крупнее (самая длинная строка короче)
@@ -23,7 +25,8 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
   description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
 >
   <Intro />
-  <header class="hero">
+  {reviewHierarchy && <a class="review-switch" href={href()}>Макет: компактная миссия · Текущий вариант →</a>}
+  <header class:list={['hero',{'hierarchy-review':reviewHierarchy}]}>
     <div class="mission">
       <p class="eyebrow">Наша миссия</p>
       <h1><span class="m-a">{head}</span> <span class="m-b">{verb}</span> <span class="m-c">{MISSION_LINES[1]}</span></h1>
@@ -81,6 +84,8 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
   .mission h1 .m-c {
     display: block;
   }
+  .review-switch{position:fixed;bottom:16px;left:16px;z-index:50;max-width:calc(100% - 96px);padding:12px 16px;background:var(--card);color:var(--teal-text);border-radius:var(--radius-btn);box-shadow:var(--shadow-pop);font-size:13px;min-height:44px}
+  @media(min-width:641px){.hero.hierarchy-review .mission h1{font-size:clamp(26px,3.6vw,40px)}}
   @media (max-width: 640px) {
     .eyebrow {
       font-size: 12px;
@@ -137,7 +142,7 @@ const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].
 
   @media (max-width: 1040px) {
     .bento {
-      grid-template-columns: 150px minmax(0, 1fr) 190px;
+      grid-template-columns: 190px minmax(0, 1fr) 190px;
       gap: 24px;
     }
   }

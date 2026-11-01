@@ -28,6 +28,10 @@ def scope_css(css, scope):
             closing += 1
         content = css[opening + 1:closing - 1]
         pos = closing
+        if selector == 'td.out > *, td.out':
+            continue
+        if selector == '[data-p].out':
+            content = content.replace('var(--ink-3)', 'var(--ink-2)')
         if selector == '.scroll':
             # Tables grow with the document; only horizontal overflow is local.
             content = re.sub(r'max-height:[^;]+;?', '', content)
