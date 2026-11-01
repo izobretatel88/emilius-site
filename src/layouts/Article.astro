@@ -246,13 +246,13 @@ const jsonLd = [
     border: 0;
     border-top: 1px solid var(--hair);
   }
-  /* Призыв агентства в тексте: спокойная врезка, без кнопок и давления */
+  /* Призыв агентства в тексте: спокойная врезка, без кнопок и давления.
+     Бирюзовая рамка, как у «Написать» и оценки на лендинге, — серая подложка уже у оглавления и кода */
   .body :global(blockquote) {
     margin: 24px 0 0;
     padding: 16px 20px;
-    border-left: 4px solid var(--teal);
+    border: 1px solid var(--teal);
     border-radius: var(--radius-sm);
-    background: var(--well);
   }
   .body :global(blockquote p) {
     margin: 0;
