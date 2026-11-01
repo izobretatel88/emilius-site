@@ -711,7 +711,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     height: 32px;
     border-radius: 50%;
     background: var(--card);
-    color: var(--teal-num);
+    /* мелкий бирюзовый текст: --teal-num давал 3,9:1 на белом */
+    color: var(--teal-text);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
   }
