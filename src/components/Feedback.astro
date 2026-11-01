@@ -190,9 +190,11 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   input[type='text']:focus {
     border-color: var(--teal);
   }
+  /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
   textarea:focus-visible,
   input[type='text']:focus-visible {
-    outline: none;
+    outline: 2px solid var(--teal);
+    outline-offset: -1px;
   }
   .trap {
     position: absolute;
