@@ -62,6 +62,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на InSales' : 'Свой интернет-магазин на InSales за 3–5 недель: телефон с живым магазином'}
 >
 
+
   <!-- Навигация по длинной странице: таблетка как у логотипа, появляется, когда первый экран ушёл вверх -->
   <nav class="jump" aria-label="Разделы страницы" data-jump>
     {JUMPS.map(([id, text]) => <a href={`#${id}`} data-jump-to={id}>{text}</a>)}
