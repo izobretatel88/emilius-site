@@ -113,7 +113,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 <div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
-  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434" inert>
+  <!-- До запуска колесо под плашкой. inert у <svg> не действует (атрибут только для HTML-элементов),
+       поэтому прячем его от чтения экрана aria-hidden, а этапы убираем из порядка Tab -->
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434" aria-hidden="true">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
     </defs>
@@ -155,7 +157,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
-        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
+        <a href={h.href} class="sector-link" data-sector={h.i} tabindex="-1" aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
           <path class="sector-hit" d={h.d}></path>
         </a>
       ))}
@@ -711,7 +713,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       // запуск мышью — курсор над колесом; с клавиатуры (detail 0) наведение не мешает
       if (e.detail > 0) hoverArmed = false;
       stage.classList.remove('is-idle');
-      rotorSvg.removeAttribute('inert');
+      rotorSvg.removeAttribute('aria-hidden');
+      links.forEach((link) => link.removeAttribute('tabindex'));
       launch.classList.add('is-gone');
       // гаснущая кнопка уходит из порядка Tab сразу, а не после затухания
       launch.tabIndex = -1;
