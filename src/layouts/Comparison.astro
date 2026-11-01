@@ -35,15 +35,23 @@ const related=[
   <script is:inline set:html={script} />
 </Base>
 <style>
+  :global(body:has(>.comparison-page)){row-gap:16px}
   .comparison-page{width:100%;max-width:1400px;min-width:0;margin-inline:auto}
+  .comparison-page :global(.breadcrumbs){margin-bottom:4px}
   .platform-comparison{--est:var(--ink-2);--caution:var(--ink-2);--negative:var(--ink-2);--low-fg:var(--ink-2);min-width:0;font-family:var(--font);color:var(--ink)}
-  .platform-comparison :global(.wrap){padding:12px 0 20px;grid-template-columns:minmax(0,1fr)}
+  .platform-comparison :global(.wrap){padding:4px 0 20px;grid-template-columns:minmax(0,1fr);gap:16px}
+  .platform-comparison :global(header){max-width:none;gap:8px}
+  .platform-comparison :global(.lead){max-width:80ch;line-height:1.45}
+  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:110ch}
+  .platform-comparison :global(.scope){line-height:1.45}
+  .platform-comparison :global(.search-row){align-items:start}
+  .platform-comparison :global(.search-row input),.platform-comparison :global(.search-row select){height:48px}
   .platform-comparison :global(.card){border:0;box-shadow:none}
   .platform-comparison :global(.foot){max-width:95ch}
   .platform-comparison :global(#comparison){min-width:0}
   .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
   .platform-comparison :global(.table-jump){width:fit-content;font-size:14px;text-underline-offset:4px}
-  .platform-comparison :global(h1){font-size:clamp(30px,4.3vw,46px);line-height:1.1;max-width:24ch}
+  .platform-comparison :global(h1){font-size:clamp(28px,3vw,40px);line-height:1.12;max-width:none;margin:0}
   .platform-comparison :global(.mobile-note-row){display:none}
   .platform-comparison :global(#comparison){scroll-margin-top:16px}
   .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
@@ -53,7 +61,11 @@ const related=[
   .platform-comparison :global(table[hidden]),.platform-comparison :global(.mobile-hint[hidden]){display:none}
   .platform-comparison :global(button),.platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){min-height:44px}
   .platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){display:inline-flex;align-items:center}
-  .platform-comparison :global(.source){display:flex;align-items:center;min-height:44px;width:fit-content;text-underline-offset:3px}
+  .platform-comparison :global(.source){display:inline-flex;vertical-align:middle;align-items:center;min-height:44px;width:fit-content;text-underline-offset:3px;margin:0 0 0 10px;font-size:13px}
+  .platform-comparison :global(.scroll td>.status){display:inline-flex;vertical-align:middle}
+  .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:8px;padding-inline:14px}
+  .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
+  .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
   .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}
   @media(max-width:760px){
     .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
@@ -63,8 +75,9 @@ const related=[
     .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
     .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere}
     .platform-comparison :global(.status){display:block;font-size:13px}
+    .platform-comparison :global(.scroll td>.status){display:block}
     .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
-    .platform-comparison :global(.source){font-size:13px}
+    .platform-comparison :global(.source){display:flex;font-size:13px;margin:2px 0 0}
     .platform-comparison :global(.source span){display:none}
     .platform-comparison :global(.mobile-note-row){display:table-row}
     .platform-comparison :global(.mobile-note-row td){padding:0 10px 12px;color:var(--ink-2);font-size:12px}
