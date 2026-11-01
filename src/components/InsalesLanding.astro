@@ -767,6 +767,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
   .more-shops li:hover { background: var(--card); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
+  .more-shops li { position: relative; }
+  .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
+  .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .more-shops a:focus-visible { outline: none; }
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
   .proof a:hover { text-underline-offset: 3px; }
