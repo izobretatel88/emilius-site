@@ -15,7 +15,7 @@ BEGET_KEY="${BEGET_KEY:-$HOME/.ssh/emilius_beget}"
 cd "$(dirname "$0")/.."
 
 # Счётчик Метрики тот же, что был на Tilda, — история посещений не прерывается.
-SITE_URL=https://emilius.agency BASE_PATH=/ YM_ID="${YM_ID:-68742100}" npm run build
+YM_ID="${YM_ID:-68742100}" npm run build:release
 
 # Защита от выкладки превью: в продакшене не должно быть noindex и метки dev.
 if grep -rlq --include='*.html' 'noindex' dist; then
