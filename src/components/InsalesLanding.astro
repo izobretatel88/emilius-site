@@ -215,7 +215,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block review" aria-labelledby="t-review">
       <h2 id="t-review">Отзыв клиента</h2>
       <div class="review-grid">
+        <!-- Имя плеера — заголовок и автор отзыва: без него читалка объявляет просто «видео» -->
         <video
+          aria-labelledby="t-review review-who"
           controls
           playsinline
           preload="none"
@@ -229,7 +231,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <figure class="quote">
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
-            <b>{VIDEO_REVIEW.who}</b>
+            <b id="review-who">{VIDEO_REVIEW.who}</b>
             <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
           </figcaption>
         </figure>
