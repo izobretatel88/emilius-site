@@ -28,6 +28,12 @@ def scope_css(css, scope):
             closing += 1
         content = css[opening + 1:closing - 1]
         pos = closing
+        if selector == '.scroll':
+            # Tables grow with the document; only horizontal overflow is local.
+            content = re.sub(r'max-height:[^;]+;?', '', content)
+            content = re.sub(r'overflow:\s*auto(?=;|$)', 'overflow-x:auto;overflow-y:hidden', content)
+            if not content.strip():
+                continue
         if selector.startswith('@font-face') or ':root' in selector:
             continue
         if selector.startswith('@'):
@@ -59,6 +65,9 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     body = re.sub(r'\s*·\s*<a href="\./vybor-platformy.html">.*?</a>', '', body)
     body = body.replace('href="./sources.md"', 'href="#comparison-sources"')
     if name == 'insales-kit':
+        scripts = scripts.replace('scroll.scrollTop = 0;', '')
+        scripts = scripts.replace("scroll.scrollTop = target.offsetTop - document.querySelector('thead').offsetHeight;", '')
+        scripts = scripts.replace("scroll.scrollIntoView({block: 'start'});", "target.scrollIntoView({block: 'start'});")
         scripts = scripts.replace('  applyTheme();\n})();', "  document.addEventListener('emi:theme',event=>{if(event.detail in themeNames){selectedTheme=event.detail;applyTheme();}});\n  applyTheme();\n})();")
         scripts = scripts.replace("localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }", "localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }\n    document.dispatchEvent(new CustomEvent('emi:theme',{detail:selectedTheme}));")
         body = body.replace('placeholder="Например, 1С, остатки или промокоды" autocomplete="off">', 'placeholder="Например, 1С, остатки или промокоды" autocomplete="off" aria-describedby="search-hint"><p class="search-hint" id="search-hint">По названию или коду функции, например F010. 1С и 1C найдутся одинаково.</p>')

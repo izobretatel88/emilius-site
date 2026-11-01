@@ -15,7 +15,7 @@
 .platform-comparison h1{ margin: 0; font-size: clamp(30px, 4.6vw, 46px); line-height: 1.06; letter-spacing: -0.015em; font-weight: 700; text-wrap: balance; }
 .platform-comparison .lead{ margin: 0; color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: 62ch; }
 .platform-comparison .card{ background: var(--card); border-radius:var(--radius-card); min-width: 0; overflow: hidden; }
-.platform-comparison .scroll{ overflow: auto; max-height: calc(100vh - 48px); overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
+.platform-comparison .scroll{ overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
 .platform-comparison table{ border-collapse: separate; border-spacing: 0; width: 100%; min-width: 1240px; table-layout: fixed; }
 .platform-comparison th,.platform-comparison td{ text-align: left; vertical-align: top; }
 .platform-comparison thead th{

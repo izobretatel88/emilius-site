@@ -50,7 +50,6 @@
     group.value = '';
     mode = 'all';
     update(true, preserveHash);
-    scroll.scrollTop = 0;
   }
   function readURL() {
     const params = new URL(location.href).searchParams;
@@ -65,17 +64,16 @@
     if (!target) return;
     if (target.hidden || target.closest('tbody').hidden) reset(true);
     requestAnimationFrame(() => {
-      scroll.scrollTop = target.offsetTop - document.querySelector('thead').offsetHeight;
       scroll.scrollLeft = 0;
-      scroll.scrollIntoView({block: 'start'});
+      target.scrollIntoView({block: 'start'});
     });
   }
   form.hidden = false;
   form.addEventListener('submit', event => event.preventDefault());
   form.addEventListener('reset', event => { event.preventDefault(); reset(); search.focus(); });
-  search.addEventListener('input', () => { update(); scroll.scrollTop = 0; });
-  group.addEventListener('change', () => { update(); scroll.scrollTop = 0; });
-  buttons.forEach(button => button.addEventListener('click', () => { mode = button.dataset.mode; update(); scroll.scrollTop = 0; }));
+  search.addEventListener('input', () => { update(); });
+  group.addEventListener('change', () => { update(); });
+  buttons.forEach(button => button.addEventListener('click', () => { mode = button.dataset.mode; update(); }));
   document.querySelector('#empty-reset').addEventListener('click', () => { reset(); search.focus(); });
   window.addEventListener('popstate', readURL);
   window.addEventListener('hashchange', revealAnchor);
