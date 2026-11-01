@@ -111,6 +111,8 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
     scripts = scripts.replace('document.body.classList', 'document.querySelector(".platform-comparison").classList')
     (out / f'{name}.html').write_text(body.strip()+'\n')
     css = scope_css(css, '.platform-comparison')
+    # Allow vertical scrolling to continue on the page at either table boundary.
+    css = re.sub(r'overscroll-behavior:\s*contain;', 'overscroll-behavior-x:contain;overscroll-behavior-y:auto;', css)
     radii = {'999':'pill','20':'card','16':'card','13':'btn','12':'sm','10':'sm','9':'sm','4':'sm'}
     css = re.sub(r'border-radius:\s*(999|20|16|13|12|10|9|4)px', lambda m:'border-radius:var(--radius-'+radii[m[1]]+')', css)
     css = css.replace('color:#fff', 'color:var(--on-teal)').replace('background:#fff', 'background:var(--print-page)').replace('color:#000','color:var(--print-ink)')
