@@ -87,24 +87,4 @@
     revealAnchor();
   }));
   readURL();
-
-  const theme = document.querySelector('#theme');
-  const themeNames = {system: 'системная', light: 'светлая', dark: 'тёмная'};
-  let selectedTheme = 'system';
-  try { selectedTheme = localStorage.getItem('emilius-comparison-theme') || 'system'; } catch { /* Storage may be disabled. */ }
-  if (!(selectedTheme in themeNames)) selectedTheme = 'system';
-  function applyTheme() {
-    if (selectedTheme === 'system') delete document.documentElement.dataset.theme;
-    else document.documentElement.dataset.theme = selectedTheme;
-    theme.textContent = `Тема: ${themeNames[selectedTheme]}`;
-    theme.setAttribute('aria-label', `Тема оформления: ${themeNames[selectedTheme]}. Переключить тему`);
-  }
-  theme.addEventListener('click', () => {
-    selectedTheme = {system: 'light', light: 'dark', dark: 'system'}[selectedTheme];
-    applyTheme();
-    try { localStorage.setItem('emilius-comparison-theme', selectedTheme); } catch { /* Keep the session choice. */ }
-    document.dispatchEvent(new CustomEvent('emi:theme',{detail:selectedTheme}));
-  });
-  document.addEventListener('emi:theme',event=>{if(event.detail in themeNames){selectedTheme=event.detail;applyTheme();}});
-  applyTheme();
 })();
