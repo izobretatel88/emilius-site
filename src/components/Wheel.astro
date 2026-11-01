@@ -548,6 +548,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const stage = document.getElementById('wheelStage')!;
     const launch = document.getElementById('wheelLaunch') as HTMLButtonElement;
     let idle = true;
+    let onScreen = true; // колесо в окне; вне экрана обод и шкала не перерисовываются
 
     // Обод плашки: вращается сам (оборот 156 с, как колесо), при наведении плавно ускоряется,
     // риски у курсора подсвечиваются; обод можно потянуть пальцем/мышью — после отпускания он
@@ -575,8 +576,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
     };
     const wrap = (d: number) => ((d % 360) + 540) % 360 - 180;
+    let ringAsleep = false;
     function ringFrame(t: number) {
       if (!idle) return;
+      if (!onScreen) {
+        ringAsleep = true;
+        return;
+      }
       const dt = Math.min(64, t - lastT);
       lastT = t;
       if (!ringDrag && !reduce) {
@@ -612,6 +618,36 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       requestAnimationFrame(ringFrame);
     }
     requestAnimationFrame(ringFrame);
+
+    // Колесо ушло с экрана — обод плашки и шкала дней не перерисовываются. Вернулось — продолжаем;
+    // круги, пройденные за это время, досчитываем, чтобы «итерация N» не отставала.
+    let sleptAt = 0;
+    let rolledAway = false;
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting === onScreen) return;
+      onScreen = entry.isIntersecting;
+      if (!onScreen) {
+        sleptAt = performance.now();
+        rolledAway = ambient?.playState === 'running';
+        return;
+      }
+      if (ringAsleep) {
+        ringAsleep = false;
+        lastT = performance.now();
+        requestAnimationFrame(ringFrame);
+      }
+      if (idle) return;
+      if (rolledAway) {
+        const laps = Math.floor((prevTurn + ((performance.now() - sleptAt) * 360) / PERIOD) / 360);
+        if (laps > 0) {
+          iteration += laps;
+          // пока висит «цикл окончен», подпись обновит его таймер
+          if (performance.now() > doneUntil) setTag(`итерация ${iteration}`);
+        }
+      }
+      prevTurn = ((currentAngle() % 360) + 360) % 360;
+      tick();
+    }).observe(stage);
 
     launch.addEventListener('pointerenter', (e) => {
       if (e.pointerType === 'mouse') boost = true;
@@ -686,7 +722,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       box.focus({ preventScroll: true });
       tick();
       // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
-      if (!reduce) window.setInterval(tick, 100);
+      if (!reduce) window.setInterval(() => onScreen && tick(), 100);
       // Пауза на «внимании» 2 с: колесо стоит, вращение — когда слово уходит вверх.
       // Если колесо уже успели покрутить или выбрали этап — не перебиваем.
       startCenter(() => {
