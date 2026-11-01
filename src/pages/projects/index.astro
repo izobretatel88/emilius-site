@@ -5,43 +5,54 @@ import {FRESH_SHOP} from '../../data/insales';
 import {DIRECTIONS} from '../../data/navigation';
 import {SERVICES} from '../../data/services';
 import {href} from '../../lib/urls';
-const projects=[{id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',about:FRESH_SHOP.what,did:FRESH_SHOP.done.join('. '),url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},...PROJECTS];
+const projects=[{id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',about:FRESH_SHOP.what,work:FRESH_SHOP.done,url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},...PROJECTS.map(p=>({...p,work:[p.did]}))];
 const dirs=(id:string)=>DIRECTIONS.filter(d=>SERVICES[d.id].cases.includes(id) || (id==='happyanimal' && ['dev','marketing'].includes(d.id)));
-const filters=DIRECTIONS.filter(d=>projects.some(p=>dirs(p.id).some(x=>x.id===d.id)));
 ---
 <Directory title="Проекты" description="Интернет-магазины, интерфейсы и развитие сайтов. В каждом проекте — конкретная работа команды и направление, с которым она связана.">
-  <div class="project-filter" hidden><label for="project-direction">Показать направление</label><select id="project-direction"><option value="">Все проекты</option>{filters.map(d=><option value={d.id}>{d.title}</option>)}</select><p id="project-count" role="status">Все проекты: {projects.length}</p></div>
-  <div class="project-list">{projects.map(p=><article class="project" id={p.id} data-directions={dirs(p.id).map(d=>d.id).join(' ')}>
-    <img src={href(p.shot)} alt={`Первый экран сайта ${p.name}`} width="640" height="400" loading="lazy" decoding="async" />
-    <div><h2>{p.name}</h2><p class="project-label">О проекте</p><p>{p.about}</p><p class="project-label">Что сделали</p><p>{p.did}</p><a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.domain} в новой вкладке`}>Открыть {p.domain} ↗</a><nav class="directory-tags" aria-label={`Направления проекта ${p.name}`}>{dirs(p.id).map(d=><a href={href(d.href)}>{d.title}</a>)}{p.id==='happyanimal' && <a href={href('services/insales-shop/')}>Магазин на InSales</a>}</nav></div>
+  <div class="project-list">{projects.map((p,index)=><article class="project" id={p.id} aria-labelledby={`title-${p.id}`}>
+    <div class="project-preview"><img src={href(p.shot)} alt={`Первый экран сайта ${p.name}`} width="640" height="400" loading={index===0?'eager':'lazy'} decoding="async" /></div>
+    <div class="project-content">
+      <h2 id={`title-${p.id}`}>{p.name}</h2>
+      <p class="project-about">{p.about}</p>
+      <div class="project-work"><h3>Что сделали</h3><ul>{p.work.map(item=><li>{item}</li>)}</ul></div>
+      <div class="project-links">
+        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.domain} в новой вкладке`}>Открыть {p.domain} <span aria-hidden="true">↗</span></a>
+        <nav class="directory-tags" aria-label={`Направления проекта ${p.name}`}>{dirs(p.id).map(d=><a href={href(d.href)}>{d.title}</a>)}{p.id==='happyanimal' && <a href={href('services/insales-shop/')}>Магазин на InSales</a>}</nav>
+      </div>
+    </div>
   </article>)}</div>
   <section class="directory-callout"><h2>Обсудим ваш продукт?</h2><p>Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
 </Directory>
-<script>
-  const filter=document.querySelector<HTMLSelectElement>('#project-direction');
-  if(filter){
-    document.querySelector<HTMLElement>('.project-filter')!.hidden=false;
-    const rows=[...document.querySelectorAll<HTMLElement>('.project')];
-    const apply=()=>{
-      let shown=0;
-      rows.forEach(row=>{row.hidden=!!filter.value&&!row.dataset.directions?.split(' ').includes(filter.value);if(!row.hidden)shown++;});
-      document.querySelector('#project-count')!.textContent=`Показано ${shown} из ${rows.length} проектов`;
-    };
-    filter.addEventListener('change',apply);
-    // Прямая ссылка на проект должна оставлять его видимым.
-    const reveal=()=>{if(rows.some(row=>`#${row.id}`===location.hash&&row.hidden)){filter.value='';apply();}};
-    window.addEventListener('hashchange',reveal);
-    apply();reveal();
-  }
-</script>
 <style>
-  .project-filter{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin-bottom:28px;font-size:14px}
-  .project-filter[hidden],.project[hidden]{display:none}
-  .project-filter select{font:inherit;min-height:44px;padding:8px 12px;background:var(--card);color:var(--ink);border:1px solid var(--input-border);border-radius:var(--radius-sm)}
-  #project-count{color:var(--ink-2)}
-  @media(max-width:600px){.project-filter select{font-size:16px}}
-  .project .project-label{font-size:13px;font-weight:700;color:var(--ink);margin:18px 0 0}
-  .project .project-label+p{margin-top:4px}
-  .project-site{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px;overflow-wrap:anywhere}
+  :global(body:has(.project-list)){row-gap:20px}
+  :global(.directory:has(.project-list) .breadcrumbs){margin-bottom:20px}
+  :global(.directory:has(.project-list) .directory-intro){margin-bottom:32px}
+  :global(.directory:has(.project-list) .directory-intro h1){font-size:clamp(32px,3.6vw,42px)}
+  :global(.directory:has(.project-list) .directory-intro p){margin-top:10px}
+  .project-list{display:grid}
+  .project{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);align-items:start;gap:32px;padding:40px 0;border-bottom:1px solid var(--hair);scroll-margin-top:24px}
+  .project:first-child{padding-top:0}
+  .project:last-child{border-bottom:0;padding-bottom:8px}
+  .project-preview{overflow:hidden;border-radius:var(--radius-sm);background:var(--well)}
+  .project img{width:100%;height:auto;aspect-ratio:8 / 5;object-fit:cover;object-position:top;display:block}
+  .project-content{min-width:0}
+  .project h2{font-size:30px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em}
+  .project-about{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0;max-width:65ch}
+  .project-work{margin-top:20px}
+  .project h3{font-size:14px;font-weight:700;line-height:1.4;margin:0 0 8px}
+  .project ul{margin:0;padding-left:18px;display:grid;gap:8px;font-size:15px;line-height:1.5;color:var(--ink-2)}
+  .project li{padding-left:2px}
+  .project li::marker{color:var(--ink-3)}
+  .project-links{margin-top:16px}
+  .project-site{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:16px;font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere}
+  .project .directory-tags{margin-top:8px;gap:0 18px;font-size:14px}
+  .project .directory-tags a{color:var(--ink-2)}
+  .project .directory-tags a:hover{color:var(--teal-text)}
+  @media(max-width:760px){
+    .project{grid-template-columns:1fr;gap:20px;padding-block:32px}
+    .project h2{font-size:26px}
+    .project-work{margin-top:16px}
+    .project .directory-tags{flex-direction:row;align-items:center}
+  }
+  @media(min-width:761px) and (max-width:1000px){.project{gap:24px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
 </style>
-<style>.project{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;padding:30px 0;border-bottom:1px solid var(--hair)}.project:first-child{padding-top:0}.project img{width:100%;height:auto;display:block;border-radius:var(--radius-sm)}.project h2{font-size:28px;margin-bottom:12px}.project p{color:var(--ink-2);margin:10px 0;font-size:15px;max-width:65ch}.project-list{display:grid;gap:10px}@media(max-width:650px){.project{grid-template-columns:1fr;gap:20px}.project h2{font-size:25px}}</style>
