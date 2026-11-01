@@ -454,6 +454,11 @@
       "title": "InSales: сопоставление существующего каталога 1С",
       "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/nastroyka-sinhronizatsii-s-1s-uzhe-suschestvuyuschego-magazina-na-insales",
       "accessed": "2026-10-31"
+    },
+    "I32": {
+      "title": "InSales: мобильный бэк-офис iOS и Android",
+      "url": "https://www.insales.ru/page/mobile",
+      "accessed": "2026-11-01"
     }
   },
   "features": [
@@ -3090,12 +3095,12 @@
     {
       "id": "F264",
       "group": "Инфраструктура",
-      "feature": "Мобильное приложение управления",
+      "feature": "Мобильное приложение для управления магазином",
       "insales": "Да",
       "kit": "НП",
-      "insales_source": "I2",
+      "insales_source": "I32",
       "kit_source": "",
-      "note": ""
+      "note": "InSales: iOS и Android — управление заказами, каталогом и просмотр продаж. Актуальную версию и ссылки установки уточняйте у InSales. У KIT отдельное приложение управления не подтверждено в изученной справке; приложение продавца Яндекс Маркета не считается приложением KIT. Перепроверено 01.11.2026."
     },
     {
       "id": "F265",

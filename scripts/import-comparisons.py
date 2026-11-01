@@ -117,7 +117,7 @@ for name, path in [('ecommerce-platforms', 'artifacts/7-sravnenie-platform/index
         scripts = scripts.replace(', "Яндекс KIT": "нет оптовых цен"', '')
         scripts = re.sub(r'site: \["Вывод",.*?\],', 'site: ["Как выбирать", "Сопоставьте каталог, процессы и ограничения платформы. Затраты включают запуск, подписку и внешние сервисы; одного тарифа для решения недостаточно. Неизвестные возможности уточняйте у платформы."],', scripts)
         scripts = re.sub(r'mp: \["Вывод для селлера",.*?\],', 'mp: ["Для продавцов маркетплейсов", "InSales заявляет обмен остатками между площадками. У KIT подтверждён импорт товаров и остатков; обратный обмен и состав обработки заказов нужно уточнить. Итоговая стоимость зависит от выбранной связки и состава интеграций."],', scripts)
-        body = body.replace('</header>', '<p class="overview-note">Обзор от 30 октября; сведения о KIT уточнены по исследованию 31 октября 2026. Полный состав функций — в детальном сравнении.</p></header>', 1)
+        body = body.replace('</header>', '<p class="overview-note">Обзор от 30 октября; сведения о KIT уточнены по исследованию 31 октября 2026. Пункт о мобильном управлении уточнён 1 ноября 2026. Полный состав функций — в детальном сравнении.</p></header>', 1)
         md = (source / 'artifacts/7-sravnenie-platform/sources.md').read_text()
         links = re.findall(r'\[([^]]+)\]\((https?://[^)]+)\)', md)
         body += '<details id="comparison-sources"><summary>Официальные источники сравнения</summary><ul>' + ''.join(f'<li><a href="{escape(url, quote=True)}" target="_blank" rel="noopener">{escape(label)} ↗</a></li>' for label,url in links) + '</ul></details>'
