@@ -285,7 +285,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (i !== shownStage) {
         shownStage = i;
         attnTo.textContent = `→ ${s.name}`;
-        attnToText.style.fill = s.c1;
+        // Цвет этапа, затемнённый для текста (4,5:1 и выше на круге): яркий c1 на белом читался плохо
+        attnToText.style.fill = `var(--sec-${s.id}-ink)`;
         if (!reduce) replay(attnToText, 'is-in');
       }
       const text = questionFor(i);
@@ -472,7 +473,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (selected === null) resume();
     });
 
-    box.addEventListener('keydown', (e) => {
+    const onKey = (e: KeyboardEvent) => {
       const idx = links.findIndex((l) => l === document.activeElement);
       if (e.key === 'Escape') {
         (document.activeElement as HTMLElement | null)?.blur();
@@ -488,10 +489,17 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         links[j].focus();
         select(j);
       }
-    });
-    box.addEventListener('focusout', (e) => {
-      if (!box.contains(e.relatedTarget as Node)) clear();
-    });
+    };
+    box.addEventListener('keydown', onKey);
+    info.addEventListener('keydown', onKey);
+    // Tab с этапа ведёт на «Подробнее →» под колесом: выбор не сбрасываем, иначе строка перерисуется
+    // и ссылка исчезнет вместе с фокусом. Сбрасываем, когда фокус ушёл и с колеса, и со строки.
+    const leave = (e: FocusEvent) => {
+      const to = e.relatedTarget as Node | null;
+      if (!box.contains(to) && !info.contains(to)) clear();
+    };
+    box.addEventListener('focusout', leave);
+    info.addEventListener('focusout', leave);
     document.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'touch' && !box.contains(e.target as Node) && !info.contains(e.target as Node)) clear();
     });
@@ -669,6 +677,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       stage.classList.remove('is-idle');
       rotorSvg.removeAttribute('inert');
       launch.classList.add('is-gone');
+      // гаснущая кнопка уходит из порядка Tab сразу, а не после затухания
+      launch.tabIndex = -1;
       launch.addEventListener('transitionend', () => launch.remove(), { once: true });
       if (reduce) launch.remove();
       // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам

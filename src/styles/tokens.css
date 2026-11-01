@@ -55,6 +55,12 @@
   --sec-dev-done: #eafaec;
   --sec-marketing-done: #f2f2f2;
   --wheel-line: #dfe3e3; /* тонкие нейтральные разделители этапов и риски дней */
+  /* Текст цветом этапа («→ этап» в центре колеса): тон этапа (c1 в src/data/site.ts), затемнённый
+     до 4,8:1 на белом круге — яркие c1 давали 2–4:1 */
+  --sec-custdev-ink: #9e6536;
+  --sec-design-ink: #18806c;
+  --sec-dev-ink: #617a25;
+  --sec-marketing-ink: #31804a;
 
   /* Колесо */
   --disc-stroke: #ffffff;
@@ -138,6 +144,11 @@
     --sec-dev-done: #1b3a22;
     --sec-marketing-done: #2c3131;
     --wheel-line: #2c3836;
+    /* На тёмном круге c1 читаются сами; касдев чуть светлее — 4,8:1 */
+    --sec-custdev-ink: #b67b4c;
+    --sec-design-ink: #20a88e;
+    --sec-dev-ink: #9cc43c;
+    --sec-marketing-ink: #3c9c5a;
     --shadow-card: none;
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
@@ -185,6 +196,10 @@
   --sec-dev-done: #1b3a22;
   --sec-marketing-done: #2c3131;
   --wheel-line: #2c3836;
+  --sec-custdev-ink: #b67b4c;
+  --sec-design-ink: #20a88e;
+  --sec-dev-ink: #9cc43c;
+  --sec-marketing-ink: #3c9c5a;
   --shadow-card: none;
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
