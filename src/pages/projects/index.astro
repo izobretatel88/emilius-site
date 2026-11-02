@@ -139,6 +139,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project-caption,.project-featured .project-caption{flex-direction:column;margin-top:16px}
     .project h2,.project-featured h2{font-size:26px}
     .project-role{margin-top:6px}
+    .project-site{align-self:flex-start}
+    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover)}
+    .project-inquiry:hover,.project-inquiry:focus-visible{background:var(--teal-btn);color:var(--on-teal)}
     .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
@@ -149,5 +152,5 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
   }
-  @media(prefers-reduced-motion:reduce){.project-preview img,.preview-action{transition:none}}
+  @media(prefers-reduced-motion:reduce){.project-preview img,.preview-action,.project-inquiry{transition:none}}
 </style>
