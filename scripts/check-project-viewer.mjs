@@ -59,11 +59,15 @@ try {
  elements.img.onload();
  assert.equal(elements['.viewer-image'].getAttribute('aria-busy'),'false');
  assert.match(elements['.viewer-status'].textContent,/1 из 2/);
+ viewer.scrollTop=500;
  elements['.viewer-zoom'].children[1].emit('click');
+ assert.equal(viewer.scrollTop,0,'Changing scale must show the top of the screen');
  assert.equal(elements['.viewer-image'].dataset.scale,'actual');
  elements['.viewer-devices'].children[0].emit('click');
  assert.equal(elements['.viewer-image'].dataset.scale,'actual','Re-selecting device must not reset zoom');
+ viewer.scrollTop=900;
  elements['[data-next-screen]'].emit('click');
+ assert.equal(viewer.scrollTop,0,'Next screen must not inherit the previous screen scroll');
  assert.match(elements.img.src,/test-only/);
  assert(elements['[data-next-screen]'].disabled);
  const staleLoad=elements.img.onload;
@@ -100,5 +104,24 @@ try {
  assert(elements['.viewer-screens'].hidden,'Single screen must not present a fake choice');
  assert.match(elements['.viewer-inquiry'].textContent,/похожий сайт$/);
  viewer.close();
+ for(const link of links){
+   link.emit('click',click);
+   const item=projects[link.dataset.projectPreview];
+   assert.equal(elements['#viewer-title'].textContent,item.name);
+   assert.equal(elements['.viewer-image'].dataset.device,'desktop');
+   elements.img.onload();
+   for(const button of elements['.viewer-devices'].children){
+     if(button.hidden)continue;
+     button.emit('click');
+     assert.equal(elements['.viewer-image'].dataset.device,button.dataset.device);
+     const screen=item.screens.find(screen=>screen.device===button.dataset.device);
+     assert.equal(elements.img.src,screen.src);
+     assert.match(elements['.viewer-image'].getAttribute('aria-label'),new RegExp(item.name));
+     if(elements.img.onload)elements.img.onload();
+   }
+   viewer.close();
+   assert(focused===link);
+ }
+ assert.equal(timers.size,0);
  console.log('Viewer controller passed: modifier click, paging, scale, devices, stale load, error/retry, timeout/recovery, close/focus and single-option controls. No browser or network used.');
 } finally {globalThis.document=originalDocument;globalThis.setTimeout=originalTimeout;globalThis.clearTimeout=originalClearTimeout;}

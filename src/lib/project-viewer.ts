@@ -32,6 +32,7 @@ export function setupProjectViewer() {
     imageBox.dataset.scale = scale;
     zoomButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scale === scale)));
     imageBox.scrollTop = imageBox.scrollLeft = 0;
+    viewer.scrollTop = 0;
   };
 
   const render = () => {
@@ -73,6 +74,9 @@ export function setupProjectViewer() {
     image.alt = `${project.name}: ${screen.label}, ${device === 'phone' ? 'мобильная версия' : 'компьютер'}`;
     image.src = screen.src;
     imageBox.scrollTop = imageBox.scrollLeft = 0;
+    // Вертикально прокручивается сам dialog, а не только область изображения.
+    // Следующий экран должен начинаться сверху даже после кнопки внизу снимка.
+    viewer.scrollTop = 0;
     // Уже декодированный снимок может не прислать повторный load.
     if (image.complete && image.naturalWidth) ready();
     deviceButtons.forEach(button => {
