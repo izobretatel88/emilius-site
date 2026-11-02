@@ -216,7 +216,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="card block review" aria-labelledby="t-review">
       <h2 id="t-review">Отзыв клиента</h2>
       <div class="review-grid">
+        <!-- Имя плеера — заголовок и автор отзыва: без него читалка объявляет просто «видео» -->
         <video
+          aria-labelledby="t-review review-who"
           controls
           playsinline
           preload="none"
@@ -230,7 +232,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <figure class="quote">
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
-            <b>{VIDEO_REVIEW.who}</b>
+            <b id="review-who">{VIDEO_REVIEW.who}</b>
             <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
           </figcaption>
         </figure>
@@ -712,7 +714,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     height: 32px;
     border-radius: 50%;
     background: var(--card);
-    color: var(--teal-num);
+    /* мелкий бирюзовый текст: --teal-num давал 3,9:1 на белом */
+    color: var(--teal-text);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
   }
@@ -767,6 +770,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
   .more-shops li:hover { background: var(--card); }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
+  .more-shops li { position: relative; }
+  .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
+  .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .more-shops a:focus-visible { outline: none; }
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
   .proof a:hover { text-underline-offset: 3px; }
@@ -976,7 +984,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: border-color var(--hover);
   }
   input[type='text']:hover, input[type='text']:focus { border-color: var(--teal); }
-  input[type='text']:focus-visible { outline: none; }
+  /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
+  input[type='text']:focus-visible { outline: 2px solid var(--teal); outline-offset: -1px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { position: relative; }
   .chip input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; } /* весь чип — область нажатия */

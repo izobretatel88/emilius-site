@@ -28,7 +28,7 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
 
 <script>
   import {setupEmbeddedFrame} from '../lib/embedded-frame';
-  // Виджет Эми весит ~1,7 МБ. Грузим его, когда страница уже показалась,
+  // Виджет Эми весит ~1,7 МБ. Грузим его, когда страница уже показалась и карточка рядом с экраном,
   // или сразу, если человек потянулся к карточке.
   const card = document.getElementById('emiCard');
   const frame = card?.querySelector<HTMLIFrameElement>('iframe[data-src]');
@@ -45,7 +45,15 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     card.addEventListener('focusin', load, { once: true });
     const idle = (cb: () => void) =>
       'requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 2500);
-    const later = () => setTimeout(() => idle(load), 1500);
+    // На телефоне карточка ниже колеса и проектов: кто не долистал до неё, виджет не скачивает.
+    const nearScreen = () => {
+      if (!('IntersectionObserver' in window)) return load();
+      const watch = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) { watch.disconnect(); load(); }
+      }, { rootMargin: '100px 0px' });
+      watch.observe(card);
+    };
+    const later = () => setTimeout(() => idle(nearScreen), 1500);
     if (document.readyState === 'complete') later();
     else window.addEventListener('load', later, { once: true });
   }
@@ -163,6 +171,8 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     fill: #000;
   }
   iframe {
+    /* Страница виджета без своей темы: при тёмной теме сайта браузер подложил бы под неё сплошной фон */
+    color-scheme: normal;
     width: 170px;
     height: 144px;
     border: 0;

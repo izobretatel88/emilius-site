@@ -67,6 +67,9 @@ const related=[
   .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
   .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
   .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}
+  /* Официальные источники под таблицей: ссылки по 18 px шли с шагом 22 px — на телефоне легко попасть в соседнюю (WCAG 2.5.8) */
+  .platform-comparison :global(#comparison-sources summary){padding-block:11px;cursor:pointer}
+  .platform-comparison :global(#comparison-sources li a){display:inline-block;padding-block:5px}
   @media(max-width:760px){
     .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
     .platform-comparison :global(.feature-col){width:38%}

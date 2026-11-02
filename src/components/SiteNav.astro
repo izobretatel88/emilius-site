@@ -12,7 +12,7 @@ const state=(item:typeof primary[number])=> current===normalize(href(item.href))
 ---
 <!-- Existing Emilius visual system; native disclosure on mobile, no new identity. -->
 <nav class="site-nav" aria-label="Основная навигация">
-  <a class="home" href={href()} aria-label="Emilius Agency — главная"><Logo />{preview && <span class="environment">Черновик · dev</span>}</a>
+  <a class="home" href={href()} aria-label="Эмилиус Эдженси — на главную"><Logo />{preview && <span class="environment">Черновик · dev</span>}</a>
   <div class="desktop">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
   <a class="discuss" href={href('#feedback')}>Обсудить проект</a>
   <details class="mobile-menu"><summary aria-label="Меню"><span>Меню</span><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="first" d="M4 6h16"/><path class="middle" d="M4 12h16"/><path class="last" d="M4 18h16"/></svg></summary><div class="mobile-links">

@@ -15,4 +15,7 @@ const {target,landing=false}=Astro.props;
   .more{font-size:13px;color:var(--teal-text);flex-shrink:0}
   @media(max-width:700px){.estimate-strip:not(.landing){display:block;margin-bottom:20px}.estimate-strip[hidden]{display:none}}
   @media(max-width:899px){.estimate-strip.landing{display:block;top:76px}.estimate-strip.landing[hidden]{display:none}}
+  /* Поле, на которое вернулись Shift+Tab, не уходит под закреплённую строку: сверху остаётся место под строку и подпись поля */
+  @media(max-width:700px){:global(form:has(.estimate-strip:not(.landing):not([hidden])) :is(input,select,textarea)){scroll-margin-top:120px}}
+  @media(max-width:899px){:global(form:has(.estimate-strip.landing:not([hidden])) :is(input,select,textarea)){scroll-margin-top:184px}}
 </style>
