@@ -28,4 +28,7 @@ for(const p of ['dist/os','dist/review','dist/blog/edinye-ostatki-wb-ozon-insale
 for(const p of ['dist/.htaccess','dist/api/lead.php','dist/404.html','dist/sitemap-index.xml'])assert(existsSync(p),`${p}: missing`);
 assert(readFileSync('dist/robots.txt','utf8').includes('Allow: /'),'robots is closed');
 assert(readFileSync('dist/index.html','utf8').includes('68742100'),'Metrika ID missing');
+for (const check of ['scripts/check-project-gallery.mjs', 'scripts/check-project-viewer.mjs']) {
+ execFileSync(process.execPath,[check],{env,stdio:'inherit'});
+}
 console.log(`Release ready: ${html.length} HTML pages; preview-only routes excluded; canonical, indexing, iteration and deployment files verified.`);

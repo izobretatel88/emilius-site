@@ -133,10 +133,33 @@ export function setupProjectViewer() {
   zoomButtons.forEach(button => button.addEventListener('click', () => setScale(button.dataset.scale as 'fit' | 'actual')));
   previous.addEventListener('click', () => { if (index > 0) { index -= 1; render(); } });
   next.addEventListener('click', () => { if (index + 1 < screens().length) { index += 1; render(); } });
-  viewer.querySelector('[data-retry-viewer]')!.addEventListener('click', render);
+  const retry = viewer.querySelector<HTMLButtonElement>('[data-retry-viewer]')!;
+  retry.addEventListener('click', () => {
+    // Кнопка исчезнет вместе с ошибкой: не оставляем фокус в скрытом блоке.
+    if (document.activeElement === retry) imageBox.focus({preventScroll: true});
+    render();
+  });
   viewer.querySelector('[data-close-viewer]')!.addEventListener('click', () => viewer.close());
-  viewer.addEventListener('click', event => { if (event.target === viewer) viewer.close(); });
+  // Закрываем только жест, который начался и закончился на внешнем фоне.
+  // Сам dialog также бывает target у клика по его свободному месту.
+  const outsideViewer = (event: MouseEvent) => {
+    if (event.target !== viewer) return false;
+    const bounds = viewer.getBoundingClientRect();
+    return event.clientX < bounds.left || event.clientX > bounds.right
+      || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  };
+  let backdropPress = false;
+  viewer.addEventListener('pointerdown', event => {
+    backdropPress = event.button === 0 && outsideViewer(event);
+  });
+  viewer.addEventListener('pointercancel', () => { backdropPress = false; });
+  viewer.addEventListener('click', event => {
+    const dismiss = backdropPress && outsideViewer(event);
+    backdropPress = false;
+    if (dismiss) viewer.close();
+  });
   viewer.addEventListener('close', () => {
+    backdropPress = false;
     request += 1;
     clearTimeout(loadingTimer);
     image.onload = image.onerror = null;

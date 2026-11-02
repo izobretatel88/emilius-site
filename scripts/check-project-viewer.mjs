@@ -18,6 +18,7 @@ class Element {
 }
 let focused;
 const viewer = new Element(); viewer.open=false;
+viewer.getBoundingClientRect=()=>({left:20,right:980,top:20,bottom:780});
 viewer.showModal=()=>{viewer.open=true;};
 viewer.close=()=>{viewer.open=false;viewer.emit('close');};
 const names=['img','.viewer-image','#viewer-title','.viewer-status','.viewer-error','.viewer-inquiry','.viewer-screens','.viewer-devices','.viewer-zoom','.viewer-paging','[data-prev-screen]','[data-next-screen]','[data-retry-viewer]','[data-close-viewer]'];
@@ -39,6 +40,7 @@ const timers=new Map();let timerId=0;
 globalThis.setTimeout=(fn)=>{timers.set(++timerId,fn);return timerId;};
 globalThis.clearTimeout=id=>timers.delete(id);
 globalThis.document={
+ get activeElement(){return focused;},
  querySelector:name=>name==='.project-viewer'?viewer:{textContent:JSON.stringify(projects)},
  querySelectorAll:()=>links,
  createElement:()=>new Element(),
@@ -83,7 +85,9 @@ try {
  assert(elements.img.hidden && !elements['.viewer-error'].hidden);
  lateLoad();
  assert(!elements['.viewer-error'].hidden,'Late load after failure must not dismiss the error');
+ elements['[data-retry-viewer]'].focus();
  elements['[data-retry-viewer]'].emit('click');
+ assert.equal(focused,elements['.viewer-image'],'Retry must move focus out of the hidden error');
  assert(!elements.img.hidden && elements['.viewer-error'].hidden);
  elements.img.onload();
  assert.match(elements['.viewer-status'].textContent,/Телефон · Каталог/);
@@ -122,6 +126,19 @@ try {
    viewer.close();
    assert(focused===link);
  }
+ links[0].emit('click',click);
+ const inside={button:0,clientX:30,clientY:30};
+ const outside={button:0,clientX:5,clientY:5};
+ viewer.emit('pointerdown',inside);viewer.emit('click',inside);
+ assert(viewer.open,'Click inside dialog must not dismiss it');
+ viewer.emit('pointerdown',inside);viewer.emit('click',outside);
+ assert(viewer.open,'Drag from image to backdrop must not dismiss it');
+ viewer.emit('pointerdown',outside);viewer.emit('click',inside);
+ assert(viewer.open,'Drag from backdrop into dialog must not dismiss it');
+ viewer.emit('pointerdown',outside);viewer.emit('pointercancel');viewer.emit('click',outside);
+ assert(viewer.open,'Cancelled backdrop gesture must not dismiss it');
+ viewer.emit('pointerdown',outside);viewer.emit('click',outside);
+ assert(!viewer.open && focused===links[0],'Backdrop click must close and return focus');
  assert.equal(timers.size,0);
  console.log('Viewer controller passed: modifier click, paging, scale, devices, stale load, error/retry, timeout/recovery, close/focus and single-option controls. No browser or network used.');
 } finally {globalThis.document=originalDocument;globalThis.setTimeout=originalTimeout;globalThis.clearTimeout=originalClearTimeout;}
