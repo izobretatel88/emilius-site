@@ -14,7 +14,10 @@ export function setupProjectViewer() {
   const error = viewer.querySelector<HTMLElement>('.viewer-error')!;
   const inquiry = viewer.querySelector<HTMLAnchorElement>('.viewer-inquiry')!;
   const screensControl = viewer.querySelector<HTMLElement>('.viewer-screens')!;
-  const deviceButtons = [...viewer.querySelectorAll<HTMLButtonElement>('[data-device]')];
+  const devicesControl = viewer.querySelector<HTMLElement>('.viewer-devices')!;
+  const deviceButtons = [...devicesControl.querySelectorAll<HTMLButtonElement>('[data-device]')];
+  const zoomControl = viewer.querySelector<HTMLElement>('.viewer-zoom')!;
+  const zoomButtons = [...zoomControl.querySelectorAll<HTMLButtonElement>('[data-scale]')];
   const paging = viewer.querySelector<HTMLElement>('.viewer-paging')!;
   const previous = viewer.querySelector<HTMLButtonElement>('[data-prev-screen]')!;
   const next = viewer.querySelector<HTMLButtonElement>('[data-next-screen]')!;
@@ -24,6 +27,11 @@ export function setupProjectViewer() {
   let index = 0;
   let request = 0;
   const screens = () => project?.screens.filter(screen => screen.device === device) ?? [];
+  const setScale = (scale: 'fit' | 'actual') => {
+    imageBox.dataset.scale = scale;
+    zoomButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scale === scale)));
+    imageBox.scrollTop = imageBox.scrollLeft = 0;
+  };
 
   const render = () => {
     const list = screens();
@@ -34,6 +42,8 @@ export function setupProjectViewer() {
     error.hidden = true;
     image.hidden = false;
     imageBox.dataset.device = device;
+    imageBox.style.setProperty('--screen-width', `${screen.width}px`);
+    imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
     const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
     status.textContent = `${description} · загружаем снимок…`;
@@ -61,6 +71,9 @@ export function setupProjectViewer() {
       button.hidden = !project!.screens.some(item => item.device === button.dataset.device);
       button.setAttribute('aria-pressed', String(button.dataset.device === device));
     });
+    devicesControl.hidden = new Set(project.screens.map(item => item.device)).size < 2;
+    zoomControl.hidden = device === 'phone';
+    screensControl.hidden = list.length < 2;
     screensControl.querySelectorAll<HTMLButtonElement>('button').forEach((button, i) => {
       button.setAttribute('aria-pressed', String(i === index));
     });
@@ -73,11 +86,13 @@ export function setupProjectViewer() {
     if (!project?.screens.some(screen => screen.device === value)) return;
     device = value;
     index = 0;
+    setScale('fit');
     screensControl.replaceChildren();
     screens().forEach((screen, i) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.textContent = screen.label;
+      button.setAttribute('aria-controls', imageBox.id);
       button.addEventListener('click', () => { index = i; render(); });
       screensControl.append(button);
     });
@@ -101,6 +116,7 @@ export function setupProjectViewer() {
     });
   });
   deviceButtons.forEach(button => button.addEventListener('click', () => chooseDevice(button.dataset.device as Device)));
+  zoomButtons.forEach(button => button.addEventListener('click', () => setScale(button.dataset.scale as 'fit' | 'actual')));
   previous.addEventListener('click', () => { if (index > 0) { index -= 1; render(); } });
   next.addEventListener('click', () => { if (index + 1 < screens().length) { index += 1; render(); } });
   viewer.querySelector('[data-retry-viewer]')!.addEventListener('click', render);

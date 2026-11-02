@@ -61,11 +61,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     <div class="viewer-controls">
       <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
       <div class="viewer-screens" role="group" aria-label="Экраны сайта"></div>
+      <div class="viewer-zoom" role="group" aria-label="Масштаб снимка"><button type="button" data-scale="fit" aria-pressed="true" aria-controls="viewer-canvas">Вписать</button><button type="button" data-scale="actual" aria-pressed="false" aria-controls="viewer-canvas">100%</button></div>
       <a class="viewer-inquiry" href={href('#feedback')}>Хочу похожий магазин</a>
     </div>
     <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
-    <div class="viewer-image" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="0" aria-busy="false"><img src={href(projects[0].image)} alt="Скриншот сайта Happy Animal" width="1600" height="1000" loading="lazy" /></div>
+    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="0" aria-busy="false"><img src={href(projects[0].image)} alt="Скриншот сайта Happy Animal" width="1600" height="1000" loading="lazy" /></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
   </dialog>
   <script type="application/json" id="project-media" set:html={JSON.stringify(media)} />
@@ -111,11 +112,13 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:14px;cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm)}
   .viewer-toolbar button span{font-size:24px}
   .viewer-image{overflow:auto}
-  .viewer-image img{display:block;width:100%;height:auto}
+  .viewer-image img{display:block;width:100%;max-width:var(--screen-width,100%);height:auto;margin-inline:auto}
+  .viewer-image[data-scale='actual'] img{width:var(--screen-width);max-width:none}
   .viewer-image img[hidden]{display:none}
   .viewer-image:focus-visible{outline-offset:-3px}
   .viewer-controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:12px 20px;border-bottom:1px solid var(--hair)}
-  .viewer-devices,.viewer-screens{display:flex;flex-wrap:wrap;gap:4px}
+  .viewer-devices,.viewer-screens,.viewer-zoom{display:flex;flex-wrap:wrap;gap:4px}
+  .viewer-devices[hidden],.viewer-screens[hidden],.viewer-zoom[hidden]{display:none}
   .viewer-controls :global(button),.viewer-paging button,.viewer-error button{font:inherit;font-size:14px;min-height:44px;padding:8px 14px;border:0;border-radius:var(--radius-sm);background:var(--well);color:var(--ink);cursor:pointer}
   .viewer-controls :global(button[aria-pressed='true']){background:var(--teal-btn);color:var(--on-teal)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
@@ -142,7 +145,6 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
-    .viewer-image img{width:1100px;max-width:none}
   }
   @media(prefers-reduced-motion:reduce){.project-preview img,.preview-action{transition:none}}
 </style>
