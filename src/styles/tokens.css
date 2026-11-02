@@ -5,6 +5,10 @@
   /* Системные части — выпадающие списки, полосы прокрутки, галочки — следуют теме сайта */
   color-scheme: light;
   --site-width: 1120px;
+  /* Изолированная экспериментальная главная /experiments/cursor/ */
+  --taste-width: 1190px;
+  --taste-clear: transparent;
+  --taste-shadow: none;
   --content-width: 1080px;
   /* Акцент */
   --teal: #00999b;
