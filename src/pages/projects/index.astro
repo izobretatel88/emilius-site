@@ -1,58 +1,129 @@
 ---
+/* Галерея работ: сайт клиента — главный экспонат, наша роль — короткая подпись.
+   Сохраняем Glober, токены и общую навигацию. Первый проект — крупно, остальные
+   по два на широком экране. На телефоне один столбец. Превью открывается крупно;
+   внешний сайт — отдельная ссылка. Только подтверждённые роли и результаты. */
 import Directory from '../../layouts/Directory.astro';
 import {PROJECTS} from '../../data/projects';
 import {FRESH_SHOP} from '../../data/insales';
-import {DIRECTIONS} from '../../data/navigation';
-import {SERVICES} from '../../data/services';
 import {href} from '../../lib/urls';
-const projects=[{id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',about:FRESH_SHOP.what,work:FRESH_SHOP.done,url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},...PROJECTS.map(p=>({...p,work:[p.did]}))];
-const dirs=(id:string)=>DIRECTIONS.filter(d=>SERVICES[d.id].cases.includes(id) || (id==='happyanimal' && ['dev','marketing'].includes(d.id)));
+
+const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
+  happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на InSales · местное SEO',updated:true},
+  alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
+  duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на InSales'},
+  wizzu:{kind:'Доставка продуктов',role:'Сайт-витрина · интеграции',updated:true},
+  geekboards:{kind:'Механические клавиатуры и аксессуары',role:'Развитие магазина · фронтенд'},
+  navalishenskoe:{kind:'Отдых в Сочи',role:'Развитие сайта · SEO'},
+};
+const projects=[
+  {id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},
+  ...['alohagaia','duman','wizzu','geekboards','navalishenskoe'].map(id=>PROJECTS.find(p=>p.id===id)!),
+].map(p=>{
+  const meta=captions[p.id];
+  return {...p,...meta,
+    image:meta.updated?`cases/gallery/${p.id}-1600.webp`:p.shot,
+    small:meta.updated?`cases/gallery/${p.id}-800.webp`:undefined,
+    width:meta.updated?1600:640,height:meta.updated?1000:400,
+  };
+});
 ---
-<Directory title="Проекты" description="Интернет-магазины, интерфейсы и развитие сайтов. В каждом проекте — конкретная работа команды и направление, с которым она связана.">
-  <div class="project-list">{projects.map((p,index)=><article class="project" id={p.id} aria-labelledby={`title-${p.id}`}>
-    <div class="project-preview"><img src={href(p.shot)} alt={`Первый экран сайта ${p.name}`} width="640" height="400" loading={index===0?'eager':'lazy'} decoding="async" /></div>
-    <div class="project-content">
-      <h2 id={`title-${p.id}`}>{p.name}</h2>
-      <p class="project-about">{p.about}</p>
-      <div class="project-work"><h3>Что сделали</h3><ul>{p.work.map(item=><li>{item}</li>)}</ul></div>
-      <div class="project-links">
-        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.domain} в новой вкладке`}>Открыть {p.domain} <span aria-hidden="true">↗</span></a>
-        <nav class="directory-tags" aria-label={`Направления проекта ${p.name}`}>{dirs(p.id).map(d=><a href={href(d.href)}>{d.title}</a>)}{p.id==='happyanimal' && <a href={href('services/insales-shop/')}>Магазин на InSales</a>}</nav>
+<Directory title="Проекты" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие.">
+  <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект <span aria-hidden="true">↗</span></a></div>
+  <div class="project-gallery">
+    {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
+      <a class="project-preview" href={href(p.image)} data-project-preview data-project-name={p.name} aria-label={`Увеличить скриншот ${p.name}`}>
+        <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1120px) calc(100vw - 40px), 1080px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1120px) calc((100vw - 72px) / 2), 524px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} decoding="async" />
+        <span class="preview-action" aria-hidden="true">Смотреть крупнее <span>↗</span></span>
+      </a>
+      <div class="project-caption">
+        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p></div>
+        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.name} в новой вкладке`}>{p.id==='wizzu'?'limemart.wizzu.ru':p.domain} <span aria-hidden="true">↗</span></a>
       </div>
-    </div>
-  </article>)}</div>
-  <section class="directory-callout"><h2>Обсудим ваш продукт?</h2><p>Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
+      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span><span aria-hidden="true">↗</span></a>}
+    </article>)}
+    <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект <span aria-hidden="true">↗</span></a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
+  </div>
+  <dialog class="project-viewer" aria-labelledby="viewer-title">
+    <div class="viewer-toolbar"><h2 id="viewer-title"></h2><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
+    <div class="viewer-image"><img src={href(projects[0].image)} alt="Скриншот сайта Happy Animal" width="1600" height="1000" loading="lazy" /></div>
+  </dialog>
 </Directory>
-<style>
-  :global(body:has(.project-list)){row-gap:20px}
-  :global(.directory:has(.project-list) .breadcrumbs){margin-bottom:20px}
-  :global(.directory:has(.project-list) .directory-intro){margin-bottom:32px}
-  :global(.directory:has(.project-list) .directory-intro h1){font-size:clamp(32px,3.6vw,42px)}
-  :global(.directory:has(.project-list) .directory-intro p){margin-top:10px}
-  .project-list{display:grid}
-  .project{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);align-items:start;gap:32px;padding:40px 0;border-bottom:1px solid var(--hair);scroll-margin-top:24px}
-  .project:first-child{padding-top:0}
-  .project:last-child{border-bottom:0;padding-bottom:8px}
-  .project-preview{overflow:hidden;border-radius:var(--radius-sm);background:var(--well)}
-  .project img{width:100%;height:auto;aspect-ratio:8 / 5;object-fit:cover;object-position:top;display:block}
-  .project-content{min-width:0}
-  .project h2{font-size:30px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em}
-  .project-about{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0;max-width:65ch}
-  .project-work{margin-top:20px}
-  .project h3{font-size:14px;font-weight:700;line-height:1.4;margin:0 0 8px}
-  .project ul{margin:0;padding-left:18px;display:grid;gap:8px;font-size:15px;line-height:1.5;color:var(--ink-2)}
-  .project li{padding-left:2px}
-  .project li::marker{color:var(--ink-3)}
-  .project-links{margin-top:16px}
-  .project-site{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:16px;font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere}
-  .project .directory-tags{margin-top:8px;gap:0 18px;font-size:14px}
-  .project .directory-tags a{color:var(--ink-2)}
-  .project .directory-tags a:hover{color:var(--teal-text)}
-  @media(max-width:760px){
-    .project{grid-template-columns:1fr;gap:20px;padding-block:32px}
-    .project h2{font-size:26px}
-    .project-work{margin-top:16px}
-    .project .directory-tags{flex-direction:row;align-items:center}
+<script>
+  const viewer=document.querySelector<HTMLDialogElement>('.project-viewer');
+  if(viewer && typeof viewer.showModal==='function'){
+    const image=viewer.querySelector<HTMLImageElement>('img')!;
+    const title=viewer.querySelector<HTMLElement>('#viewer-title')!;
+    let opener:HTMLAnchorElement|null=null;
+    document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]').forEach(link=>{
+      link.addEventListener('click',event=>{
+        if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
+        event.preventDefault();
+        opener=link;
+        title.textContent=link.dataset.projectName!;
+        image.src=link.href;
+        image.alt=`Скриншот сайта ${link.dataset.projectName}`;
+        viewer.showModal();
+      });
+    });
+    viewer.querySelector('[data-close-viewer]')!.addEventListener('click',()=>viewer.close());
+    viewer.addEventListener('click',event=>{if(event.target===viewer)viewer.close();});
+    viewer.addEventListener('close',()=>{opener?.focus({preventScroll:true});});
   }
-  @media(min-width:761px) and (max-width:1000px){.project{gap:24px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
+</script>
+<style>
+  :global(.directory:has(.project-gallery) .directory-intro){margin-bottom:22px;max-width:740px}
+  :global(.directory:has(.project-gallery) .directory-intro h1){font-size:clamp(36px,5vw,56px)}
+  :global(.directory:has(.project-gallery) .directory-intro p){max-width:54ch}
+  .gallery-intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;margin-bottom:16px;font-size:14px;color:var(--ink-2)}
+  .gallery-intro a{display:inline-flex;align-items:center;gap:16px;min-height:44px;text-underline-offset:4px;font-weight:600}
+  .project-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 32px}
+  .project{min-width:0;scroll-margin-top:24px}
+  .project-featured{grid-column:1/-1}
+  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-card);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:var(--shadow-card)}
+  .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;transition:filter var(--hover)}
+  .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:13px;font-weight:600;transition:background-color var(--hover),color var(--hover)}
+  .project-preview:hover .preview-action,.project-preview:focus-visible .preview-action{background:var(--teal-btn);color:var(--on-teal)}
+  .project-caption{display:flex;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
+  .project-kind{font-size:13px;color:var(--ink-2);margin-bottom:5px}
+  .project h2{font-size:28px;line-height:1.15;margin:0}
+  .project-featured h2{font-size:34px}
+  .project-role{font-size:14px;line-height:1.5;color:var(--ink-2);margin-top:8px}
+  .project-site{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:14px;font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere;flex-shrink:0}
+  .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:16px;min-height:64px}
+  .project-result strong{color:var(--teal-text)}
+  .project-result:hover strong{text-decoration:underline;text-underline-offset:4px}
+  .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:12px}
+  .project-result>span:last-child{color:var(--teal-text);font-size:24px}
+  .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+  .gallery-contact>p{font-size:14px;color:var(--ink-2);margin-bottom:16px}
+  .gallery-contact h2{font-size:clamp(30px,3vw,40px);line-height:1.15;margin:0 0 28px}
+  .gallery-contact a{gap:28px}
+  .contact-note{font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:16px;max-width:30ch}
+  .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
+  .project-viewer::backdrop{background:var(--viewer-backdrop)}
+  :global(html:has(.project-viewer[open])){overflow:hidden}
+  .viewer-toolbar{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--hair)}
+  .viewer-toolbar h2{font-size:20px;line-height:1.2}
+  .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:14px;cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm)}
+  .viewer-toolbar button span{font-size:24px}
+  .viewer-image{overflow:auto}
+  .viewer-image img{display:block;width:100%;height:auto}
+  @media(max-width:1000px){.project-caption{flex-direction:column;gap:2px}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
+  @media(max-width:700px){
+    .project-gallery{grid-template-columns:1fr;gap:36px}
+    .project-featured{grid-column:auto}
+    .project-caption,.project-featured .project-caption{flex-direction:column;margin-top:16px}
+    .project h2,.project-featured h2{font-size:26px}
+    .project-role{margin-top:6px}
+    .project-result{font-size:15px}
+    .gallery-intro{margin-bottom:14px}
+    .gallery-contact{padding:28px;min-height:290px}
+    .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:12px;gap:12px}
+    .project-viewer{width:calc(100% - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
+    .viewer-toolbar{padding:8px 12px}
+    .viewer-toolbar h2{font-size:18px}
+    .viewer-image img{width:1100px;max-width:none}
+  }
+  @media(prefers-reduced-motion:reduce){.project-preview img,.preview-action{transition:none}}
 </style>

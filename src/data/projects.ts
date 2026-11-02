@@ -40,7 +40,7 @@ export const PROJECTS: Project[] = [
     logoMono: true,
     shot: 'cases/duman.webp',
     about: 'Интернет-магазин на inSales — дизайнерская женская одежда премиум-сегмента.',
-    did: 'Фронтенд-разработка, сложная архитектура и выразительный UX/UI.',
+    did: 'Фронтенд-разработка интернет-магазина на InSales.',
     url: 'https://www.duman.store/',
     domain: 'duman.store',
   },
