@@ -4,9 +4,13 @@ import {readFileSync,readdirSync,rmSync,existsSync} from 'node:fs';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
 
+// Клиентские материалы не входят ни в публичный Git, ни в полную выкладку сайта.
+const tracked=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0');
+assert(!tracked.some(p=>['work/','public/extra/','docs/insales-service/data/private/'].some(prefix=>p.startsWith(prefix))),'Private client files are tracked by Git');
 const env={...process.env,SITE_URL:'https://emilius.agency',BASE_PATH:'/',YM_ID:process.env.YM_ID||'68742100'};
 delete env.PREVIEW;
 execFileSync('npm',['run','build'],{env,stdio:'inherit'});
+assert(!existsSync('dist/extra'),'dist/extra must not be included in the release');
 // The postponed OS concept remains available in preview, outside the release.
 rmSync('dist/os',{recursive:true,force:true});
 execFileSync(process.execPath,['scripts/check-site-links.mjs'],{env,stdio:'inherit'});

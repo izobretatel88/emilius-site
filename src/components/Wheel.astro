@@ -390,6 +390,17 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
     let lastActive: number | null = null;
+    let updatingInfo = false;
+    let infoMarkup = '';
+    const setInfo = (markup: string) => {
+      if (markup === infoMarkup) return;
+      infoMarkup = markup;
+      // Удаление сфокусированной ссылки синхронно вызывает focusout. Не даём ему
+      // повторно заменить DOM посреди текущего обновления (ошибка NotFoundError).
+      updatingInfo = true;
+      try { info.innerHTML = markup; }
+      finally { updatingInfo = false; }
+    };
     function render() {
       const i = active();
       if (i !== lastActive) {
@@ -407,14 +418,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         const line = performance.now() < doneUntil
           ? `<b>Цикл окончен</b> · начинаем итерацию&nbsp;${iteration}`
           : `<b>День&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
-        info.innerHTML = `<p class="info-line">${line}</p>`;
+        setInfo(`<p class="info-line">${line}</p>`);
         return;
       }
       const s = SECTORS[i];
       // Одна строка, как и без выбора: высота не меняется — колесо не прыгает под курсором
-      info.innerHTML =
+      setInfo(
         `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to} · ` +
-        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`;
+        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`);
     }
 
     function select(i: number) {
@@ -497,6 +508,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     // Tab с этапа ведёт на «Подробнее →» под колесом: выбор не сбрасываем, иначе строка перерисуется
     // и ссылка исчезнет вместе с фокусом. Сбрасываем, когда фокус ушёл и с колеса, и со строки.
     const leave = (e: FocusEvent) => {
+      if (updatingInfo) return;
       const to = e.relatedTarget as Node | null;
       if (!box.contains(to) && !info.contains(to)) clear();
     };
