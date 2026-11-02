@@ -43,15 +43,15 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <div class="project-gallery">
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
-      <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Посмотреть экраны ${p.name}`}>
+      <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
         <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1120px) calc(100vw - 40px), 1080px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1120px) calc((100vw - 72px) / 2), 524px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} decoding="async" />
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p></div>
-        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.name} в новой вкладке`}>{p.id==='wizzu'?'limemart.wizzu.ru':p.domain} <span aria-hidden="true">↗</span></a>
+        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.id==='wizzu'?'limemart.wizzu.ru':p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.id==='wizzu'?'limemart.wizzu.ru':p.domain} <span aria-hidden="true">↗</span></a>
       </div>
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект</a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
@@ -115,6 +115,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-image img{display:block;width:100%;max-width:var(--screen-width,100%);height:auto;margin-inline:auto}
   .viewer-image[data-scale='actual'] img{width:var(--screen-width);max-width:none}
   .viewer-image img[hidden]{display:none}
+  .viewer-image[aria-busy='true'] img{visibility:hidden}
   .viewer-image:focus-visible{outline-offset:-3px}
   .viewer-controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:12px 20px;border-bottom:1px solid var(--hair)}
   .viewer-devices,.viewer-screens,.viewer-zoom{display:flex;flex-wrap:wrap;gap:4px}

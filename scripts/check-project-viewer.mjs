@@ -33,6 +33,11 @@ const projects=JSON.parse(html.match(/<script\b[^>]*id="project-media"[^>]*>([\s
 projects.duman.screens.push({...projects.duman.screens[0],label:'Тестовый экран',src:'/test-only.webp'});
 const links=Object.keys(projects).map(id=>{const l=new Element();l.dataset.projectPreview=id;return l;});
 const originalDocument=globalThis.document;
+const originalTimeout=globalThis.setTimeout;
+const originalClearTimeout=globalThis.clearTimeout;
+const timers=new Map();let timerId=0;
+globalThis.setTimeout=(fn)=>{timers.set(++timerId,fn);return timerId;};
+globalThis.clearTimeout=id=>timers.delete(id);
 globalThis.document={
  querySelector:name=>name==='.project-viewer'?viewer:{textContent:JSON.stringify(projects)},
  querySelectorAll:()=>links,
@@ -56,6 +61,8 @@ try {
  assert.match(elements['.viewer-status'].textContent,/1 из 2/);
  elements['.viewer-zoom'].children[1].emit('click');
  assert.equal(elements['.viewer-image'].dataset.scale,'actual');
+ elements['.viewer-devices'].children[0].emit('click');
+ assert.equal(elements['.viewer-image'].dataset.scale,'actual','Re-selecting device must not reset zoom');
  elements['[data-next-screen]'].emit('click');
  assert.match(elements.img.src,/test-only/);
  assert(elements['[data-next-screen]'].disabled);
@@ -67,19 +74,31 @@ try {
  assert.match(elements.img.src,/mobile\/duman/);
  staleLoad();
  assert.match(elements['.viewer-status'].textContent,/загружаем/,'Old load must not finish the next screen');
+ const lateLoad=elements.img.onload;
  elements.img.onerror();
  assert(elements.img.hidden && !elements['.viewer-error'].hidden);
+ lateLoad();
+ assert(!elements['.viewer-error'].hidden,'Late load after failure must not dismiss the error');
  elements['[data-retry-viewer]'].emit('click');
  assert(!elements.img.hidden && elements['.viewer-error'].hidden);
  elements.img.onload();
  assert.match(elements['.viewer-status'].textContent,/Телефон · Каталог/);
+ assert.equal(timers.size,0,'Load must cancel the timeout');
+ elements['.viewer-devices'].children[0].emit('click');
+ const loadAfterTimeout=elements.img.onload;
+ [...timers.values()][0]();
+ assert(elements.img.hidden && !elements['.viewer-error'].hidden,'Hung load must time out');
+ loadAfterTimeout();
+ assert(!elements['.viewer-error'].hidden,'Late load must not override timeout');
+ elements['[data-retry-viewer]'].emit('click');
  elements['[data-close-viewer]'].emit('click');
  assert(!viewer.open && focused===links[2]);
  assert.equal(elements.img.onload,null);
+ assert.equal(timers.size,0,'Close must cancel loading timers');
  links.at(-1).emit('click',click);
  assert(elements['.viewer-devices'].hidden,'Single device must not present a fake choice');
  assert(elements['.viewer-screens'].hidden,'Single screen must not present a fake choice');
  assert.match(elements['.viewer-inquiry'].textContent,/похожий сайт$/);
  viewer.close();
- console.log('Viewer controller passed: modifier click, multi-screen paging, scale, devices, stale load, error/retry, close/focus and single-option controls. No browser or network used.');
-} finally {globalThis.document=originalDocument;}
+ console.log('Viewer controller passed: modifier click, paging, scale, devices, stale load, error/retry, timeout/recovery, close/focus and single-option controls. No browser or network used.');
+} finally {globalThis.document=originalDocument;globalThis.setTimeout=originalTimeout;globalThis.clearTimeout=originalClearTimeout;}

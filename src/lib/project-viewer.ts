@@ -26,6 +26,7 @@ export function setupProjectViewer() {
   let device: Device = 'desktop';
   let index = 0;
   let request = 0;
+  let loadingTimer: ReturnType<typeof setTimeout> | undefined;
   const screens = () => project?.screens.filter(screen => screen.device === device) ?? [];
   const setScale = (scale: 'fit' | 'actual') => {
     imageBox.dataset.scale = scale;
@@ -39,6 +40,7 @@ export function setupProjectViewer() {
     if (!project || !screen) return;
     const currentProject = project;
     const version = ++request;
+    clearTimeout(loadingTimer);
     error.hidden = true;
     image.hidden = false;
     imageBox.dataset.device = device;
@@ -49,17 +51,23 @@ export function setupProjectViewer() {
     status.textContent = `${description} · загружаем снимок…`;
     const ready = () => {
       if (version !== request) return;
+      clearTimeout(loadingTimer);
       imageBox.setAttribute('aria-busy', 'false');
       status.textContent = `${currentProject.name} · ${description}${list.length > 1 ? ` · ${index + 1} из ${list.length}` : ''}`;
     };
     image.onload = ready;
-    image.onerror = () => {
+    const fail = () => {
       if (version !== request) return;
+      clearTimeout(loadingTimer);
+      // Поздний load после тайм-аута не должен убирать ошибку без явного повтора.
+      request += 1;
       imageBox.setAttribute('aria-busy', 'false');
       image.hidden = true;
       error.hidden = false;
       status.textContent = `${description} · снимок недоступен`;
     };
+    image.onerror = fail;
+    loadingTimer = setTimeout(fail, 20000);
     image.width = screen.width;
     image.height = screen.height;
     image.alt = `${project.name}: ${screen.label}, ${device === 'phone' ? 'мобильная версия' : 'компьютер'}`;
@@ -93,7 +101,7 @@ export function setupProjectViewer() {
       button.type = 'button';
       button.textContent = screen.label;
       button.setAttribute('aria-controls', imageBox.id);
-      button.addEventListener('click', () => { index = i; render(); });
+      button.addEventListener('click', () => { if (index !== i) { index = i; render(); } });
       screensControl.append(button);
     });
     render();
@@ -115,7 +123,9 @@ export function setupProjectViewer() {
       viewer.scrollTop = 0;
     });
   });
-  deviceButtons.forEach(button => button.addEventListener('click', () => chooseDevice(button.dataset.device as Device)));
+  deviceButtons.forEach(button => button.addEventListener('click', () => {
+    if (device !== button.dataset.device) chooseDevice(button.dataset.device as Device);
+  }));
   zoomButtons.forEach(button => button.addEventListener('click', () => setScale(button.dataset.scale as 'fit' | 'actual')));
   previous.addEventListener('click', () => { if (index > 0) { index -= 1; render(); } });
   next.addEventListener('click', () => { if (index + 1 < screens().length) { index += 1; render(); } });
@@ -124,6 +134,7 @@ export function setupProjectViewer() {
   viewer.addEventListener('click', event => { if (event.target === viewer) viewer.close(); });
   viewer.addEventListener('close', () => {
     request += 1;
+    clearTimeout(loadingTimer);
     image.onload = image.onerror = null;
     opener?.focus({preventScroll: true});
   });
