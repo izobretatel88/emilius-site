@@ -40,28 +40,28 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 }]));
 ---
 <Directory title="Проекты" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие.">
-  <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект <span aria-hidden="true">↗</span></a></div>
+  <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <div class="project-gallery">
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
       <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Посмотреть экраны ${p.name}`}>
         <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1120px) calc(100vw - 40px), 1080px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1120px) calc((100vw - 72px) / 2), 524px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} decoding="async" />
-        <span class="preview-action" aria-hidden="true">Смотреть крупнее <span>↗</span></span>
+        <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p></div>
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`Открыть сайт ${p.name} в новой вкладке`}>{p.id==='wizzu'?'limemart.wizzu.ru':p.domain} <span aria-hidden="true">↗</span></a>
       </div>
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} <span aria-hidden="true">↗</span></a>
-      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span><span aria-hidden="true">↗</span></a>}
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
+      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}
     </article>)}
-    <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект <span aria-hidden="true">↗</span></a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
+    <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект</a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
     <div class="viewer-toolbar"><h2 id="viewer-title"></h2><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
     <div class="viewer-controls">
       <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
       <div class="viewer-screens" role="group" aria-label="Экраны сайта"></div>
-      <a class="viewer-inquiry" href={href('#feedback')}>Хочу похожий магазин ↗</a>
+      <a class="viewer-inquiry" href={href('#feedback')}>Хочу похожий магазин</a>
     </div>
     <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
@@ -98,7 +98,6 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-result strong{color:var(--teal-text)}
   .project-result:hover strong{text-decoration:underline;text-underline-offset:4px}
   .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:12px}
-  .project-result>span:last-child{color:var(--teal-text);font-size:24px}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   .gallery-contact>p{font-size:14px;color:var(--ink-2);margin-bottom:16px}
   .gallery-contact h2{font-size:clamp(30px,3vw,40px);line-height:1.15;margin:0 0 28px}

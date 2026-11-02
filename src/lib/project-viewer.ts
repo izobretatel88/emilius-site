@@ -94,7 +94,7 @@ export function setupProjectViewer() {
       project = selected;
       title.textContent = selected.name;
       inquiry.href = selected.inquiry;
-      inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт ↗' : 'Хочу похожий магазин ↗';
+      inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
       chooseDevice('desktop');
       viewer.showModal();
       viewer.scrollTop = 0;
