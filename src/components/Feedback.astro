@@ -10,6 +10,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 <section class="card feedback" id="feedback" aria-labelledby="t-feedback">
   <h2 id="t-feedback">Обратная связь</h2>
   <form method="post" action={action} novalidate>
+    <div class="project-context" hidden>
+      <p>Ориентир — <strong data-project-context></strong></p>
+      <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
+    </div>
     <div class="field">
     <label class="field-label" for="fb-message">Ваш проект или вопрос</label>
     <textarea
@@ -57,6 +61,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 </section>
 
 <script>
+  import {projectInquiry, inquiryMessage} from '../lib/project-inquiry';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
@@ -72,6 +77,26 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     message.addEventListener('input',updateLength);
     form.addEventListener('reset',()=>requestAnimationFrame(updateLength));
     updateLength();
+    const context=form.querySelector<HTMLElement>('.project-context')!;
+    const selectedId=new URLSearchParams(location.search).get('project');
+    const selectedProject=projectInquiry(selectedId);
+    if(selectedProject){
+      message.value=inquiryMessage(message.value,selectedId);
+      context.querySelector('[data-project-context]')!.textContent=selectedProject.name;
+      context.hidden=false;
+      updateLength();
+      const clearProject=()=>{
+        const prefix=`${selectedProject.message}\n\n`;
+        if(message.value.startsWith(prefix))message.value=message.value.slice(prefix.length);
+        context.hidden=true;
+        updateLength();
+      };
+      context.querySelector('[data-clear-project]')!.addEventListener('click',()=>{
+        clearProject();
+        message.focus({preventScroll:true});
+      });
+      form.addEventListener('reset',()=>{context.hidden=true;});
+    }
     const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
       field.setAttribute('aria-invalid',String(Boolean(text)));
       el.textContent=text;
@@ -103,6 +128,13 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         agree.focus();
         return;
       }
+      const contextualMessage=selectedProject && !context.hidden && !message.value.includes(selectedProject.message)
+        ? `${selectedProject.message}\n\n${message.value}` : message.value;
+      if(contextualMessage.length>message.maxLength){
+        fieldError(message,messageError,'Сократите сообщение: вместе с названием проекта — не больше 3 000 символов.');
+        message.focus();
+        return;
+      }
       button.disabled = true;
       label.textContent = 'Отправляем…';
       show(null);
@@ -110,9 +142,11 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       const controller=new AbortController();
       const timeout=window.setTimeout(()=>controller.abort(),15000);
       try {
+        const payload=new FormData(form);
+        payload.set('message',contextualMessage);
         const res = await fetch(form.action, {
           method: 'POST',
-          body: new FormData(form),
+          body: payload,
           headers: { Accept: 'application/json' },
           signal:controller.signal,
         });
@@ -156,6 +190,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     gap: 12px;
   }
   .field{display:grid;gap:7px;min-width:0}
+  .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
+  .project-context[hidden]{display:none}
+  .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
   .field-label{font-size:15px;font-weight:600}
   .field-hint{font-size:13px;line-height:1.45;color:var(--ink-2)}
   .field-error{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}

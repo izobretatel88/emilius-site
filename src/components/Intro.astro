@@ -79,10 +79,12 @@ const music = `${root}brand/music.mp3`;
     // считают навязчивым (решение владельца 25.10.2026). Отметка «видел» — чтобы заставка не всплыла позже за визит.
     var fromSearch = false;
     try { fromSearch = /(^|\.)(google|yandex|bing|duckduckgo)\.[a-z.]+$|(^|\.)(ya\.ru|go\.mail\.ru)$/.test(new URL(document.referrer).hostname); } catch (e) {}
-    if (fromSearch && !forced) {
+    // Из галереи переходят к уже выбранной задаче: заставка не перекрывает форму.
+    var fromProject = location.hash === '#feedback' && new URLSearchParams(location.search).has('project');
+    if ((fromSearch || fromProject) && !forced) {
       try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (e) {}
     }
-    if (forced || (!seen && !reduce && !fromSearch)) {
+    if (forced || (!seen && !reduce && !fromSearch && !fromProject)) {
       document.getElementById('intro').hidden = false;
       document.documentElement.classList.add('intro-open');
     }
