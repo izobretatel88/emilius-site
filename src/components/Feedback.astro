@@ -7,7 +7,7 @@ const consent = `${base}${base.endsWith('/') ? '' : '/'}consent/`;
 const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 ---
 
-<section class="card feedback" id="feedback" aria-labelledby="t-feedback">
+<section class="card feedback" id="feedback" tabindex="-1" aria-labelledby="t-feedback">
   <h2 id="t-feedback">Обсудить проект</h2>
   <form method="post" action={action} novalidate>
     <div class="project-context" hidden>

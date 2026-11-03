@@ -37,7 +37,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       <div class="opening-actions"><a class="action" href="#feedback">Обсудить проект <span aria-hidden="true">→</span></a><a class="text-action" href="#projects">Смотреть проекты</a></div>
     </section>
     <section class="product-demo" aria-labelledby="t-wheel" data-hide-write-button>
-      <div class="demo-top"><h2 id="t-wheel">Делаем по кругу</h2><span>52 дня · 4 этапа</span></div>
+      <div class="demo-top"><h2 id="t-wheel" tabindex="-1">Делаем по кругу</h2><span>52 дня · 4 этапа</span></div>
       <div class="demo-body">
         <div class="wheel-area"><Wheel /></div>
         <noscript>
@@ -73,7 +73,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
         </li>
       ))}
     </ul>
-    <section class="service-section" id="services" aria-labelledby="t-services">
+    <section class="service-section" id="services" tabindex="-1" aria-labelledby="t-services">
       <div class="section-heading"><h2 id="t-services">От задачи к решению.</h2><a class="text-action" href={href('services/')}>Все услуги <span aria-hidden="true">→</span></a></div>
       {SERVICE_ROWS.map(service => (
         <a
@@ -95,7 +95,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       ))}
       <div class="direction-links">{SECTORS.map(s => <a href={href(`services/${s.id}/`)}><strong>{s.name}</strong><span>{s.text}</span><span class="row-arrow" aria-hidden="true">→</span></a>)}</div>
     </section>
-    <section class="project-section" id="projects" aria-labelledby="t-projects">
+    <section class="project-section" id="projects" tabindex="-1" aria-labelledby="t-projects">
       <div class="section-heading"><h2 id="t-projects">Продукты, которые работают.</h2><a class="text-action" href={href('projects/')}>Все проекты <span aria-hidden="true">→</span></a></div>
       <div class="project-grid">
         {selected.map(project => (
@@ -151,14 +151,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     const summary = menu.querySelector('summary')!;
     const close = () => { menu.open = false; };
     menu.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(); summary.focus(); } });
-    for (const link of menu.querySelectorAll('a')) {
-      const fragment = link.getAttribute('href');
-      if (fragment?.startsWith('#')) {
-        const destination = document.getElementById(fragment.slice(1));
-        if (destination && !destination.hasAttribute('tabindex')) destination.tabIndex = -1;
-      }
-      link.addEventListener('click', close);
-    }
+    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close);
     document.addEventListener('pointerdown', event => { if (menu.open && event.target instanceof Node && !menu.contains(event.target)) close(); });
     document.addEventListener('focusin', event => { if (menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target)) close(); });
     const mobileLayout = matchMedia('(max-width: 760px)');
