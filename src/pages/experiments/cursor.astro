@@ -318,7 +318,20 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .nav-links,.nav-action{display:none}
     .taste-menu{display:block}.taste-menu summary{display:flex;align-items:center;justify-content:center;width:44px;height:44px;list-style:none;cursor:pointer;border-radius:var(--radius-btn);color:var(--ink)}
     .taste-menu summary::-webkit-details-marker{display:none}.taste-menu svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.5;fill:none}
-    .menu-links{position:absolute;top:calc(100% + 8px);right:0;left:0;display:grid;padding:12px 20px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-pop)}
+    .menu-links {
+      position: absolute;
+      top: calc(100% + 8px);
+      inset-inline: 0;
+      display: grid;
+      max-height: calc(100dvh - 88px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 12px 20px;
+      background: var(--card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-pop);
+    }
+    :global(body.taste-home:has(.taste-menu[open]) .write-fab) { visibility: hidden; }
     .menu-links a{min-height:48px;display:flex;align-items:center;border-bottom:1px solid var(--hair)}.menu-links a:last-child{border:0}
     .opening{padding:36px 0 28px}.disciplines{font-size:13px;margin-bottom:16px}
     h1{font-size:clamp(32px,5.4vw,42px);line-height:1.1;letter-spacing:-.025em}h1 span{display:inline}
