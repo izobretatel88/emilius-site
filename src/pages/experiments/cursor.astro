@@ -86,19 +86,35 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     </section>
     <section class="project-section" id="projects" aria-labelledby="t-projects">
       <div class="section-heading"><h2 id="t-projects">Продукты, которые работают.</h2><a class="text-action" href={href('projects/')}>Все проекты <span aria-hidden="true">→</span></a></div>
-      <div class="project-grid">{selected.map(p => <article class="selected-project"><a class="project-image" href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}><img
-        src={href(`cases/gallery/${p.id}-800.webp`)}
-        srcset={`${href(`cases/gallery/${p.id}-800.webp`)} 800w, ${href(`cases/gallery/${p.id}-1600.webp`)} 1600w`}
-        sizes="(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
-        width="800"
-        height="500"
-        loading="lazy"
-        alt={`Главная страница магазина ${p.name}`}
-      /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p>
-        <a class="project-inquiry text-action" href={`?project=${p.id}#feedback`} aria-label={`Хочу похожий магазин — ${p.name}`}>
-          Хочу похожий магазин <span aria-hidden="true">→</span>
-        </a>
-      </div></article>)}</div>
+      <div class="project-grid">
+        {selected.map(project => (
+          <article class="selected-project">
+            <a class="project-image" href={href(`projects/#${project.id}`)} aria-label={`Смотреть проект ${project.name}`}>
+              <img
+                src={href(`cases/gallery/${project.id}-800.webp`)}
+                srcset={`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`}
+                sizes="(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
+                width="800"
+                height="500"
+                loading="lazy"
+                alt={`Главная страница магазина ${project.name}`}
+              />
+              <span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span>
+            </a>
+            <div class="project-description">
+              <h3>{project.name}</h3>
+              {project.id === 'wizzu' ? (
+                <p><strong class="project-result">С 0 до 2 000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
+              ) : (
+                <p>Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.</p>
+              )}
+              <a class="project-inquiry text-action" href={`?project=${project.id}#feedback`} aria-label={`Хочу похожий магазин — ${project.name}`}>
+                Хочу похожий магазин <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
     <section class="contact-section" aria-labelledby="t-next">
       <div class="section-heading">
@@ -235,6 +251,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .view-project{position:absolute;right:14px;bottom:14px;display:inline-flex;gap:16px;background:var(--card);color:var(--ink);padding:10px 14px;font-size:13px;border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
   .project-image:hover .view-project{color:var(--teal-text)}
   .project-description{padding:18px 2px 0}
+  .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; color: var(--teal-text); }
   .project-description h3{font-size:22px;font-weight:600;margin:0 0 8px}
   .project-description p{font-size:15px;line-height:1.5;color:var(--ink-2);max-width:52ch}
