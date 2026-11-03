@@ -19,16 +19,24 @@ import { LINKS } from '../data/site';
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её.
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
+    const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
+    const compact = matchMedia('(max-width: 480px)');
     const seen = new Set<Element>();
     let typing = false;
-    const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing || !!document.querySelector('.mobile-menu[open]'));
+    const update = () => {
+      const sectionVisible = compact.matches && protectedSections.some(section => seen.has(section));
+      const contactVisible = twins.some(twin => seen.has(twin));
+      fab.classList.toggle('is-hidden', sectionVisible || contactVisible || typing || !!document.querySelector('.mobile-menu[open]'));
+    };
     document.addEventListener('emi:menu', update);
-    if (twins.length) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));
+    if (protectedSections.length) compact.addEventListener('change', update);
+    const observed = [...twins, ...protectedSections];
+    if (observed.length) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => (entry.isIntersecting ? seen.add(entry.target) : seen.delete(entry.target)));
         update();
       });
-      twins.forEach((t) => io.observe(t));
+      observed.forEach(element => io.observe(element));
     }
     // На телефоне, пока человек заполняет форму, кнопка не лезет поверх поля и клавиатуры.
     if (matchMedia('(pointer: coarse)').matches) {
