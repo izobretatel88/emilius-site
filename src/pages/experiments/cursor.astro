@@ -37,7 +37,17 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
         <div class="wheel-area"><Wheel /></div>
         <div class="method">
           <h3>Одна команда. <span>Весь цикл продукта.</span></h3>
-          <ol class="stages">{SECTORS.map(s => <li><a href={href(`services/${s.id}/`)}><span class="day-range">{String(s.from).padStart(2, '0')}–{s.to}</span><span class="stage-name">{s.name}</span><span class="row-arrow" aria-hidden="true">→</span></a></li>)}</ol>
+          <ol class="stages" role="list">
+            {SECTORS.map(stage => (
+              <li>
+                <a href={href(`services/${stage.id}/`)} aria-label={`${stage.name}, дни ${stage.from}–${stage.to}`}>
+                  <span class="day-range">{String(stage.from).padStart(2, '0')}–{stage.to}</span>
+                  <span class="stage-name">{stage.name}</span>
+                  <span class="row-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
       <p class="demo-note">Модель итерации — от вопроса до следующего шага.</p>
@@ -70,11 +80,22 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p></div></article>)}</div>
     </section>
     <section class="contact-section" aria-labelledby="t-next">
-      <div class="section-heading"><div><p class="section-label">Следующий шаг</p><h2 id="t-next">Что создадим вместе?</h2></div><a class="text-action" href={href()}>Текущая главная <span aria-hidden="true">→</span></a></div>
+      <div class="section-heading">
+        <div>
+          <p class="section-label">Следующий шаг</p>
+          <h2 id="t-next">Что создадим вместе?</h2>
+        </div>
+      </div>
       <div class="contact-layout"><Contact /><Feedback /></div>
     </section>
   </main>
-  <div class="product-footer"><p class="experiment-note">Экспериментальная главная · версия по референсу Cursor</p><Footer localHomeLinks /></div>
+  <div class="product-footer">
+    <p class="experiment-note">
+      <span>Экспериментальная главная</span>
+      <a href={href()}>Текущая главная <span aria-hidden="true">→</span></a>
+    </p>
+    <Footer localHomeLinks />
+  </div>
 </Base>
 <script>
   const menu = document.querySelector<HTMLDetailsElement>('.taste-menu');
@@ -204,7 +225,23 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .contact-layout :global(.col-card){padding:24px}
   .contact-layout :global(.card-title){font-size:20px}
   .product-footer{padding-top:12px}
-  .experiment-note{font-size:12px;color:var(--ink-3)}
+  .experiment-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 16px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .experiment-note a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: var(--teal-text);
+    text-decoration: underline;
+    text-underline-offset: .2em;
+  }
   .product-footer :global(.footer-links){max-width:none;margin-top:20px}
   @media(prefers-color-scheme:dark){:global(:root:not([data-theme='light'])) .client-strip img.mono{filter:grayscale(1) invert(1)}}
   :global(:root[data-theme='dark']) .client-strip img.mono{filter:grayscale(1) invert(1)}
@@ -247,7 +284,6 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .contact-layout{grid-template-columns:minmax(0,1fr);gap:20px}
     .contact-layout :global(.stack){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.contact-layout :global(.col-card){padding:18px 12px}
     .contact-layout :global(.feedback){padding:24px 20px}.contact-layout :global(.btn){font-size:15px}
-    .contact-section .section-heading{flex-direction:column;gap:8px}.contact-section .section-heading>.text-action{min-height:44px}
   }
   @media(max-width:400px){
     :global(body.taste-home){padding-inline:12px}
