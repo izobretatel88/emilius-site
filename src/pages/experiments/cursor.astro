@@ -20,7 +20,12 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       <div class="nav-links"><a href="#t-wheel">Метод</a><a href="#services">Услуги</a><a href="#projects">Проекты</a></div>
       <a class="action nav-action" href="#feedback">Обсудить проект</a>
       <details class="taste-menu">
-        <summary aria-label="Меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></summary>
+        <summary aria-label="Меню">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="menu-icon" d="M4 7h16M4 12h16M4 17h16" />
+            <path class="close-icon" d="m6 6 12 12M18 6 6 18" />
+          </svg>
+        </summary>
         <div class="menu-links"><a href="#t-wheel">Метод</a><a href="#services">Услуги</a><a href="#projects">Проекты</a><a href="#feedback">Обсудить проект</a><a href={href()}>Текущая главная</a></div>
       </details>
     </nav>
@@ -318,6 +323,8 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .nav-links,.nav-action{display:none}
     .taste-menu{display:block}.taste-menu summary{display:flex;align-items:center;justify-content:center;width:44px;height:44px;list-style:none;cursor:pointer;border-radius:var(--radius-btn);color:var(--ink)}
     .taste-menu summary::-webkit-details-marker{display:none}.taste-menu svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.5;fill:none}
+    .close-icon, .taste-menu[open] .menu-icon { display: none; }
+    .taste-menu[open] .close-icon { display: initial; }
     .menu-links {
       position: absolute;
       top: calc(100% + 8px);
