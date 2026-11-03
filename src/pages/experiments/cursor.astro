@@ -119,7 +119,8 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
               ) : (
                 <p>Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.</p>
               )}
-              <a class="project-inquiry text-action" href={`?project=${project.id}#feedback`} aria-label={`Хочу похожий магазин — ${project.name}`}>
+              <!-- Метка заявки сохраняет отдельную запись истории WebKit после снятия кейса. -->
+              <a class="project-inquiry text-action" href={`?project=${project.id}&inquiry=1#feedback`} aria-label={`Хочу похожий магазин — ${project.name}`}>
                 Хочу похожий магазин <span aria-hidden="true">→</span>
               </a>
             </div>
