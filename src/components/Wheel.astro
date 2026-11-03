@@ -887,7 +887,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   /* «Покрути колесо»: тянуть вбок/по кругу — крутит колесо; вертикальный свайп на телефоне
      по-прежнему листает страницу (колесо почти во всю ширину экрана) */
   .can-spin {
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     cursor: grab;
   }
   .can-spin:active {
@@ -1157,7 +1157,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     color: var(--ink);
     text-align: center;
     cursor: pointer;
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     -webkit-tap-highlight-color: transparent;
     transition:
       opacity 0.3s ease,
