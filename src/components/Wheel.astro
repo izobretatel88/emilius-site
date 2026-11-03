@@ -726,7 +726,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (e.detail > 0) hoverArmed = false;
       stage.classList.remove('is-idle');
       rotorSvg.removeAttribute('aria-hidden');
-      links.forEach((link) => link.removeAttribute('tabindex'));
+      links.forEach((link) => link.setAttribute('tabindex', '0'));
       launch.classList.add('is-gone');
       // гаснущая кнопка уходит из порядка Tab сразу, а не после затухания
       launch.tabIndex = -1;
