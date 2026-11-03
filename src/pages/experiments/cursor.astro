@@ -53,7 +53,10 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
           </ol>
         </div>
       </div>
-      <p class="demo-note">Модель итерации — от вопроса до следующего шага.</p>
+      <p class="demo-note">
+        <span class="demo-caption">Модель итерации — от вопроса до следующего шага.</span>
+        <span class="demo-gesture">Поверните колесо мышью или пальцем, чтобы перейти к другому дню.</span>
+      </p>
     </section>
     <ul class="client-strip" aria-label="Некоторые из наших проектов" role="list">
       {clients.map(project => (
@@ -214,6 +217,11 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     text-underline-offset: .2em;
   }
   .demo-note{border-top:1px solid var(--hair);padding:16px 0;font-size:13px;color:var(--ink-3)}
+  .demo-gesture { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.taste-home .product-demo:has(.wheel-stage:not(.is-idle))) .demo-caption { display: none; }
+    :global(.taste-home .product-demo:has(.wheel-stage:not(.is-idle))) .demo-gesture { display: inline; }
+  }
   .client-strip{list-style:none;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:40px;padding:28px 90px 36px}
   .client-strip a {
     display: flex;
