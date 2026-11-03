@@ -93,6 +93,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       };
       context.querySelector('[data-clear-project]')!.addEventListener('click',()=>{
         clearProject();
+        const current = new URL(location.href);
+        current.searchParams.delete('project');
+        history.replaceState(history.state, '', current);
         message.focus({preventScroll:true});
       });
       form.addEventListener('reset',()=>{context.hidden=true;});
