@@ -15,7 +15,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   <header class="masthead">
     <nav class="product-nav" aria-label="Основная навигация">
       <a class="wordmark" href={href()} aria-label="Эмилиус Эдженси — текущая главная">
-        <span>Эмилиус</span><img src={href('brand/logo.png')} width="267" height="401" alt="" /><span>Эдженси</span>
+        <span>Эмилиус</span><img src={href('brand/logo-81.png')} width="54" height="81" alt="" /><span>Эдженси</span>
       </a>
       <div class="nav-links"><a href="#t-wheel">Метод</a><a href="#services">Услуги</a><a href="#projects">Проекты</a></div>
       <a class="action nav-action" href="#feedback">Обсудить проект</a>
@@ -50,7 +50,15 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     </section>
     <section class="project-section" id="projects" aria-labelledby="t-projects">
       <div class="section-heading"><h2 id="t-projects">Продукты, которые работают.</h2><a class="text-action" href={href('projects/')}>Все проекты <span aria-hidden="true">→</span></a></div>
-      <div class="project-grid">{selected.map(p => <article class="selected-project"><a class="project-image" href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}><img src={href(`cases/gallery/${p.id}-800.webp`)} width="800" height="500" loading="lazy" alt={`Главная страница магазина ${p.name}`} /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p></div></article>)}</div>
+      <div class="project-grid">{selected.map(p => <article class="selected-project"><a class="project-image" href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}><img
+        src={href(`cases/gallery/${p.id}-800.webp`)}
+        srcset={`${href(`cases/gallery/${p.id}-800.webp`)} 800w, ${href(`cases/gallery/${p.id}-1600.webp`)} 1600w`}
+        sizes="(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
+        width="800"
+        height="500"
+        loading="lazy"
+        alt={`Главная страница магазина ${p.name}`}
+      /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p></div></article>)}</div>
     </section>
     <section class="contact-section" aria-labelledby="t-next">
       <div class="section-heading"><div><p class="section-label">Следующий шаг</p><h2 id="t-next">Что создадим вместе?</h2></div><a class="text-action" href={href()}>Текущая главная <span aria-hidden="true">→</span></a></div>
@@ -65,7 +73,14 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     const summary = menu.querySelector('summary')!;
     const close = () => { menu.open = false; };
     menu.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(); summary.focus(); } });
-    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+    for (const link of menu.querySelectorAll('a')) {
+      const fragment = link.getAttribute('href');
+      if (fragment?.startsWith('#')) {
+        const destination = document.getElementById(fragment.slice(1));
+        if (destination && !destination.hasAttribute('tabindex')) destination.tabIndex = -1;
+      }
+      link.addEventListener('click', close);
+    }
     document.addEventListener('pointerdown', event => { if (menu.open && event.target instanceof Node && !menu.contains(event.target)) close(); });
     document.addEventListener('focusin', event => { if (menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target)) close(); });
     matchMedia('(min-width:761px)').addEventListener('change', event => { if (event.matches) close(); });
@@ -115,8 +130,11 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .day-range{font-size:14px;font-variant-numeric:tabular-nums;color:var(--ink-3)}
   .stage-name{font-size:18px;text-transform:capitalize}
   .row-arrow{color:var(--teal-text)}
-  .stages .row-arrow{opacity:0;transition:opacity var(--hover)}
-  .stages a:hover .row-arrow,.stages a:focus-visible .row-arrow{opacity:1}
+  .stages a:hover .stage-name,
+  .stages a:focus-visible .stage-name {
+    text-decoration: underline;
+    text-underline-offset: .2em;
+  }
   .demo-note{border-top:1px solid var(--hair);padding:16px 0;font-size:13px;color:var(--ink-3)}
   .client-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:40px;padding:28px 90px 36px}
   .client-strip a{display:flex;align-items:center;justify-content:center;min-height:44px}
@@ -147,7 +165,11 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .project-description p{font-size:15px;line-height:1.5;color:var(--ink-2);max-width:52ch}
   .contact-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:stretch}
   .contact-layout :global(.feedback){grid-column:auto;width:100%;max-width:none;margin:0;padding:28px}
-  .contact-layout :global(.stack){gap:20px}
+  .contact-layout :global(.stack) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
   .contact-layout :global(.col-card){padding:24px}
   .contact-layout :global(.card-title){font-size:20px}
   .product-footer{padding-top:12px}
@@ -182,8 +204,8 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .demo-body{grid-template-columns:minmax(0,1fr);gap:0}
     .wheel-area{padding-inline:14px;margin-inline:-18px}
     .method{padding:20px 0 16px;border-top:1px solid var(--hair)}.method h3{font-size:25px;margin-bottom:16px}.method h3 span{display:inline}
-    .stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.stages a{grid-template-columns:52px 1fr;min-height:48px;gap:6px;border-bottom:1px solid var(--hair)}.stages li:nth-last-child(-n+2) a{border:0}
-    .stages .row-arrow{display:none}.stage-name{font-size:15px}.day-range{font-size:12px}
+    .stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.stages a{grid-template-columns:42px minmax(0,1fr) auto;min-height:48px;gap:6px;border-bottom:1px solid var(--hair)}.stages li:nth-last-child(-n+2) a{border:0}
+    .stage-name{font-size:15px}.day-range{font-size:12px}
     .demo-note{font-size:12px;padding-block:14px}
     .client-strip{padding:24px 0 28px;gap:14px}.client-strip img{height:28px}
     .section-heading h2{font-size:30px}.section-heading{gap:16px;margin-bottom:24px;align-items:flex-start}.section-heading>.text-action{font-size:13px;flex-shrink:0}
@@ -196,11 +218,15 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .contact-layout :global(.feedback){padding:24px 20px}.contact-layout :global(.btn){font-size:15px}
     .contact-section .section-heading{flex-direction:column;gap:8px}.contact-section .section-heading>.text-action{min-height:44px}
   }
+  @media(max-width:360px) {
+    .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
+  }
   @media(max-width:400px){
     :global(body.taste-home){padding-inline:12px}
     h1{font-size:32px}.opening-actions{gap:8px 20px}.wordmark{font-size:17px}
     .section-heading{flex-wrap:wrap;gap:8px}.section-heading h2{font-size:28px}
-    .stages{gap:0 14px}.stages a{grid-template-columns:44px 1fr}.stage-name{font-size:14px}
+    .stages { grid-template-columns: minmax(0, 1fr); }
+    .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
     .direction-links{gap:12px 20px}.direction-links a>span:not(.row-arrow){font-size:13px}
   }
 </style>
