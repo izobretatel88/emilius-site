@@ -139,13 +139,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
           ></line>
         ))}
       </g>
-      <g font-size="8.5" font-weight="600" class="num">
+      <g font-size="8.5" font-weight="600" class="num" aria-hidden="true">
         {weeks.map((w) => (
           <text class="week" data-week={w.k} x={w.x} y={w.y} text-anchor="middle" dominant-baseline="central" transform={`rotate(${w.rot} ${w.x} ${w.y})`}>{w.label}</text>
         ))}
       </g>
 
-      <g id="labels">
+      <g id="labels" aria-hidden="true">
         {labels.map((l, i) => (
           <text class="sector-label" font-size="18" font-weight="600" fill={l.color} data-sector={i}>
             <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
