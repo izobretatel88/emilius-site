@@ -9,6 +9,13 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const year = new Date().getFullYear();
 // Ссылка на блог появляется, когда в нём есть публикуемые статьи
 const hasBlog = (await getPosts()).length > 0;
+
+interface Props {
+  localHomeLinks?: boolean;
+}
+
+const { localHomeLinks = false } = Astro.props;
+const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment);
 ---
 
 <footer>
@@ -16,7 +23,7 @@ const hasBlog = (await getPosts()).length > 0;
     <div><h2>Направления</h2>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}</div>
     <div><h2>Готовые решения</h2><a href={href('services/insales-shop/')}>Магазин на InSales</a><a href={href('services/insales-shop/seller/')}>Для селлеров WB и Ozon</a><a href={href('services/')}>Все услуги</a></div>
     <div><h2>Полезное</h2><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}<a href={href('resources/')}>Все материалы</a></div>
-    <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={href('#t-wheel')}>Как работаем</a><a href={href('#t-contact')}>Контакты</a></div>
+    <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={homeLink('#t-wheel')}>Как работаем</a><a href={homeLink('#t-contact')}>Контакты</a></div>
   </nav>
   <ThemeControl />
   <p>© {year} | Emilius Agency</p>

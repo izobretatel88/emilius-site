@@ -25,7 +25,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       </details>
     </nav>
   </header>
-  <main class="product-home">
+  <main class="product-home" id="content" tabindex="-1">
     <section class="opening" aria-labelledby="mission-title">
       <p class="disciplines">Дизайн · Разработка · Маркетинг</p>
       <h1 id="mission-title">Помогаем великолепным людям<span> создавать великолепные продукты.</span></h1>
@@ -42,7 +42,16 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       </div>
       <p class="demo-note">Модель итерации — от вопроса до следующего шага.</p>
     </section>
-    <div class="client-strip" aria-label="Некоторые из наших проектов">{clients.map(p => <a href={href(`projects/#${p.id}`)} aria-label={`Проект ${p.name}`}><img class:list={{mono:p.logoMono}} src={href(p.logo)} alt={p.name} width="150" height="40" /></a>)}</div>
+    <ul class="client-strip" aria-label="Некоторые из наших проектов" role="list">
+      {clients.map(project => (
+        <li>
+          <a href={href(`projects/#${project.id}`)}>
+            <img class:list={{ mono: project.logoMono }} src={href(project.logo)} alt="" width="150" height="40" />
+            <span>{project.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
     <section class="service-section" id="services" aria-labelledby="t-services">
       <div class="section-heading"><h2 id="t-services">От задачи к решению.</h2><a class="text-action" href={href('services/')}>Все услуги <span aria-hidden="true">→</span></a></div>
       {SERVICE_ROWS.map(s => <a class="service-feature" href={href(s.href)}><div><p class="section-label">Готовое решение</p><h3>{s.title}</h3><p>Запускаем свой канал продаж. Каталог, оплата, доставка и связь с учётной системой.</p></div><div class="service-next"><span>{s.note}</span><span class="service-link">Посмотреть услугу <span aria-hidden="true">→</span></span></div></a>)}
@@ -65,7 +74,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       <div class="contact-layout"><Contact /><Feedback /></div>
     </section>
   </main>
-  <div class="product-footer"><p class="experiment-note">Экспериментальная главная · версия по референсу Cursor</p><Footer /></div>
+  <div class="product-footer"><p class="experiment-note">Экспериментальная главная · версия по референсу Cursor</p><Footer localHomeLinks /></div>
 </Base>
 <script>
   const menu = document.querySelector<HTMLDetailsElement>('.taste-menu');
@@ -83,7 +92,13 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     }
     document.addEventListener('pointerdown', event => { if (menu.open && event.target instanceof Node && !menu.contains(event.target)) close(); });
     document.addEventListener('focusin', event => { if (menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target)) close(); });
-    matchMedia('(min-width:761px)').addEventListener('change', event => { if (event.matches) close(); });
+    const mobileLayout = matchMedia('(max-width: 760px)');
+    mobileLayout.addEventListener('change', ({ matches }) => {
+      if (matches) return;
+      const focusWasInMenu = menu.contains(document.activeElement);
+      close();
+      if (focusWasInMenu) document.querySelector<HTMLAnchorElement>('.product-nav .wordmark')?.focus();
+    });
   }
 </script>
 <style>
@@ -136,8 +151,24 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     text-underline-offset: .2em;
   }
   .demo-note{border-top:1px solid var(--hair);padding:16px 0;font-size:13px;color:var(--ink-3)}
-  .client-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:40px;padding:28px 90px 36px}
-  .client-strip a{display:flex;align-items:center;justify-content:center;min-height:44px}
+  .client-strip{list-style:none;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:40px;padding:28px 90px 36px}
+  .client-strip a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--ink-2);
+    font-size: 13px;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .client-strip a:hover span,
+  .client-strip a:focus-visible span {
+    color: var(--teal-text);
+    text-decoration: underline;
+    text-underline-offset: .2em;
+  }
   .client-strip img{object-fit:contain;width:150px;max-width:100%;height:36px;filter:grayscale(1);opacity:.65}
   .client-strip a:hover img{opacity:1}
   .service-section,.project-section,.contact-section{border-top:1px solid var(--hair);padding:44px 0 48px;scroll-margin-top:24px}
@@ -222,6 +253,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     :global(body.taste-home){padding-inline:12px}
     h1{font-size:32px}.opening-actions{gap:8px 20px}.wordmark{font-size:17px}
     .section-heading{flex-wrap:wrap;gap:8px}.section-heading h2{font-size:28px}
+    .client-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .stages { grid-template-columns: minmax(0, 1fr); }
     .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
     .direction-links{gap:12px 20px}.direction-links a>span:not(.row-arrow){font-size:13px}
