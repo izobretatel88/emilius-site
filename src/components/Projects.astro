@@ -22,6 +22,8 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
       </li>
     ))}
   </ul>
+  <!-- Логотипы без подписей: кто не навёл курсор, иначе не узнает, что это кейсы -->
+  <a class="all" href={href('projects/')}>Все проекты →</a>
 </section>
 
 <script>
@@ -104,6 +106,12 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
   }
   .proj {
     position: relative;
+  }
+  .all {
+    font-size: 15px;
+    font-weight: 600;
+    text-underline-offset: 3px;
+    text-align: center;
   }
   .proj-btn {
     width: 52px;
