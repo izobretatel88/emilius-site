@@ -77,7 +77,11 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
         height="500"
         loading="lazy"
         alt={`Главная страница магазина ${p.name}`}
-      /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p></div></article>)}</div>
+      /><span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span></a><div class="project-description"><h3>{p.name}</h3><p>{p.id === 'wizzu' ? 'С 0 до 2 000+ заказов в месяц. Сайт-витрина и интеграции для сервиса доставки.' : 'Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.'}</p>
+        <a class="project-inquiry text-action" href={`?project=${p.id}#feedback`} aria-label={`Хочу похожий магазин — ${p.name}`}>
+          Хочу похожий магазин <span aria-hidden="true">→</span>
+        </a>
+      </div></article>)}</div>
     </section>
     <section class="contact-section" aria-labelledby="t-next">
       <div class="section-heading">
@@ -213,6 +217,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .view-project{position:absolute;right:14px;bottom:14px;display:inline-flex;gap:16px;background:var(--card);color:var(--ink);padding:10px 14px;font-size:13px;border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
   .project-image:hover .view-project{color:var(--teal-text)}
   .project-description{padding:18px 2px 0}
+  .project-inquiry { margin-top: 8px; color: var(--teal-text); }
   .project-description h3{font-size:22px;font-weight:600;margin:0 0 8px}
   .project-description p{font-size:15px;line-height:1.5;color:var(--ink-2);max-width:52ch}
   .contact-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:stretch}
