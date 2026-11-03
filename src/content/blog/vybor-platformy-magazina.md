@@ -6,7 +6,7 @@ date: "2026-11-05"
 updated: "2026-11-05"
 draft: false
 reviewBy: "2026-12-01"
-cover: "/blog/vybor-platformy-magazina/cover.webp"
+cover: "/blog/vybor-platformy-magazina/cover-og.jpg"
 coverAlt: "Tilda, KIT, InSales или Битрикс: выбор по требованиям и тесту заказа"
 readingMinutes: 10
 mainQuery: "платформа для интернет-магазина"

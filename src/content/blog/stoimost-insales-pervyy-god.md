@@ -6,7 +6,7 @@ date: "2026-11-05"
 updated: "2026-11-05"
 draft: false
 reviewBy: "2026-12-01"
-cover: "/blog/stoimost-insales-pervyy-god/cover.webp"
+cover: "/blog/stoimost-insales-pervyy-god/cover-og.jpg"
 coverAlt: "Стоимость магазина InSales: запуск, подписка и расходы с заказов"
 readingMinutes: 9
 mainQuery: "стоимость интернет-магазина на InSales"

@@ -6,7 +6,7 @@ date: "2026-11-05"
 updated: "2026-11-05"
 draft: false
 reviewBy: "2026-12-01"
-cover: "/blog/tarify-insales-seller-combo/cover.webp"
+cover: "/blog/tarify-insales-seller-combo/cover-og.jpg"
 coverAlt: "Тарифы InSales: сайт, маркетплейсы или оба канала"
 readingMinutes: 9
 mainQuery: "тарифы InSales"
