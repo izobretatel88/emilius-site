@@ -35,6 +35,9 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       <div class="demo-top"><h2 id="t-wheel">Делаем по кругу</h2><span>52 дня · 4 этапа</span></div>
       <div class="demo-body">
         <div class="wheel-area"><Wheel /></div>
+        <noscript>
+          <p class="wheel-fallback">Для запуска колеса нужен JavaScript. О каждом этапе можно прочитать по ссылкам.</p>
+        </noscript>
         <div class="method">
           <h3>Одна команда. <span>Весь цикл продукта.</span></h3>
           <ol class="stages" role="list">
@@ -187,6 +190,8 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .demo-top h2{font-size:20px;scroll-margin-block-start:44px}
   .demo-top>span{font-size:14px;color:var(--ink-2)}
   .demo-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:42px;align-items:center}
+  .wheel-fallback { padding-block: 20px; color: var(--ink-2); }
+  @media (scripting: none) { .wheel-area { display: none; } }
   .wheel-area{min-width:0;padding:0 14px 44px;position:relative}
   .wheel-area :global(.wheel-stage){--wb:min(100%,460px)}
   .wheel-area :global(.wheel-info){position:absolute;left:0;right:0;bottom:2px;margin:0;min-height:40px;font-size:13px}
