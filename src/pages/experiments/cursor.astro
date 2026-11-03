@@ -221,6 +221,13 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     text-decoration: underline;
     text-underline-offset: .2em;
   }
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="0"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(1) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="1"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(2) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="2"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(3) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="3"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(4) .stage-name {
+    color: var(--teal-text);
+    font-weight: 700;
+  }
   .demo-note{border-top:1px solid var(--hair);padding:16px 0;font-size:13px;color:var(--ink-3)}
   .demo-gesture { display: none; }
   @media (prefers-reduced-motion: no-preference) {
