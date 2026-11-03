@@ -468,7 +468,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       });
       // Касание: первое выбирает этап, второе открывает страницу
       link.addEventListener('click', (e) => {
-        if (lastPointer === 'touch' && selected !== i) {
+        if (e.detail > 0 && lastPointer === 'touch' && selected !== i) {
           e.preventDefault();
           select(i);
         }
@@ -789,7 +789,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         if (moved) {
           startAmbient(currentAngle());
           // после перетаскивания не открывать этап, на котором отпустили
-          box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
+          if (e.type === 'pointerup') {
+            box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
+          }
         }
       };
       box.addEventListener('pointerup', release);
