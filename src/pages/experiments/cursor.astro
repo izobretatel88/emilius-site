@@ -218,9 +218,6 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .contact-layout :global(.feedback){padding:24px 20px}.contact-layout :global(.btn){font-size:15px}
     .contact-section .section-heading{flex-direction:column;gap:8px}.contact-section .section-heading>.text-action{min-height:44px}
   }
-  @media(max-width:360px) {
-    .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
-  }
   @media(max-width:400px){
     :global(body.taste-home){padding-inline:12px}
     h1{font-size:32px}.opening-actions{gap:8px 20px}.wordmark{font-size:17px}
@@ -228,5 +225,14 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .stages { grid-template-columns: minmax(0, 1fr); }
     .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
     .direction-links{gap:12px 20px}.direction-links a>span:not(.row-arrow){font-size:13px}
+  }
+  @media (max-width: 360px) {
+    :global(body.taste-home .write-fab) { display: none; }
+    .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
+    .opening { padding-block: 20px 20px; }
+    .disciplines { margin-bottom: 12px; }
+    h1 { font-size: 25px; }
+    .opening-actions { gap: 8px 12px; margin-top: 16px; }
+    .opening-actions .action { gap: 10px; padding-inline: 12px; }
   }
 </style>
