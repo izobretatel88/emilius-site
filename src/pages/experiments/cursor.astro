@@ -99,7 +99,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
       <div class="section-heading"><h2 id="t-projects">Продукты, которые работают.</h2><a class="text-action" href={href('projects/')}>Все проекты <span aria-hidden="true">→</span></a></div>
       <div class="project-grid">
         {selected.map(project => (
-          <article class="selected-project">
+          <article class="selected-project" aria-labelledby={`case-${project.id}`}>
             <a class="project-image" href={href(`projects/#${project.id}`)} aria-label={`Смотреть проект ${project.name}`}>
               <img
                 src={href(`cases/gallery/${project.id}-800.webp`)}
@@ -113,7 +113,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
               <span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span>
             </a>
             <div class="project-description">
-              <h3>{project.name}</h3>
+              <h3 id={`case-${project.id}`}>{project.name}</h3>
               {project.id === 'wizzu' ? (
                 <p><strong class="project-result">С 0 до 2 000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
               ) : (
