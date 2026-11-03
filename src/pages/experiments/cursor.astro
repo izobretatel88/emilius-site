@@ -215,6 +215,10 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     text-decoration: underline;
     text-underline-offset: .2em;
   }
+  .wheel-area :global(.has-active .sector-label:not(.is-active)) {
+    fill: var(--ink-2);
+    opacity: 1;
+  }
   :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="0"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(1) .stage-name,
   :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="1"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(2) .stage-name,
   :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="2"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(3) .stage-name,
