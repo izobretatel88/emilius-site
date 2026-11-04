@@ -37,7 +37,7 @@
   input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
   span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:var(--radius-sm);color:var(--ink-2);font-weight:600;transition:background var(--hover),color var(--hover)}
   input:checked+span{background:var(--card);color:var(--ink);box-shadow:var(--shadow-card)}
-  input:hover+span{color:var(--ink)}
+  @media(hover:hover) and (pointer:fine){input:hover+span{color:var(--ink)}}
   input:focus-visible+span{outline:2px solid var(--teal-text);outline-offset:2px}
   @media(prefers-reduced-motion:reduce){span{transition:none}}
   @media(max-width:360px){span{padding-inline:12px}}

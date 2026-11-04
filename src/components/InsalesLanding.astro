@@ -563,7 +563,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Ссылка в подписи: зона нажатия выше строки, раскладка не сдвигается */
   .hero-phone figcaption a { display: inline-block; padding-block: 14px; margin-block: -14px; }
   .hero-phone a { font-weight: 600; text-decoration: none; }
-  .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) { .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; } }
   .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
@@ -630,9 +630,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-size: 16px;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), color var(--hover), opacity var(--hover), transform 0.16s ease-out;
   }
-  .cta:hover, .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); }
+  .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); transform: scale(0.98); }
+  @media (hover: hover) and (pointer: fine) { .cta:hover { background: var(--teal-btn-hover); color: var(--on-teal); } }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
   .switch {
@@ -644,7 +645,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
   .quick a { font-weight: 600; }
-  .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) { .switch:hover { text-decoration: underline; text-underline-offset: 3px; } }
   .block { padding: var(--section-pad) 0 calc(var(--section-pad) + 4px); border-top: 1px solid var(--hair); display: flex; flex-direction: column; gap: 18px; }
   .block > .small { max-width: 68ch; line-height: 1.5; }
   /* Форма расчёта — единственная белая поверхность среди секций: её заполняют */
@@ -686,8 +687,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
   a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
-  .shop:hover { background: var(--card); }
-  .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--card); } }
+  @media (hover: hover) and (pointer: fine) { .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; } }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
   /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
@@ -707,9 +708,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .case-pos thead th + th, .case-pos td { width: 76px; text-align: center; }
   .case-pos tbody tr:last-child > * { border-bottom: 0; }
   .case-pos tbody tr { transition: background-color var(--hover); }
-  .case-pos tbody tr:hover { background: var(--card); }
+  @media (hover: hover) and (pointer: fine) { .case-pos tbody tr:hover { background: var(--card); } }
   .case-pos tbody th { font-weight: 600; }
-  .case-pos tbody tr:hover .pos:not(.first):not(.none) { background: var(--well); }
+  @media (hover: hover) and (pointer: fine) { .case-pos tbody tr:hover .pos:not(.first):not(.none) { background: var(--well); } }
   .pos {
     display: inline-grid;
     place-items: center;
@@ -741,9 +742,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font: inherit;
     font-size: 18px;
     cursor: pointer;
-    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
   }
-  .arrow:hover:not(:disabled) { background: var(--well); }
+  @media (hover: hover) and (pointer: fine) { .arrow:hover:not(:disabled) { background: var(--well); } }
+  .arrow:active:not(:disabled) { transform: scale(0.97); }
   .arrow:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .arrow:disabled { opacity: 0.35; cursor: default; }
   .phones {
@@ -767,7 +769,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
-  .phone-card:hover .phone-name { color: var(--teal-text); }
+  @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } }
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
@@ -779,9 +781,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
   .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .more-shops a:focus-visible { outline: none; }
-  .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) { .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; } }
   .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
-  .proof a:hover { text-underline-offset: 3px; }
+  @media (hover: hover) and (pointer: fine) { .proof a:hover { text-underline-offset: 3px; } }
   .proof a { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
   .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
@@ -797,11 +799,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-color: var(--teal-btn);
     color: var(--on-teal);
   }
-  .plan.main .plan-cta:hover, .plan.main .plan-cta:active {
-    background: var(--teal-btn-hover);
-    border-color: var(--teal-btn-hover);
-    color: var(--on-teal);
-  }
+  .plan.main .plan-cta:active { background: var(--teal-btn-hover); border-color: var(--teal-btn-hover); color: var(--on-teal); }
+  @media (hover: hover) and (pointer: fine) { .plan.main .plan-cta:hover { background: var(--teal-btn-hover); border-color: var(--teal-btn-hover); color: var(--on-teal); } }
   .plan.main .price { color: var(--teal-text); }
   .plan h3 { font-size: 22px; font-weight: 700; }
   .who { font-size: 14px; color: var(--ink-2); min-height: 2.9em; }
@@ -827,10 +826,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     font-size: 15px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
   }
   .plan .dots { margin-bottom: 12px; }
-  .plan-cta:hover, .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(0.98); }
+  @media (hover: hover) and (pointer: fine) { .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
   .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
   .nums { counter-reset: n; gap: 0; }
@@ -913,8 +913,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   details[open] summary { color: var(--teal-text); }
   details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; border-color: var(--teal); }
-  summary:hover { color: var(--teal-text); }
-  summary:hover::after { border-color: var(--teal); }
+  @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
+  @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
   details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
@@ -989,7 +989,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     padding: 12px 14px;
     transition: border-color var(--hover);
   }
-  input[type='text']:hover, input[type='text']:focus { border-color: var(--teal); }
+  input[type='text']:focus { border-color: var(--teal); }
+  @media (hover: hover) and (pointer: fine) { input[type='text']:hover { border-color: var(--teal); } }
   /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
   input[type='text']:focus-visible { outline: 2px solid var(--teal); outline-offset: -1px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }

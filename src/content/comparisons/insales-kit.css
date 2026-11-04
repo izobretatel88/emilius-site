@@ -23,7 +23,7 @@
 .platform-comparison .filter-row{display:flex;align-items:center;gap:16px;justify-content:space-between}
 .platform-comparison .chips{display:flex;flex-wrap:wrap;gap:8px}
 .platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color 160ms ease-out,color 160ms ease-out}
-.platform-comparison .chips button:hover{border-color:var(--teal-text)}
+@media (hover: hover) and (pointer: fine) { .platform-comparison .chips button:hover{border-color:var(--teal-text)} }
 .platform-comparison .chips button[aria-pressed=true]{background:var(--teal-soft);color:var(--teal-text);border-color:var(--teal-text);font-weight:700}
 .platform-comparison .reset{padding:9px 0;border:0;background:none;color:var(--teal-text);font-size:14px;text-decoration:underline;white-space:nowrap}
 .platform-comparison .explanation{background:var(--teal-soft);border-radius:var(--radius-sm);padding:18px 20px;font-size:14px}
@@ -50,7 +50,7 @@
 .platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
 .platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
 .platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block}
-.platform-comparison .feature-link:hover{color:var(--teal-text)}
+@media (hover: hover) and (pointer: fine) { .platform-comparison .feature-link:hover{color:var(--teal-text)} }
 .platform-comparison .feature-id{display:block;font-size:11px;color:var(--ink-2);margin-top:5px}
 .platform-comparison .section-row th{padding:28px 22px 12px;border-bottom:1px solid var(--hair);background:var(--card);font-size:23px;line-height:1.3}
 .platform-comparison .section-row th>span{position:sticky;left:22px}
@@ -63,7 +63,7 @@
 .platform-comparison .caution{color:var(--caution)}
 .platform-comparison .connection{color:var(--ink)}
 .platform-comparison .source{display:block;width:fit-content;color:var(--teal-text);font-size:12px;text-decoration:none;margin-top:9px}
-.platform-comparison .source:hover{text-decoration:underline}
+@media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
 .platform-comparison .source span{font-size:10px;color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
 .platform-comparison .muted{font-size:12px}
