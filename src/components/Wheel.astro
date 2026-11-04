@@ -751,11 +751,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     if (!reduce) {
       box.classList.add('can-spin');
       let drag: { id: number; start: number; from: number; x: number; y: number; moved: boolean } | null = null;
+      let suppressDragClick = false;
       const angleAt = (e: PointerEvent) => {
         const r = box.getBoundingClientRect();
         return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
       };
       box.addEventListener('pointerdown', (e) => {
+        suppressDragClick = false;
         if (idle) return;
         // за центр не крутим: там угол скачет от малейшего сдвига пальца
         const r = box.getBoundingClientRect();
@@ -789,11 +791,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         if (moved) {
           startAmbient(currentAngle());
           // после перетаскивания не открывать этап, на котором отпустили
-          if (e.type === 'pointerup') {
-            box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
-          }
+          suppressDragClick = e.type === 'pointerup';
         }
       };
+      box.addEventListener('click', (e) => {
+        if (suppressDragClick && e.detail > 0) e.preventDefault();
+        suppressDragClick = false;
+      }, { capture: true });
       box.addEventListener('pointerup', release);
       box.addEventListener('pointercancel', release);
     }
