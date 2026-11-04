@@ -1,32 +1,35 @@
 ---
+// 404 на общем каркасе (04.11.2026): первый экран слева, как на остальных страницах,
+// ниже — прямой путь к основным разделам после устаревшей или неполной ссылки.
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
+import LinkList from '../components/LinkList.astro';
 import { LINKS } from '../data/site';
 import { SERVICE_ROWS } from '../data/services-list';
+import { href } from '../lib/urls';
 
-const home = import.meta.env.BASE_URL;
-const href = (p: string) => `${home}${home.endsWith('/') ? '' : '/'}${p}`;
+const paths = [
+  ...SERVICE_ROWS.map((r) => ({ title: r.title, description: r.note, href: r.href })),
+  { title: 'Все услуги', description: 'Касдев, дизайн, разработка и маркетинг', href: 'services/' },
+  { title: 'Проекты', description: 'Примеры работы команды', href: 'projects/' },
+  { title: 'Полезное', description: 'Сравнения платформ и калькулятор', href: 'resources/' },
+];
 ---
 
 <Base title="Страница не найдена — Эмилиус Эдженси" description="Такой страницы нет. Вернитесь на главную или напишите нам в Telegram.">
-
-  <main class="card lost">
-    <p class="eyebrow">Ошибка 404</p>
-    <h1>Страница не найдена</h1>
-    <p class="text">Проверьте адрес или выберите нужный раздел ниже. Можно вернуться на главную или написать нам.</p>
-    <div class="actions">
-      <a class="btn btn-primary" href={home}>На главную</a>
-      <a class="btn btn-secondary" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram</a>
-    </div>
-    <!-- Прямой путь к основным разделам после устаревшей или неполной ссылки. -->
-    <nav class="paths" aria-label="Разделы сайта">
-      <p class="paths-title">Или сразу туда, куда шли</p>
-      <ul class="paths-list">
-        {SERVICE_ROWS.map((r) => <li><a class="path service" href={href(r.href)}><b>{r.title}</b><span>{r.note}</span></a></li>)}
-        <li><a class="path service" href={href('services/')}><b>Все услуги</b><span>Касдев, дизайн, разработка и маркетинг</span></a></li>
-        <li><a class="path service" href={href('projects/')}><b>Проекты</b><span>Примеры работы команды</span></a></li>
-        <li><a class="path service" href={href('resources/')}><b>Полезное</b><span>Сравнения платформ и калькулятор</span></a></li>
-      </ul>
+  <main class="lost ui-shell">
+    <header class="ui-opening">
+      <p class="ui-eyebrow">Ошибка 404</p>
+      <h1 class="ui-h1">Страница не найдена</h1>
+      <p class="ui-lead">Проверьте адрес или выберите нужный раздел ниже. Можно вернуться на главную или написать нам.</p>
+      <div class="ui-actions">
+        <a class="ui-button" href={href()}>На главную</a>
+        <a class="ui-link" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+    <nav class="ui-section" aria-labelledby="t-paths">
+      <div class="ui-section-head"><h2 id="t-paths">Или сразу туда, куда шли</h2></div>
+      <div class="paths ui-surface"><LinkList items={paths} /></div>
     </nav>
   </main>
 
@@ -34,141 +37,9 @@ const href = (p: string) => `${home}${home.endsWith('/') ? '' : '/'}${p}`;
 </Base>
 
 <style>
-  .top {
-    display: flex;
-    justify-content: center;
-  }
-  .logo-link {
-    color: inherit;
-    text-decoration: none;
-    border-radius: var(--radius-card);
-  }
-  .lost {
-    width: 100%;
-    max-width: 620px;
-    margin-inline: auto;
-    padding: 36px 28px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    text-align: center;
-  }
-  .eyebrow {
-    color: var(--teal-text);
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  h1 {
-    font-size: clamp(24px, 4vw, 32px);
-    line-height: 1.15;
-  }
-  .text {
-    color: var(--ink-2);
-    max-width: 40ch;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .paths {
-    width: 100%;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--hair);
-  }
-  .paths-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink-2);
-  }
-  .paths-list {
-    list-style: none;
-    margin: 12px 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-  }
-  .paths-list li:first-child {
-    grid-column: 1 / -1;
-  }
-  @media (max-width: 520px) {
-    .paths-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  .path {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 9px 10px;
-    border-radius: var(--radius-btn);
-    white-space: nowrap;
-    background: var(--well);
-    color: var(--ink);
-    font-size: 15px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
-  }
-  .path:hover {
-    color: var(--teal-text);
-  }
-  .path:focus-visible {
-    outline: 2px dashed var(--teal);
-    outline-offset: 2px;
-  }
-  .path i {
-    flex: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--dot);
-  }
-  .path.service {
-    width: 100%;
-    white-space: normal;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .path.service span {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--ink-2);
-  }
-  .btn {
-    min-height: 54px;
-    border-radius: var(--radius-btn);
-    display: inline-flex;
-    align-items: center;
-    padding-inline: 22px;
-    font-weight: 600;
-    font-size: 17px;
-    text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
-  }
-  .btn-primary {
-    background: var(--teal-btn);
-    color: #fff;
-  }
-  .btn-primary:hover {
-    color: var(--on-teal);
-  }
-  .btn-secondary {
-    background: var(--card);
-    color: var(--ink);
-    border: 1px solid var(--teal);
-  }
-  .btn-secondary:hover {
-    background: var(--teal-btn);
-    border-color: var(--teal-btn);
-    color: #fff;
+  .lost .ui-opening { padding-top: 16px; }
+  .paths { padding: 0 26px; }
+  @media (max-width: 600px) {
+    .paths { padding-inline: 18px; }
   }
 </style>

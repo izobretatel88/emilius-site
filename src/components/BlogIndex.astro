@@ -18,12 +18,14 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
   description="Как запускать и вести интернет-магазины на InSales: тарифы, маркетплейсы, остатки, доставка, оплата — на примерах из работы агентства."
 >
 
-  <main class="list">
-    <h1>Блог</h1>
-    <p class="lead">Исследования, дизайн, разработка и маркетинг продуктов. Начинаем с практических материалов о запуске интернет-магазинов и работе с маркетплейсами.</p>
+  <main class="list ui-shell">
+    <header class="ui-opening list-head">
+    <h1 class="ui-h1">Блог</h1>
+    <p class="ui-lead">Исследования, дизайн, разработка и маркетинг продуктов. Начинаем с практических материалов о запуске интернет-магазинов и работе с маркетплейсами.</p>
+    </header>
     <ul class="posts">
       {posts.map((p) => (
-        <li class="card post">
+        <li class="post ui-surface">
           <a href={href(`blog/${p.id}/`)} class="cover-link" tabindex="-1" aria-hidden="true">
             <img src={cover(p.data.cover)} alt="" width="1200" height="630" loading="lazy" decoding="async" />
           </a>
@@ -54,31 +56,21 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
     text-decoration: none;
     border-radius: var(--radius-card);
   }
-  .list {
-    width: 100%;
-    max-width: 760px;
-    margin-inline: auto;
-  }
-  h1 {
-    font-size: clamp(30px, 5vw, 42px);
-    line-height: 1.1;
-  }
-  .lead {
-    margin-top: 10px;
-    max-width: 56ch;
-    font-size: 17px;
-    line-height: 1.55;
-    color: var(--ink-2);
-  }
+  /* Блог на общем каркасе: заголовок слева, статьи сеткой в две колонки, на телефоне — в одну */
+  .list-head { padding-top: 16px; border-bottom: 1px solid var(--hair); }
   .posts {
     display: grid;
-    gap: 20px;
-    margin: 26px 0 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    margin: var(--section-pad) 0 0;
     padding: 0;
     list-style: none;
   }
   .post {
     overflow: hidden;
+  }
+  @media (max-width: 760px) {
+    .posts { grid-template-columns: 1fr; gap: 20px; margin-top: var(--section-pad-sm); }
   }
   .cover-link {
     display: block;
@@ -93,8 +85,9 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
     padding: 18px clamp(18px, 4vw, 28px) 24px;
   }
   h2 {
-    font-size: 22px;
+    font-size: var(--fs-h3);
     line-height: 1.22;
+    letter-spacing: -0.01em;
   }
   h2 a {
     color: var(--ink);

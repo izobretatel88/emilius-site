@@ -69,9 +69,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <a class="jump-cta" href="#lead" data-goal="calc-click">Посчитать</a>
   </nav>
 
-  <main class="page">
+  <main class="page ui-shell">
     <Breadcrumbs items={variant==='shop' ? [{title:'Услуги',href:'services/'},{title:'Магазин на InSales'}] : [{title:'Услуги',href:'services/'},{title:'Магазин на InSales',href:'services/insales-shop/'},{title:'Для селлеров'}]} />
-    <section class="card hero">
+    <section class="hero">
       <div class="hero-main">
       <p class="eyebrow">{hero.eyebrow}</p>
       <h1>{nobreak(hero.title)}</h1>
@@ -93,7 +93,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </figure>
     </section>
 
-    <section class="card block" aria-labelledby="t-extras">
+    <section class="block" aria-labelledby="t-extras">
       <h2 id="t-extras">Что обычно не пишут в предложениях — у нас входит в цену</h2>
       <div class="grid2">
         {EXTRAS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
@@ -101,13 +101,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     </section>
 
     {variant === 'seller' && (
-      <section class="card block" aria-labelledby="t-why">
+      <section class="block" aria-labelledby="t-why">
         <h2 id="t-why">Зачем свой магазин, если есть WB и Ozon</h2>
         <div class="grid2">
           {SELLER_WHY.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
         </div>
       </section>
-      <section class="card block" aria-labelledby="t-move">
+      <section class="block" aria-labelledby="t-move">
         <h2 id="t-move">Что переносим с площадок</h2>
         <div class="grid2">
           {SELLER_MOVE.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
@@ -117,7 +117,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     )}
 
     {variant === 'shop' && (
-      <section class="card block" aria-labelledby="t-sit">
+      <section class="block" aria-labelledby="t-sit">
         <h2 id="t-sit">Узнаёте себя?</h2>
         <div class="grid2">
           {SITUATIONS.map(([t, d]) => <div class="item"><h3>{t}</h3><p>{d}</p></div>)}
@@ -125,13 +125,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </section>
     )}
 
-    <section class="card block" aria-labelledby="t-result">
+    <section class="block" aria-labelledby="t-result">
       <h2 id="t-result">Что получите</h2>
       <ul class="dots got">{RESULT.map((r) => <li>{r}</li>)}</ul>
     </section>
 
     <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
-    <section class="card block" aria-labelledby="t-examples">
+    <section class="block" aria-labelledby="t-examples">
       <h2 id="t-examples">Магазины, которые мы сделали</h2>
       <!-- Свежая работа — кейс «магазин + SEO»: что сделали и позиции по местным запросам -->
       <article class="case" id={`case-${FRESH_SHOP.id}`} aria-labelledby="t-case">
@@ -188,7 +188,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
-    <section class="card block mobile" aria-labelledby="t-mobile">
+    <section class="block mobile" aria-labelledby="t-mobile">
       <div class="mobile-head">
         <div class="mobile-text">
           <h2 id="t-mobile">Как эти магазины выглядят в телефоне</h2>
@@ -213,7 +213,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     </section>
 
     <!-- Видеоотзыв: как клиент нашёл нас и почему выбрал -->
-    <section class="card block review" aria-labelledby="t-review">
+    <section class="block review" aria-labelledby="t-review">
       <h2 id="t-review">Отзыв клиента</h2>
       <div class="review-grid">
         <!-- Имя плеера — заголовок и автор отзыва: без него читалка объявляет просто «видео» -->
@@ -239,7 +239,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </div>
     </section>
 
-    <section class="block plain" aria-labelledby="t-plans">
+    <section class="block" aria-labelledby="t-plans">
       <h2 id="t-plans">Пакеты и цены</h2>
       <div class="plans">
         {plans.map((p) => (
@@ -258,12 +258,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     </section>
 
     <div class="cols">
-      <section class="card block" aria-labelledby="t-accept">
+      <section class="block" aria-labelledby="t-accept">
         <h2 id="t-accept">Магазин сдан, когда</h2>
         <ol class="nums">{ACCEPTANCE.map((a) => <li>{a}</li>)}</ol>
         <p class="small">Полный протокол — 12 проверок. Отдаём его вместе с магазином.</p>
       </section>
-      <section class="card block" aria-labelledby="t-yours">
+      <section class="block" aria-labelledby="t-yours">
         <h2 id="t-yours">Всё оформлено на вас</h2>
         <p>Аккаунт InSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши.</p>
         <h2 class="sub">Честно про трафик</h2>
@@ -272,7 +272,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </section>
     </div>
 
-    <section class="card block" aria-labelledby="t-weeks">
+    <section class="block" aria-labelledby="t-weeks">
       <h2 id="t-weeks">Этапы</h2>
       <ol class="weeks">
         {WEEKS.map(([w, what, you]) => (
@@ -286,7 +286,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <p class="small">Связь — в Telegram-чате проекта: менеджер отвечает в течение часа, с 11 до 19 по Москве.</p>
     </section>
 
-    <section class="card block" aria-labelledby="t-choice">
+    <section class="block" aria-labelledby="t-choice">
       <h2 id="t-choice">InSales, Tilda, Яндекс KIT или самому?</h2>
       <LinkList items={[
         {title:'Сравнить восемь платформ',description:'Сценарии, затраты и ограничения.',href:'compare/ecommerce-platforms/'},
@@ -299,14 +299,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </dl>
     </section>
 
-    <section class="card block" aria-labelledby="t-faq">
+    <section class="block" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
         {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
       </div>
     </section>
 
-    <section class="card block lead-form" id="lead" aria-labelledby="t-lead">
+    <section class="card block lead-form ui-surface" id="lead" aria-labelledby="t-lead">
       <h2 id="t-lead">Посчитаем ваш магазин</h2>
       <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
       <form method="post" action={action} novalidate data-norms={norms} data-variant={variant}>
@@ -352,7 +352,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         </div>
       </form>
     </section>
-    <section class="card block"><h2>Если задача шире запуска магазина</h2><LinkList items={[
+    <section class="block"><h2>Если задача шире запуска магазина</h2><LinkList items={[
       {title:'Индивидуальный интерфейс',description:'Спроектировать свои сценарии и дизайн.',href:'services/design/'},
       {title:'Разработка и интеграции',description:'Обсудить нестандартную логику и связку систем.',href:'services/dev/'},
       {title:'Продвижение после запуска',description:'SEO, аналитика и развитие продукта.',href:'services/marketing/'},
@@ -543,16 +543,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .lead-form [aria-invalid='true']{outline:2px solid var(--ink);outline-offset:2px}
   .top { display: flex; justify-content: center; }
   .logo-link { color: inherit; text-decoration: none; border-radius: var(--radius-card); }
+  /* Общий каркас (04.11.2026): ширина --layout-width, разделы — секции с тонкой линией сверху,
+     белые поверхности только у пакетов, кейса и формы расчёта */
   .page {
-    width: 100%;
-    max-width: 880px;
-    margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: 28px; /* воздух между разделами, как на главной (23.10.2026) */
   }
   .hero {
-    padding: clamp(26px, 4.4vw, 48px);
+    padding: 16px 0 var(--section-pad);
     display: grid;
     grid-template-columns: minmax(0, 1fr) clamp(210px, 24vw, 280px);
     gap: clamp(24px, 4vw, 48px);
@@ -572,10 +570,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     text-transform: uppercase;
   }
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
-  h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 700; line-height: 1.06; letter-spacing: -0.02em; text-wrap: balance; }
+  h1 { font-size: var(--fs-h1); font-weight: 600; line-height: 1.1; letter-spacing: -0.035em; text-wrap: balance; }
   .block p, .item p, .shop-what, .lead { text-wrap: pretty; }
   .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
-  h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; text-wrap: balance; }
+  h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.15; letter-spacing: var(--tracking-tight); text-wrap: balance; }
   h2.sub {
     font-size: clamp(20px, 2.4vw, 24px);
     margin-top: 6px;
@@ -616,18 +614,18 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 6px; }
   .cta-row .note { flex-basis: 100%; }
   .cta {
-    min-height: 54px;
+    min-height: 50px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding-inline: 22px;
+    padding-inline: 24px;
     border: 0;
     border-radius: var(--radius-btn);
     background: var(--teal-btn);
     color: #fff;
     font: inherit;
     font-weight: 600;
-    font-size: 17px;
+    font-size: 16px;
     text-decoration: none;
     cursor: pointer;
     transition: background-color var(--hover), color var(--hover), opacity var(--hover);
@@ -645,9 +643,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
   .quick a { font-weight: 600; }
   .switch:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
-  .block.plain { padding: 8px 0 0; }
-  .block.plain > .small { max-width: 68ch; line-height: 1.5; }
+  .block { padding: var(--section-pad) 0 calc(var(--section-pad) + 4px); border-top: 1px solid var(--hair); display: flex; flex-direction: column; gap: 18px; }
+  .block > .small { max-width: 68ch; line-height: 1.5; }
+  /* Форма расчёта — единственная белая поверхность среди секций: её заполняют */
+  .block.lead-form { padding: clamp(24px, 3.6vw, 38px); border-top: 0; margin-block: 8px var(--section-pad); }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
   .item {
@@ -723,7 +722,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .pos.none { background: none; color: var(--ink-3); font-weight: 400; }
   .fresh-tag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
   /* Мобильные версии: лента выходит под края карточки, полоса прокрутки скрыта — листают стрелками или свайпом */
-  .mobile { --pad: clamp(24px, 3.6vw, 38px); }
+  .mobile { --pad: 0px; }
   .mobile-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
   .mobile-text { display: flex; flex-direction: column; gap: 8px; max-width: 560px; }
   .mobile-lead { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
@@ -828,7 +827,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .plan .dots { margin-bottom: 12px; }
   .plan-cta:hover, .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
   .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
-  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
   .nums { counter-reset: n; gap: 0; }
   .nums li {
     counter-increment: n;
@@ -1058,9 +1057,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .who { min-height: 0; }
   }
   @media (max-width: 640px) {
-    .page, .cols { gap: 20px; }
-    .hero { padding: 26px 20px; }
-    .block { padding: 24px 20px; }
+    .hero { padding: 8px 0 var(--section-pad-sm); }
+    .block { padding-block: var(--section-pad-sm); }
+    .block.lead-form { padding: 24px 20px; }
+    h1 { font-size: var(--fs-h1-sm); letter-spacing: var(--tracking-tight); }
+    h2 { font-size: var(--fs-h2-sm); }
     .grid2, .cols { grid-template-columns: 1fr; }
     .item:nth-child(2) { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hair); }
     .block ul.got { grid-template-columns: 1fr; }
@@ -1071,7 +1072,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .wk { grid-row: auto; }
     .cta { width: 100%; }
     .case-body, .case-pos { padding-inline: 16px; }
-    .mobile { --pad: 20px; }
+    .mobile { --pad: var(--layout-gutter); }
     .arrows { display: none; }
     .phones li { flex-basis: 158px; }
     .case-pos thead th + th, .case-pos td { width: 60px; }

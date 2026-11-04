@@ -36,7 +36,8 @@ const related=[
 </Base>
 <style>
   :global(body:has(>.comparison-page)){row-gap:16px}
-  .comparison-page{width:100%;max-width:1400px;min-width:0;margin-inline:auto}
+  .comparison-page :global(.directory-callout){margin-bottom:8px}
+  .comparison-page{width:100%;max-width:var(--layout-width);min-width:0;margin-inline:auto;padding-top:16px}
   .comparison-page :global(.breadcrumbs){margin-bottom:4px}
   .platform-comparison{--est:var(--ink-2);--caution:var(--ink-2);--negative:var(--ink-2);--low-fg:var(--ink-2);min-width:0;font-family:var(--font);color:var(--ink)}
   .platform-comparison :global(.wrap){padding:4px 0 20px;grid-template-columns:minmax(0,1fr);gap:16px}
@@ -51,7 +52,8 @@ const related=[
   .platform-comparison :global(#comparison){min-width:0}
   .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
   .platform-comparison :global(.table-jump){width:fit-content;font-size:14px;text-underline-offset:4px}
-  .platform-comparison :global(h1){font-size:clamp(28px,3vw,40px);line-height:1.12;max-width:none;margin:0}
+  .platform-comparison :global(h1){font-size:var(--fs-h1);font-weight:600;line-height:1.1;letter-spacing:-.035em;max-width:none;margin:0}
+  @media(max-width:760px){.platform-comparison :global(h1){font-size:var(--fs-h1-sm);letter-spacing:var(--tracking-tight)}}
   .platform-comparison :global(.mobile-note-row){display:none}
   .platform-comparison :global(#comparison){scroll-margin-top:16px}
   .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
