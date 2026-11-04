@@ -38,7 +38,7 @@
   font-size: var(--fs-lead);
   line-height: 1.5;
   color: var(--ink-2);
-  max-width: 72ch;
+  max-width: 62ch; /* около 70 знаков в строке при 19 px */
   margin-top: 20px;
   text-wrap: pretty;
 }
