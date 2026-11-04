@@ -940,6 +940,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: opacity var(--hover), visibility var(--hover);
   }
   .jump.is-on { opacity: 1; visibility: visible; }
+  /* Закреплённая навигация не закрывает элемент, к которому перешли с клавиатуры (WCAG 2.2, «фокус не перекрыт») */
+  :global(html:has(.jump.is-on)) { scroll-padding-top: 76px; }
   .jump a {
     display:inline-flex;
     align-items:center;
@@ -955,10 +957,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     white-space: nowrap;
     transition: background-color var(--hover), color var(--hover);
   }
-  .jump a:hover { color: var(--ink); background: var(--well); }
+  @media (hover: hover) and (pointer: fine) { .jump a:hover { color: var(--ink); background: var(--well); } }
   .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
-  .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); }
+  @media (hover: hover) and (pointer: fine) { .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
   .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
   @media (max-width: 480px) {
     .jump a { padding: 8px 5px; font-size: 14px; }
