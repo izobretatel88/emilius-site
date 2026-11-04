@@ -48,7 +48,7 @@ export const SERVICES: Record<string, Service> = {
       title: 'Интернет-магазин на InSales за 3–5 недель',
       text: 'Готовая тема, ваш каталог, оплата, доставка и аналитика. Состав и цену фиксируем до старта.',
       href: 'services/insales-shop/',
-      cta: 'Посчитать магазин →',
+      cta: 'Посчитать магазин',
     },
   },
   marketing: {
