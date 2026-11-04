@@ -29,7 +29,7 @@ function webpSize(file) {
   return null;
 }
 
-// Пробел между разрядами числа и перед ₽ или % — неразрывный. Код в <code>/<pre> не трогаем.
+// Пробел между разрядами числа, перед ₽ или % и перед тире — неразрывный: тире не начинает строку. Код в <code>/<pre> не трогаем.
 const NBSP = '\u00a0';
 const glueNumbers = (text) => {
   let out = text;
@@ -37,7 +37,7 @@ const glueNumbers = (text) => {
     prev = out;
     out = out.replace(/(\d) (\d{3})(?!\d)/g, `$1${NBSP}$2`);
   }
-  return out.replace(/(\d) ([₽%])/g, `$1${NBSP}$2`);
+  return out.replace(/(\d) ([₽%])/g, `$1${NBSP}$2`).replace(/ —/g, `${NBSP}—`);
 };
 
 const isRoot = (url) => typeof url === 'string' && url.startsWith('/') && !url.startsWith('//');
