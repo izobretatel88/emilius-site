@@ -641,6 +641,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     text-decoration: none;
     padding-top: 12px;
+    /* Зона касания 44 px без сдвига раскладки */
+    padding-bottom: 10px;
+    margin-bottom: -10px;
     border-top: 1px solid var(--hair);
   }
   .quick { font-size: 15px; color: var(--ink-2); line-height: 1.45; }

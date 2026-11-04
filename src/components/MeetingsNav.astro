@@ -36,7 +36,11 @@ const items = [
     border-radius: var(--radius-btn);
     box-shadow: var(--shadow-card);
   }
+  /* Высота вкладки 44 px — удобная зона касания на телефоне */
   .tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     color: var(--ink-2);
