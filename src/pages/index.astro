@@ -24,7 +24,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   <Intro />
   <main class="home-page ui-shell">
     <section class="ui-opening" aria-labelledby="mission-title">
-      <p class="disciplines">Дизайн · Разработка · Маркетинг</p>
+      <p class="ui-eyebrow">Наша миссия</p>
       <h1 class="ui-h1" id="mission-title">Помогаем великолепным людям<span class="ui-quiet"> создавать великолепные продукты.</span></h1>
       <div class="ui-actions"><a class="ui-button" href="#feedback">Обсудить проект <span aria-hidden="true">→</span></a><a class="ui-link" href="#projects">Смотреть проекты</a></div>
     </section>
@@ -152,9 +152,8 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
 <style>
   :global(body.home) { gap: 0; padding-bottom: 88px; }
   .stages a, .direction-links a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
-  /* Первый экран как в эксперименте (выбор владельца 04.11.2026): направления тихой строкой,
-     миссия с переносом после «людям», вторая часть тише. Срок и цена магазина — в блоке услуг. */
-  .disciplines { font-size: 15px; color: var(--ink-2); margin-bottom: 18px; }
+  /* Первый экран (выбор владельца 04.11.2026): eyebrow «Наша миссия», миссия с переносом после «людям»,
+     вторая часть тише. Срок и цена магазина — в блоке услуг. */
 
   .product-demo { border: 1px solid var(--hair); border-radius: var(--radius-card); background: var(--card); padding: 0 28px; }
   .demo-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 62px; border-bottom: 1px solid var(--hair); }
@@ -256,7 +255,6 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .material-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   }
   @media (max-width: 760px) {
-    .disciplines { font-size: 13px; margin-bottom: 16px; }
     .product-demo { padding: 0 18px; }
     .demo-top { min-height: 60px; }
     .demo-top h2 { font-size: 18px; }
@@ -297,6 +295,5 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     :global(body.home .write-fab) { display: none; }
     .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
     .ui-opening { padding-block: 20px; }
-    .disciplines { margin-bottom: 12px; }
   }
 </style>
