@@ -55,6 +55,24 @@ p {
   margin: 0;
 }
 
+/* Текст без «висячего» слова в последней строке абзаца */
+p,
+li,
+dd,
+figcaption,
+blockquote {
+  text-wrap: pretty;
+}
+
+/* Части браузера в цветах бренда: выделение, галочки и переключатели */
+::selection {
+  background: var(--selection);
+  color: inherit;
+}
+:root {
+  accent-color: var(--teal-btn);
+}
+
 a {
   color: var(--teal-text);
 }

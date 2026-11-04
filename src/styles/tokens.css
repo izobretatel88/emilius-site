@@ -67,6 +67,8 @@
   --sec-custdev-now: #f7e6ee;
   --sec-design-now: #e5f5f5;
   --teal-soft: var(--sec-design-now);
+  /* Выделение текста мышью — фирменная бирюза, а не системный синий */
+  --selection: rgba(0, 153, 155, 0.2);
   --sec-dev-now: #eafcec;
   --sec-marketing-now: #f3f3f3;
   /* Пройденные дни итерации — круг закрашивается цветом этапа */
@@ -127,6 +129,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
+    --selection: rgba(0, 153, 155, 0.42);
     --teal-num: #35b6b4;
     --teal-text: #3cc6c6;
     --ink: #f5f5f7;
@@ -180,6 +183,7 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
+  --selection: rgba(0, 153, 155, 0.42);
   --teal-num: #35b6b4;
   --teal-text: #3cc6c6;
   --ink: #f5f5f7;

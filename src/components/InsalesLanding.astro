@@ -681,6 +681,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .shop-name { font-size: 18px; font-weight: 700; }
   .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
   .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
+  a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
   .shop:hover { background: var(--card); }
   .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; }

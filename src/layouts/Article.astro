@@ -155,11 +155,14 @@ const jsonLd = [
     text-transform: uppercase;
   }
   .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--teal-text);
     text-decoration: none;
   }
   h1 {
-    margin-top: 18px;
+    margin-top: 4px;
     font-size: var(--fs-h1-doc);
     font-weight: 600;
     line-height: 1.12;
@@ -228,7 +231,7 @@ const jsonLd = [
   .body :global(ul),
   .body :global(ol) {
     margin: 14px 0 0;
-    max-width: 68ch;
+    max-width: 62ch; /* кириллица уже латиницы: 62ch дают 65–75 знаков в строке */
     font-size: 17px;
     line-height: 1.65;
   }
