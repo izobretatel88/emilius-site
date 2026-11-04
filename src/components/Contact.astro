@@ -138,8 +138,9 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
   }
+  .btn:active { transform: scale(0.98); }
   .btn svg {
     width: 22px;
     height: 22px;
@@ -151,8 +152,10 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     color: #fff;
     border: 0;
   }
-  .btn-primary:hover {
-    color: var(--on-teal);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      color: var(--on-teal);
+    }
   }
   .btn-secondary {
     background: var(--card);
@@ -162,13 +165,15 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
   .btn-secondary svg {
     fill: var(--ink);
   }
-  .btn-secondary:hover {
-    background: var(--teal-btn);
-    border-color: var(--teal-btn);
-    color: #fff;
-  }
-  .btn-secondary:hover svg {
-    fill: #000;
+  @media (hover: hover) and (pointer: fine) {
+    .btn-secondary:hover {
+      background: var(--teal-btn);
+      border-color: var(--teal-btn);
+      color: #fff;
+    }
+    .btn-secondary:hover svg {
+      fill: #000;
+    }
   }
   iframe {
     /* Страница виджета без своей темы: при тёмной теме сайта браузер подложил бы под неё сплошной фон */

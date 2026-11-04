@@ -66,8 +66,9 @@ import { LINKS } from '../data/site';
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover), transform 0.16s ease-out;
   }
+  .write-fab:active { transform: scale(0.97); }
   .write-fab svg {
     width: 22px;
     height: 22px;
@@ -75,13 +76,15 @@ import { LINKS } from '../data/site';
     fill: var(--ink);
     transition: fill var(--hover);
   }
-  .write-fab:hover {
-    background: var(--teal-btn-hover);
-    border-color: var(--teal-btn-hover);
-    color: var(--on-teal);
-  }
-  .write-fab:hover svg {
-    fill: var(--on-teal);
+  @media (hover: hover) and (pointer: fine) {
+    .write-fab:hover {
+      background: var(--teal-btn-hover);
+      border-color: var(--teal-btn-hover);
+      color: var(--on-teal);
+    }
+    .write-fab:hover svg {
+      fill: var(--on-teal);
+    }
   }
   .write-fab:focus-visible {
     outline: 2px dashed var(--teal);
