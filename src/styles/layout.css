@@ -151,7 +151,7 @@
     padding-block: 36px 28px;
   }
   .ui-eyebrow {
-    font-size: 12px;
+    font-size: var(--fs-small);
     margin-bottom: 16px;
   }
   .ui-h1 {
@@ -162,7 +162,7 @@
     display: inline;
   }
   .ui-lead {
-    font-size: 16px;
+    font-size: var(--fs-lead-sm);
     margin-top: 16px;
   }
   .ui-actions {
