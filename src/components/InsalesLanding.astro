@@ -791,6 +791,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quote blockquote { margin: 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
   .quote figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); }
   .quote figcaption b { font-size: 16px; color: var(--ink); }
+  /* Ссылка на сайт под отзывом: зона нажатия 44 px, строка не сдвигается */
+  .quote figcaption a { display: inline-block; padding-block: 13px; margin-block: -13px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   .plan.main { border-color: var(--teal); }

@@ -29,7 +29,7 @@
 .platform-comparison .explanation{background:var(--teal-soft);border-radius:var(--radius-sm);padding:18px 20px;font-size:14px}
 .platform-comparison .explanation>p{margin:0 0 10px;max-width:110ch}
 .platform-comparison .explanation strong{color:var(--teal-text)}
-.platform-comparison summary{color:var(--teal-text);font-weight:700;width:fit-content;padding:4px 0}
+.platform-comparison summary{color:var(--teal-text);font-weight:700;width:fit-content;min-height:44px;padding:12px 0;margin-block:-8px}
 .platform-comparison dl{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin:20px 0}
 .platform-comparison dt{font-weight:700}
 .platform-comparison dd{margin:4px 0 0;color:var(--ink-2)}
@@ -62,7 +62,7 @@
 .platform-comparison .unknown{color:var(--ink-2);font-weight:400}
 .platform-comparison .caution{color:var(--caution)}
 .platform-comparison .connection{color:var(--ink)}
-.platform-comparison .source{display:block;width:fit-content;color:var(--teal-text);font-size:12px;text-decoration:none;margin-top:9px}
+.platform-comparison .source{display:block;width:fit-content;color:var(--teal-text);font-size:12px;text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
 .platform-comparison .source span{font-size:10px;color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
