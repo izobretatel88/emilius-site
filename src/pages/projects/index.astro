@@ -128,6 +128,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-error{padding:8px 20px;color:var(--ink);font-size:14px}
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
+  /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
+  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
+  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform:scale(0.97)}
   .viewer-image[data-device='phone']{padding:20px;background:var(--well)}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   @media(max-width:1000px){.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
