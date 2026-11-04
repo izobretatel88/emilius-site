@@ -560,6 +560,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
   .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; text-wrap: balance; }
+  /* Ссылка в подписи: зона нажатия выше строки, раскладка не сдвигается */
+  .hero-phone figcaption a { display: inline-block; padding-block: 14px; margin-block: -14px; }
   .hero-phone a { font-weight: 600; text-decoration: none; }
   .hero-phone a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .eyebrow {
@@ -768,8 +770,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-card:hover .phone-name { color: var(--teal-text); }
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .more-shops li { font-size: 14px; color: var(--ink-2); padding: 6px 12px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
-  .more-shops li:hover { background: var(--card); }
+  /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
+  .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
+  @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--card); } }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
   .more-shops li { position: relative; }
@@ -779,7 +782,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
   .proof a:hover { text-underline-offset: 3px; }
-  .proof a { font-weight: 600; }
+  .proof a { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
   .review video { display: block; width: 100%; height: auto; aspect-ratio: 640 / 362; border-radius: var(--radius-sm); background: var(--well); }
   .quote { margin: 0; display: flex; flex-direction: column; gap: 14px; }
