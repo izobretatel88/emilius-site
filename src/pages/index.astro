@@ -8,15 +8,13 @@ import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
-import { MISSION_LINES, SECTORS } from '../data/site';
+import { SECTORS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
 import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
-// Под миссией — что делаем и с чего начать: миссия не говорит, чем мы заняты и сколько это стоит (03.11.2026)
-const shop = SERVICE_ROWS[0];
 ---
 <Base
   title="Эмилиус Эдженси – дизайн и реализация продуктов"
@@ -26,9 +24,8 @@ const shop = SERVICE_ROWS[0];
   <Intro />
   <main class="home-page ui-shell">
     <section class="ui-opening" aria-labelledby="mission-title">
-      <p class="ui-eyebrow">Наша миссия</p>
-      <h1 class="ui-h1" id="mission-title">{MISSION_LINES[0]}<span class="ui-quiet"> {MISSION_LINES[1]}</span></h1>
-      <p class="ui-lead">Исследуем, проектируем, разрабатываем и продвигаем. <a class="offer" href={href(shop.href)}>{shop.title}&nbsp;— <span class="nw">{shop.note.toLowerCase()}&nbsp;→</span></a></p>
+      <p class="disciplines">Дизайн · Разработка · Маркетинг</p>
+      <h1 class="ui-h1" id="mission-title">Помогаем великолепным людям<span class="ui-quiet"> создавать великолепные продукты.</span></h1>
       <div class="ui-actions"><a class="ui-button" href="#feedback">Обсудить проект <span aria-hidden="true">→</span></a><a class="ui-link" href="#projects">Смотреть проекты</a></div>
     </section>
 
@@ -155,9 +152,9 @@ const shop = SERVICE_ROWS[0];
 <style>
   :global(body.home) { gap: 0; padding-bottom: 88px; }
   .stages a, .direction-links a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
-  .home-page .offer { font-weight: 600; color: var(--teal-text); text-decoration: underline; text-underline-offset: 3px; }
-  .home-page .offer:hover { color: var(--teal-btn-hover); }
-  .nw { white-space: nowrap; }
+  /* Первый экран как в эксперименте (выбор владельца 04.11.2026): направления тихой строкой,
+     миссия с переносом после «людям», вторая часть тише. Срок и цена магазина — в блоке услуг. */
+  .disciplines { font-size: 15px; color: var(--ink-2); margin-bottom: 18px; }
 
   .product-demo { border: 1px solid var(--hair); border-radius: var(--radius-card); background: var(--card); padding: 0 28px; }
   .demo-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 62px; border-bottom: 1px solid var(--hair); }
@@ -259,6 +256,7 @@ const shop = SERVICE_ROWS[0];
     .material-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   }
   @media (max-width: 760px) {
+    .disciplines { font-size: 13px; margin-bottom: 16px; }
     .product-demo { padding: 0 18px; }
     .demo-top { min-height: 60px; }
     .demo-top h2 { font-size: 18px; }
@@ -299,5 +297,6 @@ const shop = SERVICE_ROWS[0];
     :global(body.home .write-fab) { display: none; }
     .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
     .ui-opening { padding-block: 20px; }
+    .disciplines { margin-bottom: 12px; }
   }
 </style>
