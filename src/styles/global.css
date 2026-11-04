@@ -109,7 +109,7 @@ a {
   white-space: nowrap;
 }
 
-/* Узкий телефон: поля страницы уже — места и так мало */
+/* Телефон: поля страницы уже, но не меньше 16px — текст не должен прилипать к краю экрана */
 @media (max-width: 760px) {
   :root {
     --layout-gutter: 20px;
@@ -117,7 +117,7 @@ a {
 }
 @media (max-width: 400px) {
   :root {
-    --layout-gutter: 12px;
+    --layout-gutter: 16px;
   }
 }
 

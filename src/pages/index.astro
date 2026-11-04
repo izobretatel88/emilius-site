@@ -210,7 +210,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .direction-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; margin-top: 28px; }
   .direction-links a { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-content: start; padding: 12px 0; min-width: 0; }
   .direction-links strong { font-size: 18px; font-weight: 600; text-transform: capitalize; }
-  .direction-links a > span:not(.ui-arrow) { font-size: 14px; line-height: 1.5; color: var(--ink-2); grid-column: 1; grid-row: 2; }
+  .direction-links a > span:not(.ui-arrow) { font-size: 15px; line-height: 1.5; color: var(--ink-2); grid-column: 1; grid-row: 2; }
   .direction-links .ui-arrow { grid-column: 2; grid-row: 1; }
   .direction-links a:hover strong, .direction-links a:focus-visible strong { color: var(--teal-text); }
 
@@ -224,14 +224,14 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .project-inquiry { margin-top: 8px; }
   .project-description .project-inquiry { color: var(--teal-text); }
   .project-description h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 8px; }
-  .project-description p { font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+  .project-description p { font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
   .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover); }
   .material .ui-label { grid-column: 1 / -1; margin: 0; }
   .material strong { font-size: 19px; line-height: 1.25; font-weight: 600; }
   .material .ui-arrow { grid-column: 2; grid-row: 2; }
-  .material-text { grid-column: 1 / -1; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+  .material-text { grid-column: 1 / -1; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
   .material:hover strong, .material:focus-visible strong { color: var(--teal-text); }
 
   .contact-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: stretch; }
@@ -289,7 +289,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
     .stages { grid-template-columns: minmax(0, 1fr); }
     .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
     .direction-links { gap: 12px 20px; }
-    .direction-links a > span:not(.ui-arrow) { font-size: 13px; }
+    .direction-links a > span:not(.ui-arrow) { font-size: 14px; }
   }
   @media (max-width: 360px) {
     :global(body.home .write-fab) { display: none; }
