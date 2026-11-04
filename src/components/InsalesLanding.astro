@@ -1026,7 +1026,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     flex-direction: column;
     gap: 4px;
     padding: 16px 18px;
-    border: 2px solid var(--teal);
+    /* Ориентир внутри формы — ступень тона, а не вторая карточка с рамкой */
+    background: var(--well);
     border-radius: var(--radius-sm);
   }
   .estimate[hidden] { display: none; }
