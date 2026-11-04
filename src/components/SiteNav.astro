@@ -76,7 +76,8 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   .site-header { border-bottom: 1px solid var(--hair); }
   .site-nav { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 12; }
   a { text-decoration: none; color: var(--ink); }
-  a:hover { color: var(--teal-text); }
+  a { transition: color var(--hover); }
+  @media (hover: hover) and (pointer: fine) { a:hover { color: var(--teal-text); } }
   .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .wordmark { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; white-space: nowrap; min-height: 44px; }
   .wordmark img { width: 18px; height: 27px; object-fit: contain; }
@@ -102,6 +103,9 @@ const discuss = isHome ? '#feedback' : href('#feedback');
     .nav-menu svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
     .close-icon, .nav-menu[open] .menu-icon { display: none; }
     .nav-menu[open] .close-icon { display: initial; }
+    /* Меню проявляется за 0.2 с — спокойный fade бренда, без движения */
+    .nav-menu[open] .menu-links { animation: menu-in 0.2s ease-out; }
+    @keyframes menu-in { from { opacity: 0; } }
     .menu-links { position: absolute; top: calc(100% + 8px); inset-inline: 0; display: grid; max-height: calc(100dvh - 88px); overflow-y: auto; overscroll-behavior: contain; padding: 12px 20px; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-pop); }
     .menu-links a { min-height: 48px; display: flex; align-items: center; border-bottom: 1px solid var(--hair); }
     .menu-links a:last-child { border-bottom: 0; }

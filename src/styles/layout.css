@@ -64,11 +64,18 @@
   font-weight: 600;
   text-decoration: none;
   text-align: center;
-  transition: background-color var(--hover);
+  transition: background-color var(--hover), transform 0.16s ease-out;
 }
-.ui-button:hover {
-  background: var(--teal-btn-hover);
-  color: var(--on-teal);
+/* Наведение — только там, где есть мышь: на телефоне касание не оставляет «залипший» цвет */
+@media (hover: hover) and (pointer: fine) {
+  .ui-button:hover {
+    background: var(--teal-btn-hover);
+    color: var(--on-teal);
+  }
+}
+/* Нажатие: кнопка чуть проседает — интерфейс «услышал» касание */
+.ui-button:active {
+  transform: scale(0.98);
 }
 /* Текстовое действие: подчёркивание только при наведении и в фокусе */
 .ui-link {
@@ -79,13 +86,19 @@
   font-size: 15px;
   font-weight: 600;
   color: var(--ink);
-  text-decoration: none;
+  text-decoration: underline transparent;
+  text-underline-offset: 5px;
+  transition: color var(--hover), text-decoration-color var(--hover);
 }
-.ui-link:hover,
 .ui-link:focus-visible {
   color: var(--teal-text);
-  text-decoration: underline;
-  text-underline-offset: 5px;
+  text-decoration-color: currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ui-link:hover {
+    color: var(--teal-text);
+    text-decoration-color: currentColor;
+  }
 }
 .ui-link .ui-arrow,
 .ui-arrow {
