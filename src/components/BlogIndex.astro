@@ -93,8 +93,10 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
     color: var(--ink);
     text-decoration: none;
   }
-  h2 a:hover {
-    color: var(--teal-text);
+  @media (hover: hover) and (pointer: fine) {
+    h2 a:hover {
+      color: var(--teal-text);
+    }
   }
   .text p {
     margin-top: 8px;

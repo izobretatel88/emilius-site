@@ -48,8 +48,10 @@ const items = [
   .tab.app {
     color: var(--ink);
   }
-  .tab:hover {
-    color: var(--teal-text);
+  @media (hover: hover) and (pointer: fine) {
+    .tab:hover {
+      color: var(--teal-text);
+    }
   }
   .tab[aria-current='page'] {
     background: var(--well);

@@ -224,11 +224,15 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   input[type='text']::placeholder {
     color: var(--ink-3);
   }
-  textarea:hover,
-  input[type='text']:hover,
   textarea:focus,
   input[type='text']:focus {
     border-color: var(--teal);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    textarea:hover,
+    input[type='text']:hover {
+      border-color: var(--teal);
+    }
   }
   /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
   textarea:focus-visible,

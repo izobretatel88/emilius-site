@@ -349,10 +349,15 @@ const jsonLd = [
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background var(--hover);
+    transition: background var(--hover), transform 0.16s ease-out;
   }
-  .body :global(.copy:hover) {
-    background: var(--teal);
+  @media (hover: hover) and (pointer: fine) {
+    .body :global(.copy:hover) {
+      background: var(--teal);
+    }
+  }
+  .body :global(.copy:active) {
+    transform: scale(0.97);
   }
   .body :global(.table-wrap) {
     margin-top: 18px;
