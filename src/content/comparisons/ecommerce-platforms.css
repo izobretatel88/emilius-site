@@ -15,7 +15,8 @@
 .platform-comparison h1{ margin: 0; font-size: clamp(30px, 4.6vw, 46px); line-height: 1.06; letter-spacing: -0.015em; font-weight: 700; text-wrap: balance; }
 .platform-comparison .lead{ margin: 0; color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: 62ch; }
 .platform-comparison .card{ background: var(--card); border-radius:var(--radius-card); min-width: 0; overflow: hidden; }
-.platform-comparison .scroll{ overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
+/* Таблица шире экрана, поэтому листается внутри блока высотой в экран: шапка и первая колонка остаются на месте при прокрутке в обе стороны */
+.platform-comparison .scroll{ overflow: auto; max-height: calc(100dvh - 24px); overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
 .platform-comparison table{ border-collapse: separate; border-spacing: 0; width: 100%; min-width: 1240px; table-layout: fixed; }
 .platform-comparison th,.platform-comparison td{ text-align: left; vertical-align: top; }
 .platform-comparison thead th{
@@ -26,7 +27,8 @@
   font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
 }
 .platform-comparison thead th:first-child{ left: 0; z-index: 3; width: 200px; box-shadow: inset -1px 0 var(--hair); }
-.platform-comparison .stage{ display: block; margin-bottom: 4px; color: var(--ink-3); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+/* Под ступень — место на две строки, прижатое к низу: названия платформ стоят в одну линию, даже если «Сложные процессы» переносится */
+.platform-comparison .stage{ display: flex; align-items: flex-end; min-height: 2.6em; line-height: 1.3; margin-bottom: 4px; color: var(--ink-3); font-size: 12px; font-weight: 400; letter-spacing: 0; }
 .platform-comparison tbody th[scope="row"]{
   position: sticky; left: 0; z-index: 1;
   padding: 14px 16px 14px 24px;
