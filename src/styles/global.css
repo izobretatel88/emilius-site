@@ -1,5 +1,6 @@
 @import './fonts.css';
 @import './tokens.css';
+@import './layout.css';
 
 * {
   box-sizing: border-box;
@@ -16,12 +17,18 @@ body {
   font-size: 16px;
   line-height: 1.45;
   color: var(--ink);
-  padding-inline: 20px;
-  padding-block: 26px 40px;
+  /* Шапка прижата к верху страницы, поля — из токена каркаса */
+  padding-inline: var(--layout-gutter);
+  padding-block: 0 40px;
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+/* Страницы со своей шапкой (Meetings) — прежний отступ сверху */
+body:not(:has(> .site-header)) {
+  padding-top: 26px;
 }
 
 /* Пастельные лучи — отдельный неподвижный слой. С background-attachment: fixed
@@ -85,9 +92,14 @@ a {
 }
 
 /* Узкий телефон: поля страницы уже — места и так мало */
-@media (max-width: 480px) {
-  body {
-    padding-inline: 12px;
+@media (max-width: 760px) {
+  :root {
+    --layout-gutter: 20px;
+  }
+}
+@media (max-width: 400px) {
+  :root {
+    --layout-gutter: 12px;
   }
 }
 

@@ -1,30 +1,23 @@
-.directory { width:100%; max-width:var(--content-width); min-width:0; margin-inline:auto; }
-.directory-intro { max-width:800px; margin-bottom:28px; }
-.directory-intro h1 { font-size:clamp(32px,4.6vw,48px); line-height:1.1; letter-spacing:-.02em; font-weight:700; }
-.directory-intro p { font-size:18px; line-height:1.5; color:var(--ink-2); max-width:66ch; margin-top:14px; }
-.directory > .link-list, .directory > section:not(.directory-callout) > .link-list { background:var(--card); border-radius:var(--radius-card); padding:0 26px; margin-top:18px; }
-.directory-section { margin-top:36px; }
-.directory-section h2, .directory > section > h2 { font-size:26px; line-height:1.2; letter-spacing:-.01em; margin-bottom:10px; }
+/* Каталоги — на общем каркасе (layout.css): ширина --layout-width, первый экран .ui-opening */
+.directory-intro { max-width:860px; }
+.directory-intro.ui-opening { padding-top:16px; }
+.directory > ul.link-list, .directory > section:not(.directory-callout) > ul.link-list { background:var(--card); border-radius:var(--radius-card); padding:0 26px; margin-top:18px; }
+.directory-section { margin-top:var(--section-pad); padding-top:var(--section-pad); border-top:1px solid var(--hair); }
+.directory-section h2, .directory > section > h2 { font-size:var(--fs-h2); line-height:1.15; letter-spacing:var(--tracking-tight); margin-bottom:12px; }
 .directory-section > p { color:var(--ink-2); max-width:75ch; }
-.directory-callout { background:var(--card); border-radius:var(--radius-card); padding:26px; margin-top:32px; }
-.directory-callout h2 { font-size:25px; line-height:1.2; }
+.directory-callout { background:var(--card); border-radius:var(--radius-card); box-shadow:var(--shadow-card); padding:30px 32px; margin-top:var(--section-pad); }
+.directory-callout h2 { font-size:27px; line-height:1.2; letter-spacing:-.02em; }
 .directory-callout p { max-width:75ch; color:var(--ink-2); margin:8px 0 16px; }
 .directory-button { display:inline-flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--teal-btn); color:var(--on-teal); padding:12px 18px; border-radius:var(--radius-btn); font-weight:600; }
 .directory-button:hover { background:var(--teal-btn-hover); }
 .directory-tags { display:flex; flex-wrap:wrap; gap:4px 22px; margin-top:18px; font-size:14px; }
-.directory-tags a,.home-resources>a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
-.home-resources>a { margin-top:12px; }
+.directory-tags a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
 .directory-callout p { line-height:1.55; }
-.home-content { display:grid; gap:32px; min-width:0; }
-.home-resources { width:100%; max-width:var(--content-width); margin:0 auto; padding:24px; }
-.home-resources h2 { font-size:26px; }
 @media(max-width:600px) {
-  .directory-intro p { font-size:16px; }
-  .directory-intro { margin-bottom:24px; }
-  .directory-section { margin-top:28px; }
-  .directory > .link-list, .directory > section:not(.directory-callout) > .link-list { padding-inline:18px; }
-  .directory-callout, .home-resources { padding:20px; }
-  .home-content { gap:24px; }
+  .directory-section { margin-top:var(--section-pad-sm); padding-top:var(--section-pad-sm); }
+  .directory-section h2, .directory > section > h2 { font-size:var(--fs-h2-sm); }
+  .directory > ul.link-list, .directory > section:not(.directory-callout) > ul.link-list { padding-inline:18px; }
+  .directory-callout { padding:24px 20px; }
   .directory-tags { flex-direction:column; align-items:flex-start; }
   .directory-button { max-width:100%; }
 }

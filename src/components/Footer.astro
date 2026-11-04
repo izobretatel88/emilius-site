@@ -14,7 +14,9 @@ interface Props {
   localHomeLinks?: boolean;
 }
 
-const { localHomeLinks = false } = Astro.props;
+// На главной якоря «Как работаем» и «Контакты» ведут по странице без перезагрузки
+const isHome = Astro.url.pathname.replace(/\/$/, '') === base.replace(/\/$/, '');
+const { localHomeLinks = isHome } = Astro.props;
 const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment);
 ---
 
@@ -37,7 +39,7 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
 </footer>
 
 <style>
-  .footer-links{width:100%;max-width:var(--site-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2)}.footer-links a:hover{color:var(--teal-text);text-decoration:underline}@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px;font-size:13px}}
+  .footer-links{width:100%;max-width:var(--layout-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2)}.footer-links a:hover{color:var(--teal-text);text-decoration:underline}@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px;font-size:13px}}
   footer {
     display: flex;
     flex-direction: column;

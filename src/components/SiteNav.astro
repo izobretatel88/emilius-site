@@ -1,55 +1,117 @@
 ---
+// Общая шапка сайта — по экспериментальной главной (04.11.2026): словесный знак слева,
+// три раздела и одна залитая кнопка «Обсудить проект». На телефоне — меню-«гамбургер».
+// «Метод» живёт на главной рядом с колесом, в шапку не выносится.
 import { DIRECTIONS } from '../data/navigation';
 import { getPosts } from '../lib/blog';
 import { href } from '../lib/urls';
-import Logo from './Logo.astro';
 const hasBlog = (await getPosts()).length > 0;
 const preview = /\/dev\/?$/.test(import.meta.env.BASE_URL);
-const primary = [{title:'Услуги',href:'services/',sections:['services/']},{title:'Проекты',href:'projects/',sections:['projects/']},{title:'Полезное',href:'resources/',sections:['resources/','compare/','tools/','blog/']},{title:'Контакты',href:'#t-contact',sections:[]}];
-const normalize=(path:string)=>path.replace(/\/$/,'');
-const current=normalize(Astro.url.pathname);
-const state=(item:typeof primary[number])=> current===normalize(href(item.href)) ? 'page' : item.sections.some(path=>current.startsWith(normalize(href(path))+'/') || current===normalize(href(path))) ? 'location' : undefined;
+const primary = [
+  { title: 'Услуги', href: 'services/', sections: ['services/'] },
+  { title: 'Проекты', href: 'projects/', sections: ['projects/'] },
+  { title: 'Полезное', href: 'resources/', sections: ['resources/', 'compare/', 'tools/', 'blog/'] },
+];
+const normalize = (path: string) => path.replace(/\/$/, '');
+const current = normalize(Astro.url.pathname);
+const isHome = current === normalize(href());
+const state = (item: typeof primary[number]) =>
+  current === normalize(href(item.href)) ? 'page'
+  : item.sections.some(path => current.startsWith(normalize(href(path)) + '/') || current === normalize(href(path))) ? 'location'
+  : undefined;
+// На главной форма рядом — якорь без перезагрузки; с внутренних страниц — к форме на главной
+const discuss = isHome ? '#feedback' : href('#feedback');
 ---
-<!-- Existing Emilius visual system; native disclosure on mobile, no new identity. -->
-<nav class="site-nav" aria-label="Основная навигация">
-  <a class="home" href={href()} aria-label="Эмилиус Эдженси — на главную"><Logo />{preview && <span class="environment">Черновик · dev</span>}</a>
-  <div class="desktop">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
-  <a class="discuss" href={href('#feedback')}>Обсудить проект</a>
-  <details class="mobile-menu"><summary aria-label="Меню"><span>Меню</span><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="first" d="M4 6h16"/><path class="middle" d="M4 12h16"/><path class="last" d="M4 18h16"/></svg></summary><div class="mobile-links">
-    <a class="mobile-discuss" href={href('#feedback')}>Обсудить проект →</a>
-    <div class="mobile-primary">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
-    <span>Направления</span><div class="mobile-primary">{DIRECTIONS.map(item => <a href={href(item.href)} aria-current={current===normalize(href(item.href))?'page':undefined}>{item.title}</a>)}</div>
-    <span>Готовое решение</span><a href={href('services/insales-shop/')}>Магазин на InSales</a>
-    <span>Материалы и инструменты</span><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}
-  </div></details>
-</nav>
+<header class="site-header">
+  <nav class="site-nav ui-shell" aria-label="Основная навигация">
+    <div class="brand">
+      <a class="wordmark" href={href()} aria-label="Эмилиус Эдженси — на главную" aria-current={isHome ? 'page' : undefined}>
+        <span>Эмилиус</span><img src={href('brand/logo-81.png')} width="54" height="81" alt="" /><span>Эдженси</span>
+      </a>
+      {preview && <span class="environment">черновик · dev</span>}
+    </div>
+    <div class="nav-links">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
+    <a class="nav-action ui-button" href={discuss}>Обсудить проект</a>
+    <details class="nav-menu">
+      <summary aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="menu-icon" d="M4 7h16M4 12h16M4 17h16" />
+          <path class="close-icon" d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </summary>
+      <div class="menu-links">
+        <a class="menu-discuss" href={discuss}>Обсудить проект <span aria-hidden="true">→</span></a>
+        {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
+        <span class="menu-group">Направления</span>
+        <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}>{item.title}</a>)}</div>
+        <span class="menu-group">Готовое решение</span>
+        <a href={href('services/insales-shop/')}>Магазин на InSales</a>
+        <span class="menu-group">Материалы и инструменты</span>
+        <a href={href('compare/')}>Сравнения платформ</a>
+        <a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>
+        {hasBlog && <a href={href('blog/')}>Блог</a>}
+      </div>
+    </details>
+  </nav>
+</header>
 <script>
-  const menu=document.querySelector<HTMLDetailsElement>('.mobile-menu');
-  if(menu){
-    const summary=menu.querySelector('summary')!;
-    const close=()=>{menu.open=false;};
-    menu.addEventListener('toggle',()=>document.dispatchEvent(new CustomEvent('emi:menu')));
-    menu.addEventListener('keydown',event=>{if(event.key==='Escape' && menu.open){event.preventDefault();close();summary.focus();}});
-    document.addEventListener('pointerdown',event=>{if(menu.open && event.target instanceof Node && !menu.contains(event.target))close();});
-    document.addEventListener('focusin',event=>{if(menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target))close();});
-    menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',close));
-    matchMedia('(min-width:961px)').addEventListener('change',event=>{if(event.matches)close();});
+  const menu = document.querySelector<HTMLDetailsElement>('.nav-menu');
+  if (menu) {
+    const summary = menu.querySelector('summary')!;
+    const close = () => { menu.open = false; };
+    menu.addEventListener('toggle', () => document.dispatchEvent(new CustomEvent('emi:menu')));
+    menu.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(); summary.focus(); } });
+    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close);
+    document.addEventListener('pointerdown', event => { if (menu.open && event.target instanceof Node && !menu.contains(event.target)) close(); });
+    document.addEventListener('focusin', event => { if (menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target)) close(); });
+    matchMedia('(max-width: 760px)').addEventListener('change', ({ matches }) => {
+      if (matches) return;
+      const focusWasInMenu = menu.contains(document.activeElement);
+      close();
+      if (focusWasInMenu) document.querySelector<HTMLAnchorElement>('.site-nav .wordmark')?.focus();
+    });
   }
 </script>
 <style>
-  .site-nav{width:100%;max-width:var(--site-width);margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px 24px;font-size:14px;position:relative;z-index:10}
-  a{color:var(--ink-2);text-decoration:none;padding-block:8px}a:hover,a[aria-current]{color:var(--teal-text)}.home{grid-column:2;grid-row:1;justify-self:center;color:var(--ink);display:grid;gap:5px;padding:0;text-align:center}.environment{font-size:11px;color:var(--ink-3)}.desktop{grid-column:1/-1;grid-row:2;display:flex;justify-content:center;gap:28px}.discuss{grid-column:3;grid-row:1;justify-self:end;background:var(--teal-btn);color:var(--on-teal);border-radius:var(--radius-btn);padding:12px 15px;font-weight:600;white-space:nowrap}.discuss:hover{background:var(--teal-btn-hover);color:var(--on-teal)}.mobile-menu,.menu-icon{display:none}
-  @media(max-width:960px){.site-nav{gap:12px}.desktop,.discuss{display:none}.mobile-menu{display:block}.mobile-menu summary{cursor:pointer;font-size:15px;min-height:44px;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-radius:var(--radius-btn);color:var(--teal-text);list-style:none}.mobile-menu summary::after{content:'+';font-size:20px}.mobile-menu[open] summary::after{content:'−'}.mobile-links{position:absolute;top:calc(100% + 12px);left:0;right:0;max-height:70svh;overflow:auto;display:grid;background:var(--card);padding:14px 20px;border-radius:var(--radius-card);box-shadow:var(--shadow-pop)}.mobile-links a{padding:11px 0;border-bottom:1px solid var(--hair)}.mobile-links span{font-size:12px;color:var(--ink-3);margin-top:16px}.mobile-links .mobile-discuss{color:var(--teal-text);font-weight:700}}
-  @media(max-width:960px){.mobile-menu{grid-column:3;grid-row:1;justify-self:end}}
-  @media(max-width:600px){.site-nav{column-gap:8px}.mobile-menu summary{width:44px;height:44px;padding:10px;justify-content:center}.mobile-menu summary>span,.mobile-menu summary::after{display:none}.menu-icon{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}.menu-icon path{transform-origin:12px 12px}.mobile-menu[open] .first{transform:rotate(45deg) translateY(6px)}.mobile-menu[open] .middle{opacity:0}.mobile-menu[open] .last{transform:rotate(-45deg) translateY(-6px)}}
-  @media(max-width:380px){.home :global(.pill){font-size:15px;gap:8px;padding:8px 12px}.home :global(.mark){width:20px;height:30px}}
-  .desktop a{display:inline-flex;align-items:center;min-height:44px;padding-inline:6px}
-  .desktop a[aria-current],.mobile-links a[aria-current]{font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
-  .site-nav a:focus-visible,.mobile-menu summary:focus-visible{outline:2px solid var(--teal-text);outline-offset:4px}
-  @media(max-width:960px){
-    .mobile-menu summary::-webkit-details-marker{display:none}
-    .mobile-links{max-height:calc(100svh - 140px);overscroll-behavior:contain;scrollbar-gutter:stable}
-    .mobile-primary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
-    .mobile-links a{display:flex;align-items:center;min-height:44px}
+  .site-header { border-bottom: 1px solid var(--hair); }
+  .site-nav { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 12; }
+  a { text-decoration: none; color: var(--ink); }
+  a:hover { color: var(--teal-text); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .wordmark { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; white-space: nowrap; min-height: 44px; }
+  .wordmark img { width: 18px; height: 27px; object-fit: contain; }
+  .environment { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+  .nav-links { display: flex; gap: 28px; font-size: 15px; }
+  .nav-links a { display: flex; align-items: center; min-height: 44px; }
+  .nav-links a[aria-current], .menu-links a[aria-current] { color: var(--teal-text); font-weight: 700; }
+  .site-nav .nav-action { font-size: 14px; min-height: 44px; padding: 10px 20px; color: var(--on-teal); }
+  .nav-menu { display: none; }
+  .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 4px; }
+  @media (max-width: 1000px) {
+    .site-nav { gap: 16px; }
+    .nav-links { gap: 20px; }
+  }
+  @media (max-width: 760px) {
+    .site-nav { height: 68px; }
+    .wordmark { font-size: 18px; gap: 6px; }
+    .wordmark img { width: 16px; height: 24px; }
+    .nav-links, .site-nav .nav-action { display: none; }
+    .nav-menu { display: block; }
+    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); }
+    .nav-menu summary::-webkit-details-marker { display: none; }
+    .nav-menu svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+    .close-icon, .nav-menu[open] .menu-icon { display: none; }
+    .nav-menu[open] .close-icon { display: initial; }
+    .menu-links { position: absolute; top: calc(100% + 8px); inset-inline: 0; display: grid; max-height: calc(100dvh - 88px); overflow-y: auto; overscroll-behavior: contain; padding: 12px 20px; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-pop); }
+    .menu-links a { min-height: 48px; display: flex; align-items: center; border-bottom: 1px solid var(--hair); }
+    .menu-links a:last-child { border-bottom: 0; }
+    .menu-links .menu-discuss { color: var(--teal-text); font-weight: 700; gap: 10px; }
+    .menu-group { font-size: 12px; color: var(--ink-3); margin-top: 16px; }
+    .menu-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+    :global(body:has(.nav-menu[open]) .write-fab) { visibility: hidden; }
+  }
+  @media (max-width: 400px) {
+    .wordmark { font-size: 17px; }
+    .environment { display: none; }
   }
 </style>

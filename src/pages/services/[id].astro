@@ -1,4 +1,7 @@
 ---
+// Страница направления — на общем каркасе (04.11.2026): первый экран слева, как на главной,
+// секции с тонкой линией сверху, белые поверхности без обводки. Кейсы ведут в галерею проектов,
+// внешний сайт — отдельной ссылкой. Залитая кнопка на странице одна — «Обсудить задачу».
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import { SECTORS, LINKS } from '../../data/site';
@@ -7,6 +10,7 @@ import { PROJECTS } from '../../data/projects';
 import { RELATED } from '../../data/navigation';
 import LinkList from '../../components/LinkList.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { href } from '../../lib/urls';
 
 export function getStaticPaths() {
   return SECTORS.map((s) => ({ params: { id: s.id } }));
@@ -18,10 +22,9 @@ const sector = SECTORS[index];
 const service = SERVICES[id];
 const prev = SECTORS[(index + SECTORS.length - 1) % SECTORS.length];
 const next = SECTORS[(index + 1) % SECTORS.length];
-const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter(Boolean);
-
-const base = import.meta.env.BASE_URL;
-const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter((p) => !!p);
+// Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
+const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal']);
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.
@@ -38,10 +41,9 @@ const arc = (i: number) => {
 ---
 
 <Base title={`${service.title} — Эмилиус Эдженси`} description={service.lead}>
-
-  <main class="page">
-    <Breadcrumbs items={[{title:'Услуги',href:'services/'},{title:service.title}]} />
-    <section class="card intro">
+  <main class="direction ui-shell">
+    <header class="ui-opening direction-opening">
+      <Breadcrumbs items={[{ title: 'Услуги', href: 'services/' }, { title: service.title }]} />
       <div class="stage">
         <svg viewBox="-42 -42 84 84" class="mini" aria-hidden="true">
           <defs>
@@ -54,62 +56,83 @@ const arc = (i: number) => {
             <path d={arc(i)} fill="none" stroke-width="7" stroke-linecap="round" style={i === index ? 'stroke:url(#cur)' : 'stroke:var(--hair)'}></path>
           ))}
         </svg>
-        <p class="eyebrow">Этап {index + 1} из 4 · дни <span class="num">{pad(sector.from)}–{pad(sector.to)}</span></p>
+        <p class="ui-eyebrow">Этап {index + 1} из 4 · дни <span class="num">{pad(sector.from)}–{pad(sector.to)}</span></p>
       </div>
-      <h1>{service.title}</h1>
-      <p class="lead">{service.lead}</p>
-      <a class="intro-action" href={href('#feedback')}>Обсудить задачу →</a>
+      <h1 class="ui-h1">{service.title}</h1>
+      <p class="ui-lead">{service.lead}</p>
+      <div class="ui-actions">
+        <a class="ui-button" href={href('#feedback')}>Обсудить задачу <span aria-hidden="true">→</span></a>
+        {service.offer && <a class="ui-link" href={href(service.offer.href)}>{service.offer.title} <span class="ui-arrow" aria-hidden="true">→</span></a>}
+      </div>
+    </header>
+
+    <section class="ui-section" aria-labelledby="t-scope">
+      <div class="ui-section-head"><h2 id="t-scope">Состав работ</h2></div>
+      <div class="cols">
+        <div class="block ui-surface">
+          <h3 id="t-doing">Что делаем</h3>
+          <ul aria-labelledby="t-doing">{service.doing.map((d) => <li>{d}</li>)}</ul>
+        </div>
+        <div class="block ui-surface">
+          <h3 id="t-result">Что получаете</h3>
+          <ul aria-labelledby="t-result">{service.result.map((d) => <li>{d}</li>)}</ul>
+        </div>
+      </div>
     </section>
 
-    <nav class="page-links" aria-label="На этой странице"><a href="#t-doing">Состав работ</a><a href="#t-result">Результат</a>{cases.length>0 && <a href="#t-cases">Проекты</a>}</nav>
-
-    <div class="cols">
-      <section class="card block" aria-labelledby="t-doing">
-        <h2 id="t-doing">Что делаем</h2>
-        <ul>{service.doing.map((d) => <li>{d}</li>)}</ul>
-      </section>
-      <section class="card block" aria-labelledby="t-result">
-        <h2 id="t-result">Что получаете</h2>
-        <ul>{service.result.map((d) => <li>{d}</li>)}</ul>
-      </section>
-    </div>
-
     {service.offer && (
-      <section class="card block offer" aria-labelledby="t-offer">
-        <p class="offer-eyebrow">{service.offer.eyebrow}</p>
-        <h2 id="t-offer">{service.offer.title}</h2>
-        <p class="offer-text">{service.offer.text}</p>
-        <a class="offer-cta" href={href(service.offer.href)}>{service.offer.cta}</a>
+      <section class="ui-section" aria-labelledby="t-offer">
+        <a class="offer ui-surface" href={href(service.offer.href)} aria-labelledby="t-offer">
+          <div>
+            <p class="ui-label">{service.offer.eyebrow}</p>
+            <h2 id="t-offer">{service.offer.title}</h2>
+            <p>{service.offer.text}</p>
+          </div>
+          <span class="offer-link">{service.offer.cta} <span aria-hidden="true">→</span></span>
+        </a>
       </section>
     )}
 
     {cases.length > 0 && (
-      <section class="card block" aria-labelledby="t-cases">
-        <h2 id="t-cases">Проекты</h2>
-        <ul class:list={['cases', { single: cases.length === 1 }]}>
+      <section class="ui-section" id="cases" aria-labelledby="t-cases">
+        <div class="ui-section-head"><h2 id="t-cases">Проекты</h2><a class="ui-link" href={href('projects/')}>Все проекты <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+        <ul class:list={['cases', { single: cases.length === 1 }]} role="list">
           {cases.map((p) => (
             <li>
-              <a href={p!.url} target="_blank" rel="noopener" class="case">
-                <img src={href(p!.shot)} alt={`Первый экран сайта ${p!.domain}`} width="640" height="400" loading="lazy" decoding="async" />
-                <span class="case-body">
-                  <span class="case-name">{p!.name}</span>
-                  <span class="case-text">{p!.about}</span>
-                  {cases.length === 1 && <span class="case-did">{p!.did}</span>}
-                  <span class="case-link">{p!.domain} ↗</span>
-                </span>
-              </a>
+              <article class="case" aria-labelledby={`case-${p.id}`}>
+                <a class="case-image" href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}>
+                  {gallery.has(p.id) ? (
+                    <img
+                      src={href(`cases/gallery/${p.id}-800.webp`)}
+                      srcset={`${href(`cases/gallery/${p.id}-800.webp`)} 800w, ${href(`cases/gallery/${p.id}-1600.webp`)} 1600w`}
+                      sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
+                      width="800" height="500" loading="lazy" decoding="async" alt={`Главная страница сайта ${p.name}`}
+                    />
+                  ) : (
+                    <img src={href(p.shot)} width="640" height="400" loading="lazy" decoding="async" alt={`Первый экран сайта ${p.name}`} />
+                  )}
+                </a>
+                <div class="case-body">
+                  <h3 id={`case-${p.id}`}>{p.name}</h3>
+                  <p>{p.about}</p>
+                  {cases.length === 1 && <p>{p.did}</p>}
+                  <a class="case-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.domain} <span aria-hidden="true">↗</span></a>
+                </div>
+              </article>
             </li>
           ))}
         </ul>
       </section>
     )}
 
-    <section class="card block" aria-labelledby="t-related"><h2 id="t-related">Следующий шаг по вашей задаче</h2><LinkList items={RELATED[id!]} /><a href={href('projects/')}>Все проекты агентства →</a></section>
+    <section class="ui-section" aria-labelledby="t-related">
+      <div class="ui-section-head"><h2 id="t-related">Следующий шаг по вашей задаче</h2></div>
+      <div class="related ui-surface"><LinkList items={RELATED[id!]} /></div>
+    </section>
 
-    <nav class="cycle" aria-label="Этапы цикла">
+    <nav class="cycle ui-section" aria-label="Этапы цикла">
       <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
-      <!-- Залитая кнопка на странице одна: если есть «Готовое решение», главная — его кнопка -->
-      <a class:list={['cta', { 'cta-secondary': !!service.offer }]} href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram</a>
+      <a class="ui-link telegram" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram <span class="ui-arrow" aria-hidden="true">↗</span></a>
       <a class="step next" href={href(`services/${next.id}/`)}><span class="dir">дальше →</span><span class="name">{next.name}</span></a>
     </nav>
   </main>
@@ -118,271 +141,57 @@ const arc = (i: number) => {
 </Base>
 
 <style>
-  .intro-action{align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;text-underline-offset:5px;font-weight:600}
-  .page-links{display:flex;flex-wrap:wrap;gap:4px 24px;margin-block:-12px}
-  .page-links a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;text-underline-offset:4px}
-  h2[id]{scroll-margin-top:24px}
-  .top {
-    display: flex;
-    justify-content: center;
-  }
-  .logo-link {
-    color: inherit;
-    text-decoration: none;
-    border-radius: var(--radius-card);
-  }
-  .page {
-    width: 100%;
-    max-width: 820px;
-    margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 28px; /* больше воздуха между карточками, как на главной (22.10.2026) */
-  }
-  .intro {
-    padding: clamp(24px, 4vw, 40px);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .stage {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .mini {
-    width: 40px;
-    height: 40px;
-    flex: none;
-  }
-  .eyebrow {
-    color: var(--teal-text);
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  /* Крупный заголовок этапа — в одной системе с главной и разделом /os/ */
-  h1 {
-    font-size: clamp(40px, 7vw, 64px);
-    font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
-  .lead {
-    font-size: clamp(18px, 2vw, 20px);
-    line-height: 1.5;
-    color: var(--ink-2);
-    max-width: 58ch;
-  }
-  .cols {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px;
-  }
-  .block {
-    padding: 26px 28px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .block h2 {
-    font-size: 22px;
-    line-height: 1.15;
-  }
-  .block ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .block li {
-    position: relative;
-    padding-left: 18px;
-  }
-  .block li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.62em;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--teal);
-  }
-  /* Готовое решение этапа: акцент рамкой фирменного цвета, кнопка как основная */
-  .offer {
-    border-color: var(--teal);
-    align-items: flex-start;
-  }
-  .offer-eyebrow {
-    color: var(--teal-text);
-    font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .offer-text {
-    color: var(--ink-2);
-  }
-  .offer-cta {
-    margin-top: 4px;
-    min-height: 50px;
-    display: inline-flex;
-    align-items: center;
-    padding-inline: 20px;
-    border-radius: var(--radius-btn);
-    background: var(--teal-btn);
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
-  }
-  .offer-cta:hover {
-    background: var(--teal-btn-hover);
-    color: var(--on-teal);
-  }
-  .cases {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px !important;
-  }
-  .cases li {
-    padding: 0 !important;
-  }
-  .cases li::before {
-    display: none;
-  }
-  .case {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    color: inherit;
-    text-decoration: none;
-    font-size: 14.5px;
-    line-height: 1.4;
-  }
-  .case img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--hair);
-    background: var(--well);
-  }
-  .case-body {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .case-name {
-    font-size: 16px;
-    font-weight: 700;
-  }
-  .case-link {
-    color: var(--teal-text);
-    font-weight: 600;
-  }
-  /* Один проект — широкая карточка: скриншот слева, текст справа, а не треть ширины и пустота */
-  .cases.single {
-    grid-template-columns: 1fr;
-  }
-  .cases.single .case {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 20px;
-    align-items: center;
-    font-size: 15px;
-  }
-  .cases.single .case-name {
-    font-size: 20px;
-  }
-  .case-did {
-    color: var(--ink-2);
-  }
-  .case:hover .case-link {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .cycle {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 16px;
-    padding-top: 4px;
-  }
-  .step {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    color: inherit;
-    text-decoration: none;
-  }
-  .step.next {
-    text-align: right;
-  }
-  .dir {
-    font-size: 13px;
-    color: var(--ink-3);
-  }
-  .name {
-    font-weight: 600;
-    font-size: 18px;
-    transition: color var(--hover);
-  }
-  .step:hover .name {
-    color: var(--teal-text);
-  }
-  .cta {
-    min-height: 54px;
-    display: inline-flex;
-    align-items: center;
-    padding-inline: 22px;
-    border-radius: var(--radius-btn);
-    background: var(--teal-btn);
-    color: #fff;
-    font-weight: 600;
-    font-size: 17px;
-    text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
-  }
-  .cta:hover {
-    background: var(--teal-btn-hover);
-    color: var(--on-teal);
-  }
-  .cta-secondary {
-    background: var(--card);
-    color: var(--ink);
-    border: 1px solid var(--teal);
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
-  }
-  .cta-secondary:hover {
-    background: var(--teal-btn);
-    border-color: var(--teal-btn);
-    color: #fff;
-  }
-  @media (max-width: 640px) {
-    .page,
-    .cols {
-      gap: 20px;
-    }
-    .cols {
-      grid-template-columns: 1fr;
-    }
-    .cases.single .case {
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .cycle {
-      grid-template-columns: 1fr 1fr;
-    }
-    .cta {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      justify-content: center;
-    }
+  .stage { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .stage .ui-eyebrow { margin: 0; }
+  .mini { width: 40px; height: 40px; flex: none; }
+  .direction-opening { padding-top: 16px; }
+
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .block { padding: 28px 30px 30px; }
+  .block h3 { font-size: var(--fs-h3); line-height: 1.2; font-weight: 600; margin: 0 0 16px; }
+  .block ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .block li { position: relative; padding-left: 18px; color: var(--ink); line-height: 1.5; }
+  .block li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+
+  .offer { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 30px 32px; color: var(--ink); text-decoration: none; }
+  .offer h2 { font-size: 27px; line-height: 1.2; letter-spacing: -.02em; margin: 0 0 12px; }
+  .offer p:not(.ui-label) { color: var(--ink-2); max-width: 60ch; }
+  .offer-link { flex-shrink: 0; color: var(--teal-text); font-weight: 600; }
+  .offer:hover .offer-link, .offer:focus-visible .offer-link { text-decoration: underline; text-underline-offset: 5px; }
+
+  .cases { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 28px; }
+  .case { min-width: 0; }
+  .case-image { display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--well); box-shadow: var(--shadow-card); }
+  .case-image img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; }
+  .case-body { padding: 18px 2px 0; display: grid; gap: 6px; justify-items: start; }
+  .case-body h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 2px; }
+  .case-body p { font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+  .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
+  /* Один проект — снимок слева, текст справа */
+  .cases.single { grid-template-columns: 1fr; }
+  .cases.single .case { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+  .cases.single .case-body { padding: 0; }
+
+  .related { padding: 0 26px; }
+  .related :global(.link-list) { --list-inset: 26px; }
+
+  .cycle { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding-bottom: 0; }
+  .step { display: flex; flex-direction: column; gap: 2px; color: var(--ink); text-decoration: none; min-height: 44px; justify-content: center; }
+  .step.next { text-align: right; }
+  .dir { font-size: 13px; color: var(--ink-3); }
+  .name { font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
+  .step:hover .name, .step:focus-visible .name { color: var(--teal-text); }
+
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: 1fr; gap: 20px; }
+    .block { padding: 22px 20px 24px; }
+    .offer { flex-direction: column; align-items: flex-start; gap: 20px; padding: 24px; }
+    .offer h2 { font-size: 24px; }
+    .cases, .cases.single .case { grid-template-columns: 1fr; gap: 28px; }
+    .cases.single .case { gap: 16px; }
+    .related { padding-inline: 18px; }
+    .related :global(.link-list) { --list-inset: 18px; }
+    .cycle { grid-template-columns: 1fr 1fr; }
+    .telegram { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
   }
 </style>

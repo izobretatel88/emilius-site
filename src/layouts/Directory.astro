@@ -10,6 +10,6 @@ const abs=(p:string)=>new URL(href(p),Astro.site).href;
 const jsonLd={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{name:'Главная',item:abs('')},...parents.map(i=>({name:i.title,item:abs(i.href)})),{name:title,item:new URL(Astro.url.pathname,Astro.site).href}].map((i,index)=>({'@type':'ListItem',position:index+1,...i}))};
 ---
 <Base title={`${title} — Emilius Agency`} description={description} jsonLd={jsonLd}>
-  <main class="directory"><Breadcrumbs items={[...parents,{title}]} /><header class="directory-intro"><h1>{title}</h1><p>{description}</p></header><slot /></main>
+  <main class="directory ui-shell"><header class="directory-intro ui-opening"><Breadcrumbs items={[...parents,{title}]} /><h1 class="ui-h1">{title}</h1><p class="ui-lead">{description}</p></header><slot /></main>
   <Footer />
 </Base>

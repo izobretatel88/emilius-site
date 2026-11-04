@@ -1,7 +1,0 @@
----
-import Home from '../index.astro';
-export function getStaticPaths(){
-  return process.env.PREVIEW==='1'?[{params:{variant:'home-hierarchy'}}]:[];
-}
----
-<Home reviewHierarchy />

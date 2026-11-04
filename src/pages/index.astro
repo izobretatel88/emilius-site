@@ -1,204 +1,303 @@
 ---
+// Главная — композиция экспериментальной главной (/experiments/cursor/, итерации 1–37 журнала),
+// перенесённая на общий каркас 04.11.2026: миссия → метод (колесо) → клиенты → услуги → проекты →
+// полезное → обсуждение задачи. Шапка и подвал общие (SiteNav, Footer), примитивы — styles/layout.css.
 import Base from '../layouts/Base.astro';
 import Wheel from '../components/Wheel.astro';
-import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
-import Services from '../components/Services.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
-import { MISSION_LINES } from '../data/site';
-import { MATERIALS } from '../data/navigation';
+import { MISSION_LINES, SECTORS } from '../data/site';
+import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
-import LinkList from '../components/LinkList.astro';
+import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
-import '../styles/architecture.css';
-interface Props {reviewHierarchy?:boolean;}
-const {reviewHierarchy=false}=Astro.props;
-
-// Миссия: на компьютере перенос после «создавать», на телефоне — после «людям»,
-// чтобы шрифт был крупнее (самая длинная строка короче)
-const [head, verb] = [MISSION_LINES[0].replace(/\s+\S+$/, ''), MISSION_LINES[0].split(' ').at(-1)];
-// Под миссией — что делаем и с чего начать: миссия не говорит, чем мы заняты и сколько это стоит
+const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
+const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
+// Под миссией — что делаем и с чего начать: миссия не говорит, чем мы заняты и сколько это стоит (03.11.2026)
 const shop = SERVICE_ROWS[0];
 ---
-
 <Base
   title="Эмилиус Эдженси – дизайн и реализация продуктов"
   description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
+  bodyClass="home"
 >
   <Intro />
-  {reviewHierarchy && <a class="review-switch" href={href()}>Макет: компактная миссия · Текущий вариант →</a>}
-  <header class:list={['hero',{'hierarchy-review':reviewHierarchy}]}>
-    <div class="mission">
-      <p class="eyebrow">Наша миссия</p>
-      <h1><span class="m-a">{head}</span> <span class="m-b">{verb}</span> <span class="m-c">{MISSION_LINES[1]}</span></h1>
-      <p class="offer"><span>Исследуем, проектируем, разрабатываем и продвигаем.</span> <a href={href(shop.href)}>{shop.title}&nbsp;— <span class="nw">{shop.note.toLowerCase()}&nbsp;→</span></a></p>
-    </div>
-  </header>
-
-  <main class="home-content"><div class="bento">
-    <Projects />
-    <section class="card wheel-card" aria-labelledby="t-wheel">
-      <h2 class="card-title" id="t-wheel">Делаем по кругу</h2>
-      <Wheel />
+  <main class="home-page ui-shell">
+    <section class="ui-opening" aria-labelledby="mission-title">
+      <p class="ui-eyebrow">Наша миссия</p>
+      <h1 class="ui-h1" id="mission-title">{MISSION_LINES[0]}<span class="ui-quiet"> {MISSION_LINES[1]}</span></h1>
+      <p class="ui-lead">Исследуем, проектируем, разрабатываем и продвигаем. <a class="offer" href={href(shop.href)}>{shop.title}&nbsp;— <span class="nw">{shop.note.toLowerCase()}&nbsp;→</span></a></p>
+      <div class="ui-actions"><a class="ui-button" href="#feedback">Обсудить проект <span aria-hidden="true">→</span></a><a class="ui-link" href="#projects">Смотреть проекты</a></div>
     </section>
-    <!-- Услуги — под колесом продукта: центральная колонка на компьютере, следом за колесом на телефоне -->
-    <div class="services-slot"><Services /></div>
-    <Contact />
-    <Feedback />
-  </div>
 
-  <section class="card home-resources" aria-labelledby="t-useful"><h2 id="t-useful">Полезное</h2><LinkList items={MATERIALS} /><a href={href('resources/')}>Все полезные материалы →</a></section>
+    <section class="product-demo" aria-labelledby="t-wheel" data-hide-write-button>
+      <div class="demo-top"><h2 id="t-wheel" tabindex="-1">Делаем по кругу</h2><span>52 дня · 4 этапа</span></div>
+      <div class="demo-body">
+        <div class="wheel-area"><Wheel /></div>
+        <noscript>
+          <p class="wheel-fallback">Для запуска колеса нужен JavaScript. О каждом этапе можно прочитать по ссылкам.</p>
+        </noscript>
+        <div class="method">
+          <h3>Одна команда. <span>Весь цикл продукта.</span></h3>
+          <ol class="stages" role="list">
+            {SECTORS.map(stage => (
+              <li>
+                <a href={href(`services/${stage.id}/`)} aria-label={`${stage.name}, дни ${stage.from}–${stage.to}`}>
+                  <span class="day-range">{String(stage.from).padStart(2, '0')}–{stage.to}</span>
+                  <span class="stage-name">{stage.name}</span>
+                  <span class="ui-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+      <p class="demo-note">
+        <span class="demo-caption">Модель итерации — от вопроса до следующего шага.</span>
+        <span class="demo-gesture">Поверните колесо мышью или пальцем, чтобы перейти к другому дню.</span>
+      </p>
+    </section>
+
+    <ul class="client-strip" aria-label="Некоторые из наших проектов" role="list">
+      {clients.map(project => (
+        <li>
+          <a href={href(`projects/#${project.id}`)}>
+            <img class:list={{ mono: project.logoMono }} src={href(project.logo)} alt="" width="150" height="40" />
+            <span>{project.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <section class="ui-section" id="services" tabindex="-1" aria-labelledby="t-services">
+      <div class="ui-section-head"><h2 id="t-services">От задачи к решению.</h2><a class="ui-link" href={href('services/')}>Все услуги <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+      {SERVICE_ROWS.map(service => (
+        <a class="service-feature ui-surface" href={href(service.href)} aria-labelledby={`offer-${service.id}`} aria-describedby={`offer-terms-${service.id}`}>
+          <div>
+            <p class="ui-label">Готовое решение</p>
+            <h3 id={`offer-${service.id}`}>{service.title}</h3>
+            <p>Запустим магазин на вашем домене. Добавим товары, настроим оплату и доставку, проверим тестовый заказ.</p>
+          </div>
+          <div class="service-next">
+            <span id={`offer-terms-${service.id}`}>{service.note}</span>
+            <span class="service-link">Посмотреть услугу <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+      ))}
+      <div class="direction-links">{SECTORS.map(s => <a href={href(`services/${s.id}/`)}><strong>{s.name}</strong><span>{s.text}</span><span class="ui-arrow" aria-hidden="true">→</span></a>)}</div>
+    </section>
+
+    <section class="ui-section" id="projects" tabindex="-1" aria-labelledby="t-projects">
+      <div class="ui-section-head"><h2 id="t-projects">Продукты, которые работают.</h2><a class="ui-link" href={href('projects/')}>Все проекты <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+      <div class="project-grid">
+        {selected.map(project => (
+          <article class="selected-project" aria-labelledby={`case-${project.id}`}>
+            <a class="project-image" href={href(`projects/#${project.id}`)} aria-label={`Смотреть проект ${project.name}`}>
+              <img
+                src={href(`cases/gallery/${project.id}-800.webp`)}
+                srcset={`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`}
+                sizes="(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
+                width="800"
+                height="500"
+                loading="lazy"
+                alt={`Главная страница магазина ${project.name}`}
+              />
+              <span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span>
+            </a>
+            <div class="project-description">
+              <h3 id={`case-${project.id}`}>{project.name}</h3>
+              {project.id === 'wizzu' ? (
+                <p><strong class="project-result">С 0 до 2 000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
+              ) : (
+                <p>Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.</p>
+              )}
+              <!-- Метка заявки сохраняет отдельную запись истории WebKit после снятия кейса. -->
+              <a class="project-inquiry ui-link" href={`?project=${project.id}&inquiry=1#feedback`} aria-label={`Хочу похожий магазин — ${project.name}`}>
+                Хочу похожий магазин <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="ui-section" id="useful" aria-labelledby="t-useful">
+      <div class="ui-section-head"><h2 id="t-useful">Полезное</h2><a class="ui-link" href={href('resources/')}>Все материалы <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+      <ul class="material-grid" role="list">
+        {MATERIALS.map(item => (
+          <li>
+            <a class="material ui-surface" href={href(item.href)}>
+              <span class="ui-label">{item.label}</span>
+              <strong>{item.title}</strong>
+              <span class="material-text">{item.description}</span>
+              <span class="ui-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="ui-section contact-section" aria-labelledby="t-next">
+      <div class="ui-section-head">
+        <div>
+          <p class="ui-label">Следующий шаг</p>
+          <h2 id="t-next">Что создадим вместе?</h2>
+        </div>
+      </div>
+      <div class="contact-layout"><Contact /><Feedback /></div>
+    </section>
   </main>
-
   <Footer />
 </Base>
 
 <style>
-  .hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 26px;
-    margin-bottom: 12px;
-  }
-  .mission {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  /* Eyebrow — тихая подпись, главное — сама миссия (правки владельца 22.10.2026) */
-  .eyebrow {
+  :global(body.home) { gap: 0; padding-bottom: 88px; }
+  .stages a, .direction-links a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
+  .home-page .offer { font-weight: 600; color: var(--teal-text); text-decoration: underline; text-underline-offset: 3px; }
+  .home-page .offer:hover { color: var(--teal-btn-hover); }
+  .nw { white-space: nowrap; }
+
+  .product-demo { border: 1px solid var(--hair); border-radius: var(--radius-card); background: var(--card); padding: 0 28px; }
+  .demo-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 62px; border-bottom: 1px solid var(--hair); }
+  .demo-top h2 { font-size: 20px; scroll-margin-block-start: 44px; }
+  .demo-top > span { font-size: 14px; color: var(--ink-2); }
+  .demo-body { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 42px; align-items: center; }
+  .wheel-fallback { padding-block: 20px; color: var(--ink-2); }
+  @media (scripting: none) { .wheel-area { display: none; } }
+  .wheel-area { min-width: 0; padding: 0 14px 44px; position: relative; }
+  .wheel-area :global(.wheel-stage) { --wb: min(100%, 460px); }
+  .wheel-area :global(.wheel-info) { position: absolute; left: 0; right: 0; bottom: 2px; margin: 0; min-height: 40px; font-size: 13px; }
+  .wheel-area :global(.wheel-launch) { border-color: var(--launch-border); box-shadow: var(--launch-shadow); }
+  .wheel-area :global(.launch-text) { font-size: 22px; font-weight: 600; }
+  .wheel-area :global(.launch-cta) { height: 44px; border-width: 1px; border-color: var(--ink-3); color: var(--ink); font-size: 15px; }
+  .wheel-area :global(.wheel-launch:hover .launch-cta), .wheel-area :global(.wheel-launch:focus-visible .launch-cta) { color: var(--on-teal); border-color: var(--teal-btn); }
+  .method { padding-right: 20px; }
+  .method h3 { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 26px; }
+  .method h3 span { display: block; }
+  .stages { list-style: none; padding: 0; margin: 0; }
+  .stages a { display: grid; grid-template-columns: 78px 1fr 20px; align-items: center; gap: 12px; min-height: 60px; border-bottom: 1px solid var(--hair); }
+  .stages li:last-child a { border: 0; }
+  .day-range { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink-3); }
+  .stage-name { font-size: 18px; text-transform: capitalize; }
+  .stages a:hover .stage-name, .stages a:focus-visible .stage-name { text-decoration: underline; text-underline-offset: .2em; }
+  .wheel-area :global(.has-active .sector-label:not(.is-active)) { fill: var(--ink-2); opacity: 1; }
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="0"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(1) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="1"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(2) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="2"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(3) .stage-name,
+  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="3"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(4) .stage-name {
     color: var(--teal-text);
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-weight: 700;
   }
-  .mission h1 {
-    font-size: clamp(26px, 4.2vw, 48px);
-    font-weight: 600;
-    line-height: 1.12;
-    margin-inline: auto;
-  }
-  /* Всегда две строки. Компьютер: перенос после «создавать».
-     Телефон: после «людям» — строки короче, шрифт крупнее; ширина строки не выходит за экран. */
-  .mission h1 .m-c {
-    display: block;
-  }
-  /* Строка под миссией тише заголовка: что делаем — обычным текстом, услуга — ссылкой.
-     На широком экране — одна строка, чтобы колесо не уходило ниже первого экрана; уже — ссылка переносится целиком */
-  .offer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2px 0.35em;
-    color: var(--ink-2);
-    font-size: 18px;
-    line-height: 1.45;
-  }
-  .offer > span {
-    text-wrap: balance;
-  }
-  .offer a {
-    font-weight: 600;
-    text-underline-offset: 3px;
-  }
-  /* Срок и цена не разрываются: на телефоне переносится название услуги, а не «·» */
-  .offer .nw {
-    white-space: nowrap;
-  }
-  .review-switch{position:fixed;bottom:16px;left:16px;z-index:50;max-width:calc(100% - 96px);padding:12px 16px;background:var(--card);color:var(--teal-text);border-radius:var(--radius-btn);box-shadow:var(--shadow-pop);font-size:13px;min-height:44px}
-  @media(min-width:641px){.hero.hierarchy-review .mission h1{font-size:clamp(26px,3.6vw,40px)}}
-  @media (max-width: 640px) {
-    .eyebrow {
-      font-size: 12px;
-    }
-    .offer {
-      font-size: 15px;
-    }
-    .mission h1 {
-      font-size: clamp(15px, 5.4vw, 30px);
-    }
-    .mission h1 .m-a {
-      display: block;
-      white-space: nowrap;
-    }
-    .mission h1 .m-c {
-      display: inline;
-    }
-    .mission h1 .m-b,
-    .mission h1 .m-c {
-      white-space: nowrap;
-    }
+  .demo-note { border-top: 1px solid var(--hair); padding: 16px 0; font-size: 13px; color: var(--ink-3); }
+  .demo-gesture { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.home .product-demo:has(.wheel-stage:not(.is-idle))) .demo-caption { display: none; }
+    :global(.home .product-demo:has(.wheel-stage:not(.is-idle))) .demo-gesture { display: inline; }
   }
 
-  .bento {
-    display: grid;
-    grid-template-columns: var(--col-side) minmax(0, var(--col-center)) var(--col-side);
-    justify-content: center;
-    align-items: start;
-    gap: var(--col-gap);
-  }
-  /* Компьютер: «Проекты» слева и «Связь» + «Эми» справа — ровно на высоту колеса, низ трёх карточек
-     на одной линии (дизайн-система §5.1). Услуги — под колесом, боковые колонки их не ждут. */
-  .services-slot {
-    grid-column: 2;
-    grid-row: 2;
-  }
-  .wheel-card {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .bento > :global(.projects-card) {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: stretch;
-  }
-  .bento > :global(.stack) {
-    grid-column: 3;
-    grid-row: 1;
-    align-self: stretch;
-  }
-  .wheel-card {
-    padding: 14px 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .client-strip { list-style: none; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 40px; padding: 28px 90px 36px; }
+  .client-strip a { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; color: var(--ink-2); font-size: 13px; text-align: center; overflow-wrap: anywhere; }
+  .client-strip a:hover span, .client-strip a:focus-visible span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; }
+  .client-strip img { object-fit: contain; width: 150px; max-width: 100%; height: 36px; filter: grayscale(1); opacity: .65; }
+  .client-strip a:hover img { opacity: 1; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
+  :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
 
-  @media (max-width: 1040px) {
-    .bento {
-      grid-template-columns: 190px minmax(0, 1fr) 190px;
-      gap: 24px;
-    }
+  .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; }
+  .service-feature h3 { font-size: 27px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
+  .service-feature p:not(.ui-label) { font-size: 16px; color: var(--ink-2); max-width: 54ch; }
+  .service-next { display: flex; flex-direction: column; justify-content: center; gap: 16px; flex-shrink: 0; font-size: 14px; color: var(--ink-2); }
+  .service-link { color: var(--teal-text); font-size: 16px; font-weight: 600; }
+  .service-feature:hover .service-link, .service-feature:focus-visible .service-link { text-decoration: underline; text-underline-offset: 5px; }
+  .direction-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; margin-top: 28px; }
+  .direction-links a { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-content: start; padding: 12px 0; min-width: 0; }
+  .direction-links strong { font-size: 18px; font-weight: 600; text-transform: capitalize; }
+  .direction-links a > span:not(.ui-arrow) { font-size: 14px; line-height: 1.5; color: var(--ink-2); grid-column: 1; grid-row: 2; }
+  .direction-links .ui-arrow { grid-column: 2; grid-row: 1; }
+  .direction-links a:hover strong, .direction-links a:focus-visible strong { color: var(--teal-text); }
+
+  .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); }
+  .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; }
+  .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: 13px; border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
+  .project-image:hover .view-project { color: var(--teal-text); }
+  .project-description { padding: 18px 2px 0; }
+  .project-result { color: var(--ink); font-weight: 700; }
+  .project-inquiry { margin-top: 8px; }
+  .project-description .project-inquiry { color: var(--teal-text); }
+  .project-description h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 8px; }
+  .project-description p { font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+
+  .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover); }
+  .material .ui-label { grid-column: 1 / -1; margin: 0; }
+  .material strong { font-size: 19px; line-height: 1.25; font-weight: 600; }
+  .material .ui-arrow { grid-column: 2; grid-row: 2; }
+  .material-text { grid-column: 1 / -1; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+  .material:hover strong, .material:focus-visible strong { color: var(--teal-text); }
+
+  .contact-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: stretch; }
+  .contact-layout :global(.feedback) { grid-column: auto; width: 100%; max-width: none; margin: 0; padding: 28px; }
+  .contact-layout :global(.stack) { display: flex; flex-direction: column; gap: 20px; }
+  .contact-layout :global(.col-card) { padding: 24px; }
+  .contact-layout :global(.card-title) { font-size: 20px; }
+
+  /* WebKit при почти нулевой длительности задерживает наследуемый цвет вне экрана. */
+  @media (prefers-reduced-motion: reduce) {
+    :global(*), :global(*::before), :global(*::after) { transition: none !important; }
   }
-  /* Телефон и планшет: колесо, под ним «Проекты» во всю ширину,
-     «Связь» и «Спросить Эми» — двумя блоками рядом одной высоты (правки владельца 22.10.2026) */
-  @media (max-width: 860px) {
-    .bento {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      align-items: stretch;
-      gap: 20px;
-    }
-    .wheel-card,
-    .services-slot,
-    .bento > :global(.projects-card),
-    .bento > :global(.stack) {
-      grid-row: auto;
-    }
-    .wheel-card {
-      grid-column: 1 / -1;
-      order: -1;
-    }
-    .bento > :global(.projects-card) {
-      grid-column: 1 / -1;
-    }
-    .services-slot {
-      grid-column: 1 / -1;
-      order: -1;
-    }
+  @media (max-width: 1000px) {
+    .demo-body { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; }
+    .method h3 { font-size: 26px; }
+    .method { padding-right: 0; }
+    .client-strip { padding-inline: 32px; gap: 28px; }
+    .direction-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .service-feature { gap: 24px; }
+    .service-next { flex-shrink: 1; min-width: 200px; }
+    .material-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  }
+  @media (max-width: 760px) {
+    .product-demo { padding: 0 18px; }
+    .demo-top { min-height: 60px; }
+    .demo-top h2 { font-size: 18px; }
+    .demo-top > span { font-size: 12px; }
+    .demo-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .wheel-area { padding-inline: 14px; margin-inline: -18px; }
+    .method { padding: 20px 0 16px; border-top: 1px solid var(--hair); }
+    .method h3 { font-size: 25px; margin-bottom: 16px; }
+    .method h3 span { display: inline; }
+    .stages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+    .stages a { grid-template-columns: 42px minmax(0, 1fr) auto; min-height: 48px; gap: 6px; border-bottom: 1px solid var(--hair); }
+    .stages li:nth-last-child(-n+2) a { border: 0; }
+    .stage-name { font-size: 15px; }
+    .day-range { font-size: 12px; }
+    .demo-note { font-size: 12px; padding-block: 14px; }
+    .client-strip { padding: 24px 0 28px; gap: 14px; }
+    .client-strip img { height: 28px; }
+    .service-feature { flex-direction: column; padding: 24px; gap: 24px; }
+    .service-feature h3 { font-size: 24px; }
+    .service-next { min-width: 0; gap: 12px; }
+    .direction-links { gap: 16px 24px; margin-top: 20px; }
+    .project-grid { gap: 28px; grid-template-columns: minmax(0, 1fr); }
+    .material { padding: 20px; }
+    .contact-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .contact-layout :global(.stack) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .contact-layout :global(.col-card) { padding: 18px 12px; }
+    .contact-layout :global(.feedback) { padding: 24px 20px; }
+    .contact-layout :global(.btn) { font-size: 15px; }
+  }
+  @media (max-width: 400px) {
+    .client-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stages { grid-template-columns: minmax(0, 1fr); }
+    .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
+    .direction-links { gap: 12px 20px; }
+    .direction-links a > span:not(.ui-arrow) { font-size: 13px; }
+  }
+  @media (max-width: 360px) {
+    :global(body.home .write-fab) { display: none; }
+    .contact-layout :global(.stack) { grid-template-columns: minmax(0, 1fr); }
+    .ui-opening { padding-block: 20px; }
   }
 </style>
