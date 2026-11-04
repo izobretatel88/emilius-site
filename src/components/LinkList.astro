@@ -15,12 +15,16 @@ const {items} = Astro.props;
   :global(.directory) a::before{content:'';position:absolute;inset:0 calc(10px - var(--list-inset));z-index:-1;background:transparent;transition:background-color var(--hover)}
   :global(.directory) li:first-child a::before{border-start-start-radius:var(--radius-card);border-start-end-radius:var(--radius-card)}
   :global(.directory) li:last-child a::before{border-end-start-radius:var(--radius-card);border-end-end-radius:var(--radius-card)}
-  :global(.directory) a:hover,:global(.directory) a:focus-visible{background:transparent}
-  :global(.directory) a:hover::before,:global(.directory) a:focus-visible::before{background:var(--input-bg)}
+  :global(.directory) a:focus-visible {background:transparent}
+  @media (hover: hover) and (pointer: fine) { :global(.directory) a:hover {background:transparent} }
+  :global(.directory) a:focus-visible::before {background:var(--input-bg)}
+  @media (hover: hover) and (pointer: fine) { :global(.directory) a:hover::before {background:var(--input-bg)} }
   :global(.directory) a:active::before{background:var(--page)}
   a>span:first-child{min-width:0;overflow-wrap:anywhere}
-  a:hover,a:focus-visible{background:var(--input-bg)}
-  a:hover strong,a:focus-visible strong{color:var(--teal-text)}
+  a:focus-visible {background:var(--input-bg)}
+  @media (hover: hover) and (pointer: fine) { a:hover {background:var(--input-bg)} }
+  a:focus-visible strong {color:var(--teal-text)}
+  @media (hover: hover) and (pointer: fine) { a:hover strong {color:var(--teal-text)} }
   a:active{background:var(--page)}
   strong{display:block;font-size:22px;font-weight:600;line-height:1.25}
   .description{display:block;color:var(--ink-2);margin-top:7px;max-width:72ch;font-size:15px;line-height:1.5}

@@ -10,7 +10,7 @@ const {items} = Astro.props;
   .breadcrumbs li{min-width:0;overflow-wrap:anywhere}
   .breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}
   a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
-  a:hover{text-decoration:underline;text-underline-offset:4px}
+  @media (hover: hover) and (pointer: fine) { a:hover {text-decoration:underline;text-underline-offset:4px} }
   @media(max-width:600px){
     .breadcrumbs{margin-bottom:12px}
     /* The H1 names this page; keep the full trail available to screen readers. */
