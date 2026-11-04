@@ -208,9 +208,39 @@ const jsonLd = [
     color: var(--teal-text);
     text-decoration: none;
   }
-  .toc a:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  @media (hover: hover) and (pointer: fine) {
+    .toc a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+  /* Широкий экран: содержание уходит в правую колонку и остаётся под рукой при чтении.
+     Колонка текста и левый край — прежние; пустая правая треть первого экрана заполнена. */
+  @media (min-width: 1180px) {
+    .article:has(> .toc) {
+      display: grid;
+      grid-template-columns: minmax(0, var(--read-width)) minmax(240px, 300px);
+      justify-content: space-between;
+      column-gap: 56px;
+      align-items: start;
+    }
+    .article:has(> .toc) > * {
+      grid-column: 1;
+    }
+    .article > .toc {
+      grid-column: 2;
+      grid-row: 1 / span 6;
+      position: sticky;
+      top: 24px;
+      max-height: calc(100dvh - 48px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      margin-top: 52px;
+      padding: 18px 20px;
+    }
+    .article > .toc ol {
+      font-size: 14px;
+    }
   }
 
   /* Текст статьи: читают подряд, поэтому крупнее и свободнее, строка не шире ~68 знаков */
