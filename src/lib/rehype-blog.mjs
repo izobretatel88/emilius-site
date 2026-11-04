@@ -3,7 +3,9 @@
 //  - у картинок из public/ берём размеры из самого файла WebP и включаем ленивую загрузку:
 //    без размеров страница прыгает, когда картинки догружаются;
 //  - таблицы оборачиваем в блок с горизонтальной прокруткой для узких экранов;
-//  - внешние ссылки получают rel="noopener".
+//  - внешние ссылки получают rel="noopener";
+//  - в числах вида «1 000» и «990 ₽» пробел неразрывный: на телефоне в узкой ячейке таблицы
+//    «1» и «000» иначе расходились по разным строкам.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -27,6 +29,17 @@ function webpSize(file) {
   return null;
 }
 
+// Пробел между разрядами числа и перед ₽ или % — неразрывный. Код в <code>/<pre> не трогаем.
+const NBSP = '\u00a0';
+const glueNumbers = (text) => {
+  let out = text;
+  for (let prev = ''; prev !== out; ) {
+    prev = out;
+    out = out.replace(/(\d) (\d{3})(?!\d)/g, `$1${NBSP}$2`);
+  }
+  return out.replace(/(\d) ([₽%])/g, `$1${NBSP}$2`);
+};
+
 const isRoot = (url) => typeof url === 'string' && url.startsWith('/') && !url.startsWith('//');
 const isExternal = (url) => typeof url === 'string' && /^https?:\/\//.test(url);
 
@@ -36,6 +49,7 @@ export function rehypeBlog(options = {}) {
   const walk = (node) => {
     if (!node.children) return;
     node.children = node.children.map((child) => {
+      if (child.type === 'text') return { ...child, value: glueNumbers(child.value) };
       if (child.type === 'element') {
         const props = child.properties || (child.properties = {});
         if (child.tagName === 'img' && isRoot(props.src)) {
@@ -49,7 +63,7 @@ export function rehypeBlog(options = {}) {
           if (isRoot(props.href)) props.href = base + props.href;
           else if (isExternal(props.href)) props.rel = 'noopener';
         }
-        walk(child);
+        if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
         if (child.tagName === 'table') {
           // tabindex: широкую таблицу можно листать стрелками, не только мышью и пальцем
           return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: 'Таблица' }, children: [child] };
