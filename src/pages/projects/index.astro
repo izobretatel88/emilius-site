@@ -87,6 +87,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:13px;font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
   @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} }
+  .project-preview:active .preview-action {background:var(--teal-btn);color:var(--on-teal)}
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
   .project-caption>div{min-width:0;flex:1 1 220px}
   .project-kind{font-size:13px;color:var(--ink-2);margin-bottom:5px}
@@ -141,8 +142,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project h2,.project-featured h2{font-size:26px}
     .project-role{margin-top:6px}
     .project-site{align-self:flex-start}
-    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover)}
+    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
     .project-inquiry:focus-visible {background:var(--teal-btn);color:var(--on-teal)}
+    /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
+    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform:scale(0.98)}
     @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
     .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}
