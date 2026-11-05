@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Стенд карточки InSales</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{font:14px/1.3 -apple-system,system-ui,sans-serif;background:#e9e9ee;height:100vh;display:flex;flex-direction:column}
+  .bar{display:flex;gap:16px;align-items:center;padding:10px 16px;background:#1d1d1f;color:#fff;flex-wrap:wrap}
+  .bar b{font-weight:600;margin-right:8px}
+  .seg{display:inline-flex;background:#3a3a3c;border-radius:8px;padding:3px}
+  .seg button{border:0;background:none;color:#ddd;font:inherit;padding:6px 14px;border-radius:6px;cursor:pointer}
+  .seg button.on{background:#00999b;color:#fff}
+  .wrap{flex:1;display:flex;justify-content:center;overflow:hidden;padding:0}
+  iframe{border:0;background:#fff;width:100%;height:100%}
+  .mob .wrap{padding:16px 0}
+  .mob iframe{width:390px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>Карточка Emilius в каталоге партнёров</b>
+  <span class="seg" id="ver"><button data-v="was.html">Было</button><button data-v="new.html" class="on">Стало</button><button data-v="files.html">Файлы</button></span>
+  <span class="seg" id="dev"><button data-d="desk" class="on">Компьютер</button><button data-d="mob">Телефон</button></span>
+</div>
+<div class="wrap"><iframe id="f" src="new.html"></iframe></div>
+<script>
+  const f = document.getElementById('f');
+  const pick = (id, fn) => document.getElementById(id).addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    [...b.parentNode.children].forEach(x => x.classList.toggle('on', x === b)); fn(b);
+  });
+  pick('ver', b => { const y = f.contentWindow?.scrollY || 0; f.onload = () => f.contentWindow.scrollTo(0, y); f.src = b.dataset.v; });
+  pick('dev', b => document.body.classList.toggle('mob', b.dataset.d === 'mob'));
+</script>
+</body>
+</html>
