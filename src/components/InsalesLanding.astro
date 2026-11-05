@@ -595,12 +595,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     padding-bottom: 12px;
     border-top: 1px solid var(--hair);
   }
-  .got li::before { top: calc(12px + 0.62em); }
+  /* .dots.got — специфичнее базового .dots li::before ниже, иначе точки у пунктов 3+ на 12 px выше текста */
+  .dots.got li::before { top: calc(12px + 0.62em); }
   .got li:nth-child(-n + 2) {
     padding-top: 0;
     border-top: 0;
   }
-  .got li:nth-child(-n + 2)::before { top: 0.62em; }
+  .dots.got li:nth-child(-n + 2)::before { top: 0.62em; }
   .ticks li::before, .dots li::before {
     content: '';
     position: absolute;
@@ -1081,7 +1082,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .item:nth-child(2) { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hair); }
     .block ul.got { grid-template-columns: 1fr; }
     .got li:nth-child(2) { padding-top: 12px; border-top: 1px solid var(--hair); }
-    .got li:nth-child(2)::before { top: calc(12px + 0.62em); }
+    .dots.got li:nth-child(2)::before { top: calc(12px + 0.62em); }
     .choice div { grid-template-columns: 1fr; gap: 2px; }
     .weeks li { grid-template-columns: 1fr; }
     .wk { grid-row: auto; }
