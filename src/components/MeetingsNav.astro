@@ -47,7 +47,10 @@ const items = [
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
+    transition: background-color var(--hover), color var(--hover), transform 0.16s ease-out;
+  }
+  .tab:active {
+    transform: scale(0.97);
   }
   .tab.app {
     color: var(--ink);
