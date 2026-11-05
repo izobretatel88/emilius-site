@@ -155,7 +155,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
         form.reset();
         show(ok, 'Спасибо! Сообщение у нас.');
+        // Цели Метрики (JavaScript-события): заявка с главной ушла / не ушла. Без счётчика emiGoal нет.
+        (window as any).emiGoal?.('feedback-sent');
       } catch {
+        (window as any).emiGoal?.('feedback-fail');
         // Текст не стираем — его можно скопировать и отправить в Telegram.
         show(fail);
       } finally {

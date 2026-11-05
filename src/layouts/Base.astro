@@ -75,7 +75,10 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     {ymId > 0 && (
       <script is:inline define:vars={{ ymId }}>
-        // Код из кабинета Метрики (24.10.2026), номер счётчика подставляется из YM_ID
+        // Код из кабинета Метрики (24.10.2026), номер счётчика подставляется из YM_ID.
+        // Считаем только боевой адрес: продакшен-сборку открывают и локально (astro preview), и на техническом
+        // адресе Бегета — до 05.11.2026 это давало почти половину просмотров в счётчике (docs/AUDIT-YANDEX-2026-11-05.md).
+        if (location.hostname === 'emilius.agency') {
         (function (m, e, t, r, i, k, a) {
           m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
           m[i].l = 1 * new Date();
@@ -86,6 +89,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         ym(ymId, 'init', { webvisor: true, clickmap: true, referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
         // Цели страниц вызывают window.emiGoal — без счётчика это просто отсутствие функции.
         window.emiGoal = (name, params) => ym(ymId, 'reachGoal', name, params);
+        }
       </script>
     )}
   </head>

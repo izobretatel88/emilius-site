@@ -31,6 +31,10 @@ ErrorDocument 404 /404.html
   RewriteRule ^page[0-9]+\.html$ / [L,R=301]
   # Поисковики знают карту сайта Tilda по адресу /sitemap.xml
   RewriteRule ^sitemap\.xml$ /sitemap-index.xml [L,R=301]
+  # Внешние ссылки на старые разделы (аудит Вебмастера 05.11.2026): /ru/ — с партнёрской карточки InSales
+  # и zalina.me, /career, /careers, /jobs — с Хабр Карьеры. Своих страниц нет, ведём на главную.
+  RewriteRule ^ru(/.*)?$ / [L,R=301]
+  RewriteRule ^(career|careers|jobs)/?$ / [L,R=301]
 </IfModule>
 
 # --- Сжатие ---
