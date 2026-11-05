@@ -1,0 +1,86 @@
+---
+// Плашка о cookie Яндекс Метрики. Информирует и даёт ссылку на политику; Метрика работает как и раньше.
+// Закрыли «Понятно» — больше не показываем (отметка в localStorage). Без JavaScript плашки нет.
+const base = import.meta.env.BASE_URL;
+const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#cookie`;
+---
+
+<div class="cookie-notice" role="region" aria-label="Cookie" hidden>
+  <p>
+    Сайт использует cookie Яндекс Метрики, чтобы считать посещения. Продолжая, вы соглашаетесь с этим.
+    <a href={privacy}>Подробнее</a>
+  </p>
+  <button type="button">Понятно</button>
+</div>
+
+<script is:inline>
+  (function () {
+    var key = 'emilius-cookie-ok';
+    var box = document.querySelector('.cookie-notice');
+    if (!box) return;
+    try { if (localStorage.getItem(key)) return; } catch (e) {}
+    box.hidden = false;
+    box.querySelector('button').addEventListener('click', function () {
+      try { localStorage.setItem(key, '1'); } catch (e) {}
+      box.classList.add('is-closing');
+      setTimeout(function () { box.hidden = true; }, 200);
+    });
+  })();
+</script>
+
+<style>
+  .cookie-notice {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 45; /* над «Написать» (40), под заставкой (50) */
+    width: min(440px, calc(100vw - 32px));
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 14px 14px 18px;
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.4;
+    transition: opacity 0.2s ease-out;
+    @starting-style { opacity: 0; }
+  }
+  .cookie-notice[hidden] { display: none; }
+  .cookie-notice.is-closing { opacity: 0; }
+  .cookie-notice p { margin: 0; }
+  .cookie-notice a {
+    color: var(--teal-text);
+    text-underline-offset: 3px;
+  }
+  .cookie-notice button {
+    flex: none;
+    height: 44px;
+    padding-inline: 18px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: var(--on-teal);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--hover), transform 0.16s ease-out;
+  }
+  .cookie-notice button:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .cookie-notice button:hover { background: var(--teal-btn-hover); }
+  }
+  /* Телефон: «Написать» справа внизу — плашка встаёт над ней на всю ширину */
+  @media (max-width: 600px) {
+    .cookie-notice {
+      right: max(16px, env(safe-area-inset-right));
+      width: auto;
+      bottom: calc(max(16px, env(safe-area-inset-bottom)) + 60px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cookie-notice { transition: none; }
+  }
+</style>
