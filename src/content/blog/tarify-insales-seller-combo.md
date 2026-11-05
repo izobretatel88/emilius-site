@@ -4,7 +4,7 @@ h1: "Тарифы InSales: «Селлер», «Комбо» или «Интер�
 description: "Как выбрать тариф InSales для сайта и маркетплейсов, посчитать опции 1С, пользователей и платёжных сервисов. Пример на год и вопросы перед оплатой."
 date: "2026-11-05"
 updated: "2026-11-05"
-draft: false
+draft: true
 reviewBy: "2026-12-01"
 cover: "/blog/tarify-insales-seller-combo/cover-og.jpg"
 coverAlt: "Тарифы InSales: сайт, маркетплейсы или оба канала"

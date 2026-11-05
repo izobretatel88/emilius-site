@@ -4,7 +4,7 @@ h1: "Сколько стоит магазин на InSales в первый го�
 description: "Разбираем стоимость InSales по строкам: тариф, запуск, домен, касса, эквайринг, доставка и приложения. Считаем три сценария первого года магазина."
 date: "2026-11-05"
 updated: "2026-11-05"
-draft: false
+draft: true
 reviewBy: "2026-12-01"
 cover: "/blog/stoimost-insales-pervyy-god/cover-og.jpg"
 coverAlt: "Стоимость магазина InSales: запуск, подписка и расходы с заказов"

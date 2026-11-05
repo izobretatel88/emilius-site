@@ -65,7 +65,11 @@ export function rehypeBlog(options = {}) {
           props.src = base + props.src;
         }
         if (child.tagName === 'a') {
-          if (isRoot(props.href)) props.href = base + props.href;
+          const article = typeof props.href === 'string' && props.href.match(/^\/blog\/([a-z0-9-]+)\/?(?:[?#].*)?$/);
+          if (article && options.releases && !options.releases.has(article[1])) {
+            child.tagName = 'span';
+            delete props.href;
+          } else if (isRoot(props.href)) props.href = base + props.href;
           else if (isExternal(props.href)) props.rel = 'noopener';
         }
         if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
