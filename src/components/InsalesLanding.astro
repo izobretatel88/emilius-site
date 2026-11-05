@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import LinkList from './LinkList.astro';
+import { glue } from '../lib/typograph.mjs';
 import { getPosts } from '../lib/blog';
 import { LINKS } from '../data/site';
 import {
@@ -245,16 +246,16 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {plans.map((p) => (
           <article class:list={['card', 'plan', { main: p.name === (variant === 'seller' ? 'Селлер' : 'Магазин') }]}>
             <h3>{p.name}</h3>
-            <p class="who">{p.who}</p>
-            <p class="price num">{p.price}</p>
-            <p class="term">{p.term} · тариф {p.tariff}</p>
-            <ul class="dots">{p.items.map((it) => <li>{it}</li>)}</ul>
+            <p class="who">{glue(p.who)}</p>
+            <p class="price num">{glue(p.price)}</p>
+            <p class="term">{glue(`${p.term} · тариф ${p.tariff}`)}</p>
+            <ul class="dots">{p.items.map((it) => <li>{glue(it)}</li>)}</ul>
             <a class="plan-cta" href="#lead" data-goal="calc-click" data-preset={JSON.stringify(PLAN_PRESETS[p.name] ?? {})}>Посчитать «{p.name}»</a>
           </article>
         ))}
       </div>
-      <p class="small">{PLATFORM_NOTE}</p>
-      <p class="small">{NOT_INCLUDED}</p>
+      <p class="small">{glue(PLATFORM_NOTE)}</p>
+      <p class="small">{glue(NOT_INCLUDED)}</p>
     </section>
 
     <div class="cols">
@@ -797,6 +798,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quote figcaption a { display: inline-block; padding-block: 13px; margin-block: -13px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+  /* В три колонки строки карточек общие: подпись, срок с линией и список начинаются на одной высоте */
+  @supports (grid-template-rows: subgrid) {
+    @media (min-width: 761px) {
+      .plan { display: grid; grid-template-rows: subgrid; grid-row: span 6; row-gap: 8px; }
+      .plans { row-gap: 0; }
+    }
+  }
   .plan.main { border-color: var(--teal); }
   .plan.main .plan-cta {
     background: var(--teal-btn);
