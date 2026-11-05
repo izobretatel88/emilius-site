@@ -80,6 +80,8 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   .calc-summary{margin-block:16px;border-block:1px solid var(--hair);font-size:14px}
   .calc-summary summary{min-height:48px;padding-block:12px;cursor:pointer;color:var(--teal-text);font-weight:600}
   .calc-summary dl{margin:0 0 16px;display:grid;gap:12px}
+  .calc-summary[open] dl{animation:details-in 0.2s ease-out}
+  @keyframes details-in{from{opacity:0}}
   .calc-summary dt{color:var(--ink-2)}
   .calc-summary dd{margin:2px 0 0;font-weight:600}
   #public-calculator button{min-height:44px;text-underline-offset:4px}

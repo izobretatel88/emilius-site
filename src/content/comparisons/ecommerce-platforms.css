@@ -102,3 +102,6 @@
 .platform-comparison .seg{ width: 100%; }
 .platform-comparison .seg button{ flex: 1; padding: 10px 8px; }
 .platform-comparison .count{ margin-left: 0; }}
+/* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
+.platform-comparison details[open]>:not(summary){animation:details-in 0.2s ease-out}
+@keyframes details-in{from{opacity:0}}
