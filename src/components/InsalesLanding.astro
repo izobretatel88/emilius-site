@@ -1011,8 +1011,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--input-bg);
     font-size: 15px;
     color: var(--ink);
-    transition: border-color var(--hover), background-color var(--hover), color var(--hover);
+    transition: border-color var(--hover), background-color var(--hover), color var(--hover), transform 0.16s ease-out;
   }
+  .chip input:active + span { transform: scale(0.97); }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
   .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }
