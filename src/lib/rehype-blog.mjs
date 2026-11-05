@@ -46,6 +46,18 @@ const isExternal = (url) => typeof url === 'string' && /^https?:\/\//.test(url);
 export function rehypeBlog(options = {}) {
   const base = (options.base || '/').replace(/\/$/, ''); // '' для корня, '/emilius-site' для превью
 
+  // Таблицы называем по ближайшему заголовку перед ними: в списке областей экранного диктора
+  // «Таблица: Сколько стоит первый год» понятнее, чем четыре одинаковых «Таблица».
+  const textOf = (node) => (node.type === 'text' ? node.value : (node.children || []).map(textOf).join(''));
+  let heading = '';
+  const used = new Map();
+  const tableLabel = () => {
+    if (!heading) return 'Таблица';
+    const n = (used.get(heading) || 0) + 1;
+    used.set(heading, n);
+    return `Таблица: ${heading}${n > 1 ? ` (${n})` : ''}`;
+  };
+
   const walk = (node) => {
     if (!node.children) return;
     node.children = node.children.map((child) => {
@@ -63,15 +75,20 @@ export function rehypeBlog(options = {}) {
           if (isRoot(props.href)) props.href = base + props.href;
           else if (isExternal(props.href)) props.rel = 'noopener';
         }
+        if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
         if (child.tagName === 'table') {
           // tabindex: широкую таблицу можно листать стрелками, не только мышью и пальцем
-          return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: 'Таблица' }, children: [child] };
+          return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: tableLabel() }, children: [child] };
         }
       }
       return child;
     });
   };
 
-  return (tree) => walk(tree);
+  return (tree) => {
+    heading = '';
+    used.clear();
+    walk(tree);
+  };
 }
