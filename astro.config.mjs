@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { rehypeBlog } from './src/lib/rehype-blog.mjs';
+import { readBlogReleases } from './src/lib/blog-releases.mjs';
 
 // Один и тот же код собирается под два адреса:
 //  - превью на GitHub Pages: SITE_URL=https://<логин>.github.io  BASE_PATH=/emilius-site  PREVIEW=1
@@ -15,6 +16,6 @@ export default defineConfig({
   // /os/ — эксперимент «Emilius как операционная система» (docs/concept), в карту сайта не попадает
   // Markdown используется только в блоге (src/content/blog): подсветку кода не подключаем, блок кода оформляем сами,
   // а плагин rehypeBlog докручивает картинки, ссылки и таблицы статьи (см. src/lib/rehype-blog.mjs).
-  markdown: { syntaxHighlight: false, rehypePlugins: [[rehypeBlog, { base: process.env.BASE_PATH || '/' }]] },
+  markdown: { syntaxHighlight: false, rehypePlugins: [[rehypeBlog, { base: process.env.BASE_PATH || '/', releases: process.env.PREVIEW === '1' ? null : readBlogReleases() }]] },
   integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/os/') && !page.includes('/experiments/') })],
 });
