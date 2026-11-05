@@ -1,0 +1,19 @@
+name: extra → пересобрать превью
+
+# Пуш в ветку extra запускает общий деплой из main,
+# который выкладывает её в /emilius-site/extra/.
+on:
+  push:
+    branches: [extra]
+
+permissions:
+  actions: write
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run deploy.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
