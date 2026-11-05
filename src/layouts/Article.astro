@@ -445,6 +445,9 @@ const jsonLd = [
   }
   .body :global(.table-wrap) {
     margin-top: 18px;
+    /* Ширина колонки текста (62ch при 17 px, как у абзацев): таблица не выступает за правый край текста и обложки */
+    font-size: 17px;
+    max-width: 62ch;
     overflow-x: auto;
     border-radius: var(--radius-sm);
     box-shadow: 0 0 0 1px var(--hair);
@@ -454,6 +457,8 @@ const jsonLd = [
       linear-gradient(to left, var(--card) 30%, transparent) right center / 36px 100% no-repeat local,
       radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.16), transparent) left center / 12px 100% no-repeat scroll,
       radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.16), transparent) right center / 12px 100% no-repeat scroll;
+    /* Таблица — белая поверхность, как карточки: иначе заглушки теней цвета --card видны полосами на сером фоне страницы */
+    background-color: var(--card);
   }
   .body :global(table) {
     width: 100%;
