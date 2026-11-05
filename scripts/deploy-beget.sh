@@ -17,8 +17,8 @@ cd "$(dirname "$0")/.."
 # Счётчик Метрики тот же, что был на Tilda, — история посещений не прерывается.
 YM_ID="${YM_ID:-68742100}" npm run build:release
 
-# Защита от выкладки превью: в продакшене не должно быть noindex и метки dev.
-if grep -rlq --include='*.html' 'noindex' dist; then
+# Защита от выкладки превью. Для страницы 404 noindex задан намеренно.
+if grep -riql --include='*.html' --exclude='404.html' '<meta[^>]*name="robots"[^>]*noindex' dist; then
   echo "В сборке есть noindex — это сборка превью, выкладку останавливаю." >&2
   exit 1
 fi

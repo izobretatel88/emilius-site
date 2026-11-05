@@ -19,9 +19,10 @@ function walk(dir){for(const entry of readdirSync(dir,{withFileTypes:true})){con
 walk('dist');
 for(const p of html){
  const s=readFileSync(p,'utf8');
- assert(!/<meta\b[^>]*name="robots"[^>]*noindex/i.test(s),`${p}: noindex`);
+ // 404 закрыта от индекса намеренно (итерация 86); на остальных страницах noindex — признак сборки превью
+ if(!p.endsWith('/404.html'))assert(!/<meta\b[^>]*name="robots"[^>]*noindex/i.test(s),`${p}: noindex`);
  assert(!s.includes('/emilius-site/dev/'),`${p}: dev URL`);
- assert(/rel="canonical" href="https:\/\/emilius\.agency\//.test(s),`${p}: canonical`);
+ if(!p.endsWith('/404.html'))assert(/rel="canonical" href="https:\/\/emilius\.agency\//.test(s),`${p}: canonical`);
  assert(s.includes('Итерация 5 из 15 до великолепного состояния'),`${p}: public iteration`);
 }
 for(const p of ['dist/os','dist/review','dist/blog/edinye-ostatki-wb-ozon-insales/index.html'])assert(!existsSync(p),`${p}: preview-only route`);
