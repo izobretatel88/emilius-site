@@ -83,7 +83,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="note">{CTA_NOTE}</p>
       </div>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
-      <a class="switch" href={other.url}>{other.text}</a>
+      <a class="switch" href={other.url}>{glue(other.text)}</a>
       </div>
       <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
       <figure class="hero-phone">
@@ -185,7 +185,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text} ↗</a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->

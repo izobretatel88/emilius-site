@@ -68,7 +68,7 @@
 .platform-comparison .unknown{color:var(--ink-2);font-weight:400}
 .platform-comparison .caution{color:var(--caution)}
 .platform-comparison .connection{color:var(--ink)}
-.platform-comparison .source{display:block;width:fit-content;color:var(--teal-text);font-size:var(--fs-small);text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
+.platform-comparison .source{display:block;width:fit-content;white-space:nowrap;color:var(--teal-text);font-size:var(--fs-small);text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
 .platform-comparison .source span{font-size:11px;color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
