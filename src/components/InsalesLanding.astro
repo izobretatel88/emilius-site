@@ -727,7 +727,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .pos.first { background: var(--teal-btn); color: var(--on-teal); }
   .pos.none { background: none; color: var(--ink-3); font-weight: 400; }
-  .fresh-tag { align-self: flex-start; font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px; background: var(--teal-btn); color: var(--on-teal); }
+  .fresh-tag { align-self: flex-start; font-size: var(--fs-small); font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--teal-btn); color: var(--on-teal); }
   /* Мобильные версии: лента выходит под края карточки, полоса прокрутки скрыта — листают стрелками или свайпом */
   .mobile { --pad: 0px; }
   .mobile-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
@@ -775,9 +775,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
-  .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: 999px; background: var(--well); transition: background-color var(--hover); }
+  .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover); }
   @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--card); } }
-  .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; }
+  .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; white-space: nowrap; }
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
   .more-shops li { position: relative; }
   .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
