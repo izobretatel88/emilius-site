@@ -9,6 +9,7 @@ export type Project = {
   did: string;
   url: string;
   domain: string;
+  site?: string; // адрес для подписи ссылки, если сайт живёт не на основном домене
 };
 
 export const PROJECTS: Project[] = [
@@ -32,6 +33,7 @@ export const PROJECTS: Project[] = [
     did: 'Разработали техническую часть стартапа: сайт-витрину и интеграции.',
     url: 'https://limemart.wizzu.ru/',
     domain: 'wizzu.ru',
+    site: 'limemart.wizzu.ru',
   },
   {
     id: 'duman',

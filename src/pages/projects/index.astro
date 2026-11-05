@@ -50,7 +50,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       </a>
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p></div>
-        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.id==='wizzu'?'limemart.wizzu.ru':p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.id==='wizzu'?'limemart.wizzu.ru':p.domain}</a>
+        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
       <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}

@@ -116,7 +116,7 @@ const arc = (i: number) => {
                   <h3 id={`case-${p.id}`}>{p.name}</h3>
                   <p>{p.about}</p>
                   {cases.length === 1 && <p>{p.did}</p>}
-                  <a class="case-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.domain} <span aria-hidden="true">↗</span></a>
+                  <a class="case-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
                 </div>
               </article>
             </li>
