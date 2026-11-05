@@ -101,6 +101,7 @@
      серый фон страницы, белые карточки без обводки, мягкая тень с небольшим смещением вниз */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
   --shadow-pop: 0 2px 6px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.14);
+  --img-dim: none; /* светлые обложки и схемы; в тёмной теме чуть приглушаются, чтобы не слепить */
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.25);
   /* Подложка полноразмерного просмотра работ */
   --viewer-backdrop: rgba(0, 0, 0, 0.76);
@@ -179,6 +180,7 @@
     --sec-marketing-ink: #3c9c5a;
     --shadow-card: none;
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
+    --img-dim: brightness(0.88);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
   }
 }
@@ -232,5 +234,6 @@
   --sec-marketing-ink: #3c9c5a;
   --shadow-card: none;
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
+  --img-dim: brightness(0.88);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
 }
