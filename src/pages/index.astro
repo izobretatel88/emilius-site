@@ -221,9 +221,10 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); }
-  .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; }
+  .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
+  .project-image:focus-visible img { filter: none; }
   .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: 13px; border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
-  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { color: var(--teal-text); } }
+  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { color: var(--teal-text); } .project-image:hover img { filter: none; } }
   .project-description { padding: 18px 2px 0; }
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
