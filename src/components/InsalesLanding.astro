@@ -690,7 +690,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
   a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
-  @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--card); } }
+  /* Плитки стоят на сером --well внутри белой карточки раздела: при наведении темнеют до --hair, а не растворяются в белом */
+  @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--hair); } }
   @media (hover: hover) and (pointer: fine) { .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; } }
   .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
@@ -777,7 +778,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
   .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover); }
-  @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--card); } }
+  @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--hair); } }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; white-space: nowrap; }
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
   .more-shops li { position: relative; }
