@@ -182,8 +182,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </ul>
       <p class="sub-lead">Ещё магазины и интеграции на InSales:</p>
       <ul class="more-shops">
-        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a></li>)}
-        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}</a> — {x.what}</li>)}
+        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
+        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
       </ul>
       <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
     </section>
