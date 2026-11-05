@@ -8,6 +8,7 @@
 //    «1» и «000» иначе расходились по разным строкам.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { glue } from './typograph.mjs';
 
 // Размеры WebP читаем из заголовка файла: три варианта кодирования (VP8, VP8L, VP8X).
 function webpSize(file) {
@@ -29,16 +30,8 @@ function webpSize(file) {
   return null;
 }
 
-// Пробел между разрядами числа, перед ₽ или % и перед тире — неразрывный: тире не начинает строку. Код в <code>/<pre> не трогаем.
-const NBSP = '\u00a0';
-const glueNumbers = (text) => {
-  let out = text;
-  for (let prev = ''; prev !== out; ) {
-    prev = out;
-    out = out.replace(/(\d) (\d{3})(?!\d)/g, `$1${NBSP}$2`);
-  }
-  return out.replace(/(\d) ([₽%])/g, `$1${NBSP}$2`).replace(/ —/g, `${NBSP}—`);
-};
+// Неразрывные пробелы в числах, перед ₽/%/тире и между числом и месяцем — src/lib/typograph.mjs. Код в <code>/<pre> не трогаем.
+const glueNumbers = glue;
 
 const isRoot = (url) => typeof url === 'string' && url.startsWith('/') && !url.startsWith('//');
 const isExternal = (url) => typeof url === 'string' && /^https?:\/\//.test(url);
