@@ -64,7 +64,8 @@ const showToc = toc.length >= 4;
   .doc > * {
     max-width: var(--read-width);
   }
-  .eyebrow {
+  /* .doc в селекторе: иначе общее правило абзацев документа перебивает цвет и размер */
+  .doc .eyebrow {
     color: var(--teal-text);
     font-weight: 800;
     font-size: 14px;
@@ -78,7 +79,7 @@ const showToc = toc.length >= 4;
     line-height: 1.12;
     letter-spacing: -0.03em;
   }
-  .date {
+  .doc .date {
     margin-top: 6px;
     font-size: 14px;
     color: var(--ink-2);
@@ -105,7 +106,7 @@ const showToc = toc.length >= 4;
     background: var(--card);
     box-shadow: var(--shadow-card);
   }
-  .toc-title {
+  .doc .toc-title {
     margin: 0 0 8px;
     font-size: 14px;
     font-weight: 700;
