@@ -24,7 +24,6 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   <Intro />
   <main class="home-page ui-shell">
     <section class="ui-opening" aria-labelledby="mission-title">
-      <p class="ui-eyebrow">Наша миссия</p>
       <h1 class="ui-h1" id="mission-title">Помогаем великолепным людям<span class="ui-quiet"> создавать великолепные продукты.</span></h1>
       <div class="ui-actions"><a class="ui-button" href="#feedback">Обсудить проект <span aria-hidden="true">→</span></a><a class="ui-link" href="#projects">Смотреть проекты</a></div>
     </section>
@@ -152,7 +151,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
 <style>
   :global(body.home) { gap: 0; padding-bottom: 88px; }
   .stages a, .direction-links a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
-  /* Первый экран (выбор владельца 04.11.2026): eyebrow «Наша миссия», миссия с переносом после «людям»,
+  /* Первый экран (выбор владельца 04.11.2026): миссия с переносом после «людям»; надпись «Наша миссия» убрана 05.11.2026 по просьбе владельца,
      вторая часть тише. Срок и цена магазина — в блоке услуг. */
 
   .product-demo { border: 1px solid var(--hair); border-radius: var(--radius-card); background: var(--card); padding: 0 28px; }
