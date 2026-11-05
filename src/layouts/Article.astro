@@ -303,6 +303,84 @@ const jsonLd = [
     border-radius: var(--radius-sm);
     box-shadow: 0 0 0 1px var(--hair);
     filter: var(--img-dim);
+    transition: filter var(--hover);
+  }
+  /* Картинка — ссылка на свой файл (rehype-blog.mjs): схемы в 2400 px открываются целиком.
+     На широком экране подсказка появляется плашкой при наведении, как «Смотреть крупнее» в проектах;
+     на телефоне стоит строкой под картинкой: наведения там нет, а подписи на схеме мельче 6 px. */
+  .body :global(.img-open) {
+    position: relative;
+    display: block;
+    margin: 22px 0 0;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    text-decoration: none;
+    cursor: zoom-in;
+  }
+  .body :global(.img-open img) {
+    margin: 0;
+  }
+  .body :global(.img-hint) {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    padding: 8px 14px;
+    border-radius: var(--radius-btn);
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity var(--hover), background-color var(--hover), color var(--hover);
+  }
+  .body :global(.img-open:focus-visible) {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+  .body :global(.img-open:focus-visible img) {
+    filter: none;
+  }
+  .body :global(.img-open:focus-visible .img-hint) {
+    opacity: 1;
+    background: var(--teal-btn);
+    color: var(--on-teal);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .body :global(.img-open:hover img) {
+      filter: none;
+    }
+    .body :global(.img-open:hover .img-hint) {
+      opacity: 1;
+      background: var(--teal-btn);
+      color: var(--on-teal);
+    }
+  }
+  @media (max-width: 600px) {
+    .body :global(.img-hint) {
+      position: static;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      color: var(--teal-text);
+      font-size: 14px;
+      opacity: 1;
+    }
+    .body :global(.img-open:focus-visible .img-hint) {
+      background: none;
+      color: var(--teal-text);
+    }
+    .body :global(figure .img-hint) {
+      min-height: 36px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .body :global(img),
+    .body :global(.img-hint) {
+      transition: none;
+    }
   }
   /* Подпись под картинкой — <figcaption> (в Markdown строка сразу под картинкой, см. rehype-blog.mjs).
      Абзац после пустой строки остаётся текстом статьи обычного размера. */
@@ -316,7 +394,7 @@ const jsonLd = [
     line-height: 1.5;
     color: var(--ink-2);
   }
-  .body :global(p:has(> img:only-child)) {
+  .body :global(p:has(> .img-open:only-child)) {
     max-width: none;
   }
   .body :global(code) {

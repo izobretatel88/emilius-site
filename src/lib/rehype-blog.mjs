@@ -90,9 +90,31 @@ export function rehypeBlog(options = {}) {
     });
   };
 
+  // Схемы в статьях рисуются в 2400 px: на телефоне подписи на них мельче 6 px.
+  // Картинка становится ссылкой на свой файл — открывается целиком, его можно увеличить пальцами.
+  // Обёртку ставим после разбора подписей: там ищется <img> первым в абзаце.
+  const wrapImages = (node) => {
+    if (!node.children || node.tagName === 'a') return;
+    node.children = node.children.map((child) => {
+      if (child.type !== 'element') return child;
+      if (child.tagName === 'img' && child.properties && typeof child.properties.src === 'string') {
+        const alt = String(child.properties.alt || '').trim();
+        return {
+          type: 'element',
+          tagName: 'a',
+          properties: { className: ['img-open'], href: child.properties.src, ariaLabel: alt ? `Открыть крупнее: ${alt}` : 'Открыть картинку крупнее' },
+          children: [child, { type: 'element', tagName: 'span', properties: { className: ['img-hint'], ariaHidden: 'true' }, children: [{ type: 'text', value: 'Открыть крупнее' }] }],
+        };
+      }
+      wrapImages(child);
+      return child;
+    });
+  };
+
   return (tree) => {
     heading = '';
     used.clear();
     walk(tree);
+    wrapImages(tree);
   };
 }
