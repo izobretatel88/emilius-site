@@ -18,8 +18,15 @@
       const input=event.target;
       if(!(input instanceof HTMLInputElement)||!input.checked)return;
       const value=input.value;
+      // Тема меняется одним кадром: иначе фон страницы переключается сразу,
+      // а ссылки и кнопки с переходом цвета догоняют его 0.2 с
+      const freeze=document.createElement('style');
+      freeze.textContent='*,*::before,*::after{transition:none!important}';
+      document.head.append(freeze);
       if(value==='system')delete document.documentElement.dataset.theme;
       else document.documentElement.dataset.theme=value;
+      getComputedStyle(document.documentElement).color;
+      setTimeout(()=>freeze.remove(),0);
       try{localStorage.setItem('emilius-comparison-theme',value);}catch{}
       document.dispatchEvent(new CustomEvent('emi:theme',{detail:value}));
     });
