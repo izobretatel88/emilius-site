@@ -77,6 +77,17 @@ export function rehypeBlog(options = {}) {
         }
         if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
+        // Подпись пишется в Markdown сразу под картинкой, без пустой строки: такой абзац становится
+        // <figure> с <figcaption>. Абзац после пустой строки — обычный текст статьи, не подпись.
+        if (child.tagName === 'p') {
+          const kids = child.children || [];
+          const first = kids.findIndex((k) => !(k.type === 'text' && !k.value.trim()));
+          const rest = kids.slice(first + 1);
+          if (first >= 0 && kids[first].tagName === 'img' && rest.some((k) => k.type !== 'text' || k.value.trim())) {
+            if (rest[0] && rest[0].type === 'text') rest[0] = { ...rest[0], value: rest[0].value.replace(/^\s+/, '') };
+            return { type: 'element', tagName: 'figure', properties: {}, children: [kids[first], { type: 'element', tagName: 'figcaption', properties: {}, children: rest }] };
+          }
+        }
         if (child.tagName === 'table') {
           // tabindex: широкую таблицу можно листать стрелками, не только мышью и пальцем
           return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: tableLabel() }, children: [child] };
