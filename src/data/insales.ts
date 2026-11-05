@@ -77,7 +77,7 @@ export const RESULT = [
 ] as const;
 
 export const PLANS = [
-  { name: PACKAGES.S.name, price: k(PACKAGES.S.min), term: '2–3 недели', who: 'Бренд из соцсетей, первый сайт',
+  { name: PACKAGES.S.name, price: k(PACKAGES.S.min), term: '3–4 недели', who: 'Бренд из соцсетей, первый сайт',
     items: ['До 50 товаров, заводим сами', 'До 10 категорий', 'Оплата картой и СБП, касса', 'Самовывоз или курьер + 1 служба доставки', 'Метрика с целями, Вебмастер'],
     tariff: '«Интернет-магазин» 2 700 ₽/мес' },
   { name: PACKAGES.M.name, price: k(PACKAGES.M.min), term: '3–5 недель', who: 'Розница, производитель, переезд со старого сайта',

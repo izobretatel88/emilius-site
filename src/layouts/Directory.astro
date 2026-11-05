@@ -1,0 +1,12 @@
+---
+import Base from './Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/architecture.css';
+interface Props {title:string;description:string;parents?:{title:string;href:string}[];}
+const {title,description,parents=[]}=Astro.props;
+---
+<Base title={`${title} — Emilius Agency`} description={description}>
+  <main class="directory ui-shell"><header class="directory-intro ui-opening"><Breadcrumbs items={[...parents,{title}]} /><h1 class="ui-h1">{title}</h1><p class="ui-lead">{description}</p></header><slot /></main>
+  <Footer />
+</Base>

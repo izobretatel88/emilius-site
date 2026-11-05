@@ -1,0 +1,198 @@
+/* Общий каркас и примитивы страниц — по экспериментальной главной (04.11.2026).
+   Значения — только из tokens.css. Описание — docs/EMILIUS-DESIGN-SYSTEM.md §5.4.
+   Префикс ui- — чтобы глобальные классы не пересекались со стилями компонентов. */
+
+/* Ширина содержимого: шапка, основная часть и подвал выровнены по одной линии */
+.ui-shell {
+  width: 100%;
+  max-width: var(--layout-width);
+  margin-inline: auto;
+  min-width: 0;
+}
+
+/* Первый экран страницы: текст прижат влево */
+.ui-opening {
+  padding-block: 44px 28px;
+}
+.ui-eyebrow {
+  color: var(--teal-text);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.ui-h1 {
+  font-size: var(--fs-h1);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+/* Вторая часть заголовка — тише, тем же кеглем */
+.ui-h1 .ui-quiet {
+  display: block;
+  color: var(--ink-2);
+}
+.ui-lead {
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 62ch; /* около 70 знаков в строке при 19 px */
+  margin-top: 20px;
+  text-wrap: pretty;
+}
+.ui-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 32px;
+  margin-top: 26px;
+}
+
+/* Кнопка: одна залитая на экран, бирюза кнопок */
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 50px;
+  padding: 12px 24px;
+  border-radius: var(--radius-btn);
+  background: var(--teal-btn);
+  color: var(--on-teal);
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color var(--hover), transform 0.16s ease-out;
+}
+/* Наведение — только там, где есть мышь: на телефоне касание не оставляет «залипший» цвет */
+@media (hover: hover) and (pointer: fine) {
+  .ui-button:hover {
+    background: var(--teal-btn-hover);
+    color: var(--on-teal);
+  }
+}
+/* Нажатие: кнопка чуть проседает — интерфейс «услышал» касание */
+.ui-button:active {
+  transform: scale(0.98);
+}
+/* Текстовое действие: подчёркивание только при наведении и в фокусе */
+.ui-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline transparent;
+  text-underline-offset: 5px;
+  transition: color var(--hover), text-decoration-color var(--hover);
+}
+.ui-link:focus-visible {
+  color: var(--teal-text);
+  text-decoration-color: currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ui-link:hover {
+    color: var(--teal-text);
+    text-decoration-color: currentColor;
+  }
+}
+.ui-link .ui-arrow,
+.ui-arrow {
+  color: var(--teal-text);
+}
+
+/* Секция: тонкая линия сверху, заголовок слева, ссылка «Все …» справа */
+.ui-section {
+  border-top: 1px solid var(--hair);
+  padding-block: var(--section-pad) calc(var(--section-pad) + 4px);
+  scroll-margin-top: 24px;
+}
+.ui-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.ui-section-head h2,
+.ui-h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: pretty;
+}
+.ui-section-head > .ui-link {
+  flex-shrink: 0;
+}
+.ui-label {
+  font-size: 13px;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+.ui-section-intro {
+  color: var(--ink-2);
+  max-width: 66ch;
+  margin: -16px 0 28px;
+}
+
+/* Поверхность: белая карточка без обводки с мягкой тенью */
+.ui-surface {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 760px) {
+  .ui-opening {
+    padding-block: 36px 28px;
+  }
+  .ui-eyebrow {
+    font-size: var(--fs-small);
+    margin-bottom: 16px;
+  }
+  .ui-h1 {
+    font-size: var(--fs-h1-sm);
+    letter-spacing: var(--tracking-tight);
+  }
+  .ui-h1 .ui-quiet {
+    display: inline;
+  }
+  .ui-lead {
+    font-size: var(--fs-lead-sm);
+    margin-top: 16px;
+  }
+  .ui-actions {
+    gap: 8px 20px;
+    margin-top: 24px;
+  }
+  .ui-button {
+    min-height: 48px;
+    padding-inline: 18px;
+    font-size: 15px;
+  }
+  .ui-section {
+    padding-block: var(--section-pad-sm);
+  }
+  .ui-section-head {
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+  .ui-section-head h2,
+  .ui-h2 {
+    font-size: var(--fs-h2-sm);
+  }
+  .ui-section-head > .ui-link {
+    font-size: 13px;
+  }
+}
+@media (max-width: 400px) {
+  .ui-section-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

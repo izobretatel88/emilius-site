@@ -1,0 +1,52 @@
+<fieldset class="theme-control">
+  <legend>Тема оформления</legend>
+  <div class="theme-options">
+    <label><input type="radio" name="site-theme" value="system" checked aria-label="Авто — как на устройстве" /><span>Авто</span></label>
+    <label><input type="radio" name="site-theme" value="light" /><span>Светлая</span></label>
+    <label><input type="radio" name="site-theme" value="dark" /><span>Тёмная</span></label>
+  </div>
+</fieldset>
+<script>
+  const control=document.querySelector<HTMLFieldSetElement>('.theme-control');
+  if(control){
+    const inputs=[...control.querySelectorAll<HTMLInputElement>('input')];
+    const sync=(value:string)=>inputs.forEach(input=>{input.checked=input.value===value;});
+    let initial='system';
+    try{initial=localStorage.getItem('emilius-comparison-theme')||'system';}catch{}
+    sync(['light','dark'].includes(initial)?initial:'system');
+    control.addEventListener('change',event=>{
+      const input=event.target;
+      if(!(input instanceof HTMLInputElement)||!input.checked)return;
+      const value=input.value;
+      // Тема меняется одним кадром: иначе фон страницы переключается сразу,
+      // а ссылки и кнопки с переходом цвета догоняют его 0.2 с
+      const freeze=document.createElement('style');
+      freeze.textContent='*,*::before,*::after{transition:none!important}';
+      document.head.append(freeze);
+      if(value==='system')delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme=value;
+      getComputedStyle(document.documentElement).color;
+      setTimeout(()=>freeze.remove(),0);
+      try{localStorage.setItem('emilius-comparison-theme',value);}catch{}
+      document.dispatchEvent(new CustomEvent('emi:theme',{detail:value}));
+    });
+    document.addEventListener('emi:theme',event=>{
+      const value=(event as CustomEvent<string>).detail;
+      if(['system','light','dark'].includes(value))sync(value);
+    });
+  }
+</script>
+<style>
+  .theme-control{border:0;padding:0;margin:12px 0 20px;min-width:0;max-width:100%;font-size:14px}
+  legend{padding:0;margin:0 auto 8px;color:var(--ink-2);font-size:13px}
+  .theme-options{display:flex;padding:4px;background:var(--well);border-radius:var(--radius-btn)}
+  label{position:relative;flex:1;min-width:0;cursor:pointer}
+  input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+  span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:var(--radius-sm);color:var(--ink-2);font-weight:600;transition:background var(--hover),color var(--hover),transform 0.16s ease-out}
+  label:active span{transform:scale(0.97)}
+  input:checked+span{background:var(--card);color:var(--ink);box-shadow:var(--shadow-card)}
+  @media(hover:hover) and (pointer:fine){input:hover+span{color:var(--ink)}}
+  input:focus-visible+span{outline:2px solid var(--teal-text);outline-offset:2px}
+  @media(prefers-reduced-motion:reduce){span{transition:none}}
+  @media(max-width:360px){span{padding-inline:12px}}
+</style>

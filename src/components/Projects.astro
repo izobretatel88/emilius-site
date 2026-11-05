@@ -9,11 +9,11 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
   <ul class="projects">
     {PROJECTS.map((p) => (
       <li class="proj">
-        <button class="proj-btn" type="button" aria-describedby={`case-${p.id}`}>
-          <img class:list={[{ mono: p.logoMono }]} src={href(p.logo)} alt={p.name} width="34" height="34" loading="lazy" />
+        <button class="proj-btn" type="button" aria-expanded="false" aria-controls={`case-${p.id}`}>
+          <img class:list={[{ mono: p.logoMono }]} src={href(p.logo)} alt="" width="34" height="34" loading="lazy" />
           <span class="visually-hidden">Кейс: {p.name}</span>
         </button>
-        <div class="case" id={`case-${p.id}`} role="tooltip">
+        <div class="case" id={`case-${p.id}`}>
           <img class="shot" src={href(p.shot)} alt={`Первый экран сайта ${p.domain}`} width="640" height="400" loading="lazy" decoding="async" />
           <p>{p.about}</p>
           <p>{p.did}</p>
@@ -22,13 +22,20 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
       </li>
     ))}
   </ul>
+  <!-- Логотипы без подписей: кто не навёл курсор, иначе не узнает, что это кейсы -->
+  <a class="all" href={href('projects/')}>Все проекты →</a>
 </section>
 
 <script>
-  // Кейс — над логотипом; если сверху не помещается, — туда, где места больше
-  document.querySelectorAll<HTMLElement>('.proj').forEach((proj) => {
+  // Кейс открывается наведением или фокусом, Esc его закрывает — до тех пор, пока курсор и фокус
+  // не уйдут с логотипа (WCAG 1.4.13). aria-expanded говорит экранному диктору, открыт ли кейс.
+  const projs = [...document.querySelectorAll<HTMLElement>('.proj')].flatMap((proj) => {
     const card = proj.querySelector<HTMLElement>('.case');
-    if (!card) return;
+    const btn = proj.querySelector<HTMLButtonElement>('.proj-btn');
+    return card && btn ? [{ proj, card, btn }] : [];
+  });
+  projs.forEach(({ proj, card, btn }) => {
+    // Кейс — над логотипом; если сверху не помещается, — туда, где места больше
     const place = () => {
       const r = proj.getBoundingClientRect();
       const need = card.offsetHeight + 12;
@@ -37,8 +44,27 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
       // сверху — если помещается; иначе туда, где места больше
       proj.classList.toggle('is-down', above < need && below > above);
     };
-    proj.addEventListener('pointerenter', place);
-    proj.addEventListener('focusin', place);
+    // :focus-within меняется уже после focusout — смотрим состояние в следующем такте
+    const sync = () =>
+      window.setTimeout(() => {
+        const on = proj.matches(':hover') || proj.matches(':focus-within');
+        if (!on) proj.classList.remove('is-dismissed');
+        btn.setAttribute('aria-expanded', String(on && !proj.classList.contains('is-dismissed')));
+      });
+    proj.addEventListener('pointerenter', () => (place(), sync()));
+    proj.addEventListener('focusin', () => (place(), sync()));
+    proj.addEventListener('pointerleave', sync);
+    proj.addEventListener('focusout', sync);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    projs.forEach(({ proj, btn }) => {
+      if (btn.getAttribute('aria-expanded') !== 'true') return;
+      // фокус на ссылке внутри кейса — возвращаем его на логотип, иначе он пропадёт вместе с кейсом
+      if (proj.contains(document.activeElement) && document.activeElement !== btn) btn.focus();
+      proj.classList.add('is-dismissed');
+      btn.setAttribute('aria-expanded', 'false');
+    });
   });
 </script>
 
@@ -80,6 +106,12 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
   }
   .proj {
     position: relative;
+  }
+  .all {
+    font-size: 15px;
+    font-weight: 600;
+    text-underline-offset: 3px;
+    text-align: center;
   }
   .proj-btn {
     width: 52px;
@@ -141,6 +173,13 @@ const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
     opacity: 1;
     visibility: visible;
     transform: none;
+  }
+  /* Закрыт по Esc — не открывается, пока курсор и фокус не уйдут с логотипа. Скрывается сразу,
+     без затухания: иначе Tab успевает попасть на ссылку в гаснущем кейсе и фокус теряется */
+  .proj.is-dismissed .case {
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
   }
   .case .shot {
     display: block;

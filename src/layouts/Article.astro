@@ -1,0 +1,539 @@
+---
+// Раскладка статьи блога по образцу LegalDoc: логотип, карточка с текстом, оглавление из заголовков, футер.
+// Разметка для поисковиков (BlogPosting, FAQPage, BreadcrumbList) собирается здесь из шапки статьи.
+import Base from './Base.astro';
+import Footer from '../components/Footer.astro';
+import LinkList from '../components/LinkList.astro';
+import { ruDate, type Post } from '../lib/blog';
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const d = post.data;
+const base = import.meta.env.BASE_URL;
+const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const abs = (p: string) => new URL(href(p.replace(/^\//, '')), Astro.site).href;
+
+// Оглавление из заголовков h2: у Astro они уже получили id из текста заголовка
+let html = await Astro.slots.render('default');
+const toc: { id: string; text: string }[] = [];
+for (const m of html.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/g)) {
+  toc.push({ id: m[1], text: m[2].replace(/<[^>]+>/g, '').trim() });
+}
+
+const showUpdated = d.updated && d.updated.getTime() !== d.date.getTime();
+const org = { '@type': 'Organization', name: 'Эмилиус Эдженси', url: abs('') };
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: d.h1,
+    description: d.description,
+    image: [abs(d.cover)],
+    datePublished: d.date.toISOString().slice(0, 10),
+    dateModified: (d.updated ?? d.date).toISOString().slice(0, 10),
+    inLanguage: 'ru',
+    mainEntityOfPage: canonical,
+    keywords: d.tags.join(', '),
+    author: org,
+    publisher: { ...org, logo: { '@type': 'ImageObject', url: abs('brand/logo.png') } },
+  },
+  d.faq.length > 0 && {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: abs('') },
+      { '@type': 'ListItem', position: 2, name: 'Блог', item: abs('blog/') },
+      { '@type': 'ListItem', position: 3, name: d.h1, item: canonical },
+    ],
+  },
+].filter(Boolean);
+---
+
+<Base
+  title={d.title}
+  description={d.description}
+  ogType="article"
+  ogImage={d.cover.replace(/^\//, '')}
+  ogImageAlt={d.coverAlt}
+  publishedTime={d.date.toISOString()}
+  modifiedTime={(d.updated ?? d.date).toISOString()}
+  jsonLd={jsonLd}
+  noindex={d.draft}
+>
+
+  <main id="content" class="article ui-shell">
+    <nav class="crumbs" aria-label="Хлебные крошки"><a href={href('blog/')}>Блог</a></nav>
+    <h1>{d.h1}</h1>
+    <p class="meta">
+      {d.draft && <span class="draft">черновик</span>}
+      <span>{ruDate(d.date)}</span>
+      {showUpdated && <span>обновлено {ruDate(d.updated!)}</span>}
+      <span>{d.readingMinutes} мин чтения</span>
+    </p>
+    {toc.length >= 4 && (
+      <nav class="toc" aria-label="Содержание">
+        <p class="toc-title">Содержание</p>
+        <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+      </nav>
+    )}
+    <div class="body" data-post={post.id}>
+      <Fragment set:html={html} />
+    </div>
+    {post.id==='edinye-ostatki-wb-ozon-insales' && <section class="article-next"><h2>Следующий шаг</h2><LinkList items={[
+      {title:'Магазин рядом с WB и Ozon',description:'Запуск своего сайта и настройка связки с площадками.',href:'services/insales-shop/seller/'},
+      {title:'Проверить функции InSales и KIT',description:'Способы обмена, учёт и ограничения платформ.',href:'compare/insales-vs-yandex-kit/'},
+      {title:'Обсудить сложную интеграцию',description:'Когда нужна своя логика обмена и работа с 1С.',href:'services/dev/'},
+    ]} /></section>}
+  </main>
+
+  <!-- Просмотр схемы крупно: окно поверх статьи, закрывается кнопкой, Esc и кликом по фону. Без скрипта ссылка открывает файл картинки. -->
+  <dialog class="img-viewer" aria-label="Картинка крупно">
+    <div class="img-viewer-bar"><span class="img-viewer-title"></span><button type="button" data-close-img autofocus>Закрыть <span aria-hidden="true">×</span></button></div>
+    <div class="img-viewer-body"><img alt="" decoding="async" /></div>
+  </dialog>
+
+  <Footer />
+</Base>
+
+<script is:inline>
+  // Кнопка «Скопировать» у блоков кода (промпты, ТЗ): без скрипта блок остаётся обычным текстом
+  (function () {
+    document.querySelectorAll('.article pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy';
+      btn.textContent = 'Скопировать';
+      btn.addEventListener('click', function () {
+        var text = pre.innerText;
+        var done = function () {
+          btn.textContent = 'Скопировано';
+          setTimeout(function () { btn.textContent = 'Скопировать'; }, 2000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () {});
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(ta);
+        }
+        if (window.emiGoal) window.emiGoal('blog-copy-prompt');
+      });
+      pre.appendChild(btn);
+    });
+    // «Открыть крупнее»: картинка в окне поверх статьи вместо перехода на файл — закрыть можно кнопкой, Esc или кликом по фону
+    var viewer = document.querySelector('.img-viewer');
+    if (viewer && viewer.showModal) {
+      var vImg = viewer.querySelector('img');
+      var vTitle = viewer.querySelector('.img-viewer-title');
+      document.addEventListener('click', function (e) {
+        var link = e.target.closest && e.target.closest('.img-open');
+        if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+        e.preventDefault();
+        var src = link.querySelector('img');
+        vImg.src = link.getAttribute('href');
+        vImg.alt = src ? src.alt : '';
+        vTitle.textContent = src && src.alt ? src.alt : 'Картинка';
+        viewer.showModal();
+      });
+      viewer.addEventListener('click', function (e) {
+        if (e.target === viewer || e.target.closest('[data-close-img]')) viewer.close();
+      });
+      viewer.addEventListener('close', function () { vImg.removeAttribute('src'); });
+    }
+    // Переход из статьи на лендинг услуги: ссылки с utm_source=blog
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="utm_source=blog"]');
+      if (a && window.emiGoal) window.emiGoal('blog-to-landing', { post: (document.querySelector('.body') || {}).dataset.post });
+    });
+  })();
+</script>
+
+<style>
+  /* Окно просмотра картинки — как просмотр проектов: белая панель, сверху название и «Закрыть», картинка по ширине окна */
+  .img-viewer { width: min(1440px, calc(100% - 40px)); max-width: none; max-height: calc(100svh - 40px); padding: 0; border: 0; border-radius: var(--radius-card); background: var(--card); color: var(--ink); box-shadow: var(--shadow-pop); overflow: auto; overscroll-behavior: contain; }
+  .img-viewer::backdrop { background: var(--viewer-backdrop); }
+  .img-viewer[open], .img-viewer[open]::backdrop { animation: img-viewer-in 0.2s ease-out; }
+  @keyframes img-viewer-in { from { opacity: 0; } }
+  :global(html:has(.img-viewer[open])) { overflow: hidden; }
+  .img-viewer-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 12px 10px 20px; background: var(--card); border-bottom: 1px solid var(--hair); }
+  .img-viewer-title { min-width: 0; font-size: 15px; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .img-viewer-bar button { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: var(--radius-sm); background: var(--well); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color var(--hover), transform 0.16s ease-out; }
+  .img-viewer-bar button:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) { .img-viewer-bar button:hover { background: var(--hair); } }
+  .img-viewer-body { padding: 16px; }
+  .img-viewer-body img { display: block; width: 100%; height: auto; border-radius: var(--radius-sm); }
+  @media (max-width: 600px) {
+    .img-viewer { width: calc(100% - 16px); max-height: calc(100svh - 16px); border-radius: var(--radius-sm); }
+    .img-viewer-bar { padding-left: 14px; }
+    .img-viewer-body { padding: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .img-viewer[open], .img-viewer[open]::backdrop { animation: none; } }
+  .top {
+    display: flex;
+    justify-content: center;
+  }
+  .logo-link {
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+  }
+  /* Статья на общем каркасе: левый край общий со всем сайтом, колонка текста — для чтения */
+  .article {
+    padding-top: 16px;
+  }
+  .article > * {
+    max-width: var(--read-width);
+  }
+  .crumbs {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  h1 {
+    margin-top: 4px;
+    font-size: var(--fs-h1-doc);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .draft {
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    background: var(--well);
+    font-weight: 700;
+  }
+  .toc {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+  }
+  .toc-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 22px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .toc li {
+    margin: 0 0 4px;
+  }
+  .toc a {
+    color: var(--teal-text);
+    text-decoration: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .toc a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+  /* Широкий экран: содержание уходит в правую колонку и остаётся под рукой при чтении.
+     Колонка текста и левый край — прежние; пустая правая треть первого экрана заполнена. */
+  @media (min-width: 1180px) {
+    .article:has(> .toc) {
+      display: grid;
+      grid-template-columns: minmax(0, var(--read-width)) minmax(240px, 300px);
+      justify-content: space-between;
+      column-gap: 56px;
+      align-items: start;
+    }
+    .article:has(> .toc) > * {
+      grid-column: 1;
+    }
+    .article > .toc {
+      grid-column: 2;
+      grid-row: 1 / span 6;
+      position: sticky;
+      top: 24px;
+      max-height: calc(100dvh - 48px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      margin-top: 52px;
+      padding: 18px 20px;
+    }
+    .article > .toc ol {
+      font-size: 14px;
+    }
+  }
+
+  /* Текст статьи: читают подряд, поэтому крупнее и свободнее, строка не шире ~68 знаков */
+  .body :global(h2) {
+    margin-top: 44px;
+    font-size: clamp(22px, 3.2vw, 26px);
+    line-height: 1.22;
+    scroll-margin-top: 24px;
+  }
+  .body :global(h3) {
+    margin: 30px 0 0;
+    font-size: 19px;
+    line-height: 1.25;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .body :global(p),
+  .body :global(ul),
+  .body :global(ol) {
+    margin: 14px 0 0;
+    max-width: 62ch; /* кириллица уже латиницы: 62ch дают 65–75 знаков в строке */
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .body :global(ul),
+  .body :global(ol) {
+    padding-left: 22px;
+  }
+  .body :global(li + li) {
+    margin-top: 6px;
+  }
+  .body :global(strong) {
+    font-weight: 700;
+  }
+  .body :global(a) {
+    text-underline-offset: 3px;
+  }
+  .body :global(hr) {
+    margin: 36px 0 0;
+    border: 0;
+    border-top: 1px solid var(--hair);
+  }
+  /* Призыв агентства в тексте: спокойная врезка, без кнопок и давления.
+     Бирюзовая рамка, как у «Написать» и оценки на лендинге, — серая подложка уже у оглавления и кода */
+  .body :global(blockquote) {
+    margin: 24px 0 0;
+    padding: 16px 20px;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-sm);
+  }
+  .body :global(blockquote p) {
+    margin: 0;
+  }
+  .body :global(img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 22px 0 0;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--hair);
+    filter: var(--img-dim);
+    transition: filter var(--hover);
+  }
+  /* Картинка — ссылка на свой файл (rehype-blog.mjs): схемы в 2400 px открываются целиком.
+     На широком экране подсказка появляется плашкой при наведении, как «Смотреть крупнее» в проектах;
+     на телефоне стоит строкой под картинкой: наведения там нет, а подписи на схеме мельче 6 px. */
+  .body :global(.img-open) {
+    position: relative;
+    display: block;
+    margin: 22px 0 0;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    text-decoration: none;
+    cursor: zoom-in;
+  }
+  .body :global(.img-open img) {
+    margin: 0;
+  }
+  .body :global(.img-hint) {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    padding: 8px 14px;
+    border-radius: var(--radius-btn);
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity var(--hover), background-color var(--hover), color var(--hover);
+  }
+  .body :global(.img-open:focus-visible) {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+  .body :global(.img-open:focus-visible img) {
+    filter: none;
+  }
+  .body :global(.img-open:focus-visible .img-hint) {
+    opacity: 1;
+    background: var(--teal-btn);
+    color: var(--on-teal);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .body :global(.img-open:hover img) {
+      filter: none;
+    }
+    .body :global(.img-open:hover .img-hint) {
+      opacity: 1;
+      background: var(--teal-btn);
+      color: var(--on-teal);
+    }
+  }
+  @media (max-width: 600px) {
+    .body :global(.img-hint) {
+      position: static;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      color: var(--teal-text);
+      font-size: 14px;
+      opacity: 1;
+    }
+    .body :global(.img-open:focus-visible .img-hint) {
+      background: none;
+      color: var(--teal-text);
+    }
+    .body :global(figure .img-hint) {
+      min-height: 36px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .body :global(img),
+    .body :global(.img-hint) {
+      transition: none;
+    }
+  }
+  /* Подпись под картинкой — <figcaption> (в Markdown строка сразу под картинкой, см. rehype-blog.mjs).
+     Абзац после пустой строки остаётся текстом статьи обычного размера. */
+  .body :global(figure) {
+    margin: 14px 0 0;
+  }
+  .body :global(figcaption) {
+    margin-top: 8px;
+    max-width: 62ch;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .body :global(p:has(> .img-open:only-child)) {
+    max-width: none;
+  }
+  .body :global(code) {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--well);
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    overflow-wrap: anywhere;
+  }
+  .body :global(pre) {
+    position: relative;
+    margin: 18px 0 0;
+    padding: 54px 18px 18px; /* сверху место под кнопку «Скопировать» */
+    border-radius: var(--radius-sm);
+    background: var(--well);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .body :global(pre code) {
+    padding: 0;
+    background: none;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .body :global(.copy) {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 7px 14px;
+    border: 0;
+    border-radius: var(--radius-btn);
+    background: var(--teal-btn);
+    color: var(--on-teal);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--hover), transform 0.16s ease-out;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .body :global(.copy:hover) {
+      background: var(--teal);
+    }
+  }
+  .body :global(.copy:active) {
+    transform: scale(0.97);
+  }
+  .body :global(.table-wrap) {
+    margin-top: 18px;
+    /* Ширина колонки текста (62ch при 17 px, как у абзацев): таблица не выступает за правый край текста и обложки */
+    font-size: 17px;
+    max-width: 62ch;
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 1px var(--hair);
+    /* Тени по краям показывают, что таблицу можно листать: пропадают, когда край достигнут */
+    background:
+      linear-gradient(to right, var(--card) 30%, transparent) left center / 36px 100% no-repeat local,
+      linear-gradient(to left, var(--card) 30%, transparent) right center / 36px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.16), transparent) left center / 12px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.16), transparent) right center / 12px 100% no-repeat scroll;
+    /* Таблица — белая поверхность, как карточки: иначе заглушки теней цвета --card видны полосами на сером фоне страницы */
+    background-color: var(--card);
+  }
+  .body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  /* От четырёх колонок текст не сжимаем в узкие столбцы, а даём таблице листаться */
+  .body :global(table:has(th:nth-child(4))) {
+    min-width: 640px;
+  }
+  /* На телефоне и три колонки не сжимаем в столбики по 2–3 слова: таблица листается, тени по краям подсказывают */
+  @media (max-width: 600px) {
+    .body :global(table:has(th:nth-child(3))) {
+      min-width: 520px;
+    }
+  }
+  .body :global(th) {
+    padding: 10px 14px;
+    background: var(--well);
+    text-align: left;
+    font-weight: 700;
+  }
+  .body :global(td) {
+    padding: 10px 14px;
+    border-top: 1px solid var(--hair);
+    vertical-align: top;
+  }
+  .body :global(.table-wrap:focus-visible) {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+</style>

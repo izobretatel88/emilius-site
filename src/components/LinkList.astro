@@ -1,0 +1,39 @@
+---
+import { href } from '../lib/urls';
+import { glue } from '../lib/typograph.mjs';
+interface Props { items: {title:string;description:string;href:string;label?:string}[]; }
+const {items} = Astro.props;
+---
+<ul class="link-list">{items.map(item => <li><a href={href(item.href)}><span>{item.label && <small>{item.label}</small>}<strong>{glue(item.title)}</strong><span class="description">{glue(item.description)}</span></span><span class="arrow" aria-hidden="true">→</span></a></li>)}</ul>
+<style>
+  .link-list{list-style:none;margin:0;padding:0}
+  .link-list li+li{border-top:1px solid var(--hair)}
+  a{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:23px 10px;margin-inline:-10px;text-decoration:none;color:var(--ink);border-radius:var(--radius-sm);transition:background-color var(--hover)}
+  /* В белом списке подсветка доходит до края и повторяет радиус всей поверхности.
+     Псевдоэлемент оставляет отступ текста и рамку клавиатурного фокуса на месте. */
+  :global(.directory) .link-list{--list-inset:26px}
+  :global(.directory) a{position:relative;isolation:isolate}
+  :global(.directory) a::before{content:'';position:absolute;inset:0 calc(10px - var(--list-inset));z-index:-1;background:transparent;transition:background-color var(--hover)}
+  :global(.directory) li:first-child a::before{border-start-start-radius:var(--radius-card);border-start-end-radius:var(--radius-card)}
+  :global(.directory) li:last-child a::before{border-end-start-radius:var(--radius-card);border-end-end-radius:var(--radius-card)}
+  :global(.directory) a:focus-visible {background:transparent}
+  @media (hover: hover) and (pointer: fine) { :global(.directory) a:hover {background:transparent} }
+  :global(.directory) a:focus-visible::before {background:var(--input-bg)}
+  @media (hover: hover) and (pointer: fine) { :global(.directory) a:hover::before {background:var(--input-bg)} }
+  :global(.directory) a:active::before{background:var(--page)}
+  a>span:first-child{min-width:0;overflow-wrap:anywhere}
+  a:focus-visible {background:var(--input-bg)}
+  @media (hover: hover) and (pointer: fine) { a:hover {background:var(--input-bg)} }
+  a:focus-visible strong {color:var(--teal-text)}
+  @media (hover: hover) and (pointer: fine) { a:hover strong {color:var(--teal-text)} }
+  a:active{background:var(--page)}
+  strong{display:block;font-size:22px;font-weight:600;line-height:1.25;transition:color var(--hover)}
+  .description{display:block;color:var(--ink-2);margin-top:7px;max-width:72ch;font-size:15px;line-height:1.5}
+  small{display:block;color:var(--ink-3);font-size:var(--fs-small);margin-bottom:7px}
+  .arrow{color:var(--teal-text);font-size:24px;flex-shrink:0;transition:transform 0.2s ease-out}
+  /* Стрелка чуть сдвигается вперёд: строка — переход, а не просто подсветка */
+  a:focus-visible .arrow{transform:translateX(3px)}
+  @media (hover: hover) and (pointer: fine) { a:hover .arrow{transform:translateX(3px)} }
+  @media (prefers-reduced-motion: reduce){.arrow{transition:none}a:focus-visible .arrow{transform:none}a:hover .arrow{transform:none}}
+  @media(max-width:600px){strong{font-size:20px}a{padding-block:20px;gap:16px}.description{font-size:14px}:global(.directory) .link-list{--list-inset:18px}}
+</style>

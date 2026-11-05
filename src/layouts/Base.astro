@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import WriteButton from '../components/WriteButton.astro';
+import SiteNav from '../components/SiteNav.astro';
 // Основные начертания грузим заранее: заголовки (600) и текст (400) не перескакивают со шрифта на шрифт
 import glober400 from '../styles/fonts/glober-400.woff2?url';
 import glober600 from '../styles/fonts/glober-600.woff2?url';
@@ -9,6 +10,8 @@ interface Props {
   title: string;
   description: string;
   noindex?: boolean; // эксперименты (раздел /os/) не индексируются и в продакшене
+  customNav?: boolean;
+  bodyClass?: string;
   // Для статей блога: своя обложка, тип страницы и разметка для поисковиков. По умолчанию — как у всего сайта.
   ogType?: 'website' | 'article';
   ogImage?: string; // путь от корня сайта, например blog/<адрес>/cover-og.jpg
@@ -17,7 +20,7 @@ interface Props {
   modifiedTime?: string;
   jsonLd?: object | object[];
 }
-const { title, description, noindex = false, ogType = 'website', ogImage: ogImagePath, ogImageAlt, publishedTime, modifiedTime, jsonLd } = Astro.props;
+const { title, description, noindex = false, customNav = false, bodyClass, ogType = 'website', ogImage: ogImagePath, ogImageAlt, publishedTime, modifiedTime, jsonLd } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -26,6 +29,7 @@ const ogImage = new URL(href(ogImagePath ?? 'og.jpg'), Astro.site);
 const preview = process.env.PREVIEW === '1';
 // Сборка ветки dev лежит в подпапке /dev — помечаем её, чтобы не путать с рабочим превью.
 const devBuild = /\/dev\/?$/.test(base);
+const hasSiteNav = !customNav && !/\/(os|meetings)(\/|$)/.test(Astro.url.pathname);
 // Яндекс Метрика: номер счётчика задаётся при сборке продакшена (YM_ID=…). В превью счётчика нет, чтобы не мешать данные.
 const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
 ---
@@ -35,11 +39,19 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Тема, выбранная в сравнении, сохраняется при переходах по сайту и применяется до отрисовки.
+      try {
+        var chosenTheme = localStorage.getItem('emilius-comparison-theme');
+        if (chosenTheme === 'light' || chosenTheme === 'dark') document.documentElement.dataset.theme = chosenTheme;
+      } catch {}
+    </script>
     <title>{title}</title>
     <link rel="preload" href={glober600} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={glober400} as="font" type="font/woff2" crossorigin />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {/* Закрытой от индекса странице (404, черновик) каноническая ссылка не нужна: 404 отдаётся по любому неверному адресу */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {(preview || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={href('favicon-32.png')} type="image/png" sizes="32x32" />
@@ -58,11 +70,15 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#f7f7f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e1413" media="(prefers-color-scheme: dark)" />
+    <!-- Цвет панели браузера — фон страницы (--page в tokens.css); скрипт в конце body следит за выбранной темой -->
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     {ymId > 0 && (
       <script is:inline define:vars={{ ymId }}>
-        // Код из кабинета Метрики (24.10.2026), номер счётчика подставляется из YM_ID
+        // Код из кабинета Метрики (24.10.2026), номер счётчика подставляется из YM_ID.
+        // Считаем только боевой адрес: продакшен-сборку открывают и локально (astro preview), и на техническом
+        // адресе Бегета — до 05.11.2026 это давало почти половину просмотров в счётчике (docs/AUDIT-YANDEX-2026-11-05.md).
+        if (location.hostname === 'emilius.agency') {
         (function (m, e, t, r, i, k, a) {
           m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
           m[i].l = 1 * new Date();
@@ -73,20 +89,39 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         ym(ymId, 'init', { webvisor: true, clickmap: true, referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
         // Цели страниц вызывают window.emiGoal — без счётчика это просто отсутствие функции.
         window.emiGoal = (name, params) => ym(ymId, 'reachGoal', name, params);
+        }
       </script>
     )}
   </head>
-  <body>
+  <body class={bodyClass}>
     {ymId > 0 && <noscript><div><img src={`https://mc.yandex.ru/watch/${ymId}`} style="position:absolute; left:-9999px;" alt="" /></div></noscript>}
     <!-- С клавиатуры первая остановка — «К содержанию»: мимо шапки сразу к главному блоку страницы. Видна только в фокусе. -->
     <a class="skip" href="#content">К содержанию</a>
-    {devBuild && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
+    {devBuild && !hasSiteNav && !customNav && <a class="dev-badge" href="/emilius-site/">черновик · ветка dev</a>}
+    {hasSiteNav && <SiteNav />}
     <slot />
     <script is:inline>
       // Цель ссылки — первый <main> страницы; id и фокус даём ему здесь, чтобы не размечать каждую страницу
       (function () {
         var m = document.querySelector('main');
         if (m && !document.getElementById('content')) { m.id = 'content'; m.tabIndex = -1; }
+      })();
+    </script>
+    <script is:inline>
+      // Панель браузера в цвет страницы и при ручном выборе темы: «Светлая» при тёмной системе — светлая панель.
+      // В режиме «Авто» остаются цвета из разметки — браузер сам берёт светлый или тёмный по системе.
+      (function () {
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        var sync = function () {
+          var manual = document.documentElement.dataset.theme;
+          var page = getComputedStyle(document.documentElement).getPropertyValue('--page').trim();
+          metas.forEach(function (meta) {
+            if (!meta.dataset.auto) meta.dataset.auto = meta.getAttribute('content');
+            meta.setAttribute('content', manual && page ? page : meta.dataset.auto);
+          });
+        };
+        sync();
+        document.addEventListener('emi:theme', sync);
       })();
     </script>
     <WriteButton />

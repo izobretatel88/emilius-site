@@ -36,20 +36,29 @@ const items = [
     border-radius: var(--radius-btn);
     box-shadow: var(--shadow-card);
   }
+  /* Высота вкладки 44 px — удобная зона касания на телефоне */
   .tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     color: var(--ink-2);
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover);
+    transition: background-color var(--hover), color var(--hover), transform 0.16s ease-out;
+  }
+  .tab:active {
+    transform: scale(0.97);
   }
   .tab.app {
     color: var(--ink);
   }
-  .tab:hover {
-    color: var(--teal-text);
+  @media (hover: hover) and (pointer: fine) {
+    .tab:hover {
+      color: var(--teal-text);
+    }
   }
   .tab[aria-current='page'] {
     background: var(--well);

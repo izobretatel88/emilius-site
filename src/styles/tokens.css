@@ -2,6 +2,30 @@
    Источник значений: docs/EMILIUS-DESIGN-SYSTEM.md */
 
 :root {
+  /* Системные части — выпадающие списки, полосы прокрутки, галочки — следуют теме сайта */
+  color-scheme: light;
+  --site-width: 1120px;
+  /* Каркас страниц — по экспериментальной главной (04.11.2026). Правила — docs/EMILIUS-DESIGN-SYSTEM.md §5.4 */
+  --layout-width: 1190px; /* шапка, содержимое и подвал */
+  --layout-gutter: 24px; /* поле страницы; уже на телефоне — в global.css */
+  --section-pad: 44px; /* отступ секции сверху и снизу */
+  --section-pad-sm: 32px;
+  /* Шкала заголовков */
+  --fs-h1: clamp(36px, 4.1vw, 60px);
+  --fs-h1-sm: clamp(30px, 7.4vw, 42px);
+  --fs-h1-doc: clamp(30px, 24px + 1.52vw, 46px); /* статьи и документы: заголовки длиннее; растёт ровно от 30 px на 390 до 46 px на 1440, на планшете ~36 px */
+  --read-width: 760px; /* колонка текста для чтения */
+  --fs-h2: 36px;
+  --fs-h2-sm: 28px;
+  --fs-h3: 22px;
+  --fs-lead: 19px;
+  --fs-lead-sm: 17px; /* лид на телефоне: на ступень крупнее основного текста 16 px */
+  --fs-small: 13px; /* нижний предел для текста, который читают: подписи, даты, группы меню */
+  --tracking-tight: -0.025em;
+  /* Кнопка запуска колеса — без рамки и тени, в плоской секции демонстрации */
+  --launch-border: transparent;
+  --launch-shadow: none;
+  --content-width: 1080px;
   /* Акцент */
   --teal: #00999b;
   /* Заливка кнопок: чуть глубже фирменного, чтобы белый текст читался (4,58:1 по WCAG).
@@ -24,7 +48,7 @@
   --well: #f2f2f4;
   --proj-bg: #ffffff; /* кружки логотипов проектов */
   --input-bg: #f2f2f4;
-  --input-border: #e0e0e5;
+  --input-border: #86868b;
 
   /* Фон: пастельные спектральные лучи под белой вуалью */
   --veil-a: rgba(245, 245, 247, 0.92);
@@ -44,6 +68,9 @@
   /* Текущий этап колеса — чуть насыщеннее обычного, мягко, видно без наведения */
   --sec-custdev-now: #f7e6ee;
   --sec-design-now: #e5f5f5;
+  --teal-soft: var(--sec-design-now);
+  /* Выделение текста мышью — фирменная бирюза, а не системный синий */
+  --selection: rgba(0, 153, 155, 0.2);
   --sec-dev-now: #eafcec;
   --sec-marketing-now: #f3f3f3;
   /* Пройденные дни итерации — круг закрашивается цветом этапа */
@@ -52,6 +79,12 @@
   --sec-dev-done: #eafaec;
   --sec-marketing-done: #f2f2f2;
   --wheel-line: #dfe3e3; /* тонкие нейтральные разделители этапов и риски дней */
+  /* Текст цветом этапа («→ этап» в центре колеса): тон этапа (c1 в src/data/site.ts), затемнённый
+     до 4,8:1 на белом круге — яркие c1 давали 2–4:1 */
+  --sec-custdev-ink: #9e6536;
+  --sec-design-ink: #18806c;
+  --sec-dev-ink: #617a25;
+  --sec-marketing-ink: #31804a;
 
   /* Колесо */
   --disc-stroke: #ffffff;
@@ -68,15 +101,23 @@
      серый фон страницы, белые карточки без обводки, мягкая тень с небольшим смещением вниз */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
   --shadow-pop: 0 2px 6px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.14);
+  --img-dim: none; /* светлые обложки и схемы; в тёмной теме чуть приглушаются, чтобы не слепить */
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.25);
+  /* Подложка полноразмерного просмотра работ */
+  --viewer-backdrop: rgba(0, 0, 0, 0.76);
 
   /* Форма */
   --radius-card: 20px;
   --radius-btn: 13px;
   --radius-sm: 10px;
+  --radius-pill: 999px;
+  --print-page: #ffffff;
+  --print-ink: #000000;
 
   /* Типографика: Glober (src/styles/fonts.css) */
   --font: 'Glober', Arial, sans-serif;
+  /* Блоки кода в статьях блога: промпты и артикулы */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Сетка первого экрана */
   --col-side: 185px;
@@ -90,6 +131,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --selection: rgba(0, 153, 155, 0.42);
     --teal-num: #35b6b4;
     --teal-text: #3cc6c6;
     --ink: #f5f5f7;
@@ -102,7 +145,7 @@
     --well: #232325;
     --proj-bg: #2c2c2e;
     --input-bg: #2c2c2e;
-    --input-border: #3a3a3c;
+    --input-border: #77777e;
     --veil-a: rgba(0, 0, 0, 0.94);
     --veil-b: rgba(0, 0, 0, 0.9);
     --ray-1: #2c4a8a;
@@ -130,13 +173,21 @@
     --sec-dev-done: #1b3a22;
     --sec-marketing-done: #2c3131;
     --wheel-line: #2c3836;
+    /* На тёмном круге c1 читаются сами; касдев чуть светлее — 4,8:1 */
+    --sec-custdev-ink: #b67b4c;
+    --sec-design-ink: #20a88e;
+    --sec-dev-ink: #9cc43c;
+    --sec-marketing-ink: #3c9c5a;
     --shadow-card: none;
     --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
+    --img-dim: brightness(0.88);
     --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
   }
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
+  --selection: rgba(0, 153, 155, 0.42);
   --teal-num: #35b6b4;
   --teal-text: #3cc6c6;
   --ink: #f5f5f7;
@@ -149,7 +200,7 @@
   --well: #232325;
   --proj-bg: #2c2c2e;
   --input-bg: #2c2c2e;
-  --input-border: #3a3a3c;
+  --input-border: #77777e;
   --veil-a: rgba(0, 0, 0, 0.94);
   --veil-b: rgba(0, 0, 0, 0.9);
   --ray-1: #2c4a8a;
@@ -177,7 +228,12 @@
   --sec-dev-done: #1b3a22;
   --sec-marketing-done: #2c3131;
   --wheel-line: #2c3836;
+  --sec-custdev-ink: #b67b4c;
+  --sec-design-ink: #20a88e;
+  --sec-dev-ink: #9cc43c;
+  --sec-marketing-ink: #3c9c5a;
   --shadow-card: none;
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
+  --img-dim: brightness(0.88);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
 }

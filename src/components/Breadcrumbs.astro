@@ -1,0 +1,24 @@
+---
+import { href } from '../lib/urls';
+interface Props { items: {title:string;href?:string}[]; }
+const {items} = Astro.props;
+// Та же цепочка — разметкой BreadcrumbList для поисковиков: видимые крошки и данные для поиска не расходятся.
+// Последний пункт без ссылки — текущая страница.
+const abs=(p:string)=>new URL(href(p),Astro.site).href;
+const ld={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{name:'Главная',item:abs('')},...items.map(i=>({name:i.title,item:i.href?abs(i.href):new URL(Astro.url.pathname,Astro.site).href}))].map((i,index)=>({'@type':'ListItem',position:index+1,...i}))};
+---
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />
+<nav class:list={['breadcrumbs', {'has-parent':items.some(item=>item.href)}]} aria-label="Хлебные крошки"><ol><li><a href={href()}>Главная</a></li>{items.map(item => <li class:list={{'current':!item.href}}>{item.href ? <a href={href(item.href)}>{item.title}</a> : <span aria-current="page">{item.title}</span>}</li>)}</ol></nav>
+<style>
+  .breadcrumbs{font-size:13px;color:var(--ink-2);margin-bottom:20px}
+  .breadcrumbs ol{display:flex;align-items:center;flex-wrap:wrap;gap:0 10px;list-style:none;padding:0;margin:0}
+  .breadcrumbs li{min-width:0;overflow-wrap:anywhere}
+  .breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}
+  a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
+  @media (hover: hover) and (pointer: fine) { a:hover {text-decoration:underline;text-underline-offset:4px} }
+  @media(max-width:600px){
+    .breadcrumbs{margin-bottom:12px}
+    /* The H1 names this page; keep the full trail available to screen readers. */
+    .has-parent .current{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  }
+</style>

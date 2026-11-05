@@ -4,10 +4,13 @@ import { LINKS } from '../data/site';
 
 <!-- Плавающая «Написать» на всех страницах: решился — сразу в личку в Telegram.
      Вид — как вторичная кнопка «Написать» в карточке «Связь», плюс тень плавающих элементов. -->
-<a class="write-fab" href={LINKS.direct} target="_blank" rel="noopener" aria-label="Написать в Telegram">
-  Написать
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
-</a>
+<!-- Отдельная область страницы: кнопка вне main и footer, программы чтения экрана находят её в списке областей -->
+<aside aria-label="Быстрая связь">
+  <a class="write-fab" href={LINKS.direct} target="_blank" rel="noopener" aria-label="Написать в Telegram">
+    Написать
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
+  </a>
+</aside>
 
 <script>
   const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
@@ -16,15 +19,24 @@ import { LINKS } from '../data/site';
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её.
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
+    const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
+    const compact = matchMedia('(max-width: 480px)');
     const seen = new Set<Element>();
     let typing = false;
-    const update = () => fab.classList.toggle('is-hidden', seen.size > 0 || typing);
-    if (twins.length) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target)));
+    const update = () => {
+      const sectionVisible = compact.matches && protectedSections.some(section => seen.has(section));
+      const contactVisible = twins.some(twin => seen.has(twin));
+      fab.classList.toggle('is-hidden', sectionVisible || contactVisible || typing || !!document.querySelector('.mobile-menu[open]'));
+    };
+    document.addEventListener('emi:menu', update);
+    if (protectedSections.length) compact.addEventListener('change', update);
+    const observed = [...twins, ...protectedSections];
+    if (observed.length) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => (entry.isIntersecting ? seen.add(entry.target) : seen.delete(entry.target)));
         update();
       });
-      twins.forEach((t) => io.observe(t));
+      observed.forEach(element => io.observe(element));
     }
     // На телефоне, пока человек заполняет форму, кнопка не лезет поверх поля и клавиатуры.
     if (matchMedia('(pointer: coarse)').matches) {
@@ -54,8 +66,9 @@ import { LINKS } from '../data/site';
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover), transform 0.16s ease-out;
   }
+  .write-fab:active { transform: scale(0.97); }
   .write-fab svg {
     width: 22px;
     height: 22px;
@@ -63,13 +76,15 @@ import { LINKS } from '../data/site';
     fill: var(--ink);
     transition: fill var(--hover);
   }
-  .write-fab:hover {
-    background: var(--teal-btn-hover);
-    border-color: var(--teal-btn-hover);
-    color: var(--on-teal);
-  }
-  .write-fab:hover svg {
-    fill: var(--on-teal);
+  @media (hover: hover) and (pointer: fine) {
+    .write-fab:hover {
+      background: var(--teal-btn-hover);
+      border-color: var(--teal-btn-hover);
+      color: var(--on-teal);
+    }
+    .write-fab:hover svg {
+      fill: var(--on-teal);
+    }
   }
   .write-fab:focus-visible {
     outline: 2px dashed var(--teal);
@@ -83,4 +98,9 @@ import { LINKS } from '../data/site';
   :global(body) {
     padding-bottom: 88px;
   }
+  /* Элемент, к которому перешли с клавиатуры, встаёт выше кнопки, а не под неё */
+  :global(html) {
+    scroll-padding-bottom: 80px;
+  }
+  @media(max-width:480px){.write-fab{width:48px;justify-content:center;padding:0;font-size:0;gap:0}.write-fab svg{width:22px;height:22px}}
 </style>

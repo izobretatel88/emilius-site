@@ -1,4 +1,5 @@
 node_modules/
+/node_modules
 dist/
 .astro/
 .DS_Store
@@ -10,3 +11,7 @@ design/exports/
 
 # Сырые выгрузки и соответствие кодов проектам — не в публичный репозиторий
 docs/insales-service/data/private/
+
+# Локальные клиентские материалы и отдельные публикации на Бегете
+/work/
+/public/extra/

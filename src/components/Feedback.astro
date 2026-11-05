@@ -7,33 +7,47 @@ const consent = `${base}${base.endsWith('/') ? '' : '/'}consent/`;
 const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 ---
 
-<section class="card feedback" id="feedback" aria-labelledby="t-feedback">
-  <h2 id="t-feedback">Обратная связь</h2>
+<section class="card feedback" id="feedback" tabindex="-1" aria-labelledby="t-feedback">
+  <h2 id="t-feedback">Обсудить проект</h2>
   <form method="post" action={action} novalidate>
-    <label class="visually-hidden" for="fb-message">Сообщение</label>
+    <div class="project-context" hidden>
+      <p>Ориентир — <strong data-project-context></strong></p>
+      <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
+    </div>
+    <div class="field">
+    <label class="field-label" for="fb-message">Ваш проект или вопрос</label>
     <textarea
       id="fb-message"
       name="message"
       required
       maxlength="3000"
-      placeholder="Любая обратная связь будет очень полезна. Заранее благодарим!"></textarea>
-    <label class="visually-hidden" for="fb-contact">Как с вами связаться</label>
+      aria-describedby="fb-message-hint fb-message-error"
+      placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
+    <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3 000.</span></p>
+    <p class="field-error" id="fb-message-error" role="alert" hidden></p>
+    </div>
+    <div class="field">
+    <label class="field-label" for="fb-contact">Как с вами связаться</label>
     <input
       id="fb-contact"
       name="contact"
       type="text"
       maxlength="200"
+      aria-describedby="fb-contact-hint"
       placeholder="Telegram, телефон или почта"
     />
+    <p class="field-hint" id="fb-contact-hint">Необязательно. Оставьте контакт, если хотите получить ответ.</p>
+    </div>
     <!-- Ловушка для ботов: человек это поле не видит -->
     <div class="trap" aria-hidden="true">
       <input name="website" type="text" tabindex="-1" autocomplete="off" />
     </div>
     <!-- Согласие по 152-ФЗ — отдельной галочкой, по умолчанию не отмечена -->
     <label class="agree">
-      <input type="checkbox" name="consent" value="1" required />
+      <input type="checkbox" name="consent" value="1" required aria-describedby="fb-consent-error" />
       <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
     </label>
+    <p class="field-error" id="fb-consent-error" role="alert" hidden></p>
     <button class="btn-send" type="submit">
       <span class="label">Отправить</span>
       <!-- Облачко сообщения: значок Telegram — только у кнопок, которые ведут в Telegram -->
@@ -47,14 +61,52 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 </section>
 
 <script>
+  import {projectInquiry, inquiryMessage} from '../lib/project-inquiry';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
     const agree = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
-    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
     const label = button.querySelector('.label')!;
     const ok = form.querySelector<HTMLElement>('.status:not(.status-error)')!;
     const fail = form.querySelector<HTMLElement>('.status-error')!;
+    const messageError=form.querySelector<HTMLElement>('#fb-message-error')!;
+    const consentError=form.querySelector<HTMLElement>('#fb-consent-error')!;
+    const length=form.querySelector<HTMLElement>('#fb-length')!;
+    const updateLength=()=>{length.textContent=`Осталось ${(message.maxLength-message.value.length).toLocaleString('ru-RU')}.`;};
+    message.addEventListener('input',updateLength);
+    form.addEventListener('reset',()=>requestAnimationFrame(updateLength));
+    updateLength();
+    const context=form.querySelector<HTMLElement>('.project-context')!;
+    const selectedId=new URLSearchParams(location.search).get('project');
+    const selectedProject=projectInquiry(selectedId);
+    if(selectedProject){
+      message.value=inquiryMessage(message.value,selectedId);
+      context.querySelector('[data-project-context]')!.textContent=selectedProject.name;
+      context.hidden=false;
+      updateLength();
+      const clearProject=()=>{
+        const prefix=`${selectedProject.message}\n\n`;
+        if(message.value.startsWith(prefix))message.value=message.value.slice(prefix.length);
+        context.hidden=true;
+        updateLength();
+      };
+      context.querySelector('[data-clear-project]')!.addEventListener('click',()=>{
+        clearProject();
+        const current = new URL(location.href);
+        current.searchParams.delete('project');
+        history.replaceState(history.state, '', current);
+        message.focus({preventScroll:true});
+      });
+      form.addEventListener('reset',()=>{context.hidden=true;});
+    }
+    const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
+      field.setAttribute('aria-invalid',String(Boolean(text)));
+      el.textContent=text;
+      el.hidden=!text;
+    };
+    message.addEventListener('input',()=>{if(message.value.trim())fieldError(message,messageError);});
+    agree.addEventListener('change',()=>{if(agree.checked)fieldError(agree,consentError);});
 
     const show = (el: HTMLElement | null, text?: string) => {
       ok.hidden = fail.hidden = true;
@@ -65,33 +117,53 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!message.value.trim()) {
-        show(ok, 'Напишите пару слов — и отправим.');
-        message.focus();
+      if(button.disabled)return;
+      show(null);
+      fieldError(message,messageError);
+      fieldError(agree,consentError);
+      // Все ошибки показываем сразу, фокус — на первое поле с ошибкой: одна попытка вместо двух
+      const emptyMessage=!message.value.trim();
+      if (emptyMessage) fieldError(message,messageError,'Напишите, с какой задачей нужна помощь.');
+      if (!agree.checked) fieldError(agree,consentError,'Чтобы отправить сообщение, отметьте согласие на обработку данных.');
+      if (emptyMessage || !agree.checked) {
+        (emptyMessage ? message : agree).focus();
         return;
       }
-      if (!agree.checked) {
-        show(ok, 'Отметьте согласие на обработку данных — без него не можем принять сообщение.');
-        agree.focus();
+      const contextualMessage=selectedProject && !context.hidden && !message.value.includes(selectedProject.message)
+        ? `${selectedProject.message}\n\n${message.value}` : message.value;
+      if(contextualMessage.length>message.maxLength){
+        fieldError(message,messageError,'Сократите сообщение: вместе с названием проекта — не больше 3 000 символов.');
+        message.focus();
         return;
       }
       button.disabled = true;
       label.textContent = 'Отправляем…';
       show(null);
+      form.setAttribute('aria-busy','true');
+      const controller=new AbortController();
+      const timeout=window.setTimeout(()=>controller.abort(),15000);
       try {
+        const payload=new FormData(form);
+        payload.set('message',contextualMessage);
         const res = await fetch(form.action, {
           method: 'POST',
-          body: new FormData(form),
+          body: payload,
           headers: { Accept: 'application/json' },
+          signal:controller.signal,
         });
         const data = await res.json().catch(() => ({ ok: false }));
         if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
         form.reset();
         show(ok, 'Спасибо! Сообщение у нас.');
+        // Цели Метрики (JavaScript-события): заявка с главной ушла / не ушла. Без счётчика emiGoal нет.
+        (window as any).emiGoal?.('feedback-sent');
       } catch {
+        (window as any).emiGoal?.('feedback-fail');
         // Текст не стираем — его можно скопировать и отправить в Telegram.
         show(fail);
       } finally {
+        clearTimeout(timeout);
+        form.removeAttribute('aria-busy');
         button.disabled = false;
         label.textContent = 'Отправить';
       }
@@ -121,6 +193,14 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     flex-direction: column;
     gap: 12px;
   }
+  .field{display:grid;gap:7px;min-width:0}
+  .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
+  .project-context[hidden]{display:none}
+  .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
+  .field-label{font-size:15px;font-weight:600}
+  .field-hint{font-size:13px;line-height:1.45;color:var(--ink-2)}
+  .field-error{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}
+  [aria-invalid='true']{outline:2px solid var(--ink);outline-offset:2px}
   textarea,
   input[type='text'] {
     width: 100%;
@@ -128,7 +208,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     font-size: 16px; /* меньше 16 — iOS приближает страницу при фокусе */
     color: var(--ink);
     background: var(--input-bg);
-    border: 2px solid var(--input-border);
+    border: 1px solid var(--input-border);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     transition: border-color var(--hover);
@@ -145,15 +225,21 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   input[type='text']::placeholder {
     color: var(--ink-3);
   }
-  textarea:hover,
-  input[type='text']:hover,
   textarea:focus,
   input[type='text']:focus {
     border-color: var(--teal);
   }
+  @media (hover: hover) and (pointer: fine) {
+    textarea:hover,
+    input[type='text']:hover {
+      border-color: var(--teal);
+    }
+  }
+  /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
   textarea:focus-visible,
   input[type='text']:focus-visible {
-    outline: none;
+    outline: 2px solid var(--teal);
+    outline-offset: -1px;
   }
   .trap {
     position: absolute;
@@ -196,8 +282,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     justify-content: space-between;
     padding-inline: 16px 14px;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
   }
+  /* Нажатие: кнопка чуть проседает, как остальные кнопки сайта */
+  .btn-send:active:not(:disabled) { transform: scale(0.98); }
   .btn-send svg {
     width: 22px;
     height: 22px;
@@ -205,13 +293,15 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     fill: var(--ink);
     transition: fill var(--hover);
   }
-  .btn-send:hover {
-    background: var(--teal-btn);
-    border-color: var(--teal-btn);
-    color: #fff;
-  }
-  .btn-send:hover svg {
-    fill: #000;
+  @media (hover: hover) and (pointer: fine) {
+    .btn-send:hover {
+      background: var(--teal-btn);
+      border-color: var(--teal-btn);
+      color: #fff;
+    }
+    .btn-send:hover svg {
+      fill: #000;
+    }
   }
   .btn-send:disabled {
     opacity: 0.7;

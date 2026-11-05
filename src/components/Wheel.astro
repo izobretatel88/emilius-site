@@ -113,7 +113,9 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
 <div class="wheel-box" id="wheelBox" role="group" aria-label="Колесо продукта: итерация из 52 дней и четырёх этапов — касдев, дизайн, разработка, маркетинг">
   <!-- Вращается весь этот SVG целиком через CSS-transform: браузер растрирует его один раз
        и поворачивает на видеокарте, без перерисовки 200 элементов каждый кадр. -->
-  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434" inert>
+  <!-- До запуска колесо под плашкой. inert у <svg> не действует (атрибут только для HTML-элементов),
+       поэтому прячем его от чтения экрана aria-hidden, а этапы убираем из порядка Tab -->
+  <svg class="wheel-rotor" id="wheelRotor" viewBox="-217 -217 434 434" aria-hidden="true">
     <defs>
       <path id="arc" d="M125 0 A125 125 0 1 1 -125 0 A125 125 0 1 1 125 0" fill="none"></path>
     </defs>
@@ -137,13 +139,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
           ></line>
         ))}
       </g>
-      <g font-size="8.5" font-weight="600" class="num">
+      <g font-size="8.5" font-weight="600" class="num" aria-hidden="true">
         {weeks.map((w) => (
           <text class="week" data-week={w.k} x={w.x} y={w.y} text-anchor="middle" dominant-baseline="central" transform={`rotate(${w.rot} ${w.x} ${w.y})`}>{w.label}</text>
         ))}
       </g>
 
-      <g id="labels">
+      <g id="labels" aria-hidden="true">
         {labels.map((l, i) => (
           <text class="sector-label" font-size="18" font-weight="600" fill={l.color} data-sector={i}>
             <textPath href="#arc" startOffset={`${l.offset}%`} text-anchor="middle">{l.name}</textPath>
@@ -155,7 +157,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       {rim.map((a) => <path d={a.d} fill="none" stroke={a.color} stroke-width="1.1"></path>)}
 
       {hits.map((h) => (
-        <a href={h.href} class="sector-link" data-sector={h.i} aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
+        <a href={h.href} class="sector-link" data-sector={h.i} tabindex="-1" aria-label={`${h.name}: дни ${h.from}–${h.to}. ${h.text}`}>
           <path class="sector-hit" d={h.d}></path>
         </a>
       ))}
@@ -285,7 +287,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (i !== shownStage) {
         shownStage = i;
         attnTo.textContent = `→ ${s.name}`;
-        attnToText.style.fill = s.c1;
+        // Цвет этапа, затемнённый для текста (4,5:1 и выше на круге): яркий c1 на белом читался плохо
+        attnToText.style.fill = `var(--sec-${s.id}-ink)`;
         if (!reduce) replay(attnToText, 'is-in');
       }
       const text = questionFor(i);
@@ -387,6 +390,17 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
     let lastActive: number | null = null;
+    let updatingInfo = false;
+    let infoMarkup = '';
+    const setInfo = (markup: string) => {
+      if (markup === infoMarkup) return;
+      infoMarkup = markup;
+      // Удаление сфокусированной ссылки синхронно вызывает focusout. Не даём ему
+      // повторно заменить DOM посреди текущего обновления (ошибка NotFoundError).
+      updatingInfo = true;
+      try { info.innerHTML = markup; }
+      finally { updatingInfo = false; }
+    };
     function render() {
       const i = active();
       if (i !== lastActive) {
@@ -404,14 +418,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         const line = performance.now() < doneUntil
           ? `<b>Цикл окончен</b> · начинаем итерацию&nbsp;${iteration}`
           : `<b>День&nbsp;${simWeek}</b> из 52 · идёт <b>${SECTORS[simSector].name}</b>`;
-        info.innerHTML = `<p class="info-line">${line}</p>`;
+        setInfo(`<p class="info-line">${line}</p>`);
         return;
       }
       const s = SECTORS[i];
       // Одна строка, как и без выбора: высота не меняется — колесо не прыгает под курсором
-      info.innerHTML =
+      setInfo(
         `<p class="info-line"><b>${cap(s.name)}</b> · дни ${s.from}–${s.to} · ` +
-        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`;
+        `<a class="info-more" href="${s.href}" aria-label="Подробнее об этапе «${s.name}»">Подробнее&nbsp;→</a></p>`);
     }
 
     function select(i: number) {
@@ -454,7 +468,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       });
       // Касание: первое выбирает этап, второе открывает страницу
       link.addEventListener('click', (e) => {
-        if (lastPointer === 'touch' && selected !== i) {
+        if (e.detail > 0 && lastPointer === 'touch' && selected !== i) {
           e.preventDefault();
           select(i);
         }
@@ -472,7 +486,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (selected === null) resume();
     });
 
-    box.addEventListener('keydown', (e) => {
+    const onKey = (e: KeyboardEvent) => {
       const idx = links.findIndex((l) => l === document.activeElement);
       if (e.key === 'Escape') {
         (document.activeElement as HTMLElement | null)?.blur();
@@ -488,10 +502,18 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         links[j].focus();
         select(j);
       }
-    });
-    box.addEventListener('focusout', (e) => {
-      if (!box.contains(e.relatedTarget as Node)) clear();
-    });
+    };
+    box.addEventListener('keydown', onKey);
+    info.addEventListener('keydown', onKey);
+    // Tab с этапа ведёт на «Подробнее →» под колесом: выбор не сбрасываем, иначе строка перерисуется
+    // и ссылка исчезнет вместе с фокусом. Сбрасываем, когда фокус ушёл и с колеса, и со строки.
+    const leave = (e: FocusEvent) => {
+      if (updatingInfo) return;
+      const to = e.relatedTarget as Node | null;
+      if (!box.contains(to) && !info.contains(to)) clear();
+    };
+    box.addEventListener('focusout', leave);
+    info.addEventListener('focusout', leave);
     document.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'touch' && !box.contains(e.target as Node) && !info.contains(e.target as Node)) clear();
     });
@@ -540,6 +562,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     const stage = document.getElementById('wheelStage')!;
     const launch = document.getElementById('wheelLaunch') as HTMLButtonElement;
     let idle = true;
+    let onScreen = true; // колесо в окне; вне экрана обод и шкала не перерисовываются
 
     // Обод плашки: вращается сам (оборот 156 с, как колесо), при наведении плавно ускоряется,
     // риски у курсора подсвечиваются; обод можно потянуть пальцем/мышью — после отпускания он
@@ -567,8 +590,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
     };
     const wrap = (d: number) => ((d % 360) + 540) % 360 - 180;
+    let ringAsleep = false;
     function ringFrame(t: number) {
       if (!idle) return;
+      if (!onScreen) {
+        ringAsleep = true;
+        return;
+      }
       const dt = Math.min(64, t - lastT);
       lastT = t;
       if (!ringDrag && !reduce) {
@@ -604,6 +632,36 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       requestAnimationFrame(ringFrame);
     }
     requestAnimationFrame(ringFrame);
+
+    // Колесо ушло с экрана — обод плашки и шкала дней не перерисовываются. Вернулось — продолжаем;
+    // круги, пройденные за это время, досчитываем, чтобы «итерация N» не отставала.
+    let sleptAt = 0;
+    let rolledAway = false;
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting === onScreen) return;
+      onScreen = entry.isIntersecting;
+      if (!onScreen) {
+        sleptAt = performance.now();
+        rolledAway = ambient?.playState === 'running';
+        return;
+      }
+      if (ringAsleep) {
+        ringAsleep = false;
+        lastT = performance.now();
+        requestAnimationFrame(ringFrame);
+      }
+      if (idle) return;
+      if (rolledAway) {
+        const laps = Math.floor((prevTurn + ((performance.now() - sleptAt) * 360) / PERIOD) / 360);
+        if (laps > 0) {
+          iteration += laps;
+          // пока висит «цикл окончен», подпись обновит его таймер
+          if (performance.now() > doneUntil) setTag(`итерация ${iteration}`);
+        }
+      }
+      prevTurn = ((currentAngle() % 360) + 360) % 360;
+      tick();
+    }).observe(stage);
 
     launch.addEventListener('pointerenter', (e) => {
       if (e.pointerType === 'mouse') boost = true;
@@ -667,8 +725,11 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       // запуск мышью — курсор над колесом; с клавиатуры (detail 0) наведение не мешает
       if (e.detail > 0) hoverArmed = false;
       stage.classList.remove('is-idle');
-      rotorSvg.removeAttribute('inert');
+      rotorSvg.removeAttribute('aria-hidden');
+      links.forEach((link) => link.setAttribute('tabindex', '0'));
       launch.classList.add('is-gone');
+      // гаснущая кнопка уходит из порядка Tab сразу, а не после затухания
+      launch.tabIndex = -1;
       launch.addEventListener('transitionend', () => launch.remove(), { once: true });
       if (reduce) launch.remove();
       // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам
@@ -676,7 +737,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       box.focus({ preventScroll: true });
       tick();
       // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
-      if (!reduce) window.setInterval(tick, 100);
+      if (!reduce) window.setInterval(() => onScreen && tick(), 100);
       // Пауза на «внимании» 2 с: колесо стоит, вращение — когда слово уходит вверх.
       // Если колесо уже успели покрутить или выбрали этап — не перебиваем.
       startCenter(() => {
@@ -690,11 +751,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     if (!reduce) {
       box.classList.add('can-spin');
       let drag: { id: number; start: number; from: number; x: number; y: number; moved: boolean } | null = null;
+      let suppressDragClick = false;
       const angleAt = (e: PointerEvent) => {
         const r = box.getBoundingClientRect();
         return (Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) * 180) / Math.PI;
       };
       box.addEventListener('pointerdown', (e) => {
+        suppressDragClick = false;
         if (idle) return;
         // за центр не крутим: там угол скачет от малейшего сдвига пальца
         const r = box.getBoundingClientRect();
@@ -728,9 +791,13 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         if (moved) {
           startAmbient(currentAngle());
           // после перетаскивания не открывать этап, на котором отпустили
-          box.addEventListener('click', (ev) => ev.preventDefault(), { capture: true, once: true });
+          suppressDragClick = e.type === 'pointerup';
         }
       };
+      box.addEventListener('click', (e) => {
+        if (suppressDragClick && e.detail > 0) e.preventDefault();
+        suppressDragClick = false;
+      }, { capture: true });
       box.addEventListener('pointerup', release);
       box.addEventListener('pointercancel', release);
     }
@@ -826,7 +893,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
   /* «Покрути колесо»: тянуть вбок/по кругу — крутит колесо; вертикальный свайп на телефоне
      по-прежнему листает страницу (колесо почти во всю ширину экрана) */
   .can-spin {
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     cursor: grab;
   }
   .can-spin:active {
@@ -1096,7 +1163,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     color: var(--ink);
     text-align: center;
     cursor: pointer;
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
     -webkit-tap-highlight-color: transparent;
     transition:
       opacity 0.3s ease,

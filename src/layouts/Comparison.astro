@@ -1,0 +1,93 @@
+---
+import Base from './Base.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LinkList from '../components/LinkList.astro';
+import ComparisonPicker from '../components/ComparisonPicker.astro';
+import {href} from '../lib/urls';
+import '../styles/architecture.css';
+import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
+import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
+import generalScript from '../content/comparisons/ecommerce-platforms.js?raw';
+import detailHtml from '../content/comparisons/insales-kit.html?raw';
+import detailCss from '../content/comparisons/insales-kit.css?raw';
+import detailScript from '../content/comparisons/insales-kit.js?raw';
+interface Props {kind:'general'|'detail';}
+const {kind}=Astro.props;
+const detailed=kind==='detail';
+const title=detailed?'InSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
+const description=detailed?'348 функций InSales и Яндекс KIT: способы подключения, ограничения и официальные источники.':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
+const html=detailed?detailHtml:generalHtml;
+const css=detailed?detailCss:generalCss;
+const script=detailed?detailScript:generalScript;
+const related=[
+  detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'InSales и Яндекс KIT подробно',description:'348 функций, ограничения и источники.',href:'compare/insales-vs-yandex-kit/'},
+  {title:'Оценить запуск на InSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
+  {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
+];
+---
+<Base title={`${title} — Emilius Agency`} description={description}>
+  <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
+    <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
+    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на InSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
+  </main><Footer />
+  <style is:global set:html={css} />
+  <script is:inline set:html={script} />
+</Base>
+<style>
+  :global(body:has(>.comparison-page)){row-gap:16px}
+  .comparison-page :global(.directory-callout){margin-bottom:8px}
+  .comparison-page{width:100%;max-width:var(--layout-width);min-width:0;margin-inline:auto;padding-top:16px}
+  .comparison-page :global(.breadcrumbs){margin-bottom:4px}
+  .platform-comparison{--est:var(--ink-2);--caution:var(--ink-2);--negative:var(--ink-2);--low-fg:var(--ink-2);min-width:0;font-family:var(--font);color:var(--ink)}
+  .platform-comparison :global(.wrap){padding:4px 0 20px;grid-template-columns:minmax(0,1fr);gap:16px}
+  .platform-comparison :global(header){max-width:none;gap:8px}
+  .platform-comparison :global(.lead){max-width:80ch;line-height:1.45}
+  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:110ch}
+  .platform-comparison :global(.scope){line-height:1.45}
+  .platform-comparison :global(.search-row){align-items:start}
+  .platform-comparison :global(.search-row input),.platform-comparison :global(.search-row select){height:48px}
+  .platform-comparison :global(.card){border:0;box-shadow:none}
+  .platform-comparison :global(.foot){max-width:95ch}
+  .platform-comparison :global(#comparison){min-width:0}
+  .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
+  .platform-comparison :global(.table-jump){width:fit-content;font-size:14px;text-underline-offset:4px}
+  .platform-comparison :global(h1){font-size:var(--fs-h1);font-weight:600;line-height:1.1;letter-spacing:-.035em;max-width:none;margin:0}
+  @media(max-width:760px){.platform-comparison :global(h1){font-size:var(--fs-h1-sm);letter-spacing:var(--tracking-tight)}}
+  .platform-comparison :global(.mobile-note-row){display:none}
+  .platform-comparison :global(#comparison){scroll-margin-top:16px}
+  .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
+  .platform-comparison :global(.search-hint){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0}
+  .platform-comparison :global(input),.platform-comparison :global(select){border-color:var(--input-border)}
+  .platform-comparison :global(.count){display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;line-height:1.45}
+  .platform-comparison :global(table[hidden]),.platform-comparison :global(.mobile-hint[hidden]){display:none}
+  .platform-comparison :global(button),.platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){min-height:44px}
+  .platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){display:inline-flex;align-items:center}
+  .platform-comparison :global(.source){display:inline-flex;vertical-align:middle;align-items:center;min-height:44px;width:fit-content;text-underline-offset:3px;margin:0 0 0 10px;font-size:13px}
+  .platform-comparison :global(.scroll td>.status){display:inline-flex;vertical-align:middle}
+  .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:8px;padding-inline:14px}
+  .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
+  .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
+  .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}
+  /* Официальные источники под таблицей: ссылки по 18 px шли с шагом 22 px — на телефоне легко попасть в соседнюю (WCAG 2.5.8) */
+  .platform-comparison :global(#comparison-sources summary){padding-block:11px;cursor:pointer}
+  .platform-comparison :global(#comparison-sources li a){display:inline-block;padding-block:5px}
+  @media(max-width:760px){
+    .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
+    .platform-comparison :global(.feature-col){width:38%}
+    .platform-comparison :global(.platform-col){width:31%}
+    .platform-comparison :global(.note-col){width:0}
+    .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
+    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere}
+    .platform-comparison :global(.status){display:block;font-size:13px}
+    .platform-comparison :global(.scroll td>.status){display:block}
+    .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
+    .platform-comparison :global(.source){display:flex;font-size:13px;margin:2px 0 0}
+    .platform-comparison :global(.source span){display:none}
+    .platform-comparison :global(.mobile-note-row){display:table-row}
+    .platform-comparison :global(.mobile-note-row td){padding:0 10px 12px;color:var(--ink-2);font-size:var(--fs-small)}
+    .platform-comparison :global(.mobile-note-row summary){font-size:13px;font-weight:400;min-height:44px;padding-block:12px;cursor:pointer}
+    .platform-comparison :global(.mobile-note-row p){padding:6px 0;line-height:1.5;font-size:14px}
+    .platform-comparison :global(input),.platform-comparison :global(select){font-size:16px}
+  }
+</style>

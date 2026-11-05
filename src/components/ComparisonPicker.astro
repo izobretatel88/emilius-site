@@ -1,0 +1,55 @@
+---
+const names=['Tilda','Яндекс KIT','InSales','Shop-Script','AdvantShop','1С-Битрикс','WooCommerce','OpenCart'];
+---
+<div class="comparison-picker" id="comparison-picker" hidden>
+  <p>Две платформы рядом</p>
+  <div class="picker-fields">{['Первая платформа','Вторая платформа'].map((label,index)=><label>{label}<select data-picker={index}>{names.map((name,i)=><option value={i} selected={i===(index===0?2:1)}>{name}</option>)}</select></label>)}</div>
+  <p class="picker-hint">Выберите нужную пару. На широком экране видны все восемь платформ.</p>
+</div>
+<script>
+  const picker=document.querySelector<HTMLElement>('#comparison-picker');
+  if(picker){
+    const section=document.querySelector<HTMLElement>('.platform-comparison #comparison')!;
+    const table=section.querySelector('table')!;
+    section.before(picker);
+    const controls=[...picker.querySelectorAll('select')];
+    let previous=controls.map(select=>select.value);
+    const narrow=matchMedia('(max-width:760px)');
+    const apply=(changed?:number)=>{
+      if(controls[0].value===controls[1].value&&changed!==undefined)controls[1-changed].value=previous[changed];
+      previous=controls.map(select=>select.value);
+      picker.hidden=!narrow.matches;
+      table.toggleAttribute('data-compact',narrow.matches);
+      table.querySelectorAll<HTMLElement>('[data-p]').forEach(cell=>cell.hidden=narrow.matches&&!previous.includes(cell.dataset.p!));
+      table.querySelectorAll('tr').forEach(row=>{
+        const cells=[...row.querySelectorAll<HTMLElement>(':scope>[data-p]')];
+        const rank=(cell:HTMLElement)=>{const i=previous.indexOf(cell.dataset.p!);return narrow.matches&&i>=0?i:10+Number(cell.dataset.p);};
+        cells.sort((a,b)=>rank(a)-rank(b)).forEach(cell=>row.append(cell));
+      });
+      table.querySelectorAll<HTMLTableCellElement>('th[colspan]').forEach(cell=>cell.colSpan=narrow.matches?3:9);
+    };
+    controls.forEach((select,index)=>select.addEventListener('change',()=>apply(index)));
+    narrow.addEventListener('change',()=>apply());
+    apply();
+  }
+</script>
+<style>
+  .comparison-picker{padding:20px;background:var(--card);border-radius:var(--radius-card);margin-block:8px 20px;font-size:15px}
+  .comparison-picker[hidden]{display:none}
+  .comparison-picker>p:first-child{font-weight:700;margin-bottom:12px}
+  .picker-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  label{display:grid;gap:7px;font-size:13px;min-width:0}
+  select{width:100%;font:inherit;font-size:16px;color:var(--ink);background-color:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:10px 28px 10px 10px;background-position:right 15px center,right 10px center;min-height:48px;transition:border-color var(--hover)}
+  select:focus{border-color:var(--teal)}
+  @media(hover:hover) and (pointer:fine){select:hover{border-color:var(--teal)}}
+  /* Узкий экран: «WooCommerce» и «Shop-Script» не помещаются в половину ширины — списки друг под другом */
+  @media(max-width:379px){.picker-fields{grid-template-columns:minmax(0,1fr)}}
+  .picker-hint{font-size:13px;color:var(--ink-2);margin-top:12px}
+  :global(.platform-comparison table [hidden]){display:none!important}
+  @media(max-width:760px){
+    :global(.platform-comparison table[data-compact]){width:100%;min-width:0}
+    :global(.platform-comparison table[data-compact] th),:global(.platform-comparison table[data-compact] td){padding:12px 8px;font-size:13px;overflow-wrap:anywhere}
+    :global(.platform-comparison table[data-compact] thead th:first-child){width:34%}
+    :global(.platform-comparison table[data-compact] thead th[data-p]){width:33%}
+  }
+</style>

@@ -1,0 +1,122 @@
+---
+// Общая шапка сайта — по экспериментальной главной (04.11.2026): словесный знак слева,
+// три раздела и одна залитая кнопка «Обсудить проект». На телефоне — меню-«гамбургер».
+// «Метод» живёт на главной рядом с колесом, в шапку не выносится.
+import { DIRECTIONS } from '../data/navigation';
+import { getPosts } from '../lib/blog';
+import { href } from '../lib/urls';
+const hasBlog = (await getPosts()).length > 0;
+const preview = /\/dev\/?$/.test(import.meta.env.BASE_URL);
+const primary = [
+  { title: 'Услуги', href: 'services/', sections: ['services/'] },
+  { title: 'Проекты', href: 'projects/', sections: ['projects/'] },
+  { title: 'Полезное', href: 'resources/', sections: ['resources/', 'compare/', 'tools/', 'blog/'] },
+];
+const normalize = (path: string) => path.replace(/\/$/, '');
+const current = normalize(Astro.url.pathname);
+const isHome = current === normalize(href());
+const state = (item: typeof primary[number]) =>
+  current === normalize(href(item.href)) ? 'page'
+  : item.sections.some(path => current.startsWith(normalize(href(path)) + '/') || current === normalize(href(path))) ? 'location'
+  : undefined;
+// На главной форма рядом — якорь без перезагрузки; с внутренних страниц — к форме на главной
+const discuss = isHome ? '#feedback' : href('#feedback');
+---
+<header class="site-header">
+  <nav class="site-nav ui-shell" aria-label="Основная навигация">
+    <div class="brand">
+      <a class="wordmark" href={href()} aria-label="Эмилиус Эдженси — на главную" aria-current={isHome ? 'page' : undefined}>
+        <span>Эмилиус</span><img src={href('brand/logo-81.png')} width="54" height="81" alt="" /><span>Эдженси</span>
+      </a>
+      {preview && <span class="environment">черновик · dev</span>}
+    </div>
+    <div class="nav-links">{primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}</div>
+    <a class="nav-action ui-button" href={discuss}>Обсудить проект</a>
+    <details class="nav-menu">
+      <summary aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="menu-icon" d="M4 7h16M4 12h16M4 17h16" />
+          <path class="close-icon" d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </summary>
+      <div class="menu-links">
+        <a class="menu-discuss" href={discuss}>Обсудить проект <span aria-hidden="true">→</span></a>
+        {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
+        <span class="menu-group">Направления</span>
+        <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}>{item.title}</a>)}</div>
+        <span class="menu-group">Готовое решение</span>
+        <a href={href('services/insales-shop/')}>Магазин на InSales</a>
+        <span class="menu-group">Материалы и инструменты</span>
+        <a href={href('compare/')}>Сравнения платформ</a>
+        <a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>
+        {hasBlog && <a href={href('blog/')}>Блог</a>}
+      </div>
+    </details>
+  </nav>
+</header>
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('.nav-menu');
+  if (menu) {
+    const summary = menu.querySelector('summary')!;
+    const close = () => { menu.open = false; };
+    menu.addEventListener('toggle', () => document.dispatchEvent(new CustomEvent('emi:menu')));
+    menu.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.open) { event.preventDefault(); close(); summary.focus(); } });
+    for (const link of menu.querySelectorAll('a')) link.addEventListener('click', close);
+    document.addEventListener('pointerdown', event => { if (menu.open && event.target instanceof Node && !menu.contains(event.target)) close(); });
+    document.addEventListener('focusin', event => { if (menu.open && event.target instanceof Node && !menu.closest('nav')!.contains(event.target)) close(); });
+    matchMedia('(max-width: 760px)').addEventListener('change', ({ matches }) => {
+      if (matches) return;
+      const focusWasInMenu = menu.contains(document.activeElement);
+      close();
+      if (focusWasInMenu) document.querySelector<HTMLAnchorElement>('.site-nav .wordmark')?.focus();
+    });
+  }
+</script>
+<style>
+  .site-header { border-bottom: 1px solid var(--hair); }
+  .site-nav { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 12; }
+  a { text-decoration: none; color: var(--ink); }
+  a { transition: color var(--hover); }
+  @media (hover: hover) and (pointer: fine) { a:hover { color: var(--teal-text); } }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .wordmark { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; white-space: nowrap; min-height: 44px; }
+  .wordmark img { width: 18px; height: 27px; object-fit: contain; }
+  .environment { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+  .nav-links { display: flex; gap: 28px; font-size: 15px; }
+  .nav-links a { display: flex; align-items: center; min-height: 44px; }
+  .nav-links a[aria-current], .menu-links a[aria-current] { color: var(--teal-text); font-weight: 700; }
+  .site-nav .nav-action { font-size: 14px; min-height: 44px; padding: 10px 20px; color: var(--on-teal); }
+  .nav-menu { display: none; }
+  .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 4px; }
+  @media (max-width: 1000px) {
+    .site-nav { gap: 16px; }
+    .nav-links { gap: 20px; }
+  }
+  @media (max-width: 760px) {
+    .site-nav { height: 68px; }
+    .wordmark { font-size: 18px; gap: 6px; }
+    .wordmark img { width: 16px; height: 24px; }
+    .nav-links, .site-nav .nav-action { display: none; }
+    .nav-menu { display: block; }
+    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); transition: transform 0.16s ease-out; }
+    .nav-menu summary:active { transform: scale(0.97); }
+    .nav-menu summary::-webkit-details-marker { display: none; }
+    .nav-menu svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+    .close-icon, .nav-menu[open] .menu-icon { display: none; }
+    .nav-menu[open] .close-icon { display: initial; }
+    /* Меню проявляется за 0.2 с — спокойный fade бренда, без движения */
+    .nav-menu[open] .menu-links { animation: menu-in 0.2s ease-out; }
+    @keyframes menu-in { from { opacity: 0; } }
+    .menu-links { position: absolute; top: calc(100% + 8px); inset-inline: 0; display: grid; max-height: calc(100dvh - 88px); overflow-y: auto; overscroll-behavior: contain; padding: 12px 20px; background: var(--card); border-radius: var(--radius-card); box-shadow: var(--shadow-pop); }
+    .menu-links a { min-height: 48px; display: flex; align-items: center; border-bottom: 1px solid var(--hair); }
+    .menu-links a:last-child { border-bottom: 0; }
+    .menu-links .menu-discuss { color: var(--teal-text); font-weight: 700; gap: 10px; }
+    .menu-group { font-size: var(--fs-small); color: var(--ink-3); margin-top: 16px; }
+    .menu-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+    :global(body:has(.nav-menu[open]) .write-fab) { visibility: hidden; }
+  }
+  @media (max-width: 400px) {
+    .wordmark { font-size: 17px; }
+    .environment { display: none; }
+  }
+</style>

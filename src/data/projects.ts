@@ -9,6 +9,7 @@ export type Project = {
   did: string;
   url: string;
   domain: string;
+  site?: string; // адрес для подписи ссылки, если сайт живёт не на основном домене
 };
 
 export const PROJECTS: Project[] = [
@@ -18,8 +19,8 @@ export const PROJECTS: Project[] = [
     logo: 'projects/alohagaia.svg',
     logoMono: true,
     shot: 'cases/alohagaia.webp',
-    about: 'Интернет-магазин на inSales — ювелирные украшения с душой.',
-    did: 'Фронтенд-разработка, тесная интеграция с inSales и собственные модули.',
+    about: 'Интернет-магазин на InSales — ювелирные украшения с душой.',
+    did: 'Фронтенд-разработка, тесная интеграция с InSales и собственные модули.',
     url: 'https://alohagaia.ru/',
     domain: 'alohagaia.ru',
   },
@@ -28,10 +29,11 @@ export const PROJECTS: Project[] = [
     name: 'LimeMart',
     logo: 'projects/wizzu.svg',
     shot: 'cases/wizzu.webp',
-    about: 'Интернет-магазин на inSales, доставка продуктов в Чечне — стартап, выросший с 0 до 2000+ заказов в месяц.',
+    about: 'Интернет-магазин на InSales, доставка продуктов в Чечне — стартап, выросший с 0 до 2000+ заказов в месяц.',
     did: 'Разработали техническую часть стартапа: сайт-витрину и интеграции.',
     url: 'https://limemart.wizzu.ru/',
     domain: 'wizzu.ru',
+    site: 'limemart.wizzu.ru',
   },
   {
     id: 'duman',
@@ -39,8 +41,8 @@ export const PROJECTS: Project[] = [
     logo: 'projects/duman.svg',
     logoMono: true,
     shot: 'cases/duman.webp',
-    about: 'Интернет-магазин на inSales — дизайнерская женская одежда премиум-сегмента.',
-    did: 'Фронтенд-разработка, сложная архитектура и выразительный UX/UI.',
+    about: 'Интернет-магазин на InSales — дизайнерская женская одежда премиум-сегмента.',
+    did: 'Фронтенд-разработка интернет-магазина на InSales.',
     url: 'https://www.duman.store/',
     domain: 'duman.store',
   },
@@ -50,8 +52,8 @@ export const PROJECTS: Project[] = [
     logo: 'projects/geekboards.svg',
     logoMono: true,
     shot: 'cases/geekboards.webp',
-    about: 'Интернет-магазин на inSales — премиальные клавиатуры, мыши и аксессуары, шоурум в Москве.',
-    did: 'Развитие магазина на inSales и кастомизация фронтенда.',
+    about: 'Интернет-магазин на InSales — премиальные клавиатуры, мыши и аксессуары, шоурум в Москве.',
+    did: 'Развитие магазина на InSales и кастомизация фронтенда.',
     url: 'https://geekboards.ru/',
     domain: 'geekboards.ru',
   },

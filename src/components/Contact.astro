@@ -17,20 +17,23 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
 
   <section class="card col-card" aria-labelledby="t-emi" id="emiCard">
     <h2 class="card-title" id="t-emi">Спросить 🤖 Эми</h2>
-    <iframe data-src={EMI_WIDGET_SRC} title="Голосовой ассистент Эми" width="170" height="144" allow="microphone" scrolling="no" frameborder="0"></iframe>
-    <p class="micro">Если не отвечает — смените интернет-соединение</p>
+    <div class="emi-widget" aria-busy="false">
+      <iframe data-src={EMI_WIDGET_SRC} title="Голосовой ассистент Эми" width="170" height="144" allow="microphone" scrolling="no" frameborder="0" hidden></iframe>
+      <div class="widget-state" data-widget-fallback><p class="micro" data-frame-status role="status">Голосовой помощник</p><a class="widget-contact" href={LINKS.direct} target="_blank" rel="noopener" data-widget-contact hidden>Написать в Telegram</a></div>
+    </div>
+    <div class="retry-slot"><button class="widget-retry" type="button" data-frame-retry hidden>Повторить загрузку</button></div>
+    <noscript><p class="micro">Для голосового помощника нужен JavaScript. Можно <a href={LINKS.direct}>написать нам</a>.</p></noscript>
   </section>
 </div>
 
 <script>
-  // Виджет Эми весит ~1,7 МБ. Грузим его, когда страница уже показалась,
+  import {setupEmbeddedFrame} from '../lib/embedded-frame';
+  // Виджет Эми весит ~1,7 МБ. Грузим его, когда страница уже показалась и карточка рядом с экраном,
   // или сразу, если человек потянулся к карточке.
   const card = document.getElementById('emiCard');
   const frame = card?.querySelector<HTMLIFrameElement>('iframe[data-src]');
   if (card && frame) {
-    const load = () => {
-      if (!frame.src) frame.src = frame.dataset.src!;
-    };
+    const {load}=setupEmbeddedFrame(card);
     card.addEventListener('pointerenter', load, { once: true });
     // Человек нажал в виджет Эми (фокус ушёл в iframe) — сообщаем странице: фоновая музыка затихает,
     // чтобы не звучать вместе с голосом. Кросс-доменный iframe по-другому не выдаёт нажатие.
@@ -42,7 +45,15 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     card.addEventListener('focusin', load, { once: true });
     const idle = (cb: () => void) =>
       'requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 2500);
-    const later = () => setTimeout(() => idle(load), 1500);
+    // На телефоне карточка ниже колеса и проектов: кто не долистал до неё, виджет не скачивает.
+    const nearScreen = () => {
+      if (!('IntersectionObserver' in window)) return load();
+      const watch = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) { watch.disconnect(); load(); }
+      }, { rootMargin: '100px 0px' });
+      watch.observe(card);
+    };
+    const later = () => setTimeout(() => idle(nearScreen), 1500);
     if (document.readyState === 'complete') later();
     else window.addEventListener('load', later, { once: true });
   }
@@ -72,10 +83,10 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     #emiCard {
       flex: 1;
     }
-    #emiCard iframe {
+    #emiCard .emi-widget {
       margin-top: auto;
     }
-    #emiCard .micro {
+    #emiCard .retry-slot {
       margin-bottom: auto;
     }
   }
@@ -127,8 +138,9 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
   }
+  .btn:active { transform: scale(0.98); }
   .btn svg {
     width: 22px;
     height: 22px;
@@ -140,8 +152,10 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     color: #fff;
     border: 0;
   }
-  .btn-primary:hover {
-    color: var(--on-teal);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      color: var(--on-teal);
+    }
   }
   .btn-secondary {
     background: var(--card);
@@ -151,15 +165,19 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
   .btn-secondary svg {
     fill: var(--ink);
   }
-  .btn-secondary:hover {
-    background: var(--teal-btn);
-    border-color: var(--teal-btn);
-    color: #fff;
-  }
-  .btn-secondary:hover svg {
-    fill: #000;
+  @media (hover: hover) and (pointer: fine) {
+    .btn-secondary:hover {
+      background: var(--teal-btn);
+      border-color: var(--teal-btn);
+      color: #fff;
+    }
+    .btn-secondary:hover svg {
+      fill: #000;
+    }
   }
   iframe {
+    /* Страница виджета без своей темы: при тёмной теме сайта браузер подложил бы под неё сплошной фон */
+    color-scheme: normal;
     width: 170px;
     height: 144px;
     border: 0;
@@ -181,9 +199,18 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     background: transparent;
   }
   .micro {
-    font-size: 12px;
+    font-size: var(--fs-small);
     line-height: 1.3;
     text-align: center;
     color: var(--ink-2);
   }
+  .emi-widget{display:grid;place-items:center;width:100%;max-width:170px;min-height:144px}
+  .emi-widget>iframe,.widget-state{grid-area:1/1}
+  .emi-widget>iframe{width:100%;max-width:170px}
+  .emi-widget>iframe[hidden],.widget-state[hidden],.widget-contact[hidden],.widget-retry[hidden]{display:none}
+  .widget-state{text-align:center;width:100%}
+  .widget-contact{display:inline-flex;align-items:center;min-height:44px;font-size:13px}
+  .retry-slot{min-height:44px;width:100%;display:grid;place-items:center}
+  .widget-retry{font:inherit;font-size:13px;color:var(--teal-text);background:none;border:0;min-height:44px;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+  .widget-retry:disabled{color:var(--ink-2);cursor:progress;text-decoration:none}
 </style>

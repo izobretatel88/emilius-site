@@ -79,10 +79,12 @@ const music = `${root}brand/music.mp3`;
     // считают навязчивым (решение владельца 25.10.2026). Отметка «видел» — чтобы заставка не всплыла позже за визит.
     var fromSearch = false;
     try { fromSearch = /(^|\.)(google|yandex|bing|duckduckgo)\.[a-z.]+$|(^|\.)(ya\.ru|go\.mail\.ru)$/.test(new URL(document.referrer).hostname); } catch (e) {}
-    if (fromSearch && !forced) {
+    // Из галереи переходят к уже выбранной задаче: заставка не перекрывает форму.
+    var fromProject = location.hash === '#feedback' && new URLSearchParams(location.search).has('project');
+    if ((fromSearch || fromProject) && !forced) {
       try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (e) {}
     }
-    if (forced || (!seen && !reduce && !fromSearch)) {
+    if (forced || (!seen && !reduce && !fromSearch && !fromProject)) {
       document.getElementById('intro').hidden = false;
       document.documentElement.classList.add('intro-open');
     }
@@ -127,6 +129,10 @@ const music = `${root}brand/music.mp3`;
     // С клавиатуры кнопки — по Tab.
     intro.tabIndex = -1;
     intro.focus({ preventScroll: true });
+    // Пока заставка открыта, страница под ней недоступна: Tab не уводит фокус под непрозрачный фон
+    const behind = [...document.body.children].filter((el) => el !== intro && el.tagName !== 'SCRIPT');
+    const setBehind = (off: boolean) => behind.forEach((el) => el.toggleAttribute('inert', off));
+    setBehind(true);
 
     // Звук: файл качаем сразу, AudioContext создаём по нажатию — раньше браузер не даст играть
     let ctx: AudioContext | null = null;
@@ -303,6 +309,7 @@ const music = `${root}brand/music.mp3`;
       musicUp();
       intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration, easing: 'ease-out', fill: 'forwards' }).onfinish = () => {
         reset();
+        setBehind(false);
         intro.remove();
         document.documentElement.classList.remove('intro-open');
       };
