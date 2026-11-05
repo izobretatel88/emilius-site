@@ -18,7 +18,9 @@
 .platform-comparison .search-row{display:grid;grid-template-columns:minmax(240px,1fr) minmax(200px,320px);gap:20px}
 .platform-comparison .field{display:grid;gap:6px}
 .platform-comparison label{color:var(--ink-2);font-size:14px}
-.platform-comparison input,.platform-comparison select{width:100%;background:var(--well);border:1px solid var(--hair);border-radius:var(--radius-sm);padding:12px 14px;min-height:48px}
+.platform-comparison input,.platform-comparison select{width:100%;background:var(--well);border:1px solid var(--hair);border-radius:var(--radius-sm);padding:12px 14px;min-height:48px;transition:border-color var(--hover)}
+.platform-comparison input:focus,.platform-comparison select:focus{border-color:var(--teal)}
+@media(hover:hover) and (pointer:fine){.platform-comparison input:hover,.platform-comparison select:hover{border-color:var(--teal)}}
 .platform-comparison input::placeholder{color:var(--ink-2);opacity:1}
 .platform-comparison .filter-row{display:flex;align-items:center;gap:16px;justify-content:space-between}
 .platform-comparison .chips{display:flex;flex-wrap:wrap;gap:8px}
