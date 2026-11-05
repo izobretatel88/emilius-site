@@ -39,9 +39,11 @@ const names=['Tilda','Яндекс KIT','InSales','Shop-Script','AdvantShop','1�
   .comparison-picker>p:first-child{font-weight:700;margin-bottom:12px}
   .picker-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   label{display:grid;gap:7px;font-size:13px;min-width:0}
-  select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:10px 6px;min-height:48px;transition:border-color var(--hover)}
+  select{width:100%;font:inherit;font-size:16px;color:var(--ink);background-color:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:10px 28px 10px 10px;background-position:right 15px center,right 10px center;min-height:48px;transition:border-color var(--hover)}
   select:focus{border-color:var(--teal)}
   @media(hover:hover) and (pointer:fine){select:hover{border-color:var(--teal)}}
+  /* Узкий экран: «WooCommerce» и «Shop-Script» не помещаются в половину ширины — списки друг под другом */
+  @media(max-width:379px){.picker-fields{grid-template-columns:minmax(0,1fr)}}
   .picker-hint{font-size:13px;color:var(--ink-2);margin-top:12px}
   :global(.platform-comparison table [hidden]){display:none!important}
   @media(max-width:760px){

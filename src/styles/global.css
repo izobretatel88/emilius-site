@@ -121,6 +121,23 @@ a {
   }
 }
 
+/* Выпадающие списки: своя стрелка в цвет текста с отступом от рамки вместо системной, прижатой к краю.
+   Цвет фона компоненты задают через background-color, иначе сокращённое background сотрёт стрелку. */
+select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink-2) 50%),
+    linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+  background-position:
+    right 21px center,
+    right 16px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+@media (forced-colors: active) {
+  select { appearance: auto; background-image: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
