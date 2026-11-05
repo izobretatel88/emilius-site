@@ -8,6 +8,9 @@ const {target,landing=false}=Astro.props;
 <style>
   .estimate-strip{display:none;position:sticky;top:12px;z-index:6;background:var(--card);border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
   .estimate-strip[hidden]{display:none}
+  /* Когда сам расчёт уже на экране, строка-дубль уходит и не закрывает поля */
+  .estimate-strip{transition:opacity var(--hover),visibility var(--hover)}
+  .estimate-strip.at-result{opacity:0;visibility:hidden;pointer-events:none}
   a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:10px 12px;color:var(--ink);text-decoration:none}
   a>span:first-child{min-width:0}
   .caption{display:block;font-size:var(--fs-small);color:var(--ink-2);margin-bottom:2px}
@@ -19,3 +22,13 @@ const {target,landing=false}=Astro.props;
   @media(max-width:700px){:global(form:has(.estimate-strip:not(.landing):not([hidden])) :is(input,select,textarea)){scroll-margin-top:120px}}
   @media(max-width:899px){:global(form:has(.estimate-strip.landing:not([hidden])) :is(input,select,textarea)){scroll-margin-top:184px}}
 </style>
+<script>
+  for (const strip of document.querySelectorAll<HTMLElement>('[data-live-estimate]')) {
+    const id = strip.querySelector('a')?.getAttribute('href')?.slice(1);
+    const result = id ? document.getElementById(id) : null;
+    if (!result || !('IntersectionObserver' in window)) continue;
+    new IntersectionObserver(([entry]) => {
+      strip.classList.toggle('at-result', entry.isIntersecting);
+    }, { rootMargin: '-80px 0px 0px 0px' }).observe(result);
+  }
+</script>
