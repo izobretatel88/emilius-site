@@ -121,14 +121,12 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       show(null);
       fieldError(message,messageError);
       fieldError(agree,consentError);
-      if (!message.value.trim()) {
-        fieldError(message,messageError,'Напишите, с какой задачей нужна помощь.');
-        message.focus();
-        return;
-      }
-      if (!agree.checked) {
-        fieldError(agree,consentError,'Чтобы отправить сообщение, отметьте согласие на обработку данных.');
-        agree.focus();
+      // Все ошибки показываем сразу, фокус — на первое поле с ошибкой: одна попытка вместо двух
+      const emptyMessage=!message.value.trim();
+      if (emptyMessage) fieldError(message,messageError,'Напишите, с какой задачей нужна помощь.');
+      if (!agree.checked) fieldError(agree,consentError,'Чтобы отправить сообщение, отметьте согласие на обработку данных.');
+      if (emptyMessage || !agree.checked) {
+        (emptyMessage ? message : agree).focus();
         return;
       }
       const contextualMessage=selectedProject && !context.hidden && !message.value.includes(selectedProject.message)

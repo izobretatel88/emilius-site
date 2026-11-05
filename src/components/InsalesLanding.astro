@@ -491,14 +491,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       ok.hidden = fail.hidden = true;
       fieldError(contact,contactError);
       fieldError(agree,consentError);
-      if (!contact.value.trim()) {
-        fieldError(contact,contactError,'Оставьте Telegram или телефон, чтобы мы могли ответить.');
-        contact.focus();
-        return;
-      }
-      if (!agree.checked) {
-        fieldError(agree,consentError,'Для отправки заявки отметьте согласие на обработку данных.');
-        agree.focus();
+      // Все ошибки показываем сразу, фокус — на первое поле с ошибкой: одна попытка вместо двух
+      const emptyContact=!contact.value.trim();
+      if (emptyContact) fieldError(contact,contactError,'Оставьте Telegram или телефон, чтобы мы могли ответить.');
+      if (!agree.checked) fieldError(agree,consentError,'Для отправки заявки отметьте согласие на обработку данных.');
+      if (emptyContact || !agree.checked) {
+        (emptyContact ? contact : agree).focus();
         return;
       }
       // lead.php принимает message + contact: ответы и ориентир собираем в текст сообщения.
