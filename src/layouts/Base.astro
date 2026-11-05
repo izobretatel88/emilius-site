@@ -50,7 +50,8 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <link rel="preload" href={glober600} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={glober400} as="font" type="font/woff2" crossorigin />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {/* Закрытой от индекса странице (404, черновик) каноническая ссылка не нужна: 404 отдаётся по любому неверному адресу */}
+    {!noindex && <link rel="canonical" href={canonical} />}
     {(preview || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={href('favicon-32.png')} type="image/png" sizes="32x32" />
