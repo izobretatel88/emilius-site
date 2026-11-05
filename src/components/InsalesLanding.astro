@@ -556,7 +556,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .hero-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
   .hero-phone { margin: 0; display: flex; flex-direction: column; gap: 10px; }
-  .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
+  .hero-phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); }
   .hero-phone figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-3); text-align: center; text-wrap: balance; }
   /* Ссылка в подписи: зона нажатия выше строки, раскладка не сдвигается */
   .hero-phone figcaption a { display: inline-block; padding-block: 14px; margin-block: -14px; }
@@ -681,7 +681,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     text-decoration: none;
     transition: background-color var(--hover);
   }
-  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; filter: var(--img-dim); }
   .shop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 14px 16px 16px; }
   .shop-name { font-size: 18px; font-weight: 700; }
   .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
@@ -696,7 +696,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
   .case { border-radius: var(--radius-sm); overflow: hidden; background: var(--well); }
   .case-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
-  .case-shot img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; }
+  .case-shot img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; filter: var(--img-dim); }
   .case-body { display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; }
   .case-name { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; line-height: 1.1; }
   .case-body .shop-what { font-size: 15px; }
@@ -767,7 +767,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-card { display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
-  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); }
   .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
