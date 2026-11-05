@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import WriteButton from '../components/WriteButton.astro';
 import SiteNav from '../components/SiteNav.astro';
+import CookieNotice from '../components/CookieNotice.astro';
 // Основные начертания грузим заранее: заголовки (600) и текст (400) не перескакивают со шрифта на шрифт
 import glober400 from '../styles/fonts/glober-400.woff2?url';
 import glober600 from '../styles/fonts/glober-600.woff2?url';
@@ -125,6 +126,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
       })();
     </script>
     <WriteButton />
+    {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <CookieNotice />}
   </body>
 </html>
 
