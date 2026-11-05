@@ -917,7 +917,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     transition: transform 0.2s ease, border-color var(--hover);
   }
   details[open] summary { color: var(--teal-text); }
-  details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; border-color: var(--teal); }
+  /* Стрелка поднимается через transform, а не margin: поворот и сдвиг идут одним плавным движением */
+  details[open] summary::after { transform: translateY(4px) rotate(-135deg); border-color: var(--teal); }
+  details[open] p { animation: faq-in 0.2s ease-out; }
+  @keyframes faq-in { from { opacity: 0; } }
   @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
   @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
   summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }

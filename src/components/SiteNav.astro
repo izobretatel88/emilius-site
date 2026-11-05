@@ -98,7 +98,8 @@ const discuss = isHome ? '#feedback' : href('#feedback');
     .wordmark img { width: 16px; height: 24px; }
     .nav-links, .site-nav .nav-action { display: none; }
     .nav-menu { display: block; }
-    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); }
+    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); transition: transform 0.16s ease-out; }
+    .nav-menu summary:active { transform: scale(0.97); }
     .nav-menu summary::-webkit-details-marker { display: none; }
     .nav-menu svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
     .close-icon, .nav-menu[open] .menu-icon { display: none; }
