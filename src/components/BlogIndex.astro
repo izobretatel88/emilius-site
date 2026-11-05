@@ -2,6 +2,7 @@
 // Список статей блога: карточка с обложкой, заголовком, описанием, датой и временем чтения.
 import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
 import { ruDate, type Post } from '../lib/blog';
 
 interface Props {
@@ -20,6 +21,7 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
 
   <main class="list ui-shell">
     <header class="ui-opening list-head">
+    <Breadcrumbs items={[{ title: 'Блог' }]} />
     <h1 class="ui-h1">Блог</h1>
     <p class="ui-lead">Исследования, дизайн, разработка и маркетинг продуктов. Начинаем с практических материалов о запуске интернет-магазинов и работе с маркетплейсами.</p>
     </header>
