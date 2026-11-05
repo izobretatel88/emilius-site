@@ -17,8 +17,8 @@ cd "$(dirname "$0")/.."
 # Счётчик Метрики тот же, что был на Tilda, — история посещений не прерывается.
 YM_ID="${YM_ID:-68742100}" npm run build:release
 
-# Защита от выкладки превью: в продакшене не должно быть noindex и метки dev.
-if grep -rlq --include='*.html' 'noindex' dist; then
+# Защита от выкладки превью. Для страницы 404 noindex задан намеренно.
+if grep -riql --include='*.html' --exclude='404.html' '<meta[^>]*name="robots"[^>]*noindex' dist; then
   echo "В сборке есть noindex — это сборка превью, выкладку останавливаю." >&2
   exit 1
 fi
@@ -29,6 +29,6 @@ mv dist/robots.txt dist/robots-main.txt
 # --delete убирает с сервера файлы, которых больше нет в сборке; .well-known нужен для SSL-сертификата,
 # emilius-telegram.php — на случай, если файл с токеном положили в папку сайта.
 # extra/ — отдельно публикуемые клиентские материалы, не входят в сборку Astro.
-rsync -az --delete --exclude '.well-known/' --exclude 'emilius-telegram.php' --exclude '/extra/' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes" dist/ "$BEGET_SSH:$BEGET_DIR/"
+rsync -az --delete --exclude '.well-known/' --exclude 'emilius-telegram.php' --exclude '/extra/' -e "ssh -i $BEGET_KEY -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=15" dist/ "$BEGET_SSH:$BEGET_DIR/"
 
 echo "Готово: https://emilius.agency"
