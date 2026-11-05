@@ -79,10 +79,13 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 <style>
   .gallery-intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;margin-bottom:24px;padding-top:12px;border-top:1px solid var(--hair);font-size:14px;color:var(--ink-2)}
   .gallery-intro a{display:inline-flex;align-items:center;gap:16px;min-height:44px;text-underline-offset:4px;font-weight:600}
-  .project-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 28px}
-  .project{min-width:0;scroll-margin-top:24px}
+  .project-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+  /* Каждый проект — белая карточка на сером фоне (05.11.2026, по замечанию владельца): проекты не сливаются */
+  .project{min-width:0;scroll-margin-top:24px;display:flex;flex-direction:column;padding:10px 10px 22px;background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+  .project>:not(.project-preview){margin-inline:16px}
+  .project>.project-inquiry{align-self:start}
   .project-featured{grid-column:1/-1}
-  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-card);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:var(--shadow-card)}
+  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair)}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
   .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:13px;font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
@@ -140,7 +143,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   @media(max-width:1000px){.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
   @media(max-width:700px){
-    .project-gallery{grid-template-columns:1fr;gap:36px}
+    .project-gallery{grid-template-columns:1fr;gap:20px}
+    .project{padding:8px 8px 18px}
+    .project>:not(.project-preview){margin-inline:10px}
+    .project>.project-inquiry{align-self:stretch;width:auto}
     .project-featured{grid-column:auto}
     .project-caption,.project-featured .project-caption{flex-direction:column;margin-top:16px}
     .project h2,.project-featured h2{font-size:26px}
