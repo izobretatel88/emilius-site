@@ -95,6 +95,7 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
   h2 a {
     color: var(--ink);
     text-decoration: none;
+    transition: color var(--hover);
   }
   @media (hover: hover) and (pointer: fine) {
     h2 a:hover {
