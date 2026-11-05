@@ -15,6 +15,9 @@
 .directory-tags { display:flex; flex-wrap:wrap; gap:4px 22px; margin-top:18px; font-size:14px; }
 .directory-tags a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
 .directory-callout p { line-height:1.55; }
+/* Первый раздел без линии сверху (Полезное) не прилипает к вводному тексту; ссылка «Все статьи» отстоит от списка */
+.directory > section:not([class]) { margin-top:var(--section-pad-sm); }
+.directory-section > ul.link-list + a { display:inline-flex; align-items:center; min-height:44px; margin-top:10px; font-weight:600; text-underline-offset:4px; }
 @media(max-width:600px) {
   .directory-section { margin-top:var(--section-pad-sm); padding-top:var(--section-pad-sm); }
   .directory-section h2, .directory > section > h2 { font-size:var(--fs-h2-sm); }
