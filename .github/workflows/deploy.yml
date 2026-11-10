@@ -5,9 +5,10 @@ name: Deploy preview to GitHub Pages
 #   /emilius-site/dev/         — ветка dev (опыты), если она есть
 #   /emilius-site/extra/       — ветка extra (клиентские материалы, статика как есть), если она есть
 #   /emilius-site/dev-ui/      — ветка dev-ui (правки интерфейса на проверку, отдельно от dev), если она есть
+#   /emilius-site/ds/          — ветка ds-v2 (развитие дизайн-системы, отдельно от dev и dev-ui), если она есть
 # Публикует всегда main: окружение github-pages разрешает деплой только из неё.
 # Пуш в dev или extra запускает этот workflow через dev-trigger.yml / extra-trigger.yml.
-# После пуша в dev-ui запускать вручную: gh workflow run deploy.yml --ref main
+# После пуша в dev-ui или ds-v2 запускать вручную: gh workflow run deploy.yml --ref main
 
 on:
   push:
@@ -56,6 +57,13 @@ jobs:
           ref: dev-ui
           path: devuisite
 
+      - id: dsbranch
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: ds-v2
+          path: dssite
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -79,6 +87,13 @@ jobs:
         run: npm ci && npm run build && mkdir -p ../site/dist/dev-ui && cp -R dist/. ../site/dist/dev-ui/
         env:
           BASE_PATH: /${{ github.event.repository.name }}/dev-ui
+
+      - name: Сборка ds-v2
+        if: steps.dsbranch.outcome == 'success'
+        working-directory: dssite
+        run: npm ci && npm run build && mkdir -p ../site/dist/ds && cp -R dist/. ../site/dist/ds/
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/ds
 
       - name: Ветка extra (без сборки)
         if: steps.extrabranch.outcome == 'success'
