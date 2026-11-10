@@ -104,7 +104,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   p.project-result{margin-bottom:0}
   .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:16px;min-height:64px}
   .project-result strong{color:var(--teal-text)}
-  @media (hover: hover) and (pointer: fine) { .project-result:hover strong {text-decoration:underline;text-underline-offset:4px} }
+  @media (hover: hover) and (pointer: fine) { a.project-result:hover strong {text-decoration:underline;text-underline-offset:4px} }
   .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-small)}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   .gallery-contact>p{font-size:14px;color:var(--ink-2);margin-bottom:16px}
