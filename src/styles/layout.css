@@ -157,7 +157,8 @@
 .ui-ruler i.first {
   height: 14px;
 }
-.ui-ruler i.on { width: 2px; }
+.ui-ruler i.on { width: 2px; height: 11px; }
+.ui-ruler i.on.first { height: 14px; }
 .ui-ruler i.first[data-stage='custdev'],
 .ui-ruler i.on[data-stage='custdev'],
 [data-ruler-scope]:has([data-stage-link='custdev']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='custdev'] { background: var(--sec-custdev-ink); }
