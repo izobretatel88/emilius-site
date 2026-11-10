@@ -523,6 +523,11 @@ const jsonLd = [
   .body :global(.copy:active) {
     transform: scale(0.97);
   }
+  /* Палец: кнопка не ниже 44 px, блоку — место под неё */
+  @media (pointer: coarse) {
+    .body :global(.copy) { min-height: 44px; padding-inline: 16px; }
+    .body :global(pre) { padding-top: 66px; }
+  }
   .body :global(.table-wrap) {
     margin-top: 18px;
     /* Ширина колонки текста (62ch при 17 px, как у абзацев): таблица не выступает за правый край текста и обложки */

@@ -185,7 +185,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
           </figcaption>
         </figure>
       </div>
@@ -788,7 +788,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
   .more-shops a:focus-visible { outline: none; }
   @media (hover: hover) and (pointer: fine) { .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; } }
-  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+  /* Ссылки разделяет отступ, а не точка: при переносе на телефоне точка повисала в конце или начале строки */
+  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; display: flex; flex-wrap: wrap; column-gap: 24px; }
   @media (hover: hover) and (pointer: fine) { .proof a:hover { text-underline-offset: 3px; } }
   .proof a { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
@@ -798,6 +799,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quote figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); }
   .quote figcaption b { font-size: 16px; color: var(--ink); }
   /* Ссылка на сайт под отзывом: зона нажатия 44 px, строка не сдвигается */
+  .quote figcaption > span { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
   .quote figcaption a { display: inline-block; padding-block: 13px; margin-block: -13px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
