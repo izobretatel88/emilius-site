@@ -1,0 +1,22 @@
+---
+// Линейка итерации: обод колеса, развёрнутый в строку. 52 деления — 52 дня, четыре этапа по 13.
+// Не украшение: показывает, какие дни итерации занимает этап. Без этапа — нейтральная, этап
+// подсвечивается родителем (наведение на ссылку направления, см. главную).
+// Стили — .ui-ruler в src/styles/layout.css. Описание — docs/EMILIUS-DESIGN-SYSTEM.md §8.1.
+import { SECTORS } from '../data/site';
+interface Props { stage?: (typeof SECTORS)[number]['id']; }
+const { stage } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const current = SECTORS.find((s) => s.id === stage);
+const label = current
+  ? `Итерация из 52 дней. Дни ${pad(current.from)}–${pad(current.to)} — ${current.name}.`
+  : 'Итерация из 52 дней: ' + SECTORS.map((s) => `${pad(s.from)}–${pad(s.to)} ${s.name}`).join(', ') + '.';
+const days = Array.from({ length: 52 }, (_, i) => {
+  const day = i + 1;
+  const s = SECTORS.find((x) => day >= x.from && day <= x.to)!;
+  return { stage: s.id, first: day === s.from, on: s.id === stage };
+});
+---
+<div class="ui-ruler" role="img" aria-label={label}>
+  {days.map((d) => <i data-stage={d.stage} class:list={{ first: d.first, on: d.on }}></i>)}
+</div>

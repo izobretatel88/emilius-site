@@ -45,6 +45,7 @@
   --card: #ffffff;
   --card-border: transparent;
   --hair: #e5e5ea;
+  --ruler: #c7c7cc; /* деления линейки итерации: заметнее линии секции, тише текста */
   --well: #f2f2f4;
   --proj-bg: #ffffff; /* кружки логотипов проектов */
   --input-bg: #f2f2f4;
@@ -142,6 +143,7 @@
     --card: #1c1c1e;
     --card-border: transparent;
     --hair: #2c2c2e;
+    --ruler: #48484a;
     --well: #232325;
     --proj-bg: #2c2c2e;
     --input-bg: #2c2c2e;
@@ -197,6 +199,7 @@
   --card: #1c1c1e;
   --card-border: transparent;
   --hair: #2c2c2e;
+  --ruler: #48484a;
   --well: #232325;
   --proj-bg: #2c2c2e;
   --input-bg: #2c2c2e;
