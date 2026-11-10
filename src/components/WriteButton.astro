@@ -21,14 +21,20 @@ import { LINKS } from '../data/site';
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
     const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
     const compact = matchMedia('(max-width: 480px)');
+    // Пока открыта плашка о cookie, на телефоне она занимает низ экрана — кнопка ждёт «Понятно»
+    const phone = matchMedia('(max-width: 600px)');
+    const cookieOpen = () => phone.matches && document.documentElement.classList.contains('cookie-open');
     const seen = new Set<Element>();
     let typing = false;
     const update = () => {
       const sectionVisible = compact.matches && protectedSections.some(section => seen.has(section));
       const contactVisible = twins.some(twin => seen.has(twin));
-      fab.classList.toggle('is-hidden', sectionVisible || contactVisible || typing || !!document.querySelector('.mobile-menu[open]'));
+      fab.classList.toggle('is-hidden', sectionVisible || contactVisible || typing || cookieOpen() || !!document.querySelector('.mobile-menu[open]'));
     };
     document.addEventListener('emi:menu', update);
+    document.addEventListener('emi:cookie', update);
+    phone.addEventListener('change', update);
+    update();
     if (protectedSections.length) compact.addEventListener('change', update);
     const observed = [...twins, ...protectedSections];
     if (observed.length) {

@@ -80,8 +80,18 @@ const jsonLd = [
     </p>
     {toc.length >= 4 && (
       <nav class="toc" aria-label="Содержание">
-        <p class="toc-title">Содержание</p>
-        <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+        {/* На телефоне и планшете свёрнуто: текст статьи начинается сразу. На широком экране раскрыто в боковой колонке. */}
+        <details>
+          <summary class="toc-title">Содержание <span class="toc-count">· {toc.length} разделов</span></summary>
+          <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+        </details>
+        <script is:inline>
+          (function () {
+            var d = document.currentScript.previousElementSibling, wide = matchMedia('(min-width: 1180px)');
+            var sync = function () { if (wide.matches) d.open = true; };
+            sync(); wide.addEventListener('change', sync);
+          })();
+        </script>
       </nav>
     )}
     <div class="body" data-post={post.id}>
@@ -235,11 +245,32 @@ const jsonLd = [
     box-shadow: var(--shadow-card);
   }
   .toc-title {
-    margin: 0 0 8px;
     font-size: 14px;
     font-weight: 700;
     color: var(--ink-2);
+    cursor: pointer;
+    min-height: 44px;
+    margin-block: -10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
   }
+  .toc-title::-webkit-details-marker { display: none; }
+  .toc-title::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    margin-left: auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.2s ease-out;
+  }
+  .toc details[open] > .toc-title::after { transform: translateY(2px) rotate(225deg); }
+  .toc details[open] > .toc-title { margin-bottom: 0; }
+  .toc-count { font-weight: 400; color: var(--ink-3); }
+  @media (prefers-reduced-motion: reduce) { .toc-title::after { transition: none; } }
   .toc ol {
     margin: 0;
     padding-left: 22px;
@@ -286,6 +317,10 @@ const jsonLd = [
     .article > .toc ol {
       font-size: 14px;
     }
+    /* В боковой колонке содержание всегда раскрыто: заголовок — подпись, а не переключатель */
+    .toc-title { pointer-events: none; cursor: default; min-height: 0; margin-block: 0 8px; }
+    .toc details[open] > .toc-title { margin-bottom: 8px; }
+    .toc-title::after, .toc-count { display: none; }
   }
 
   /* Текст статьи: читают подряд, поэтому крупнее и свободнее, строка не шире ~68 знаков */

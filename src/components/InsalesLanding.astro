@@ -300,7 +300,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </dl>
     </section>
 
-    <section class="card block" aria-labelledby="t-faq">
+    <section class="block flat" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
         {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
@@ -353,7 +353,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         </div>
       </form>
     </section>
-    <section class="card block"><h2>Если задача шире запуска магазина</h2><LinkList items={[
+    <section class="block flat"><h2>Если задача шире запуска магазина</h2><LinkList items={[
       {title:'Индивидуальный интерфейс',description:'Спроектировать свои сценарии и дизайн.',href:'services/design/'},
       {title:'Разработка и интеграции',description:'Обсудить нестандартную логику и связку систем.',href:'services/dev/'},
       {title:'Продвижение после запуска',description:'SEO, аналитика и развитие продукта.',href:'services/marketing/'},
@@ -652,6 +652,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   @media (hover: hover) and (pointer: fine) { .switch:hover { text-decoration: underline; text-underline-offset: 3px; } }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
+  /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
+  .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
   .block > .small { max-width: 68ch; line-height: 1.5; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
@@ -1087,6 +1089,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .hero { padding: 26px 20px; }
     .block { padding: 24px 20px; }
     .block.plain { padding: 4px 0 0; }
+    .block.flat { padding: 24px 0 0; }
     h1 { font-size: var(--fs-h1-sm); letter-spacing: var(--tracking-tight); }
     h2 { font-size: var(--fs-h2-sm); }
     .grid2, .cols { grid-template-columns: 1fr; }

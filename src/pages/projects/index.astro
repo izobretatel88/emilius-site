@@ -53,6 +53,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
       <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
+      {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект</a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
@@ -100,6 +101,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-role{font-size:14px;line-height:1.5;color:var(--ink-2);margin-top:8px}
   .project-site{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:14px;font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere;max-width:100%;flex-shrink:1}
   .project-inquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;margin-top:8px;font-size:14px;font-weight:600;text-underline-offset:4px}
+  p.project-result{margin-bottom:0}
   .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:16px;min-height:64px}
   .project-result strong{color:var(--teal-text)}
   @media (hover: hover) and (pointer: fine) { .project-result:hover strong {text-decoration:underline;text-underline-offset:4px} }
