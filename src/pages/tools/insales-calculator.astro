@@ -87,5 +87,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   #public-calculator button{min-height:44px;text-underline-offset:4px}
   #calc-result,#public-calculator{scroll-margin-top:24px}
   @media(max-width:700px){.calc-jump{display:inline-flex}}
+  /* Строка «Текущая оценка» ведёт туда же: когда она показана, ссылка-дубль над ней не нужна (остаётся для режима без JavaScript) */
+  @media(max-width:700px){.calc-jump:has(+ .calculator :global(.estimate-strip:not([hidden]))){display:none}}
 </style>
 <style>.calculator{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}.calc-field{display:grid;gap:8px;margin-bottom:20px}.calc-field label{font-weight:600}select{font:inherit;color:var(--ink);background-color:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:12px 40px 12px 12px;width:100%;min-height:48px;transition:border-color var(--hover)}select:focus{border-color:var(--teal)}@media(hover:hover) and (pointer:fine){select:hover{border-color:var(--teal)}}.calc-result{margin:0;position:sticky;top:20px}.calc-result .calc-price{font-size:clamp(24px,3vw,34px);color:var(--ink);font-weight:700;line-height:1.25}.calc-result .calc-hint{font-size:var(--fs-small);margin-bottom:0}button{font:inherit;padding:8px 0;border:0;background:none;color:var(--teal-text);text-decoration:underline;cursor:pointer}@media(max-width:700px){.calculator{grid-template-columns:minmax(0,1fr);gap:24px}.calc-result{position:static}}</style>
