@@ -4,8 +4,10 @@ name: Deploy preview to GitHub Pages
 #   /emilius-site/             — ветка main (рабочее превью)
 #   /emilius-site/dev/         — ветка dev (опыты), если она есть
 #   /emilius-site/extra/       — ветка extra (клиентские материалы, статика как есть), если она есть
+#   /emilius-site/dev-ui/      — ветка dev-ui (правки интерфейса на проверку, отдельно от dev), если она есть
 # Публикует всегда main: окружение github-pages разрешает деплой только из неё.
 # Пуш в dev или extra запускает этот workflow через dev-trigger.yml / extra-trigger.yml.
+# После пуша в dev-ui запускать вручную: gh workflow run deploy.yml --ref main
 
 on:
   push:
@@ -47,6 +49,13 @@ jobs:
           ref: extra
           path: extra
 
+      - id: devuibranch
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: dev-ui
+          path: devuisite
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -63,6 +72,13 @@ jobs:
         run: npm ci && npm run build && mkdir -p ../site/dist/dev && cp -R dist/. ../site/dist/dev/
         env:
           BASE_PATH: /${{ github.event.repository.name }}/dev
+
+      - name: Сборка dev-ui
+        if: steps.devuibranch.outcome == 'success'
+        working-directory: devuisite
+        run: npm ci && npm run build && mkdir -p ../site/dist/dev-ui && cp -R dist/. ../site/dist/dev-ui/
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/dev-ui
 
       - name: Ветка extra (без сборки)
         if: steps.extrabranch.outcome == 'success'
