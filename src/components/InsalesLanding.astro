@@ -82,7 +82,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
         <p class="note">{CTA_NOTE}</p>
       </div>
-      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
+      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}<span class="visually-hidden">, откроется в новой вкладке</span></a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{glue(other.text)}</a>
       </div>
       <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
@@ -90,7 +90,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <picture>
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
-        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
       </figure>
     </section>
 
@@ -145,7 +145,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <h3 class="case-name" id="t-case">{FRESH_SHOP.name}</h3>
             <p class="shop-what">{FRESH_SHOP.what}</p>
             <ul class="dots case-done">{FRESH_SHOP.done.map((d) => <li>{d}</li>)}</ul>
-            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} ↗</a>
+            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <div class="case-pos">
@@ -174,7 +174,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
               <span class="shop-body">
                 <span class="shop-name">{x.name}</span>
                 <span class="shop-what">{x.what}</span>
-                <span class="shop-link">{x.domain} ↗</span>
+                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span></span>
               </span>
             </a>
           </li>
@@ -185,7 +185,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span></a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span></a></span>
           </figcaption>
         </figure>
       </div>
@@ -341,14 +341,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <!-- Согласие по 152-ФЗ отдельной галочкой: без него lead.php заявку не примет -->
         <label class="agree">
           <input type="checkbox" name="consent" value="1" required aria-describedby="lead-consent-error" />
-          <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
+          <span>Согласен на <a href={consent} target="_blank">обработку персональных данных<span class="visually-hidden">, откроется в новой вкладке</span></a> по <a href={privacy} target="_blank">политике конфиденциальности<span class="visually-hidden">, откроется в новой вкладке</span></a></span>
         </label>
         <p class="field-error" id="lead-consent-error" role="alert" hidden></p>
         <button class="cta" type="submit">Отправить расчёт и записаться на диагностику</button>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
         <p class="status" data-fail role="alert" hidden>
-          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
+          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке</span></a>
         </p>
         </div>
       </form>

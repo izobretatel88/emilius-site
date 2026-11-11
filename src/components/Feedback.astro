@@ -47,7 +47,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     <!-- Согласие по 152-ФЗ — отдельной галочкой, по умолчанию не отмечена -->
     <label class="agree">
       <input type="checkbox" name="consent" value="1" required aria-describedby="fb-consent-error" />
-      <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
+      <span>Согласен на <a href={consent} target="_blank">обработку персональных данных<span class="visually-hidden">, откроется в новой вкладке</span></a> по <a href={privacy} target="_blank">политике конфиденциальности<span class="visually-hidden">, откроется в новой вкладке</span></a></span>
     </label>
     <p class="ui-field-error" id="fb-consent-error" role="alert" hidden></p>
     <button class="btn-send" type="submit">
@@ -57,7 +57,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     </button>
     <p class="status" role="status" aria-live="polite" hidden></p>
     <p class="status status-error" role="alert" hidden>
-      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}</a>
+      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}<span class="visually-hidden">, откроется в новой вкладке</span></a>
     </p>
   </form>
 </section>

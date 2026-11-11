@@ -6,11 +6,11 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
   <section class="card col-card" aria-labelledby="t-contact" data-goal-place="contact">
     <h2 class="card-title" id="t-contact">Связь</h2>
     <a class="btn btn-primary" href={LINKS.channel} target="_blank" rel="noopener">
-      В канал
+      В канал<span class="visually-hidden"> в Telegram, откроется в новой вкладке</span>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
     </a>
     <a class="btn btn-secondary" href={LINKS.direct} target="_blank" rel="noopener">
-      Написать
+      Написать<span class="visually-hidden"> в Telegram, откроется в новой вкладке</span>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
     </a>
   </section>
@@ -19,7 +19,7 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     <h2 class="card-title" id="t-emi">Спросить 🤖 Эми</h2>
     <div class="emi-widget" aria-busy="false">
       <iframe data-src={EMI_WIDGET_SRC} title="Голосовой ассистент Эми" width="170" height="144" allow="microphone" scrolling="no" frameborder="0" hidden></iframe>
-      <div class="widget-state" data-widget-fallback><p class="micro" data-frame-status role="status">Голосовой помощник</p><a class="widget-contact" href={LINKS.direct} target="_blank" rel="noopener" data-widget-contact hidden>Написать в Telegram</a></div>
+      <div class="widget-state" data-widget-fallback><p class="micro" data-frame-status role="status">Голосовой помощник</p><a class="widget-contact" href={LINKS.direct} target="_blank" rel="noopener" data-widget-contact hidden>Написать в Telegram<span class="visually-hidden">, откроется в новой вкладке</span></a></div>
     </div>
     <div class="retry-slot"><button class="widget-retry" type="button" data-frame-retry hidden>Повторить загрузку</button></div>
     <noscript><p class="micro">Для голосового помощника нужен JavaScript. Можно <a href={LINKS.direct}>написать нам</a>.</p></noscript>
