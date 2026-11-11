@@ -3,6 +3,8 @@ import { SECTORS } from './site';
 
 export const DIRECTIONS = ['custdev', 'design', 'dev', 'marketing'].map(id => ({
   id, title: SERVICES[id].title, description: SECTORS.find(sector=>sector.id===id)!.text, href: `services/${id}/`,
+  // Этап итерации: цвет точки и дни в списках направлений (дизайн-система §3.3)
+  stage: id, label: (({from,to})=>`Дни ${String(from).padStart(2,'0')}–${String(to).padStart(2,'0')}`)(SECTORS.find(sector=>sector.id===id)!),
 }));
 export const MATERIALS = [
   { title: 'Какую платформу выбрать для магазина', description: 'Восемь платформ: сценарии, ограничения и стоимость. Данные на 30 октября 2026.', href: 'compare/ecommerce-platforms/', label: 'Сравнение' },

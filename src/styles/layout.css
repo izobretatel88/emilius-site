@@ -139,6 +139,20 @@
   margin: -16px 0 28px;
 }
 
+/* Цвет этапа — признак направления. Любой элемент с data-stage получает --stage-ink своего этапа;
+   им красятся точка этапа и заголовок ссылки направления при наведении и в фокусе. */
+[data-stage='custdev'] { --stage-ink: var(--sec-custdev-ink); }
+[data-stage='design'] { --stage-ink: var(--sec-design-ink); }
+[data-stage='dev'] { --stage-ink: var(--sec-dev-ink); }
+[data-stage='marketing'] { --stage-ink: var(--sec-marketing-ink); }
+.ui-stage-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--stage-ink, var(--ruler));
+}
 /* Линейка итерации: 52 деления — 52 дня, первое деление каждого этапа выше. Компонент IterationRuler.astro.
    Первое деление этапа всегда цветом этапа (--sec-*-ink). Все 13 дней этапа красятся классом .on (страница направления)
    или когда в общем предке [data-ruler-scope] наведена или в фокусе ссылка [data-stage-link] этого этапа. */
