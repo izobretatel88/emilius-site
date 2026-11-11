@@ -5,7 +5,7 @@
     python3 -I partner-insales/stend/build.py
 Смотреть: preview «insales-stend» → http://127.0.0.1:4341/stend/index.html
 
-Скрипты InSales вырезаются (без счётчиков и чужого кода), стили и картинки грузятся с insales.ru.
+Скрипты InSales вырезаются (без счётчиков и чужого кода), стили и картинки шаблона встроены в HTML (копии в insales-css/), шрифты — с CDN InSales.
 Слайдер портфолио без JS заменён лентой с прокруткой.
 """
 import re
@@ -50,6 +50,18 @@ def local_asset(m):
         dst.write_bytes(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read())
     return m.group(1) + "insales-css/" + name + m.group(3)
 h = re.sub(r'((?:src|href)=")(https://cdn\.insales-shop\.ru/assets/[^"]+\.(?:svg|png|jpg|jpeg|webp|gif|ico))(")', local_asset, h)
+
+# встраиваем копии прямо в HTML: стили — <style>, картинки шаблона — data:-URI.
+# Так стенд — один файл без внешних запросов к своему хосту: GitHub Pages и старый кэш браузера ничего не ломают.
+import base64, mimetypes
+def inline_css(m):
+    return "<style>\n" + (CSS_DIR / m.group(1)).read_text(encoding="utf-8") + "\n</style>"
+h = re.sub(r'<link\b[^>]*href="insales-css/([^"]+\.css)"[^>]*>', inline_css, h)
+def inline_asset(m):
+    f = CSS_DIR / m.group(2)
+    mime = mimetypes.guess_type(f.name)[0] or "application/octet-stream"
+    return m.group(1) + f"data:{mime};base64," + base64.b64encode(f.read_bytes()).decode() + m.group(3)
+h = re.sub(r'((?:src|href)=")insales-css/([^"]+)(")', inline_asset, h)
 
 STAND_CSS = """<style>
   .js-partner-slider .swiper-wrapper{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;transform:none!important}
