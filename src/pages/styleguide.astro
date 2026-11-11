@@ -1,0 +1,176 @@
+---
+// Образцы дизайн-системы: живая страница на настоящих токенах, классах и компонентах сайта.
+// Служебная: закрыта от индекса, не входит в карту сайта и в релиз (scripts/prepare-release.mjs),
+// в навигации её нет. Описание системы — docs/EMILIUS-DESIGN-SYSTEM.md.
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import IterationRuler from '../components/IterationRuler.astro';
+import LinkList from '../components/LinkList.astro';
+import { SECTORS, ITERATION } from '../data/site';
+import { DIRECTIONS } from '../data/navigation';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const colors = [
+  { title: 'Акцент', note: 'Один акцент для действий. Бирюзовый текст — только ссылки.', tokens: [
+    ['--teal', 'Рамки, колесо, кольцо фокуса'],
+    ['--teal-btn', 'Заливка кнопок'],
+    ['--teal-btn-hover', 'Наведение на кнопку'],
+    ['--teal-text', 'Ссылки и мелкий бирюзовый текст'],
+    ['--teal-num', 'Номера на ободе колеса'],
+    ['--on-teal', 'Текст на бирюзовом'],
+  ] },
+  { title: 'Текст и поверхности', note: 'Серый фон страницы, белые карточки без обводки.', tokens: [
+    ['--ink', 'Заголовки и основной текст'],
+    ['--ink-2', 'Второстепенный текст'],
+    ['--ink-3', 'Подписи'],
+    ['--page', 'Фон страницы'],
+    ['--card', 'Карточки'],
+    ['--well', 'Утопленные плашки'],
+    ['--hair', 'Линии секций'],
+    ['--ruler', 'Деления линейки'],
+    ['--input-bg', 'Фон поля'],
+    ['--input-border', 'Рамка поля'],
+  ] },
+  { title: 'Этапы', note: 'Цвет этапа — признак направления: точка, дни на линейке, заголовок при наведении.', tokens: SECTORS.flatMap((s) => [
+    [`--sec-${s.id}-ink`, `${s.name}: текст и точка`],
+    [`--sec-${s.id}-now`, `${s.name}: текущий этап в колесе`],
+  ]) },
+];
+---
+
+<Base noindex title="Образцы дизайн-системы — Эмилиус Эдженси" description="Служебная страница: токены, типографика и компоненты сайта Эмилиус Эдженси.">
+  <main class="ui-shell guide">
+    <header class="ui-opening">
+      <Breadcrumbs items={[{ title: 'Образцы системы' }]} />
+      <h1 class="ui-h1">Образцы системы</h1>
+      <p class="ui-lead">Всё на этой странице собрано из настоящих токенов, классов и компонентов сайта. Значения цветов показаны для текущей темы — переключатель в подвале.</p>
+    </header>
+
+    <section class="ui-section" aria-labelledby="g-color">
+      <div class="ui-section-head"><h2 id="g-color">Цвет</h2></div>
+      {colors.map((group) => (
+        <div class="group">
+          <h3>{group.title}</h3>
+          <p class="note">{group.note}</p>
+          <ul class="swatches">
+            {group.tokens.map(([token, use]) => (
+              <li>
+                <span class="chip" style={`background: var(${token})`}></span>
+                <span class="meta"><code>{token}</code><span class="value" data-token={token}></span><span class="use">{use}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-type">
+      <div class="ui-section-head"><h2 id="g-type">Типографика</h2></div>
+      <div class="specimens">
+        <div class="specimen"><p class="spec">H1 · <code>.ui-h1</code> · 36–60 px, 600</p><p class="ui-h1" role="presentation">Помогаем великолепным людям <span class="ui-quiet">создавать великолепные продукты.</span></p></div>
+        <div class="specimen"><p class="spec">H2 · <code>.ui-h2</code> · 36 px, на телефоне 28</p><p class="ui-h2 h2-sample" role="presentation">Делаем по кругу</p></div>
+        <div class="specimen"><p class="spec">H3 · <code>--fs-h3</code> · 22 px, 600</p><p class="h3-sample" role="presentation">Что делаем</p></div>
+        <div class="specimen"><p class="spec">Метка над заголовком · <code>.ui-eyebrow</code> · 14 px, 800, капс</p><p class="ui-eyebrow">Этап 3 из 4 · дни 27–39</p></div>
+        <div class="specimen"><p class="spec">Лид · <code>.ui-lead</code> · 19 px, на телефоне 17</p><p class="ui-lead lead-sample">Исследуем потребности, проектируем интерфейсы, разрабатываем продукт и помогаем ему расти.</p></div>
+        <div class="specimen"><p class="spec">Основной текст · 16 px, цвет <code>--ink</code></p><p>Продукт создаётся циклом итераций, а не разовой сдачей проекта. В центре метода — внимание к пользователю, клиенту и деталям.</p></div>
+        <div class="specimen"><p class="spec">Подпись · <code>.ui-label</code> · 13 px — нижний предел читаемого текста</p><p class="ui-label">Готовое решение</p></div>
+      </div>
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-actions">
+      <div class="ui-section-head"><h2 id="g-actions">Действия</h2></div>
+      <p class="ui-section-intro">Залитая кнопка на экране одна. Остальные действия — текстовые ссылки со стрелкой. Иконка справа называет объект действия.</p>
+      <div class="ui-actions sample-actions">
+        <a class="ui-button" href="#g-actions">Обсудить проект <span aria-hidden="true">→</span></a>
+        <a class="ui-link" href="#g-actions">Смотреть проекты <span class="ui-arrow" aria-hidden="true">→</span></a>
+      </div>
+      <p class="note focus-note">Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, 2 px, отступ 3 px (<code>--focus-ring</code>, <code>--focus-offset</code>). Нажмите Tab, чтобы увидеть его на кнопке и ссылке выше.</p>
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-surface">
+      <div class="ui-section-head"><h2 id="g-surface">Поверхности и форма</h2></div>
+      <div class="surfaces">
+        <div class="ui-surface surface-sample"><h3>Карточка</h3><p><code>.ui-surface</code>: фон <code>--card</code>, радиус 20 px, тень <code>--shadow-card</code>, без обводки. Для содержательного блока; карточка внутри карточки — нет.</p></div>
+        <div class="flat-sample"><h3>Блок под линией</h3><p>Справочные блоки в конце страницы идут без карточки, под линией <code>--hair</code>.</p></div>
+      </div>
+      <ul class="radii">
+        <li><span class="radius r-card"></span><code>--radius-card</code> 20 px — карточки</li>
+        <li><span class="radius r-btn"></span><code>--radius-btn</code> 13 px — кнопки</li>
+        <li><span class="radius r-sm"></span><code>--radius-sm</code> 10 px — поля, картинки</li>
+      </ul>
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-iteration">
+      <div class="ui-section-head"><h2 id="g-iteration">Итерация</h2></div>
+      <p class="ui-section-intro">Линейка итерации — обод колеса, развёрнутый в строку: 52 деления по числу дней, четыре этапа по 13. Ставится только там, где показывает дни этапа.</p>
+      <div class="rulers">
+        <div><p class="spec">Без этапа: первое деление каждого этапа — его цветом</p><IterationRuler /></div>
+        {SECTORS.map((s) => (
+          <div data-stage={s.id}><p class="spec"><i class="ui-stage-dot" aria-hidden="true"></i> {s.name} · дни {pad(s.from)}–{pad(s.to)}</p><IterationRuler stage={s.id} /></div>
+        ))}
+        <div><p class="spec">Шкала итераций сайта: {ITERATION.current} из {ITERATION.total}</p><div class="ui-ruler iterations-sample" aria-hidden="true">{Array.from({ length: ITERATION.total }, (_, i) => <i class:list={{ done: i < ITERATION.current }}></i>)}</div></div>
+      </div>
+      <h3 class="list-title">Список направлений</h3>
+      <p class="note">Компонент <code>LinkList</code> с этапом: точка цвета этапа у подписи, заголовок при наведении — цветом этапа.</p>
+      <div class="ui-surface list-sample"><LinkList items={DIRECTIONS} /></div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<script is:inline>
+  // Значения токенов читаются из страницы, поэтому совпадают с текущей темой и не расходятся с tokens.css
+  (function () {
+    var fill = function () {
+      var cs = getComputedStyle(document.documentElement);
+      document.querySelectorAll('[data-token]').forEach(function (el) {
+        el.textContent = cs.getPropertyValue(el.dataset.token).trim();
+      });
+    };
+    fill();
+    document.addEventListener('emi:theme', fill);
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', fill);
+  })();
+</script>
+
+<style>
+  .guide h3 { margin: 0; font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; }
+  .group + .group { margin-top: 40px; }
+  .note { margin-top: 6px; color: var(--ink-2); max-width: 66ch; }
+  .swatches { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px 24px; }
+  .swatches li { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  /* Образец с тонкой рамкой: светлые цвета не теряются на белом и сером */
+  .chip { flex: none; width: 56px; height: 56px; border-radius: var(--radius-sm); box-shadow: inset 0 0 0 1px var(--hair); }
+  .meta { display: grid; gap: 2px; min-width: 0; font-size: 14px; }
+  .meta code, .spec code, .note code, .guide p code, .radii code { font-family: var(--font-mono); font-size: 0.92em; }
+  .value { color: var(--ink-2); font-variant-numeric: tabular-nums; text-transform: uppercase; }
+  .use { color: var(--ink-3); font-size: var(--fs-small); }
+  .specimens { display: grid; gap: 32px; }
+  .spec { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: var(--fs-small); color: var(--ink-3); }
+  .specimen .ui-eyebrow, .specimen .ui-label { margin-bottom: 0; }
+  .lead-sample { margin-top: 0; }
+  .h3-sample { font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; }
+  .h2-sample { font-weight: 600; }
+  .sample-actions { margin-top: 0; }
+  .focus-note { margin-top: 24px; }
+  .surfaces { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+  .surface-sample { padding: 26px; }
+  .flat-sample { padding-top: 26px; border-top: 1px solid var(--hair); }
+  .surfaces p { margin-top: 10px; color: var(--ink-2); }
+  .radii { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 16px 36px; font-size: 14px; color: var(--ink-2); }
+  .radii li { display: flex; align-items: center; gap: 12px; }
+  .radius { width: 44px; height: 44px; background: var(--card); box-shadow: inset 0 0 0 1px var(--ruler); }
+  .r-card { border-radius: var(--radius-card); }
+  .r-btn { border-radius: var(--radius-btn); }
+  .r-sm { border-radius: var(--radius-sm); }
+  .rulers { display: grid; gap: 28px; }
+  .iterations-sample { width: 154px; }
+  .guide h3.list-title { margin-top: 48px; }
+  .list-sample { margin-top: 18px; padding: 4px 26px; }
+  @media (max-width: 760px) {
+    .surfaces { grid-template-columns: 1fr; }
+    .swatches { grid-template-columns: 1fr; }
+    .list-sample { padding-inline: 18px; }
+  }
+</style>
