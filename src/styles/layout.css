@@ -185,6 +185,12 @@
 .ui-ruler i.first[data-stage='marketing'],
 .ui-ruler i.on[data-stage='marketing'],
 [data-ruler-scope]:has([data-stage-link='marketing']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='marketing'] { background: var(--sec-marketing-ink); }
+/* Линейка в роли шкалы пройденного (итерации сайта в подвале): пройденные деления выше и бирюзовые */
+.ui-ruler i.done {
+  width: 2px;
+  height: 14px;
+  background: var(--teal);
+}
 @media (prefers-reduced-motion: reduce) {
   .ui-ruler i { transition: none; }
 }
