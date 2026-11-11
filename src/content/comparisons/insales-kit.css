@@ -1,6 +1,6 @@
 @media(prefers-color-scheme:dark){}
 .platform-comparison *{box-sizing:border-box}
-.platform-comparison{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+.platform-comparison{margin:0;/* без своего фона: под сравнением те же лучи, что на всём сайте */ color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
 .platform-comparison button,.platform-comparison input,.platform-comparison select{font:inherit;color:inherit}
 .platform-comparison button,.platform-comparison a,.platform-comparison input,.platform-comparison select,.platform-comparison summary,.platform-comparison .scroll{outline-offset:4px}
 .platform-comparison button:focus-visible,.platform-comparison a:focus-visible,.platform-comparison input:focus-visible,.platform-comparison select:focus-visible,.platform-comparison summary:focus-visible,.platform-comparison .scroll:focus-visible{outline:2px solid var(--teal-text)}

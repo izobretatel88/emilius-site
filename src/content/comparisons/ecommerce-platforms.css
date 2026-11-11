@@ -1,5 +1,5 @@
 @media (prefers-color-scheme: dark){}
-.platform-comparison{ background: var(--page); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+.platform-comparison{ /* без своего фона: под сравнением те же лучи, что на всём сайте */ color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 .platform-comparison .wrap{
   max-width: 1400px; margin: 0 auto;
   padding-block: 56px 64px;
