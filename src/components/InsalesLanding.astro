@@ -631,9 +631,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-size: 16px;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), opacity var(--hover), transform var(--press);
   }
-  .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); transform: scale(0.98); }
+  .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .cta:hover { background: var(--teal-btn-hover); color: var(--on-teal); } }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
@@ -748,10 +748,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font: inherit;
     font-size: 18px;
     cursor: pointer;
-    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover), transform var(--press);
   }
   @media (hover: hover) and (pointer: fine) { .arrow:hover:not(:disabled) { background: var(--well); } }
-  .arrow:active:not(:disabled) { transform: scale(0.97); }
+  .arrow:active:not(:disabled) { transform: scale(var(--press-scale)); }
   .arrow:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .arrow:disabled { opacity: 0.35; cursor: default; }
   .phones {
@@ -843,10 +843,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     font-size: 15px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform var(--press);
   }
   .plan .dots { margin-bottom: 12px; }
-  .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(0.98); }
+  .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
   .plan-cta:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
@@ -1024,9 +1024,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--input-bg);
     font-size: 15px;
     color: var(--ink);
-    transition: border-color var(--hover), background-color var(--hover), color var(--hover), transform 0.16s ease-out;
+    transition: border-color var(--hover), background-color var(--hover), color var(--hover), transform var(--press);
   }
-  .chip input:active + span { transform: scale(0.97); }
+  .chip input:active + span { transform: scale(var(--press-scale)); }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
   .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }

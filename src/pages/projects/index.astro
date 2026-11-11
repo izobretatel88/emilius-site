@@ -150,8 +150,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
-  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
-  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform:scale(0.97)}
+  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
+  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   .viewer-image[data-device='phone']{padding:20px;background:var(--well)}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   @media(max-width:1000px){.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
@@ -165,10 +165,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project h2,.project-featured h2{font-size:26px}
     .project-role{margin-top:6px}
     .project-site{align-self:flex-start}
-    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
+    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform var(--press)}
     .project-inquiry:focus-visible {background:var(--teal-btn);color:var(--on-teal)}
     /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
-    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform:scale(0.98)}
+    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform: scale(var(--press-scale))}
     @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
     .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}

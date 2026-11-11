@@ -42,8 +42,8 @@
   .theme-options{display:flex;padding:4px;background:var(--well);border-radius:var(--radius-btn)}
   label{position:relative;flex:1;min-width:0;cursor:pointer}
   input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
-  span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:var(--radius-sm);color:var(--ink-2);font-weight:600;transition:background var(--hover),color var(--hover),transform 0.16s ease-out}
-  label:active span{transform:scale(0.97)}
+  span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:var(--radius-sm);color:var(--ink-2);font-weight:600;transition:background var(--hover),color var(--hover),transform var(--press)}
+  label:active span{transform: scale(var(--press-scale))}
   input:checked+span{background:var(--card);color:var(--ink);box-shadow:var(--shadow-card)}
   @media(hover:hover) and (pointer:fine){input:hover+span{color:var(--ink)}}
   input:focus-visible+span{outline:2px solid var(--teal-text);outline-offset:2px}

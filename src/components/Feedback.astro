@@ -242,10 +242,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     justify-content: space-between;
     padding-inline: 16px 14px;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), transform var(--press);
   }
   /* Нажатие: кнопка чуть проседает, как остальные кнопки сайта */
-  .btn-send:active:not(:disabled) { transform: scale(0.98); }
+  .btn-send:active:not(:disabled) { transform: scale(var(--press-scale)); }
   .btn-send svg {
     width: 22px;
     height: 22px;

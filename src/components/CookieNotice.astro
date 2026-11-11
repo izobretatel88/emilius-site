@@ -70,9 +70,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#s-8`;
     font: inherit;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), transform var(--press);
   }
-  .cookie-notice button:active { transform: scale(0.97); }
+  .cookie-notice button:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) {
     .cookie-notice button:hover { background: var(--teal-btn-hover); }
   }

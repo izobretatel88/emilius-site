@@ -10,8 +10,8 @@
 .directory-callout p { max-width:75ch; color:var(--ink-2); margin:8px 0 16px; }
 .directory-button { display:inline-flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--teal-btn); color:var(--on-teal); padding:12px 18px; border-radius:var(--radius-btn); font-weight:600; }
 @media (hover: hover) and (pointer: fine) { .directory-button:hover { background:var(--teal-btn-hover); } }
-.directory-button { transition: background-color var(--hover), transform 0.16s ease-out; }
-.directory-button:active { transform: scale(0.98); }
+.directory-button { transition: background-color var(--hover), transform var(--press); }
+.directory-button:active { transform: scale(var(--press-scale)); }
 .directory-tags { display:flex; flex-wrap:wrap; gap:4px 22px; margin-top:18px; font-size:14px; }
 .directory-tags a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
 .directory-callout p { line-height:1.55; }

@@ -25,8 +25,8 @@
 .platform-comparison input::placeholder{color:var(--ink-2);opacity:1}
 .platform-comparison .filter-row{display:flex;align-items:center;gap:16px;justify-content:space-between}
 .platform-comparison .chips{display:flex;flex-wrap:wrap;gap:8px}
-.platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color 160ms ease-out,color 160ms ease-out,border-color 160ms ease-out,transform 160ms ease-out}
-.platform-comparison .chips button:active{transform:scale(0.97)}
+.platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color var(--hover),color var(--hover),border-color var(--hover),transform var(--press)}
+.platform-comparison .chips button:active{transform:scale(var(--press-scale))}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .chips button:hover{border-color:var(--teal-text)} }
 .platform-comparison .chips button[aria-pressed=true]{background:var(--teal-soft);color:var(--teal-text);border-color:var(--teal-text);font-weight:700}
 .platform-comparison .reset{padding:9px 0;border:0;background:none;color:var(--teal-text);font-size:14px;text-decoration:underline;white-space:nowrap}

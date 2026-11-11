@@ -138,9 +138,9 @@ import { LINKS, EMI_WIDGET_SRC } from '../data/site';
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform var(--press);
   }
-  .btn:active { transform: scale(0.98); }
+  .btn:active { transform: scale(var(--press-scale)); }
   .btn svg {
     width: 22px;
     height: 22px;

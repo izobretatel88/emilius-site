@@ -69,14 +69,14 @@
 .platform-comparison .label{ flex: none; width: 170px; color: var(--ink-2); font-size: 14px; }
 .platform-comparison .seg{ display: inline-flex; padding: 4px; gap: 4px; border-radius:var(--radius-btn); background: var(--well); }
 .platform-comparison .seg button{ font: inherit; font-size: 15px; font-weight: 700; padding: 9px 16px; border: 0; border-radius:var(--radius-sm);
-  background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+  background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color var(--hover), color var(--hover), transform var(--press); }
 @media (hover: hover) and (pointer: fine) { .platform-comparison .seg button:hover{ color: var(--ink); background: var(--card); } }
 .platform-comparison .seg button[aria-pressed="true"]{ background: var(--teal-btn); color: var(--on-teal); }
 .platform-comparison .chips{ display: flex; flex-wrap: wrap; gap: 8px; }
 .platform-comparison .chips button{ font: inherit; font-size: 14px; padding: 7px 13px; border: 1px solid var(--hair); border-radius:var(--radius-pill);
-  background: var(--card); color: var(--ink); cursor: pointer; transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out; }
+  background: var(--card); color: var(--ink); cursor: pointer; transition: background-color var(--hover), border-color var(--hover), transform var(--press); }
 /* Отклик на нажатие, как у остальных кнопок сайта */
-.platform-comparison .seg button:active,.platform-comparison .chips button:active{ transform: scale(0.97); }
+.platform-comparison .seg button:active,.platform-comparison .chips button:active{ transform: scale(var(--press-scale)); }
 @media (hover: hover) and (pointer: fine) { .platform-comparison .chips button:hover{ border-color: var(--teal); } }
 .platform-comparison .chips button[aria-pressed="true"]{ background: var(--teal-soft); border-color: var(--teal); color: var(--teal-text); font-weight: 700; }
 .platform-comparison .seg button:focus-visible,.platform-comparison .chips button:focus-visible,.platform-comparison .reset:focus-visible{ outline: 2px solid var(--teal); outline-offset: 2px; }
@@ -84,7 +84,7 @@
 .platform-comparison .count b{ color: var(--ink); }
 .platform-comparison .reset{ font: inherit; font-size: 14px; padding: 0; border: 0; background: none; color: var(--teal-text);
   text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.platform-comparison .takeaway{ margin: 0; max-width: 78ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
+.platform-comparison .takeaway{ margin: 0; max-width: 68ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
 .platform-comparison .takeaway b{ display: block; color: var(--teal-text); }
 @media (prefers-reduced-motion: reduce){.platform-comparison .seg button,.platform-comparison .chips button{ transition: none; }}
 .platform-comparison .foot{ display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; max-width: 86ch; }

@@ -86,6 +86,8 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   .nav-links a { display: flex; align-items: center; min-height: 44px; }
   .nav-links a[aria-current], .menu-links a[aria-current] { color: var(--teal-text); font-weight: 700; }
   .site-nav .nav-action { font-size: 14px; min-height: 44px; padding: 10px 20px; color: var(--on-teal); }
+  /* Правило `a { transition: color }` выше перебивало переходы .ui-button: цвет при наведении менялся рывком, нажатие — без перехода */
+  .site-nav .nav-action { transition: background-color var(--hover), transform var(--press); }
   .nav-menu { display: none; }
   .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 4px; }
   @media (max-width: 1000px) {
@@ -98,8 +100,8 @@ const discuss = isHome ? '#feedback' : href('#feedback');
     .wordmark img { width: 16px; height: 24px; }
     .nav-links, .site-nav .nav-action { display: none; }
     .nav-menu { display: block; }
-    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); transition: transform 0.16s ease-out; }
-    .nav-menu summary:active { transform: scale(0.97); }
+    .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); transition: transform var(--press); }
+    .nav-menu summary:active { transform: scale(var(--press-scale)); }
     .nav-menu summary::-webkit-details-marker { display: none; }
     .nav-menu svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
     .close-icon, .nav-menu[open] .menu-icon { display: none; }

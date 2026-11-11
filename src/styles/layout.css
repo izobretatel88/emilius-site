@@ -64,7 +64,7 @@
   font-weight: 600;
   text-decoration: none;
   text-align: center;
-  transition: background-color var(--hover), transform 0.16s ease-out;
+  transition: background-color var(--hover), transform var(--press);
 }
 /* Наведение — только там, где есть мышь: на телефоне касание не оставляет «залипший» цвет */
 @media (hover: hover) and (pointer: fine) {
@@ -75,7 +75,7 @@
 }
 /* Нажатие: кнопка чуть проседает — интерфейс «услышал» касание */
 .ui-button:active {
-  transform: scale(0.98);
+  transform: scale(var(--press-scale));
 }
 /* Текстовое действие: подчёркивание только при наведении и в фокусе */
 .ui-link {

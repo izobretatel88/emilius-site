@@ -221,7 +221,7 @@ const organization = {
   @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
   :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
 
-  .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform 0.16s ease-out; }
+  .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform var(--press); }
   .service-feature h3 { font-size: 27px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
   .service-feature p:not(.ui-label) { font-size: 16px; color: var(--ink-2); max-width: 54ch; }
   .service-next { display: flex; flex-direction: column; justify-content: center; gap: 16px; flex-shrink: 0; font-size: 14px; color: var(--ink-2); }
@@ -252,9 +252,9 @@ const organization = {
   .project-description p { font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform 0.16s ease-out; }
+  .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform var(--press); }
   /* Нажатие на карточку: едва заметно проседает, как кнопка */
-  .material:active, .service-feature:active { transform: scale(0.99); }
+  .material:active, .service-feature:active { transform: scale(var(--press-scale-card)); }
   .material .ui-label { grid-column: 1 / -1; margin: 0; }
   .material strong { font-size: 19px; line-height: 1.25; font-weight: 600; }
   .material .ui-arrow { grid-column: 2; grid-row: 2; }

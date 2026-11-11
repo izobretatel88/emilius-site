@@ -158,9 +158,9 @@ const arc = (i: number) => {
   .block li { position: relative; padding-left: 18px; color: var(--ink); line-height: 1.5; }
   .block li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
 
-  .offer { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 30px 32px; color: var(--ink); text-decoration: none; transition: transform 0.16s ease-out; }
+  .offer { display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 30px 32px; color: var(--ink); text-decoration: none; transition: transform var(--press); }
   /* Нажатие на карточку — как у такой же карточки на главной: едва заметно проседает */
-  .offer:active { transform: scale(0.99); }
+  .offer:active { transform: scale(var(--press-scale-card)); }
   .offer h2 { font-size: 27px; line-height: 1.2; letter-spacing: -.02em; margin: 0 0 12px; }
   .offer p:not(.ui-label) { color: var(--ink-2); max-width: 60ch; }
   .offer-link { flex-shrink: 0; color: var(--teal-text); font-weight: 600; }
