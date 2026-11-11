@@ -414,7 +414,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
 
   document.querySelectorAll<HTMLElement>('[data-goal]').forEach((el) => el.addEventListener('click', () => goal(el.dataset.goal!)));
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="https://t.me/"]').forEach((a) => a.addEventListener('click', () => goal('tg-click')));
+  // tg-click отправляет общий обработчик в Base.astro — на всех страницах, со страницей и местом клика.
 
   const form = document.querySelector<HTMLFormElement>('#lead form');
   if (form) {

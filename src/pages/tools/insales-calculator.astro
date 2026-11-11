@@ -70,6 +70,10 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     form.addEventListener('change',update);
     form.addEventListener('reset',()=>requestAnimationFrame(update));
     update();
+    // Цели Метрики: calc-used — первое изменение ответа за визит на страницу, calc-to-lead — переход к заявке с расчётом.
+    const goal=(name:string,params:Record<string,unknown>={})=>(window as any).emiGoal?.(name,params);
+    form.addEventListener('change',()=>goal('calc-used'),{once:true});
+    document.querySelector('#calc-discuss')?.addEventListener('click',()=>goal('calc-to-lead',{package:document.querySelector('#calc-package')?.textContent?.replace(/[«»]/g,'')}));
   }
 </script>
 <style>

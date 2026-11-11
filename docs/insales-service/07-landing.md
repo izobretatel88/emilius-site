@@ -177,7 +177,12 @@
 | `quick-start` | Первое изменение ответа в расчёте (вовлечение) | `variant`: shop / seller |
 | `lead-sent` | Заявка с расчётом ушла | `variant`, `package`, `from` (нижняя граница цены), `touched` — менял ли ответы |
 | `lead-fail` | Отправка не прошла (сбой `lead.php`) | `variant` |
-| `tg-click` | Клик по ссылке на Telegram | — |
+| `tg-click` | Клик по ссылке на Telegram — на любой странице сайта (общий обработчик в `Base.astro`) | `page` — адрес страницы, `place`: `fab` (плавающая кнопка), `nav`, `footer`, id раздела или `page` |
+| `calc-used` | Первое изменение ответа в калькуляторе `/tools/insales-calculator/` | — |
+| `calc-to-lead` | Клик «Обсудить расчёт» в калькуляторе | `package` |
+| `compare-to-landing` | Переход со страницы `/compare/…` на лендинг InSales | `page`, `to` |
+| `feedback-sent` / `feedback-fail` | Заявка с формы на главной ушла / не ушла | — |
+| `blog-copy-prompt`, `blog-to-landing` | Копирование промпта из статьи, переход из статьи на лендинг | `post` у `blog-to-landing` |
 
 - Источник заявки — строка `Источник:` в сообщении менеджеру: UTM (`utm_source / utm_medium / utm_campaign / utm_content`) или сайт, с которого пришли, запоминается на визит. По ней менеджер ставит канал в воронку `10-sales.md`, не спрашивая клиента.
 - Воронка страницы: визит → `quick-start` → `lead-sent`. `lead-sent` с `touched: false` — человек отправил расчёт по ответам по умолчанию: проверить, не мешают ли плашки.
