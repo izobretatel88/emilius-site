@@ -695,7 +695,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Плитки стоят на сером --well внутри белой карточки раздела: при наведении темнеют до --hair, а не растворяются в белом */
   @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--hair); } }
   @media (hover: hover) and (pointer: fine) { .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; } }
-  .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .shop:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
   /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
   .case { border-radius: var(--radius-sm); overflow: hidden; background: var(--well); }
@@ -752,7 +752,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   @media (hover: hover) and (pointer: fine) { .arrow:hover:not(:disabled) { background: var(--well); } }
   .arrow:active:not(:disabled) { transform: scale(0.97); }
-  .arrow:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .arrow:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .arrow:disabled { opacity: 0.35; cursor: default; }
   .phones {
     display: flex;
@@ -776,7 +776,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
   @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } }
-  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
+  .phone-card:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
   .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover); }
@@ -785,7 +785,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
   .more-shops li { position: relative; }
   .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
-  .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .more-shops li:has(a:focus-visible) { outline: var(--focus-ring); outline-offset: 3px; }
   .more-shops a:focus-visible { outline: none; }
   @media (hover: hover) and (pointer: fine) { .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; } }
   /* Ссылки разделяет отступ, а не точка: при переносе на телефоне точка повисала в конце или начале строки */
@@ -848,7 +848,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .plan .dots { margin-bottom: 12px; }
   .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(0.98); }
   @media (hover: hover) and (pointer: fine) { .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
-  .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .plan-cta:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .nums { counter-reset: n; gap: 0; }
   .nums li {
@@ -935,7 +935,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   @keyframes faq-in { from { opacity: 0; } }
   @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
   @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
-  summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
+  summary:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
   details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
@@ -981,7 +981,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
   @media (hover: hover) and (pointer: fine) { .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
-  .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
+  .jump a:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
   @media (max-width: 480px) {
     .jump a { padding: 8px 5px; font-size: 14px; }
     .jump [data-jump-to='t-weeks'] { display: none; }
