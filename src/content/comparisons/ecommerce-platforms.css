@@ -105,5 +105,7 @@
 .platform-comparison .seg button{ flex: 1; padding: 10px 8px; }
 .platform-comparison .count{ margin-left: 0; }}
 /* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
+/* Ссылки на источники — цель касания 44 px: список длинный, на телефоне ссылки шли вплотную по 32 px */
+.platform-comparison #comparison-sources li a{display:inline-flex;align-items:center;min-height:44px}
 .platform-comparison details[open]>:not(summary){animation:details-in 0.2s ease-out}
 @keyframes details-in{from{opacity:0}}
