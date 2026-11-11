@@ -1,9 +1,10 @@
 ---
 // Раскладка статьи блога по образцу LegalDoc: логотип, карточка с текстом, оглавление из заголовков, футер.
-// Разметка для поисковиков (BlogPosting, FAQPage, BreadcrumbList) собирается здесь из шапки статьи.
+// Разметка для поисковиков (BlogPosting, FAQPage) собирается здесь из шапки статьи; BreadcrumbList — в общем компоненте Breadcrumbs.
 import Base from './Base.astro';
 import Footer from '../components/Footer.astro';
 import LinkList from '../components/LinkList.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { ruDate, type Post } from '../lib/blog';
 
 interface Props {
@@ -45,15 +46,6 @@ const jsonLd = [
     '@type': 'FAQPage',
     mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: abs('') },
-      { '@type': 'ListItem', position: 2, name: 'Блог', item: abs('blog/') },
-      { '@type': 'ListItem', position: 3, name: d.h1, item: canonical },
-    ],
-  },
 ].filter(Boolean);
 ---
 
@@ -70,7 +62,8 @@ const jsonLd = [
 >
 
   <main id="content" class="article ui-shell">
-    <nav class="crumbs" aria-label="Хлебные крошки"><a href={href('blog/')}>Блог</a></nav>
+    <!-- Те же крошки, что в списке блога, сравнениях и разделах: «Главная › Блог › статья»; на телефоне текущая статья скрыта, её называет H1 -->
+    <Breadcrumbs items={[{ title: 'Блог', href: 'blog/' }, { title: d.h1 }]} />
     <h1>{d.h1}</h1>
     <p class="meta">
       {d.draft && <span class="draft">черновик</span>}
@@ -202,19 +195,6 @@ const jsonLd = [
   }
   .article > * {
     max-width: var(--read-width);
-  }
-  .crumbs {
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .crumbs a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: var(--teal-text);
-    text-decoration: none;
   }
   h1 {
     margin-top: 4px;

@@ -94,6 +94,29 @@ const colors = [
       <p class="note focus-note">Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, 2 px, отступ 3 px (<code>--focus-ring</code>, <code>--focus-offset</code>). Нажмите Tab, чтобы увидеть его на кнопке и ссылке выше.</p>
     </section>
 
+    <section class="ui-section" aria-labelledby="g-fields">
+      <div class="ui-section-head"><h2 id="g-fields">Поля формы</h2></div>
+      <p class="ui-section-intro">Подпись над полем, подсказка под ним. Фон <code>--input-bg</code>, рамка <code>--input-border</code>, при наведении и в фокусе — бирюза, текст 16 px. Ошибка — рамка цветом текста: второго акцента в палитре нет.</p>
+      <!-- Образцы без формы: ничего не отправляют -->
+      <div class="ui-surface fields-sample">
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-message">Ваш проект или вопрос</label>
+          <textarea class="ui-input" id="g-message" aria-describedby="g-message-hint" placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
+          <p class="ui-field-hint" id="g-message-hint">Подсказка — 13 px, цвет <code>--ink-2</code>.</p>
+        </div>
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-contact">Как с вами связаться</label>
+          <input class="ui-input" id="g-contact" type="text" aria-describedby="g-contact-hint" placeholder="Telegram, телефон или почта" />
+          <p class="ui-field-hint" id="g-contact-hint">Поле 50 px по высоте, радиус <code>--radius-sm</code>.</p>
+        </div>
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-error">Поле с ошибкой</label>
+          <input class="ui-input" id="g-error" type="text" aria-invalid="true" aria-describedby="g-error-text" value="" />
+          <p class="ui-field-error" id="g-error-text">Ошибка — 14 px, полужирный, цвет <code>--ink</code>.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="ui-section" aria-labelledby="g-surface">
       <div class="ui-section-head"><h2 id="g-surface">Поверхности и форма</h2></div>
       <div class="surfaces">
@@ -183,10 +206,12 @@ const colors = [
   .iterations-sample { width: 154px; }
   .guide h3.list-title { margin-top: 48px; }
   .list-sample { margin-top: 18px; padding: 4px 26px; }
+  .fields-sample { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 26px; align-items: start; }
   .tags { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 12px; }
   .steps-sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 640px; margin-top: 12px; }
   @media (max-width: 760px) {
     .surfaces { grid-template-columns: 1fr; }
+    .fields-sample { grid-template-columns: 1fr; padding: 20px 18px; }
     .swatches { grid-template-columns: 1fr; }
     .list-sample { padding-inline: 18px; }
   }
