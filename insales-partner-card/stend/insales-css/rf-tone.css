@@ -1,0 +1,200 @@
+
+@font-face {
+    font-family: 'Insales';
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-SemiBold.eot");
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-SemiBold.eot?#iefix") format('embedded-opentype'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-SemiBold.woff2") format('woff2'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-SemiBold.woff") format('woff'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-SemiBold.ttf") format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Insales';
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Regular.eot");
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Regular.eot?#iefix") format('embedded-opentype'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Regular.woff2") format('woff2'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Regular.woff") format('woff'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Regular.ttf") format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Insales';
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Light.eot");
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Light.eot?#iefix") format('embedded-opentype'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Light.woff2") format('woff2'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Light.woff") format('woff'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Light.ttf") format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+@font-face {
+    font-family: 'Insales';
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Bold.eot");
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Bold.eot?#iefix") format('embedded-opentype'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Bold.woff2") format('woff2'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Bold.woff") format('woff'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-Bold.ttf") format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Insales';
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-ExtraBold.eot");
+    src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-ExtraBold.eot?#iefix") format('embedded-opentype'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-ExtraBold.woff2") format('woff2'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-ExtraBold.woff") format('woff'),
+        url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/Insales-ExtraBold.ttf") format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+
+
+
+
+
+
+
+
+
+@font-face {
+  font-family: 'SBSansText';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Regular.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Regular.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Regular.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Regular.woff") format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansText';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Light.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Light.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Light.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Light.woff") format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansText';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Semibold.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Semibold.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Semibold.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Semibold.woff") format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansText';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Bold.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Bold.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Bold.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansText-Bold.woff") format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'SBSansDisplay';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Regular.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Regular.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Regular.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Regular.woff") format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansDisplay';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Light.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Light.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Light.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Light.woff") format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansDisplay';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Medium.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Medium.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Medium.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Medium.woff") format('woff');
+  font-weight: 500;
+  font-style: normal; 
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansDisplay';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-SemiBold.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-SemiBold.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-SemiBold.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-SemiBold.woff") format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansDisplay';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Bold.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Bold.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Bold.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansDisplay-Bold.woff") format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+@font-face {
+  font-family: 'SBSansInterface';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Regular.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Regular.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Regular.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Regular.woff") format('woff');
+  font-weight: 400; /* Обычный */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SBSansInterface';
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Semibold.eot");
+  src: url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Semibold.eot?#iefix") format('embedded-opentype'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Semibold.woff2") format('woff2'),
+       url("https://cdn.insales-shop.ru/assets/1/57/11280441/1793949681/SBSansUI-Semibold.woff") format('woff');
+  font-weight: 600; /* Полужирный */
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+

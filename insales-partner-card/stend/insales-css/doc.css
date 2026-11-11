@@ -1,0 +1,1504 @@
+/* line 1, doc.scss */
+.tr {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem; }
+  /* line 7, doc.scss */
+  .tr img {
+    height: auto; }
+
+/* line 12, doc.scss */
+.tr-center-items {
+  align-items: center; }
+
+@media (min-width: 1200px) {
+  /* line 17, doc.scss */
+  .tr > * {
+    flex: 1;
+    min-width: 0;
+    max-width: max-content; }
+
+  /* line 24, doc.scss */
+  .tr-1 {
+    width: 1%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-2 {
+    width: 2%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-3 {
+    width: 3%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-4 {
+    width: 4%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-5 {
+    width: 5%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-6 {
+    width: 6%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-7 {
+    width: 7%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-8 {
+    width: 8%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-9 {
+    width: 9%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-10 {
+    width: 10%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-11 {
+    width: 11%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-12 {
+    width: 12%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-13 {
+    width: 13%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-14 {
+    width: 14%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-15 {
+    width: 15%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-16 {
+    width: 16%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-17 {
+    width: 17%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-18 {
+    width: 18%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-19 {
+    width: 19%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-20 {
+    width: 20%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-21 {
+    width: 21%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-22 {
+    width: 22%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-23 {
+    width: 23%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-24 {
+    width: 24%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-25 {
+    width: 25%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-26 {
+    width: 26%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-27 {
+    width: 27%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-28 {
+    width: 28%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-29 {
+    width: 29%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-30 {
+    width: 30%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-31 {
+    width: 31%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-32 {
+    width: 32%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-33 {
+    width: 33%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-34 {
+    width: 34%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-35 {
+    width: 35%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-36 {
+    width: 36%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-37 {
+    width: 37%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-38 {
+    width: 38%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-39 {
+    width: 39%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-40 {
+    width: 40%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-41 {
+    width: 41%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-42 {
+    width: 42%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-43 {
+    width: 43%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-44 {
+    width: 44%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-45 {
+    width: 45%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-46 {
+    width: 46%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-47 {
+    width: 47%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-48 {
+    width: 48%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-49 {
+    width: 49%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-50 {
+    width: 50%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-51 {
+    width: 51%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-52 {
+    width: 52%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-53 {
+    width: 53%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-54 {
+    width: 54%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-55 {
+    width: 55%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-56 {
+    width: 56%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-57 {
+    width: 57%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-58 {
+    width: 58%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-59 {
+    width: 59%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-60 {
+    width: 60%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-61 {
+    width: 61%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-62 {
+    width: 62%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-63 {
+    width: 63%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-64 {
+    width: 64%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-65 {
+    width: 65%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-66 {
+    width: 66%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-67 {
+    width: 67%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-68 {
+    width: 68%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-69 {
+    width: 69%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-70 {
+    width: 70%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-71 {
+    width: 71%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-72 {
+    width: 72%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-73 {
+    width: 73%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-74 {
+    width: 74%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-75 {
+    width: 75%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-76 {
+    width: 76%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-77 {
+    width: 77%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-78 {
+    width: 78%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-79 {
+    width: 79%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-80 {
+    width: 80%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-81 {
+    width: 81%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-82 {
+    width: 82%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-83 {
+    width: 83%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-84 {
+    width: 84%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-85 {
+    width: 85%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-86 {
+    width: 86%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-87 {
+    width: 87%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-88 {
+    width: 88%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-89 {
+    width: 89%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-90 {
+    width: 90%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-91 {
+    width: 91%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-92 {
+    width: 92%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-93 {
+    width: 93%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-94 {
+    width: 94%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-95 {
+    width: 95%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-96 {
+    width: 96%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-97 {
+    width: 97%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-98 {
+    width: 98%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-99 {
+    width: 99%;
+    flex: 0 0 auto; }
+
+  /* line 24, doc.scss */
+  .tr-100 {
+    width: 100%;
+    flex: 0 0 auto; }
+
+  /* line 31, doc.scss */
+  .tr-min-1 {
+    min-width: 1%; }
+
+  /* line 31, doc.scss */
+  .tr-min-2 {
+    min-width: 2%; }
+
+  /* line 31, doc.scss */
+  .tr-min-3 {
+    min-width: 3%; }
+
+  /* line 31, doc.scss */
+  .tr-min-4 {
+    min-width: 4%; }
+
+  /* line 31, doc.scss */
+  .tr-min-5 {
+    min-width: 5%; }
+
+  /* line 31, doc.scss */
+  .tr-min-6 {
+    min-width: 6%; }
+
+  /* line 31, doc.scss */
+  .tr-min-7 {
+    min-width: 7%; }
+
+  /* line 31, doc.scss */
+  .tr-min-8 {
+    min-width: 8%; }
+
+  /* line 31, doc.scss */
+  .tr-min-9 {
+    min-width: 9%; }
+
+  /* line 31, doc.scss */
+  .tr-min-10 {
+    min-width: 10%; }
+
+  /* line 31, doc.scss */
+  .tr-min-11 {
+    min-width: 11%; }
+
+  /* line 31, doc.scss */
+  .tr-min-12 {
+    min-width: 12%; }
+
+  /* line 31, doc.scss */
+  .tr-min-13 {
+    min-width: 13%; }
+
+  /* line 31, doc.scss */
+  .tr-min-14 {
+    min-width: 14%; }
+
+  /* line 31, doc.scss */
+  .tr-min-15 {
+    min-width: 15%; }
+
+  /* line 31, doc.scss */
+  .tr-min-16 {
+    min-width: 16%; }
+
+  /* line 31, doc.scss */
+  .tr-min-17 {
+    min-width: 17%; }
+
+  /* line 31, doc.scss */
+  .tr-min-18 {
+    min-width: 18%; }
+
+  /* line 31, doc.scss */
+  .tr-min-19 {
+    min-width: 19%; }
+
+  /* line 31, doc.scss */
+  .tr-min-20 {
+    min-width: 20%; }
+
+  /* line 31, doc.scss */
+  .tr-min-21 {
+    min-width: 21%; }
+
+  /* line 31, doc.scss */
+  .tr-min-22 {
+    min-width: 22%; }
+
+  /* line 31, doc.scss */
+  .tr-min-23 {
+    min-width: 23%; }
+
+  /* line 31, doc.scss */
+  .tr-min-24 {
+    min-width: 24%; }
+
+  /* line 31, doc.scss */
+  .tr-min-25 {
+    min-width: 25%; }
+
+  /* line 31, doc.scss */
+  .tr-min-26 {
+    min-width: 26%; }
+
+  /* line 31, doc.scss */
+  .tr-min-27 {
+    min-width: 27%; }
+
+  /* line 31, doc.scss */
+  .tr-min-28 {
+    min-width: 28%; }
+
+  /* line 31, doc.scss */
+  .tr-min-29 {
+    min-width: 29%; }
+
+  /* line 31, doc.scss */
+  .tr-min-30 {
+    min-width: 30%; }
+
+  /* line 31, doc.scss */
+  .tr-min-31 {
+    min-width: 31%; }
+
+  /* line 31, doc.scss */
+  .tr-min-32 {
+    min-width: 32%; }
+
+  /* line 31, doc.scss */
+  .tr-min-33 {
+    min-width: 33%; }
+
+  /* line 31, doc.scss */
+  .tr-min-34 {
+    min-width: 34%; }
+
+  /* line 31, doc.scss */
+  .tr-min-35 {
+    min-width: 35%; }
+
+  /* line 31, doc.scss */
+  .tr-min-36 {
+    min-width: 36%; }
+
+  /* line 31, doc.scss */
+  .tr-min-37 {
+    min-width: 37%; }
+
+  /* line 31, doc.scss */
+  .tr-min-38 {
+    min-width: 38%; }
+
+  /* line 31, doc.scss */
+  .tr-min-39 {
+    min-width: 39%; }
+
+  /* line 31, doc.scss */
+  .tr-min-40 {
+    min-width: 40%; }
+
+  /* line 31, doc.scss */
+  .tr-min-41 {
+    min-width: 41%; }
+
+  /* line 31, doc.scss */
+  .tr-min-42 {
+    min-width: 42%; }
+
+  /* line 31, doc.scss */
+  .tr-min-43 {
+    min-width: 43%; }
+
+  /* line 31, doc.scss */
+  .tr-min-44 {
+    min-width: 44%; }
+
+  /* line 31, doc.scss */
+  .tr-min-45 {
+    min-width: 45%; }
+
+  /* line 31, doc.scss */
+  .tr-min-46 {
+    min-width: 46%; }
+
+  /* line 31, doc.scss */
+  .tr-min-47 {
+    min-width: 47%; }
+
+  /* line 31, doc.scss */
+  .tr-min-48 {
+    min-width: 48%; }
+
+  /* line 31, doc.scss */
+  .tr-min-49 {
+    min-width: 49%; }
+
+  /* line 31, doc.scss */
+  .tr-min-50 {
+    min-width: 50%; }
+
+  /* line 31, doc.scss */
+  .tr-min-51 {
+    min-width: 51%; }
+
+  /* line 31, doc.scss */
+  .tr-min-52 {
+    min-width: 52%; }
+
+  /* line 31, doc.scss */
+  .tr-min-53 {
+    min-width: 53%; }
+
+  /* line 31, doc.scss */
+  .tr-min-54 {
+    min-width: 54%; }
+
+  /* line 31, doc.scss */
+  .tr-min-55 {
+    min-width: 55%; }
+
+  /* line 31, doc.scss */
+  .tr-min-56 {
+    min-width: 56%; }
+
+  /* line 31, doc.scss */
+  .tr-min-57 {
+    min-width: 57%; }
+
+  /* line 31, doc.scss */
+  .tr-min-58 {
+    min-width: 58%; }
+
+  /* line 31, doc.scss */
+  .tr-min-59 {
+    min-width: 59%; }
+
+  /* line 31, doc.scss */
+  .tr-min-60 {
+    min-width: 60%; }
+
+  /* line 31, doc.scss */
+  .tr-min-61 {
+    min-width: 61%; }
+
+  /* line 31, doc.scss */
+  .tr-min-62 {
+    min-width: 62%; }
+
+  /* line 31, doc.scss */
+  .tr-min-63 {
+    min-width: 63%; }
+
+  /* line 31, doc.scss */
+  .tr-min-64 {
+    min-width: 64%; }
+
+  /* line 31, doc.scss */
+  .tr-min-65 {
+    min-width: 65%; }
+
+  /* line 31, doc.scss */
+  .tr-min-66 {
+    min-width: 66%; }
+
+  /* line 31, doc.scss */
+  .tr-min-67 {
+    min-width: 67%; }
+
+  /* line 31, doc.scss */
+  .tr-min-68 {
+    min-width: 68%; }
+
+  /* line 31, doc.scss */
+  .tr-min-69 {
+    min-width: 69%; }
+
+  /* line 31, doc.scss */
+  .tr-min-70 {
+    min-width: 70%; }
+
+  /* line 31, doc.scss */
+  .tr-min-71 {
+    min-width: 71%; }
+
+  /* line 31, doc.scss */
+  .tr-min-72 {
+    min-width: 72%; }
+
+  /* line 31, doc.scss */
+  .tr-min-73 {
+    min-width: 73%; }
+
+  /* line 31, doc.scss */
+  .tr-min-74 {
+    min-width: 74%; }
+
+  /* line 31, doc.scss */
+  .tr-min-75 {
+    min-width: 75%; }
+
+  /* line 31, doc.scss */
+  .tr-min-76 {
+    min-width: 76%; }
+
+  /* line 31, doc.scss */
+  .tr-min-77 {
+    min-width: 77%; }
+
+  /* line 31, doc.scss */
+  .tr-min-78 {
+    min-width: 78%; }
+
+  /* line 31, doc.scss */
+  .tr-min-79 {
+    min-width: 79%; }
+
+  /* line 31, doc.scss */
+  .tr-min-80 {
+    min-width: 80%; }
+
+  /* line 31, doc.scss */
+  .tr-min-81 {
+    min-width: 81%; }
+
+  /* line 31, doc.scss */
+  .tr-min-82 {
+    min-width: 82%; }
+
+  /* line 31, doc.scss */
+  .tr-min-83 {
+    min-width: 83%; }
+
+  /* line 31, doc.scss */
+  .tr-min-84 {
+    min-width: 84%; }
+
+  /* line 31, doc.scss */
+  .tr-min-85 {
+    min-width: 85%; }
+
+  /* line 31, doc.scss */
+  .tr-min-86 {
+    min-width: 86%; }
+
+  /* line 31, doc.scss */
+  .tr-min-87 {
+    min-width: 87%; }
+
+  /* line 31, doc.scss */
+  .tr-min-88 {
+    min-width: 88%; }
+
+  /* line 31, doc.scss */
+  .tr-min-89 {
+    min-width: 89%; }
+
+  /* line 31, doc.scss */
+  .tr-min-90 {
+    min-width: 90%; }
+
+  /* line 31, doc.scss */
+  .tr-min-91 {
+    min-width: 91%; }
+
+  /* line 31, doc.scss */
+  .tr-min-92 {
+    min-width: 92%; }
+
+  /* line 31, doc.scss */
+  .tr-min-93 {
+    min-width: 93%; }
+
+  /* line 31, doc.scss */
+  .tr-min-94 {
+    min-width: 94%; }
+
+  /* line 31, doc.scss */
+  .tr-min-95 {
+    min-width: 95%; }
+
+  /* line 31, doc.scss */
+  .tr-min-96 {
+    min-width: 96%; }
+
+  /* line 31, doc.scss */
+  .tr-min-97 {
+    min-width: 97%; }
+
+  /* line 31, doc.scss */
+  .tr-min-98 {
+    min-width: 98%; }
+
+  /* line 31, doc.scss */
+  .tr-min-99 {
+    min-width: 99%; }
+
+  /* line 31, doc.scss */
+  .tr-min-100 {
+    min-width: 100%; }
+
+  /* line 37, doc.scss */
+  .tr-max-1 {
+    max-width: 1%; }
+
+  /* line 37, doc.scss */
+  .tr-max-2 {
+    max-width: 2%; }
+
+  /* line 37, doc.scss */
+  .tr-max-3 {
+    max-width: 3%; }
+
+  /* line 37, doc.scss */
+  .tr-max-4 {
+    max-width: 4%; }
+
+  /* line 37, doc.scss */
+  .tr-max-5 {
+    max-width: 5%; }
+
+  /* line 37, doc.scss */
+  .tr-max-6 {
+    max-width: 6%; }
+
+  /* line 37, doc.scss */
+  .tr-max-7 {
+    max-width: 7%; }
+
+  /* line 37, doc.scss */
+  .tr-max-8 {
+    max-width: 8%; }
+
+  /* line 37, doc.scss */
+  .tr-max-9 {
+    max-width: 9%; }
+
+  /* line 37, doc.scss */
+  .tr-max-10 {
+    max-width: 10%; }
+
+  /* line 37, doc.scss */
+  .tr-max-11 {
+    max-width: 11%; }
+
+  /* line 37, doc.scss */
+  .tr-max-12 {
+    max-width: 12%; }
+
+  /* line 37, doc.scss */
+  .tr-max-13 {
+    max-width: 13%; }
+
+  /* line 37, doc.scss */
+  .tr-max-14 {
+    max-width: 14%; }
+
+  /* line 37, doc.scss */
+  .tr-max-15 {
+    max-width: 15%; }
+
+  /* line 37, doc.scss */
+  .tr-max-16 {
+    max-width: 16%; }
+
+  /* line 37, doc.scss */
+  .tr-max-17 {
+    max-width: 17%; }
+
+  /* line 37, doc.scss */
+  .tr-max-18 {
+    max-width: 18%; }
+
+  /* line 37, doc.scss */
+  .tr-max-19 {
+    max-width: 19%; }
+
+  /* line 37, doc.scss */
+  .tr-max-20 {
+    max-width: 20%; }
+
+  /* line 37, doc.scss */
+  .tr-max-21 {
+    max-width: 21%; }
+
+  /* line 37, doc.scss */
+  .tr-max-22 {
+    max-width: 22%; }
+
+  /* line 37, doc.scss */
+  .tr-max-23 {
+    max-width: 23%; }
+
+  /* line 37, doc.scss */
+  .tr-max-24 {
+    max-width: 24%; }
+
+  /* line 37, doc.scss */
+  .tr-max-25 {
+    max-width: 25%; }
+
+  /* line 37, doc.scss */
+  .tr-max-26 {
+    max-width: 26%; }
+
+  /* line 37, doc.scss */
+  .tr-max-27 {
+    max-width: 27%; }
+
+  /* line 37, doc.scss */
+  .tr-max-28 {
+    max-width: 28%; }
+
+  /* line 37, doc.scss */
+  .tr-max-29 {
+    max-width: 29%; }
+
+  /* line 37, doc.scss */
+  .tr-max-30 {
+    max-width: 30%; }
+
+  /* line 37, doc.scss */
+  .tr-max-31 {
+    max-width: 31%; }
+
+  /* line 37, doc.scss */
+  .tr-max-32 {
+    max-width: 32%; }
+
+  /* line 37, doc.scss */
+  .tr-max-33 {
+    max-width: 33%; }
+
+  /* line 37, doc.scss */
+  .tr-max-34 {
+    max-width: 34%; }
+
+  /* line 37, doc.scss */
+  .tr-max-35 {
+    max-width: 35%; }
+
+  /* line 37, doc.scss */
+  .tr-max-36 {
+    max-width: 36%; }
+
+  /* line 37, doc.scss */
+  .tr-max-37 {
+    max-width: 37%; }
+
+  /* line 37, doc.scss */
+  .tr-max-38 {
+    max-width: 38%; }
+
+  /* line 37, doc.scss */
+  .tr-max-39 {
+    max-width: 39%; }
+
+  /* line 37, doc.scss */
+  .tr-max-40 {
+    max-width: 40%; }
+
+  /* line 37, doc.scss */
+  .tr-max-41 {
+    max-width: 41%; }
+
+  /* line 37, doc.scss */
+  .tr-max-42 {
+    max-width: 42%; }
+
+  /* line 37, doc.scss */
+  .tr-max-43 {
+    max-width: 43%; }
+
+  /* line 37, doc.scss */
+  .tr-max-44 {
+    max-width: 44%; }
+
+  /* line 37, doc.scss */
+  .tr-max-45 {
+    max-width: 45%; }
+
+  /* line 37, doc.scss */
+  .tr-max-46 {
+    max-width: 46%; }
+
+  /* line 37, doc.scss */
+  .tr-max-47 {
+    max-width: 47%; }
+
+  /* line 37, doc.scss */
+  .tr-max-48 {
+    max-width: 48%; }
+
+  /* line 37, doc.scss */
+  .tr-max-49 {
+    max-width: 49%; }
+
+  /* line 37, doc.scss */
+  .tr-max-50 {
+    max-width: 50%; }
+
+  /* line 37, doc.scss */
+  .tr-max-51 {
+    max-width: 51%; }
+
+  /* line 37, doc.scss */
+  .tr-max-52 {
+    max-width: 52%; }
+
+  /* line 37, doc.scss */
+  .tr-max-53 {
+    max-width: 53%; }
+
+  /* line 37, doc.scss */
+  .tr-max-54 {
+    max-width: 54%; }
+
+  /* line 37, doc.scss */
+  .tr-max-55 {
+    max-width: 55%; }
+
+  /* line 37, doc.scss */
+  .tr-max-56 {
+    max-width: 56%; }
+
+  /* line 37, doc.scss */
+  .tr-max-57 {
+    max-width: 57%; }
+
+  /* line 37, doc.scss */
+  .tr-max-58 {
+    max-width: 58%; }
+
+  /* line 37, doc.scss */
+  .tr-max-59 {
+    max-width: 59%; }
+
+  /* line 37, doc.scss */
+  .tr-max-60 {
+    max-width: 60%; }
+
+  /* line 37, doc.scss */
+  .tr-max-61 {
+    max-width: 61%; }
+
+  /* line 37, doc.scss */
+  .tr-max-62 {
+    max-width: 62%; }
+
+  /* line 37, doc.scss */
+  .tr-max-63 {
+    max-width: 63%; }
+
+  /* line 37, doc.scss */
+  .tr-max-64 {
+    max-width: 64%; }
+
+  /* line 37, doc.scss */
+  .tr-max-65 {
+    max-width: 65%; }
+
+  /* line 37, doc.scss */
+  .tr-max-66 {
+    max-width: 66%; }
+
+  /* line 37, doc.scss */
+  .tr-max-67 {
+    max-width: 67%; }
+
+  /* line 37, doc.scss */
+  .tr-max-68 {
+    max-width: 68%; }
+
+  /* line 37, doc.scss */
+  .tr-max-69 {
+    max-width: 69%; }
+
+  /* line 37, doc.scss */
+  .tr-max-70 {
+    max-width: 70%; }
+
+  /* line 37, doc.scss */
+  .tr-max-71 {
+    max-width: 71%; }
+
+  /* line 37, doc.scss */
+  .tr-max-72 {
+    max-width: 72%; }
+
+  /* line 37, doc.scss */
+  .tr-max-73 {
+    max-width: 73%; }
+
+  /* line 37, doc.scss */
+  .tr-max-74 {
+    max-width: 74%; }
+
+  /* line 37, doc.scss */
+  .tr-max-75 {
+    max-width: 75%; }
+
+  /* line 37, doc.scss */
+  .tr-max-76 {
+    max-width: 76%; }
+
+  /* line 37, doc.scss */
+  .tr-max-77 {
+    max-width: 77%; }
+
+  /* line 37, doc.scss */
+  .tr-max-78 {
+    max-width: 78%; }
+
+  /* line 37, doc.scss */
+  .tr-max-79 {
+    max-width: 79%; }
+
+  /* line 37, doc.scss */
+  .tr-max-80 {
+    max-width: 80%; }
+
+  /* line 37, doc.scss */
+  .tr-max-81 {
+    max-width: 81%; }
+
+  /* line 37, doc.scss */
+  .tr-max-82 {
+    max-width: 82%; }
+
+  /* line 37, doc.scss */
+  .tr-max-83 {
+    max-width: 83%; }
+
+  /* line 37, doc.scss */
+  .tr-max-84 {
+    max-width: 84%; }
+
+  /* line 37, doc.scss */
+  .tr-max-85 {
+    max-width: 85%; }
+
+  /* line 37, doc.scss */
+  .tr-max-86 {
+    max-width: 86%; }
+
+  /* line 37, doc.scss */
+  .tr-max-87 {
+    max-width: 87%; }
+
+  /* line 37, doc.scss */
+  .tr-max-88 {
+    max-width: 88%; }
+
+  /* line 37, doc.scss */
+  .tr-max-89 {
+    max-width: 89%; }
+
+  /* line 37, doc.scss */
+  .tr-max-90 {
+    max-width: 90%; }
+
+  /* line 37, doc.scss */
+  .tr-max-91 {
+    max-width: 91%; }
+
+  /* line 37, doc.scss */
+  .tr-max-92 {
+    max-width: 92%; }
+
+  /* line 37, doc.scss */
+  .tr-max-93 {
+    max-width: 93%; }
+
+  /* line 37, doc.scss */
+  .tr-max-94 {
+    max-width: 94%; }
+
+  /* line 37, doc.scss */
+  .tr-max-95 {
+    max-width: 95%; }
+
+  /* line 37, doc.scss */
+  .tr-max-96 {
+    max-width: 96%; }
+
+  /* line 37, doc.scss */
+  .tr-max-97 {
+    max-width: 97%; }
+
+  /* line 37, doc.scss */
+  .tr-max-98 {
+    max-width: 98%; }
+
+  /* line 37, doc.scss */
+  .tr-max-99 {
+    max-width: 99%; }
+
+  /* line 37, doc.scss */
+  .tr-max-100 {
+    max-width: 100%; }
+
+  /* line 42, doc.scss */
+  .tr-right {
+    order: 1; }
+
+  /* line 46, doc.scss */
+  .tr-start {
+    justify-content: flex-start; }
+
+  /* line 49, doc.scss */
+  .tr-center {
+    justify-content: center; }
+
+  /* line 52, doc.scss */
+  .tr-between {
+    justify-content: space-between; }
+
+  /* line 55, doc.scss */
+  .tr-around {
+    justify-content: space-around; }
+
+  /* line 58, doc.scss */
+  .tr-evenly {
+    justify-content: space-evenly; }
+
+  /* line 61, doc.scss */
+  .tr-end {
+    justify-content: flex-end; }
+
+  /* line 65, doc.scss */
+  .tr-top {
+    align-items: flex-start; }
+
+  /* line 68, doc.scss */
+  .tr-middle {
+    align-items: center; }
+
+  /* line 71, doc.scss */
+  .tr-end {
+    align-items: flex-end; }
+
+  /* line 74, doc.scss */
+  .tr-stretch {
+    align-items: stretch; }
+
+  /* line 78, doc.scss */
+  .tr-self-top {
+    align-self: flex-start; }
+
+  /* line 81, doc.scss */
+  .tr-self-middle {
+    align-self: center; }
+
+  /* line 84, doc.scss */
+  .tr-self-end {
+    align-self: flex-end; }
+
+  /* line 87, doc.scss */
+  .tr-self-stretch {
+    align-self: stretch; } }
+/* line 92, doc.scss */
+.tr-insert {
+  color: #53657e;
+  font-size: 15px; }
+
+/* line 97, doc.scss */
+.tr-lightgray {
+  background-color: #d7dedf4d; }
+
+/* line 101, doc.scss */
+.doc-spoiler-blue {
+  background: #eaf7fe;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem; }
+
+/* line 109, doc.scss */
+.doc-spoiler-lightblue {
+  background: #eaf7fe5c;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem; }
+
+/* line 117, doc.scss */
+.doc-main-spoiler {
+  background: #f5f5f5;
+  padding: 1rem 1.5rem;
+  border-radius: 24px;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  cursor: pointer; }
+
+/* line 126, doc.scss */
+.doc-rate {
+  background-color: #edfafd;
+  padding: 15px 10px; }
+
+/* line 131, doc.scss */
+.tr-mb .tr {
+  margin-bottom: 0.4rem; }
+
+/* line 135, doc.scss */
+.tr-bmb .tr {
+  margin-bottom: 1rem; }
+
+/* line 139, doc.scss */
+.tr-pd-all .tr {
+  padding: 0.3rem 0.5rem; }
+
+/* line 143, doc.scss */
+.tr-pb .tr {
+  padding-bottom: 1rem; }
+
+/* line 147, doc.scss */
+.tr-bord-bott .tr {
+  border-bottom: 0.1rem solid lightgrey; }
+
+/* line 150, doc.scss */
+.doc-anchor-dynamic {
+  opacity: 0; }
+
+@media (min-width: 769px) {
+  /* line 154, doc.scss */
+  .doc-inside .with-anchor-dynamic {
+    --anchor-width: 20px;
+    position: relative;
+    margin-left: -20px; }
+    /* line 158, doc.scss */
+    .doc-inside .with-anchor-dynamic:hover {
+      z-index: 2000; }
+
+  /* line 163, doc.scss */
+  .doc-anchor-dynamic {
+    position: relative;
+    display: inline-flex;
+    top: 1px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    user-select: none;
+    color: #498ce9;
+    float: left;
+    font-size: 18px;
+    margin-left: 0;
+    padding-right: 0;
+    padding-left: 3px;
+    width: var(--anchor-width); }
+
+  /* line 180, doc.scss */
+  .doc-inside h1:hover .doc-anchor-dynamic,
+  .doc-inside h2:hover .doc-anchor-dynamic,
+  .doc-inside h3:hover .doc-anchor-dynamic,
+  .doc-inside h4:hover .doc-anchor-dynamic,
+  .doc-inside h5:hover .doc-anchor-dynamic,
+  .doc-inside h6:hover .doc-anchor-dynamic {
+    opacity: 1; }
+
+  /* line 189, doc.scss */
+  .doc-anchor-dynamic::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    background-color: #f5f5f5;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none; }
+
+  /* line 207, doc.scss */
+  .doc-anchor-dynamic:hover::after {
+    opacity: 1; } }
+@media (max-width: 768px) {
+  /* line 213, doc.scss */
+  .doc-anchor-dynamic {
+    display: none; } }

@@ -1,0 +1,113 @@
+/* line 3, ui-kit.scss */
+.h1 {
+  font-weight: 800;
+  font-size: 88px;
+  line-height: 104px;
+  letter-spacing: -0.02em; }
+  @media (max-width: 767px) {
+    /* line 3, ui-kit.scss */
+    .h1 {
+      font-size: 36px;
+      line-height: 44px; } }
+
+/* line 15, ui-kit.scss */
+.h2 {
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 67px;
+  letter-spacing: -0.02em; }
+  @media (max-width: 767px) {
+    /* line 15, ui-kit.scss */
+    .h2 {
+      font-size: 26px;
+      line-height: 34px; } }
+
+/* line 27, ui-kit.scss */
+.h3 {
+  font-weight: 800;
+  font-size: 42px;
+  line-height: 52px;
+  letter-spacing: -0.02em; }
+  @media (max-width: 767px) {
+    /* line 27, ui-kit.scss */
+    .h3 {
+      font-size: 24px;
+      line-height: 32px; } }
+
+/* line 39, ui-kit.scss */
+.h4 {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 42px; }
+  @media (max-width: 767px) {
+    /* line 39, ui-kit.scss */
+    .h4 {
+      font-size: 22px;
+      line-height: 30px; } }
+
+/* line 50, ui-kit.scss */
+.h5 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px; }
+  @media (max-width: 767px) {
+    /* line 50, ui-kit.scss */
+    .h5 {
+      font-size: 20px;
+      line-height: 28px;
+      letter-spacing: -0.02em; } }
+
+/* line 62, ui-kit.scss */
+.h6 {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px; }
+  @media (max-width: 767px) {
+    /* line 62, ui-kit.scss */
+    .h6 {
+      font-size: 16px;
+      line-height: 24px; } }
+
+/* line 73, ui-kit.scss */
+.subtitle1 {
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 32px; }
+  @media (max-width: 767px) {
+    /* line 73, ui-kit.scss */
+    .subtitle1 {
+      font-size: 16px;
+      line-height: 24px; } }
+
+/* line 84, ui-kit.scss */
+.subtitle2 {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px; }
+  @media (max-width: 767px) {
+    /* line 84, ui-kit.scss */
+    .subtitle2 {
+      font-size: 14px;
+      line-height: 22px; } }
+
+/* line 95, ui-kit.scss */
+.body2 {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px; }
+  @media (max-width: 767px) {
+    /* line 95, ui-kit.scss */
+    .body2 {
+      font-size: 14px;
+      line-height: 20px; } }
+
+/* line 106, ui-kit.scss */
+.tooltip {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px; }
+  @media (max-width: 767px) {
+    /* line 106, ui-kit.scss */
+    .tooltip {
+      font-size: 10px;
+      line-height: 18px; } }

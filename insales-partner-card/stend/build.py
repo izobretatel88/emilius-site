@@ -23,6 +23,34 @@ h = re.sub(r'\son[a-z]+="[^"]*"', "", h, flags=re.I)
 h = re.sub(r'(href|src)="/(?!/)', r'\1="https://www.insales.ru/', h)
 h = re.sub(r'(href|src)="//', r'\1="https://', h)
 
+# стили InSales — копией рядом со стендом: адреса на CDN версионные и после обновления сайта отдают 403.
+# Внутри CSS шрифты и картинки остаются ссылками на CDN (шрифты InSales лицензированы — не копируем).
+import urllib.request
+from urllib.parse import urljoin
+CSS_DIR = here / "insales-css"
+CSS_DIR.mkdir(exist_ok=True)
+def local_css(m):
+    url = m.group(2)
+    name = url.rsplit("/", 1)[-1].split("?")[0]
+    dst = CSS_DIR / name
+    if not dst.exists():
+        css = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read().decode("utf-8", "replace")
+        css = re.sub(r'url\(\s*([\'"]?)(?!data:|https?:|//)([^\'")]+)\1\s*\)', lambda u: f'url("{urljoin(url, u.group(2))}")', css)
+        css = re.sub(r'url\(\s*([\'"]?)//', r'url(\1https://', css)
+        dst.write_text(css, encoding="utf-8")
+    return m.group(1) + "insales-css/" + name + m.group(3)
+h = re.sub(r'(<link\b[^>]*rel="stylesheet"[^>]*href=")(https://cdn\.insales-shop\.ru/[^"]+\.css)("[^>]*>)', local_css, h)
+h = re.sub(r'(<link\b[^>]*href=")(https://cdn\.insales-shop\.ru/[^"]+\.css)("[^>]*rel="stylesheet"[^>]*>)', local_css, h)
+# картинки шаблона InSales (логотип, иконки) лежат по тем же версионным адресам — тоже копией рядом
+def local_asset(m):
+    url = m.group(2)
+    name = url.rsplit("/", 1)[-1].split("?")[0]
+    dst = CSS_DIR / name
+    if not dst.exists():
+        dst.write_bytes(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read())
+    return m.group(1) + "insales-css/" + name + m.group(3)
+h = re.sub(r'((?:src|href)=")(https://cdn\.insales-shop\.ru/assets/[^"]+\.(?:svg|png|jpg|jpeg|webp|gif|ico))(")', local_asset, h)
+
 STAND_CSS = """<style>
   .js-partner-slider .swiper-wrapper{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;transform:none!important}
   .js-partner-slider .swiper-slide{flex:0 0 auto;width:420px!important;max-width:85vw}
