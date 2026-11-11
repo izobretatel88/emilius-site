@@ -133,9 +133,9 @@ const arc = (i: number) => {
     </section>
 
     <nav class="cycle ui-section" aria-label="Этапы цикла">
-      <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
+      <a class="step" href={href(`services/${prev.id}/`)} data-stage={prev.id}><span class="dir">← до этого · дни {pad(prev.from)}–{pad(prev.to)}</span><span class="name"><i class="ui-stage-dot" aria-hidden="true"></i>{prev.name}</span></a>
       <a class="ui-link telegram" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram <span class="ui-arrow" aria-hidden="true">↗</span></a>
-      <a class="step next" href={href(`services/${next.id}/`)}><span class="dir">дальше →</span><span class="name">{next.name}</span></a>
+      <a class="step next" href={href(`services/${next.id}/`)} data-stage={next.id}><span class="dir">дни {pad(next.from)}–{pad(next.to)} · дальше →</span><span class="name">{next.name}<i class="ui-stage-dot" aria-hidden="true"></i></span></a>
     </nav>
   </main>
 
@@ -192,9 +192,12 @@ const arc = (i: number) => {
   .step { display: flex; flex-direction: column; gap: 2px; color: var(--ink); text-decoration: none; min-height: 44px; justify-content: center; }
   .step.next { text-align: right; }
   .dir { font-size: 13px; color: var(--ink-3); }
-  .name { font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
-  .step:focus-visible .name, .step:active .name { color: var(--teal-text); }
-  @media (hover: hover) and (pointer: fine) { .step:hover .name { color: var(--teal-text); } }
+  .dir { font-variant-numeric: tabular-nums; }
+  /* Соседний этап — со своей точкой и днями; при наведении загорается цветом этапа, как направления на главной */
+  .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
+  .step.next .name { justify-content: flex-end; }
+  .step:focus-visible .name, .step:active .name { color: var(--stage-ink, var(--teal-text)); }
+  @media (hover: hover) and (pointer: fine) { .step:hover .name { color: var(--stage-ink, var(--teal-text)); } }
 
   @media (max-width: 760px) {
     .cols { grid-template-columns: 1fr; gap: 20px; }
