@@ -9,8 +9,14 @@ import IterationRuler from '../components/IterationRuler.astro';
 import LinkList from '../components/LinkList.astro';
 import { SECTORS, ITERATION } from '../data/site';
 import { DIRECTIONS } from '../data/navigation';
+import { SERVICES } from '../data/services';
+import { href } from '../lib/urls';
 
 const pad = (n: number) => String(n).padStart(2, '0');
+// Соседние этапы показаны так, как их видит страница «Разработки»: до неё дизайн, после — маркетинг
+const devIndex = SECTORS.findIndex((s) => s.id === 'dev');
+const prev = SECTORS[devIndex - 1];
+const next = SECTORS[devIndex + 1];
 const colors = [
   { title: 'Акцент', note: 'Один акцент для действий. Бирюзовый текст — только ссылки.', tokens: [
     ['--teal', 'Рамки, колесо, кольцо фокуса'],
@@ -114,6 +120,15 @@ const colors = [
       <h3 class="list-title">Список направлений</h3>
       <p class="note">Компонент <code>LinkList</code> с этапом: точка цвета этапа у подписи, заголовок при наведении — цветом этапа.</p>
       <div class="ui-surface list-sample"><LinkList items={DIRECTIONS} /></div>
+      <h3 class="list-title">Метка этапа</h3>
+      <p class="note">Класс <code>.ui-stage-tag</code>: ставится у проекта, который числится кейсом направления в <code>src/data/services.ts</code>. Ведёт на страницу направления, при наведении и в фокусе — цвет этапа.</p>
+      <div class="tags">{SECTORS.map((s) => <a class="ui-stage-tag" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{SERVICES[s.id].title}</span><span class="days">дни {pad(s.from)}–{pad(s.to)}</span></a>)}</div>
+      <h3 class="list-title">Соседние этапы</h3>
+      <p class="note">Класс <code>.ui-stage-step</code>: внизу страницы направления стоят этап до и этап после, с днями итерации. Цикл замыкается: после маркетинга снова касдев.</p>
+      <nav class="steps-sample" aria-label="Образец: соседние этапы «Разработки»">
+        <a class="ui-stage-step" href={href(`services/${prev.id}/`)} data-stage={prev.id}><span class="dir">← до этого · дни {pad(prev.from)}–{pad(prev.to)}</span><span class="name"><i class="ui-stage-dot" aria-hidden="true"></i>{prev.name}</span></a>
+        <a class="ui-stage-step next" href={href(`services/${next.id}/`)} data-stage={next.id}><span class="dir">дни {pad(next.from)}–{pad(next.to)} · дальше →</span><span class="name">{next.name}<i class="ui-stage-dot" aria-hidden="true"></i></span></a>
+      </nav>
     </section>
   </main>
   <Footer />
@@ -168,6 +183,8 @@ const colors = [
   .iterations-sample { width: 154px; }
   .guide h3.list-title { margin-top: 48px; }
   .list-sample { margin-top: 18px; padding: 4px 26px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 12px; }
+  .steps-sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 640px; margin-top: 12px; }
   @media (max-width: 760px) {
     .surfaces { grid-template-columns: 1fr; }
     .swatches { grid-template-columns: 1fr; }

@@ -22,7 +22,8 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
 
 <footer>
   <nav class="footer-links" aria-label="Разделы сайта">
-    <div><h2>Направления</h2>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}</div>
+    <!-- Направления — с точкой цвета этапа, как в мобильном меню и на /services/ (дизайн-система §3.3) -->
+    <div><h2>Направления</h2>{DIRECTIONS.map(item => <a class="stage-link" href={href(item.href)} data-stage={item.stage}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
     <div><h2>Готовые решения</h2><a href={href('services/insales-shop/')}>Магазин на InSales</a><a href={href('services/insales-shop/seller/')}>Для селлеров WB и Ozon</a><a href={href('services/')}>Все услуги</a></div>
     <div><h2>Полезное</h2><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}<a href={href('resources/')}>Все материалы</a></div>
     <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={homeLink('#t-wheel')}>Как работаем</a><a href={homeLink('#t-contact')}>Контакты</a></div>
@@ -58,6 +59,10 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
   }
   .footer-links>div{min-width:0;gap:0}
   .footer-links a{display:flex;align-items:center;min-height:44px;max-width:100%;overflow-wrap:anywhere;line-height:1.4}
+  /* Направление загорается цветом своего этапа, а не общей бирюзой — как в списках направлений */
+  .footer-links .stage-link{gap:9px}
+  .footer-links .stage-link:focus-visible{color:var(--stage-ink)}
+  @media(hover:hover) and (pointer:fine){.footer-links .stage-link:hover{color:var(--stage-ink)}}
   .site-iterations{width:154px;margin:18px auto 8px}
   .legal-links{display:flex;justify-content:center;flex-wrap:wrap;gap:0 20px;font-size:13px}
   .legal-links a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}

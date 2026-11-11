@@ -153,6 +153,31 @@
   border-radius: 50%;
   background: var(--stage-ink, var(--ruler));
 }
+/* Метка этапа: точка, направление и его дни итерации; ведёт на страницу направления (проекты, образцы системы) */
+.ui-stage-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline transparent;
+  text-underline-offset: 4px;
+  transition: color var(--hover), text-decoration-color var(--hover);
+}
+.ui-stage-tag .days { font-weight: 400; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ui-stage-tag:focus-visible { color: var(--stage-ink); text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) { .ui-stage-tag:hover { color: var(--stage-ink); text-decoration-color: currentColor; } }
+/* Соседний этап внизу страницы направления: «← до этого · дни 14–26» и название этапа с точкой */
+.ui-stage-step { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 44px; color: var(--ink); text-decoration: none; }
+.ui-stage-step.next { text-align: right; }
+.ui-stage-step .dir { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ui-stage-step .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
+.ui-stage-step.next .name { justify-content: flex-end; }
+.ui-stage-step:focus-visible .name, .ui-stage-step:active .name { color: var(--stage-ink, var(--teal-text)); }
+@media (hover: hover) and (pointer: fine) { .ui-stage-step:hover .name { color: var(--stage-ink, var(--teal-text)); } }
+@media (prefers-reduced-motion: reduce) { .ui-stage-tag, .ui-stage-step .name { transition: none; } }
 /* Линейка итерации: 52 деления — 52 дня, первое деление каждого этапа выше. Компонент IterationRuler.astro.
    Первое деление этапа всегда цветом этапа (--sec-*-ink). Все 13 дней этапа красятся классом .on (страница направления)
    или когда в общем предке [data-ruler-scope] наведена или в фокусе ссылка [data-stage-link] этого этапа. */
