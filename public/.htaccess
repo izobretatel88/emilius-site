@@ -27,14 +27,16 @@ ErrorDocument 404 /404.html
   RewriteRule ^robots\.txt$ /robots-noindex.txt [L]
   RewriteRule ^robots\.txt$ /robots-main.txt [L]
 
+  # Цели редиректов ниже — полным адресом с https: за прокси Бегета Apache видит запрос как http,
+  # и относительный «/» давал Location: http://…, то есть второй 301 (аудит 11.11.2026).
   # --- Старые адреса Tilda (до 10.2026): страницы вида /page36898459.html — на главную ---
-  RewriteRule ^page[0-9]+\.html$ / [L,R=301]
+  RewriteRule ^page[0-9]+\.html$ https://emilius.agency/ [L,R=301]
   # Поисковики знают карту сайта Tilda по адресу /sitemap.xml
-  RewriteRule ^sitemap\.xml$ /sitemap-index.xml [L,R=301]
+  RewriteRule ^sitemap\.xml$ https://emilius.agency/sitemap-index.xml [L,R=301]
   # Внешние ссылки на старые разделы (аудит Вебмастера 05.11.2026): /ru/ — с партнёрской карточки InSales
   # и zalina.me, /career, /careers, /jobs — с Хабр Карьеры. Своих страниц нет, ведём на главную.
-  RewriteRule ^ru(/.*)?$ / [L,R=301]
-  RewriteRule ^(career|careers|jobs)/?$ / [L,R=301]
+  RewriteRule ^ru(/.*)?$ https://emilius.agency/ [L,R=301]
+  RewriteRule ^(career|careers|jobs)/?$ https://emilius.agency/ [L,R=301]
 </IfModule>
 
 # --- Сжатие ---

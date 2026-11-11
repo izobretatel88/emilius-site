@@ -8,7 +8,7 @@ import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
-import { SECTORS } from '../data/site';
+import { SECTORS, LINKS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
 import IterationRuler from '../components/IterationRuler.astro';
@@ -16,11 +16,25 @@ import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
+// Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
+// sameAs — только свои публичные профили; телефон и адрес не указываем, их нет на сайте.
+const abs = (p: string) => new URL(href(p), Astro.site).href;
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Эмилиус Эдженси',
+  alternateName: 'Emilius Agency',
+  url: abs(''),
+  logo: abs('brand/logo.png'),
+  description: 'Дизайн, разработка и интернет-маркетинг цифровых продуктов. Интернет-магазины на InSales.',
+  sameAs: [LINKS.channel, 'https://vk.ru/emiliusagency', 'https://career.habr.com/companies/emilius-agency'],
+};
 ---
 <Base
   title="Эмилиус Эдженси – дизайн и реализация продуктов"
   description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
   bodyClass="home"
+  jsonLd={organization}
 >
   <Intro />
   <main class="home-page ui-shell">
