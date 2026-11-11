@@ -43,7 +43,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
         <a class="menu-discuss" href={discuss}>Обсудить проект <span aria-hidden="true">→</span></a>
         {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
         <span class="menu-group">Направления</span>
-        <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}>{item.title}</a>)}</div>
+        <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} data-stage={item.stage} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
         <span class="menu-group">Готовое решение</span>
         <a href={href('services/insales-shop/')}>Магазин на InSales</a>
         <span class="menu-group">Материалы и инструменты</span>
@@ -113,6 +113,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
     .menu-links .menu-discuss { color: var(--teal-text); font-weight: 700; gap: 10px; }
     .menu-group { font-size: var(--fs-small); color: var(--ink-3); margin-top: 16px; }
     .menu-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+    .menu-pair a { gap: 10px; }
     :global(body:has(.nav-menu[open]) .write-fab) { visibility: hidden; }
   }
   @media (max-width: 400px) {

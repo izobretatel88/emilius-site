@@ -185,7 +185,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l, i) => <>{i > 0 && ' · '}<a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span>{VIDEO_REVIEW.project} · <a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
           </figcaption>
         </figure>
       </div>
@@ -300,7 +300,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </dl>
     </section>
 
-    <section class="card block" aria-labelledby="t-faq">
+    <section class="block flat" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
         {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
@@ -353,7 +353,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         </div>
       </form>
     </section>
-    <section class="card block"><h2>Если задача шире запуска магазина</h2><LinkList items={[
+    <section class="block flat"><h2>Если задача шире запуска магазина</h2><LinkList items={[
       {title:'Индивидуальный интерфейс',description:'Спроектировать свои сценарии и дизайн.',href:'services/design/'},
       {title:'Разработка и интеграции',description:'Обсудить нестандартную логику и связку систем.',href:'services/dev/'},
       {title:'Продвижение после запуска',description:'SEO, аналитика и развитие продукта.',href:'services/marketing/'},
@@ -652,6 +652,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   @media (hover: hover) and (pointer: fine) { .switch:hover { text-decoration: underline; text-underline-offset: 3px; } }
   .block { padding: clamp(24px, 3.6vw, 38px); display: flex; flex-direction: column; gap: 18px; }
   .block.plain { padding: 8px 0 0; }
+  /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
+  .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
   .block > .small { max-width: 68ch; line-height: 1.5; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
@@ -693,7 +695,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Плитки стоят на сером --well внутри белой карточки раздела: при наведении темнеют до --hair, а не растворяются в белом */
   @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--hair); } }
   @media (hover: hover) and (pointer: fine) { .shop:hover .shop-link { text-decoration: underline; text-underline-offset: 3px; } }
-  .shop:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .shop:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   /* Свежая работа — широкая карточка: картинка слева, текст справа */
   /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
   .case { border-radius: var(--radius-sm); overflow: hidden; background: var(--well); }
@@ -750,7 +752,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   @media (hover: hover) and (pointer: fine) { .arrow:hover:not(:disabled) { background: var(--well); } }
   .arrow:active:not(:disabled) { transform: scale(0.97); }
-  .arrow:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .arrow:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .arrow:disabled { opacity: 0.35; cursor: default; }
   .phones {
     display: flex;
@@ -774,7 +776,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
   @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } }
-  .phone-card:focus-visible { outline: 2px dashed var(--teal); outline-offset: 4px; border-radius: var(--radius-card); }
+  .phone-card:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
   .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover); }
@@ -783,10 +785,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
   .more-shops li { position: relative; }
   .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-pill); }
-  .more-shops li:has(a:focus-visible) { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .more-shops li:has(a:focus-visible) { outline: var(--focus-ring); outline-offset: 3px; }
   .more-shops a:focus-visible { outline: none; }
   @media (hover: hover) and (pointer: fine) { .more-shops a:hover { text-decoration: underline; text-underline-offset: 3px; } }
-  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; }
+  /* Ссылки разделяет отступ, а не точка: при переносе на телефоне точка повисала в конце или начале строки */
+  .proof { font-size: 14px; color: var(--ink-3); line-height: 1.7; display: flex; flex-wrap: wrap; column-gap: 24px; }
   @media (hover: hover) and (pointer: fine) { .proof a:hover { text-underline-offset: 3px; } }
   .proof a { font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
   .review-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: center; }
@@ -796,6 +799,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quote figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; padding-top: 14px; border-top: 1px solid var(--hair); font-size: 14px; color: var(--ink-2); }
   .quote figcaption b { font-size: 16px; color: var(--ink); }
   /* Ссылка на сайт под отзывом: зона нажатия 44 px, строка не сдвигается */
+  .quote figcaption > span { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
   .quote figcaption a { display: inline-block; padding-block: 13px; margin-block: -13px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
@@ -844,7 +848,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .plan .dots { margin-bottom: 12px; }
   .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(0.98); }
   @media (hover: hover) and (pointer: fine) { .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
-  .plan-cta:focus-visible { outline: 2px dashed var(--teal); outline-offset: 3px; }
+  .plan-cta:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .nums { counter-reset: n; gap: 0; }
   .nums li {
@@ -931,7 +935,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   @keyframes faq-in { from { opacity: 0; } }
   @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
   @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
-  summary:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; border-radius: 4px; }
+  summary:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
   details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
@@ -977,7 +981,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
   @media (hover: hover) and (pointer: fine) { .jump .jump-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
-  .jump a:focus-visible { outline: 2px dashed var(--teal); outline-offset: 2px; }
+  .jump a:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
   @media (max-width: 480px) {
     .jump a { padding: 8px 5px; font-size: 14px; }
     .jump [data-jump-to='t-weeks'] { display: none; }
@@ -1087,6 +1091,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .hero { padding: 26px 20px; }
     .block { padding: 24px 20px; }
     .block.plain { padding: 4px 0 0; }
+    .block.flat { padding: 24px 0 0; }
     h1 { font-size: var(--fs-h1-sm); letter-spacing: var(--tracking-tight); }
     h2 { font-size: var(--fs-h2-sm); }
     .grid2, .cols { grid-template-columns: 1fr; }

@@ -29,5 +29,5 @@ export default defineConfig({
   // Markdown используется только в блоге (src/content/blog): подсветку кода не подключаем, блок кода оформляем сами,
   // а плагин rehypeBlog докручивает картинки, ссылки и таблицы статьи (см. src/lib/rehype-blog.mjs).
   markdown: { syntaxHighlight: false, rehypePlugins: [[rehypeBlog, { base: process.env.BASE_PATH || '/', releases: process.env.PREVIEW === '1' ? null : publishedPosts() }]] },
-  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/os/') && !page.includes('/experiments/') })],
+  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/os/') && !page.includes('/experiments/') && !page.includes('/styleguide/') })],
 });

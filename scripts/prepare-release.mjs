@@ -13,6 +13,8 @@ execFileSync('npm',['run','build'],{env,stdio:'inherit'});
 assert(!existsSync('dist/extra'),'dist/extra must not be included in the release');
 // The postponed OS concept remains available in preview, outside the release.
 rmSync('dist/os',{recursive:true,force:true});
+// Образцы дизайн-системы — служебная страница превью (docs/EMILIUS-DESIGN-SYSTEM.md), в релиз не входит.
+rmSync('dist/styleguide',{recursive:true,force:true});
 execFileSync(process.execPath,['scripts/check-site-links.mjs'],{env,stdio:'inherit'});
 const html=[];
 function walk(dir){for(const entry of readdirSync(dir,{withFileTypes:true})){const p=join(dir,entry.name);if(entry.isDirectory())walk(p);else if(entry.name.endsWith('.html'))html.push(p);}}
@@ -25,7 +27,7 @@ for(const p of html){
  if(!p.endsWith('/404.html'))assert(/rel="canonical" href="https:\/\/emilius\.agency\//.test(s),`${p}: canonical`);
  assert(s.includes('Итерация 5 из 15 до великолепного состояния'),`${p}: public iteration`);
 }
-for(const p of ['dist/os','dist/review','dist/blog/edinye-ostatki-wb-ozon-insales/index.html'])assert(!existsSync(p),`${p}: preview-only route`);
+for(const p of ['dist/os','dist/styleguide','dist/review','dist/blog/edinye-ostatki-wb-ozon-insales/index.html'])assert(!existsSync(p),`${p}: preview-only route`);
 for(const p of ['dist/.htaccess','dist/api/lead.php','dist/404.html','dist/sitemap-index.xml'])assert(existsSync(p),`${p}: missing`);
 assert(readFileSync('dist/robots.txt','utf8').includes('Allow: /'),'robots is closed');
 assert(readFileSync('dist/index.html','utf8').includes('68742100'),'Metrika ID missing');

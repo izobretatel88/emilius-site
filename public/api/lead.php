@@ -67,6 +67,17 @@ if ($message === '') {
     reply(422, ['ok' => false, 'error' => 'empty']);
 }
 
+// Спам-фильтр: боты обходят ловушку и пишут «отличный каталог…» со ссылкой на telegra.ph и т. п.
+// Ссылки в тексте не принимаем: http(s)://, www., домен с путём (site.ru/page). Просто «shop.ru» без пути
+// пропускаем — клиент может назвать свой сайт. Человек увидит ошибку и блок «напишите в Telegram».
+$hasLink = (bool)preg_match('~https?://|www\.|\b[\p{L}0-9-]+\.[\p{L}]{2,}/\S~iu', $message);
+// Сообщение целиком без кириллицы — почти всегда зарубежная рассылка.
+$noCyrillic = !preg_match('/\p{Cyrillic}/u', $message);
+if ($hasLink || $noCyrillic) {
+    error_log('lead.php: отклонено как спам (' . ($hasLink ? 'ссылка' : 'без кириллицы') . ')');
+    reply(422, ['ok' => false, 'error' => 'spam']);
+}
+
 // Простое ограничение частоты: отметки времени по хешу адреса во временной папке.
 $ipKey = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . __FILE__);
 $rateFile = sys_get_temp_dir() . '/emilius-lead-' . substr($ipKey, 0, 32);

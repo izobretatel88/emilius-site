@@ -10,6 +10,7 @@ import { PROJECTS } from '../../data/projects';
 import { RELATED } from '../../data/navigation';
 import LinkList from '../../components/LinkList.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import IterationRuler from '../../components/IterationRuler.astro';
 import { href } from '../../lib/urls';
 
 export function getStaticPaths() {
@@ -64,9 +65,10 @@ const arc = (i: number) => {
         <a class="ui-button" href={href('#feedback')}>Обсудить задачу <span aria-hidden="true">→</span></a>
         {service.offer && <a class="ui-link" href={href(service.offer.href)}>{service.offer.title} <span class="ui-arrow" aria-hidden="true">→</span></a>}
       </div>
+      <div class="opening-ruler"><IterationRuler stage={sector.id} /></div>
     </header>
 
-    <section class="ui-section" aria-labelledby="t-scope">
+    <section class="ui-section scope" aria-labelledby="t-scope">
       <div class="ui-section-head"><h2 id="t-scope">Состав работ</h2></div>
       <div class="cols">
         <div class="block ui-surface">
@@ -131,9 +133,9 @@ const arc = (i: number) => {
     </section>
 
     <nav class="cycle ui-section" aria-label="Этапы цикла">
-      <a class="step" href={href(`services/${prev.id}/`)}><span class="dir">← до этого</span><span class="name">{prev.name}</span></a>
+      <a class="step" href={href(`services/${prev.id}/`)} data-stage={prev.id}><span class="dir">← до этого · дни {pad(prev.from)}–{pad(prev.to)}</span><span class="name"><i class="ui-stage-dot" aria-hidden="true"></i>{prev.name}</span></a>
       <a class="ui-link telegram" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram <span class="ui-arrow" aria-hidden="true">↗</span></a>
-      <a class="step next" href={href(`services/${next.id}/`)}><span class="dir">дальше →</span><span class="name">{next.name}</span></a>
+      <a class="step next" href={href(`services/${next.id}/`)} data-stage={next.id}><span class="dir">дни {pad(next.from)}–{pad(next.to)} · дальше →</span><span class="name">{next.name}<i class="ui-stage-dot" aria-hidden="true"></i></span></a>
     </nav>
   </main>
 
@@ -144,7 +146,10 @@ const arc = (i: number) => {
   .stage { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
   .stage .ui-eyebrow { margin: 0; }
   .mini { width: 40px; height: 40px; flex: none; }
-  .direction-opening { padding-top: 16px; }
+  .direction-opening { padding-top: 16px; padding-bottom: 0; }
+  /* Линейка итерации с днями этапа — граница первого экрана вместо серой линии секции */
+  .opening-ruler { margin-top: 36px; }
+  .scope { border-top: 0; }
 
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .block { padding: 28px 30px 30px; }
@@ -187,9 +192,12 @@ const arc = (i: number) => {
   .step { display: flex; flex-direction: column; gap: 2px; color: var(--ink); text-decoration: none; min-height: 44px; justify-content: center; }
   .step.next { text-align: right; }
   .dir { font-size: 13px; color: var(--ink-3); }
-  .name { font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
-  .step:focus-visible .name, .step:active .name { color: var(--teal-text); }
-  @media (hover: hover) and (pointer: fine) { .step:hover .name { color: var(--teal-text); } }
+  .dir { font-variant-numeric: tabular-nums; }
+  /* Соседний этап — со своей точкой и днями; при наведении загорается цветом этапа, как направления на главной */
+  .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
+  .step.next .name { justify-content: flex-end; }
+  .step:focus-visible .name, .step:active .name { color: var(--stage-ink, var(--teal-text)); }
+  @media (hover: hover) and (pointer: fine) { .step:hover .name { color: var(--stage-ink, var(--teal-text)); } }
 
   @media (max-width: 760px) {
     .cols { grid-template-columns: 1fr; gap: 20px; }

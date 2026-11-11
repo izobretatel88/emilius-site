@@ -5,7 +5,7 @@
   /* Системные части — выпадающие списки, полосы прокрутки, галочки — следуют теме сайта */
   color-scheme: light;
   --site-width: 1120px;
-  /* Каркас страниц — по экспериментальной главной (04.11.2026). Правила — docs/EMILIUS-DESIGN-SYSTEM.md §5.4 */
+  /* Каркас страниц — по экспериментальной главной (04.11.2026). Правила — docs/EMILIUS-DESIGN-SYSTEM.md §6 */
   --layout-width: 1190px; /* шапка, содержимое и подвал */
   --layout-gutter: 24px; /* поле страницы; уже на телефоне — в global.css */
   --section-pad: 44px; /* отступ секции сверху и снизу */
@@ -45,6 +45,7 @@
   --card: #ffffff;
   --card-border: transparent;
   --hair: #e5e5ea;
+  --ruler: #c7c7cc; /* деления линейки итерации: заметнее линии секции, тише текста */
   --well: #f2f2f4;
   --proj-bg: #ffffff; /* кружки логотипов проектов */
   --input-bg: #f2f2f4;
@@ -106,6 +107,11 @@
   /* Подложка полноразмерного просмотра работ */
   --viewer-backdrop: rgba(0, 0, 0, 0.76);
 
+  /* Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, с отступом, как обод центра колеса.
+     Контраст бирюзы с фоном страницы и карточки — не ниже 3:1 в обеих темах. */
+  --focus-ring: 2px solid var(--teal);
+  --focus-offset: 3px;
+
   /* Форма */
   --radius-card: 20px;
   --radius-btn: 13px;
@@ -142,6 +148,7 @@
     --card: #1c1c1e;
     --card-border: transparent;
     --hair: #2c2c2e;
+    --ruler: #48484a;
     --well: #232325;
     --proj-bg: #2c2c2e;
     --input-bg: #2c2c2e;
@@ -197,6 +204,7 @@
   --card: #1c1c1e;
   --card-border: transparent;
   --hair: #2c2c2e;
+  --ruler: #48484a;
   --well: #232325;
   --proj-bg: #2c2c2e;
   --input-bg: #2c2c2e;

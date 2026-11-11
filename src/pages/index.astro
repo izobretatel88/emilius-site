@@ -11,6 +11,7 @@ import Intro from '../components/Intro.astro';
 import { SECTORS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
+import IterationRuler from '../components/IterationRuler.astro';
 import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
@@ -82,7 +83,10 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
           </div>
         </a>
       ))}
-      <div class="direction-links">{SECTORS.map(s => <a href={href(`services/${s.id}/`)}><strong>{s.name}</strong><span>{s.text}</span><span class="ui-arrow" aria-hidden="true">→</span></a>)}</div>
+      <div class="direction-nav" data-ruler-scope>
+        <IterationRuler />
+        <div class="direction-links">{SECTORS.map(s => <a href={href(`services/${s.id}/`)} data-stage-link={s.id} data-stage={s.id}><strong>{s.name}</strong><span>{s.text}</span><span class="ui-arrow" aria-hidden="true">→</span></a>)}</div>
+      </div>
     </section>
 
     <section class="ui-section" id="projects" tabindex="-1" aria-labelledby="t-projects">
@@ -210,13 +214,15 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .service-link { color: var(--teal-text); font-size: 16px; font-weight: 600; }
   .service-feature:focus-visible .service-link { text-decoration: underline; text-underline-offset: 5px; }
   @media (hover: hover) and (pointer: fine) { .service-feature:hover .service-link { text-decoration: underline; text-underline-offset: 5px; } }
-  .direction-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; margin-top: 28px; }
+  .direction-nav { margin-top: 32px; }
+  .direction-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; margin-top: 10px; }
   .direction-links a { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-content: start; padding: 12px 0; min-width: 0; }
   .direction-links strong { font-size: 18px; font-weight: 600; text-transform: capitalize; }
   .direction-links a > span:not(.ui-arrow) { font-size: 15px; line-height: 1.5; color: var(--ink-2); grid-column: 1; grid-row: 2; }
   .direction-links .ui-arrow { grid-column: 2; grid-row: 1; }
-  .direction-links a:focus-visible strong { color: var(--teal-text); }
-  @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--teal-text); } }
+  .direction-links strong { transition: color var(--hover); }
+  .direction-links a:focus-visible strong { color: var(--stage-ink, var(--teal-text)); }
+  @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); }

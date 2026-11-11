@@ -1,5 +1,5 @@
 /* Общий каркас и примитивы страниц — по экспериментальной главной (04.11.2026).
-   Значения — только из tokens.css. Описание — docs/EMILIUS-DESIGN-SYSTEM.md §5.4.
+   Значения — только из tokens.css. Описание — docs/EMILIUS-DESIGN-SYSTEM.md §6.
    Префикс ui- — чтобы глобальные классы не пересекались со стилями компонентов. */
 
 /* Ширина содержимого: шапка, основная часть и подвал выровнены по одной линии */
@@ -139,6 +139,61 @@
   margin: -16px 0 28px;
 }
 
+/* Цвет этапа — признак направления. Любой элемент с data-stage получает --stage-ink своего этапа;
+   им красятся точка этапа и заголовок ссылки направления при наведении и в фокусе. */
+[data-stage='custdev'] { --stage-ink: var(--sec-custdev-ink); }
+[data-stage='design'] { --stage-ink: var(--sec-design-ink); }
+[data-stage='dev'] { --stage-ink: var(--sec-dev-ink); }
+[data-stage='marketing'] { --stage-ink: var(--sec-marketing-ink); }
+.ui-stage-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--stage-ink, var(--ruler));
+}
+/* Линейка итерации: 52 деления — 52 дня, первое деление каждого этапа выше. Компонент IterationRuler.astro.
+   Первое деление этапа всегда цветом этапа (--sec-*-ink). Все 13 дней этапа красятся классом .on (страница направления)
+   или когда в общем предке [data-ruler-scope] наведена или в фокусе ссылка [data-stage-link] этого этапа. */
+.ui-ruler {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 14px;
+}
+.ui-ruler i {
+  width: 1px;
+  height: 7px;
+  background: var(--ruler);
+  transition: background-color var(--hover);
+}
+.ui-ruler i.first {
+  height: 14px;
+}
+.ui-ruler i.on { width: 2px; height: 11px; }
+.ui-ruler i.on.first { height: 14px; }
+.ui-ruler i.first[data-stage='custdev'],
+.ui-ruler i.on[data-stage='custdev'],
+[data-ruler-scope]:has([data-stage-link='custdev']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='custdev'] { background: var(--sec-custdev-ink); }
+.ui-ruler i.first[data-stage='design'],
+.ui-ruler i.on[data-stage='design'],
+[data-ruler-scope]:has([data-stage-link='design']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='design'] { background: var(--sec-design-ink); }
+.ui-ruler i.first[data-stage='dev'],
+.ui-ruler i.on[data-stage='dev'],
+[data-ruler-scope]:has([data-stage-link='dev']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='dev'] { background: var(--sec-dev-ink); }
+.ui-ruler i.first[data-stage='marketing'],
+.ui-ruler i.on[data-stage='marketing'],
+[data-ruler-scope]:has([data-stage-link='marketing']:is(:hover, :focus-visible)) .ui-ruler i[data-stage='marketing'] { background: var(--sec-marketing-ink); }
+/* Линейка в роли шкалы пройденного (итерации сайта в подвале): пройденные деления выше и бирюзовые */
+.ui-ruler i.done {
+  width: 2px;
+  height: 14px;
+  background: var(--teal);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-ruler i { transition: none; }
+}
 /* Поверхность: белая карточка без обводки с мягкой тенью */
 .ui-surface {
   background: var(--card);
