@@ -142,5 +142,4 @@
 .platform-comparison a{color:var(--print-ink)}
 .platform-comparison .foot{max-width:none}}
 /* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
-.platform-comparison details[open]>:not(summary){animation:details-in 0.2s ease-out}
-@keyframes details-in{from{opacity:0}}
+.platform-comparison details[open]>:not(summary){animation:ui-fade-in var(--fade-in)}
