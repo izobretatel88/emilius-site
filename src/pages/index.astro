@@ -8,7 +8,7 @@ import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
-import { SECTORS } from '../data/site';
+import { SECTORS, LINKS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
 import IterationRuler from '../components/IterationRuler.astro';
@@ -16,11 +16,25 @@ import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
+// Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
+// sameAs — только свои публичные профили; телефон и адрес не указываем, их нет на сайте.
+const abs = (p: string) => new URL(href(p), Astro.site).href;
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Эмилиус Эдженси',
+  alternateName: 'Emilius Agency',
+  url: abs(''),
+  logo: abs('brand/logo.png'),
+  description: 'Дизайн, разработка и интернет-маркетинг цифровых продуктов. Интернет-магазины на InSales.',
+  sameAs: [LINKS.channel, 'https://vk.ru/emiliusagency', 'https://career.habr.com/companies/emilius-agency'],
+};
 ---
 <Base
   title="Эмилиус Эдженси – дизайн и реализация продуктов"
   description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
   bodyClass="home"
+  jsonLd={organization}
 >
   <Intro />
   <main class="home-page ui-shell">
@@ -207,7 +221,7 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
   :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
 
-  .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform 0.16s ease-out; }
+  .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform var(--press); }
   .service-feature h3 { font-size: 27px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
   .service-feature p:not(.ui-label) { font-size: 16px; color: var(--ink-2); max-width: 54ch; }
   .service-next { display: flex; flex-direction: column; justify-content: center; gap: 16px; flex-shrink: 0; font-size: 14px; color: var(--ink-2); }
@@ -238,9 +252,9 @@ const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => 
   .project-description p { font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform 0.16s ease-out; }
+  .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform var(--press); }
   /* Нажатие на карточку: едва заметно проседает, как кнопка */
-  .material:active, .service-feature:active { transform: scale(0.99); }
+  .material:active, .service-feature:active { transform: scale(var(--press-scale-card)); }
   .material .ui-label { grid-column: 1 / -1; margin: 0; }
   .material strong { font-size: 19px; line-height: 1.25; font-weight: 600; }
   .material .ui-arrow { grid-column: 2; grid-row: 2; }

@@ -31,10 +31,10 @@ const {items} = Astro.props;
   strong{display:block;font-size:22px;font-weight:600;line-height:1.25;transition:color var(--hover)}
   .description{display:block;color:var(--ink-2);margin-top:7px;max-width:72ch;font-size:15px;line-height:1.5}
   small{display:flex;align-items:center;gap:8px;color:var(--ink-3);font-size:var(--fs-small);margin-bottom:7px}
-  .arrow{color:var(--teal-text);font-size:24px;flex-shrink:0;transition:transform 0.2s ease-out}
-  /* Стрелка чуть сдвигается вперёд: строка — переход, а не просто подсветка */
-  a:focus-visible .arrow{transform:translateX(3px)}
+  .arrow{color:var(--teal-text);font-size:24px;flex-shrink:0;transition:transform var(--hover)}
+  /* Стрелка чуть сдвигается вперёд: строка — переход, а не просто подсветка. На телефоне — при касании */
+  a:focus-visible .arrow,a:active .arrow{transform:translateX(3px)}
   @media (hover: hover) and (pointer: fine) { a:hover .arrow{transform:translateX(3px)} }
-  @media (prefers-reduced-motion: reduce){.arrow{transition:none}a:focus-visible .arrow{transform:none}a:hover .arrow{transform:none}}
+  @media (prefers-reduced-motion: reduce){.arrow{transition:none}a:focus-visible .arrow,a:active .arrow{transform:none}a:hover .arrow{transform:none}}
   @media(max-width:600px){strong{font-size:20px}a{padding-block:20px;gap:16px}.description{font-size:14px}:global(.directory) .link-list{--list-inset:18px}}
 </style>

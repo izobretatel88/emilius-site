@@ -22,7 +22,8 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
 
 <footer>
   <nav class="footer-links" aria-label="Разделы сайта">
-    <div><h2>Направления</h2>{DIRECTIONS.map(item => <a href={href(item.href)}>{item.title}</a>)}</div>
+    <!-- Направления — с точкой цвета этапа, как в мобильном меню и на /services/ (дизайн-система §3.3) -->
+    <div><h2>Направления</h2>{DIRECTIONS.map(item => <a class="stage-link" href={href(item.href)} data-stage={item.stage}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
     <div><h2>Готовые решения</h2><a href={href('services/insales-shop/')}>Магазин на InSales</a><a href={href('services/insales-shop/seller/')}>Для селлеров WB и Ozon</a><a href={href('services/')}>Все услуги</a></div>
     <div><h2>Полезное</h2><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}<a href={href('resources/')}>Все материалы</a></div>
     <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={homeLink('#t-wheel')}>Как работаем</a><a href={homeLink('#t-contact')}>Контакты</a></div>
@@ -37,12 +38,12 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
   <p>Итерация {ITERATION.current} из {ITERATION.total} до великолепного состояния</p>
   <!-- Ассоциация ARDA — в самом низу и мельче (решение владельца 23.10.2026) -->
   <a href={LINKS.arda} target="_blank" rel="noopener" class="arda">
-    <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств" width="104" height="49" loading="lazy" />
+    <img src={href('brand/arda.png')} alt="ARDA — Ассоциация Развития Digital Агентств, откроется в новой вкладке" width="104" height="49" loading="lazy" />
   </a>
 </footer>
 
 <style>
-  .footer-links{width:100%;max-width:var(--layout-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2);transition:color var(--hover)}@media(hover:hover) and (pointer:fine){.footer-links a:hover{color:var(--teal-text);text-decoration:underline}}@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px;font-size:13px}}
+  .footer-links{width:100%;max-width:var(--layout-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2);transition:color var(--hover)}@media(hover:hover) and (pointer:fine){.footer-links a:hover{color:var(--teal-text);text-decoration:underline}}/* На телефоне ссылки тем же кеглем 14 px, что и на компьютере: строки по 44 px, мельче 14 текст в них теряется */@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px}}
   footer {
     display: flex;
     flex-direction: column;
@@ -58,10 +59,14 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
   }
   .footer-links>div{min-width:0;gap:0}
   .footer-links a{display:flex;align-items:center;min-height:44px;max-width:100%;overflow-wrap:anywhere;line-height:1.4}
+  /* Направление загорается цветом своего этапа, а не общей бирюзой — как в списках направлений */
+  .footer-links .stage-link{gap:9px}
+  .footer-links .stage-link:focus-visible{color:var(--stage-ink)}
+  @media(hover:hover) and (pointer:fine){.footer-links .stage-link:hover{color:var(--stage-ink)}}
   .site-iterations{width:154px;margin:18px auto 8px}
   .legal-links{display:flex;justify-content:center;flex-wrap:wrap;gap:0 20px;font-size:13px}
   .legal-links a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
-  @media(max-width:380px){.footer-links{font-size:14px;gap:24px 16px}.legal-links{column-gap:16px}}
+  @media(max-width:380px){.footer-links{gap:24px 16px}.legal-links{column-gap:16px}}
   .arda {
     display: block;
     margin-top: 10px;

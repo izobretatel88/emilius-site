@@ -127,6 +127,25 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     </script>
     <WriteButton />
     {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <CookieNotice />}
+    <script is:inline>
+      // Общие цели Метрики (аудит трафика и целей 11.11.2026), одним обработчиком на весь документ:
+      // tg-click — любая ссылка на Telegram, с параметрами page и place: data-goal-place ближайшего блока,
+      // fab, nav, footer, id раздела или page. compare-to-landing — со страниц сравнений на лендинг InSales.
+      // Без счётчика emiGoal нет — ничего не происходит.
+      document.addEventListener('click', function (e) {
+        var a = e.target instanceof Element ? e.target.closest('a[href]') : null;
+        if (!a || !window.emiGoal) return;
+        var page = location.pathname;
+        if (a.href.indexOf('https://t.me/') === 0) {
+          var marked = a.closest('[data-goal-place]');
+          var section = a.closest('section[id]');
+          var place = marked ? marked.getAttribute('data-goal-place') : a.classList.contains('write-fab') ? 'fab' : a.closest('nav') ? 'nav' : a.closest('footer') ? 'footer' : section ? section.id : 'page';
+          window.emiGoal('tg-click', { page: page, place: place });
+        } else if (/\/compare\//.test(page) && /\/services\/insales-shop\//.test(a.pathname)) {
+          window.emiGoal('compare-to-landing', { page: page, to: a.pathname });
+        }
+      });
+    </script>
   </body>
 </html>
 

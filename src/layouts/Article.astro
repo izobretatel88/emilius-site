@@ -1,9 +1,10 @@
 ---
 // Раскладка статьи блога по образцу LegalDoc: логотип, карточка с текстом, оглавление из заголовков, футер.
-// Разметка для поисковиков (BlogPosting, FAQPage, BreadcrumbList) собирается здесь из шапки статьи.
+// Разметка для поисковиков (BlogPosting, FAQPage) собирается здесь из шапки статьи; BreadcrumbList — в общем компоненте Breadcrumbs.
 import Base from './Base.astro';
 import Footer from '../components/Footer.astro';
 import LinkList from '../components/LinkList.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { ruDate, type Post } from '../lib/blog';
 
 interface Props {
@@ -45,15 +46,6 @@ const jsonLd = [
     '@type': 'FAQPage',
     mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: abs('') },
-      { '@type': 'ListItem', position: 2, name: 'Блог', item: abs('blog/') },
-      { '@type': 'ListItem', position: 3, name: d.h1, item: canonical },
-    ],
-  },
 ].filter(Boolean);
 ---
 
@@ -70,7 +62,8 @@ const jsonLd = [
 >
 
   <main id="content" class="article ui-shell">
-    <nav class="crumbs" aria-label="Хлебные крошки"><a href={href('blog/')}>Блог</a></nav>
+    <!-- Те же крошки, что в списке блога, сравнениях и разделах: «Главная › Блог › статья»; на телефоне текущая статья скрыта, её называет H1 -->
+    <Breadcrumbs items={[{ title: 'Блог', href: 'blog/' }, { title: d.h1 }]} />
     <h1>{d.h1}</h1>
     <p class="meta">
       {d.draft && <span class="draft">черновик</span>}
@@ -171,13 +164,12 @@ const jsonLd = [
   /* Окно просмотра картинки — как просмотр проектов: белая панель, сверху название и «Закрыть», картинка по ширине окна */
   .img-viewer { width: min(1440px, calc(100% - 40px)); max-width: none; max-height: calc(100svh - 40px); padding: 0; border: 0; border-radius: var(--radius-card); background: var(--card); color: var(--ink); box-shadow: var(--shadow-pop); overflow: auto; overscroll-behavior: contain; }
   .img-viewer::backdrop { background: var(--viewer-backdrop); }
-  .img-viewer[open], .img-viewer[open]::backdrop { animation: img-viewer-in 0.2s ease-out; }
-  @keyframes img-viewer-in { from { opacity: 0; } }
+  .img-viewer[open], .img-viewer[open]::backdrop { animation: ui-fade-in var(--fade-in); }
   :global(html:has(.img-viewer[open])) { overflow: hidden; }
   .img-viewer-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 12px 10px 20px; background: var(--card); border-bottom: 1px solid var(--hair); }
   .img-viewer-title { min-width: 0; font-size: 15px; font-weight: 600; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .img-viewer-bar button { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: var(--radius-sm); background: var(--well); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color var(--hover), transform 0.16s ease-out; }
-  .img-viewer-bar button:active { transform: scale(0.97); }
+  .img-viewer-bar button { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 14px; flex-shrink: 0; border: 0; border-radius: var(--radius-sm); background: var(--well); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color var(--hover), transform var(--press); }
+  .img-viewer-bar button:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .img-viewer-bar button:hover { background: var(--hair); } }
   .img-viewer-body { padding: 16px; }
   .img-viewer-body img { display: block; width: 100%; height: auto; border-radius: var(--radius-sm); }
@@ -202,19 +194,6 @@ const jsonLd = [
   }
   .article > * {
     max-width: var(--read-width);
-  }
-  .crumbs {
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .crumbs a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: var(--teal-text);
-    text-decoration: none;
   }
   h1 {
     margin-top: 4px;
@@ -265,10 +244,12 @@ const jsonLd = [
     border-right: 2px solid currentColor;
     border-bottom: 2px solid currentColor;
     transform: translateY(-2px) rotate(45deg);
-    transition: transform 0.2s ease-out;
+    transition: transform var(--fade-in); /* поворот — той же кривой, что проявление списка */
   }
   .toc details[open] > .toc-title::after { transform: translateY(2px) rotate(225deg); }
   .toc details[open] > .toc-title { margin-bottom: 0; }
+  /* Раскрытый список проявляется, как ответы и меню на остальных страницах */
+  .toc details[open] > ol { animation: ui-fade-in var(--fade-in); }
   .toc-count { font-weight: 400; color: var(--ink-3); }
   @media (prefers-reduced-motion: reduce) { .toc-title::after { transition: none; } }
   .toc ol {
@@ -513,7 +494,7 @@ const jsonLd = [
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background var(--hover), transform 0.16s ease-out;
+    transition: background var(--hover), transform var(--press);
   }
   @media (hover: hover) and (pointer: fine) {
     .body :global(.copy:hover) {
@@ -521,7 +502,7 @@ const jsonLd = [
     }
   }
   .body :global(.copy:active) {
-    transform: scale(0.97);
+    transform: scale(var(--press-scale));
   }
   /* Палец: кнопка не ниже 44 px, блоку — место под неё */
   @media (pointer: coarse) {

@@ -82,7 +82,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
         <p class="note">{CTA_NOTE}</p>
       </div>
-      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}</a> — {SELLER_QUICK.rest}.</p>}
+      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}<span class="visually-hidden">, откроется в новой вкладке</span></a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{glue(other.text)}</a>
       </div>
       <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
@@ -90,7 +90,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <picture>
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
-        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} ↗</a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
       </figure>
     </section>
 
@@ -145,7 +145,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <h3 class="case-name" id="t-case">{FRESH_SHOP.name}</h3>
             <p class="shop-what">{FRESH_SHOP.what}</p>
             <ul class="dots case-done">{FRESH_SHOP.done.map((d) => <li>{d}</li>)}</ul>
-            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} ↗</a>
+            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <div class="case-pos">
@@ -174,7 +174,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
               <span class="shop-body">
                 <span class="shop-name">{x.name}</span>
                 <span class="shop-what">{x.what}</span>
-                <span class="shop-link">{x.domain} ↗</span>
+                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span></span>
               </span>
             </a>
           </li>
@@ -185,7 +185,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;↗</a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span></a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru ↗</a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span></a></span>
           </figcaption>
         </figure>
       </div>
@@ -254,8 +254,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           </article>
         ))}
       </div>
-      <p class="small">{glue(PLATFORM_NOTE)}</p>
-      <p class="small">{glue(NOT_INCLUDED)}</p>
+      <p class="small price-terms">{glue(PLATFORM_NOTE)}</p>
+      <p class="small price-terms">{glue(NOT_INCLUDED)}</p>
     </section>
 
     <div class="cols">
@@ -327,10 +327,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         ))}
         </div>
         <div class="side">
-        <div class="estimate" id="lead-estimate" aria-live="polite" hidden>
+        <div class="estimate" id="lead-estimate" hidden>
+          <!-- Пакет, цена и срок — одна живая область: после пересчёта читается одной фразой, как в калькуляторе -->
+          <div class="est-live" aria-live="polite" aria-atomic="true">
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
           <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
+          </div>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>
         <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
@@ -341,14 +344,14 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <!-- Согласие по 152-ФЗ отдельной галочкой: без него lead.php заявку не примет -->
         <label class="agree">
           <input type="checkbox" name="consent" value="1" required aria-describedby="lead-consent-error" />
-          <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
+          <span>Согласен на <a href={consent} target="_blank">обработку персональных данных<span class="visually-hidden">, откроется в новой вкладке</span></a> по <a href={privacy} target="_blank">политике конфиденциальности<span class="visually-hidden">, откроется в новой вкладке</span></a></span>
         </label>
         <p class="field-error" id="lead-consent-error" role="alert" hidden></p>
         <button class="cta" type="submit">Отправить расчёт и записаться на диагностику</button>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
         <p class="status" data-fail role="alert" hidden>
-          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}</a>
+          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке</span></a>
         </p>
         </div>
       </form>
@@ -364,7 +367,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 </Base>
 
 <script>
-  import {updateLiveEstimate} from '../lib/live-estimate';
+  import {updateLiveEstimate,showUpdate} from '../lib/live-estimate';
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
   // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
@@ -414,7 +417,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
 
   document.querySelectorAll<HTMLElement>('[data-goal]').forEach((el) => el.addEventListener('click', () => goal(el.dataset.goal!)));
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="https://t.me/"]').forEach((a) => a.addEventListener('click', () => goal('tg-click')));
+  // tg-click отправляет общий обработчик в Base.astro — на всех страницах, со страницей и местом клика.
 
   const form = document.querySelector<HTMLFormElement>('#lead form');
   if (form) {
@@ -459,11 +462,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         updateLiveEstimate(form,null);
         return;
       }
-      out('pkg').textContent = `«${last.packageName}»`;
-      out('price').textContent = `${rub(last.from)} – ${rub(last.to)}`;
+      showUpdate(out('pkg'), `«${last.packageName}»`);
+      showUpdate(out('price'), `${rub(last.from)} – ${rub(last.to)}`);
       updateLiveEstimate(form,`${rub(last.from)} – ${rub(last.to)}`);
-      out('weeks').textContent = `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`;
-      out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
+      showUpdate(out('weeks'), `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`);
+      showUpdate(out('tariff'), `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`);
       box.hidden = false;
     };
     // Кнопка под пакетом: отмечаем его типичные ответы, якорь #lead прокрутит к расчёту.
@@ -631,9 +634,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-size: 16px;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), opacity var(--hover), transform var(--press);
   }
-  .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); transform: scale(0.98); }
+  .cta:active { background: var(--teal-btn-hover); color: var(--on-teal); transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .cta:hover { background: var(--teal-btn-hover); color: var(--on-teal); } }
   .cta:disabled { opacity: 0.6; cursor: wait; }
   .note, .small { font-size: 14px; color: var(--ink-3); line-height: 1.45; }
@@ -655,6 +658,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
   .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
   .block > .small { max-width: 68ch; line-height: 1.5; }
+  /* Условия цены под пакетами — часть цены, а не сноска: читаются вторым цветом текста, а не самым бледным */
+  .block > .price-terms { font-size: 15px; color: var(--ink-2); }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
   .item {
@@ -748,10 +753,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font: inherit;
     font-size: 18px;
     cursor: pointer;
-    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), border-color var(--hover), opacity var(--hover), transform var(--press);
   }
   @media (hover: hover) and (pointer: fine) { .arrow:hover:not(:disabled) { background: var(--well); } }
-  .arrow:active:not(:disabled) { transform: scale(0.97); }
+  .arrow:active:not(:disabled) { transform: scale(var(--press-scale)); }
   .arrow:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .arrow:disabled { opacity: 0.35; cursor: default; }
   .phones {
@@ -843,10 +848,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     font-size: 15px;
     text-decoration: none;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform var(--press);
   }
   .plan .dots { margin-bottom: 12px; }
-  .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(0.98); }
+  .plan-cta:active { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .plan-cta:hover { background: var(--teal-btn); border-color: var(--teal-btn); color: var(--on-teal); } }
   .plan-cta:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
   .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
@@ -926,13 +931,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-right: 2px solid var(--ink-3);
     border-bottom: 2px solid var(--ink-3);
     transform: rotate(45deg);
-    transition: transform 0.2s ease, border-color var(--hover);
+    transition: transform var(--fade-in), border-color var(--hover); /* поворот — той же кривой, что проявление ответа */
   }
   details[open] summary { color: var(--teal-text); }
   /* Стрелка поднимается через transform, а не margin: поворот и сдвиг идут одним плавным движением */
   details[open] summary::after { transform: translateY(4px) rotate(-135deg); border-color: var(--teal); }
-  details[open] p { animation: faq-in 0.2s ease-out; }
-  @keyframes faq-in { from { opacity: 0; } }
+  details[open] p { animation: ui-fade-in var(--fade-in); }
   @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
   @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
   summary:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
@@ -975,8 +979,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color var(--hover), color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform var(--press);
   }
+  /* Пункт меню разделов проседает при нажатии, как кнопки и переключатели: на телефоне наведения нет, отклик — только этот */
+  .jump a:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .jump a:hover { color: var(--ink); background: var(--well); } }
   .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
@@ -1024,11 +1030,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--input-bg);
     font-size: 15px;
     color: var(--ink);
-    transition: border-color var(--hover), background-color var(--hover), color var(--hover), transform 0.16s ease-out;
+    transition: border-color var(--hover), background-color var(--hover), color var(--hover), transform var(--press);
   }
-  .chip input:active + span { transform: scale(0.97); }
+  .chip input:active + span { transform: scale(var(--press-scale)); }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
+  /* Высокая контрастность Windows: цвет рамки и фона пропадает — выбранный ответ отмечает системная рамка */
+  @media (forced-colors: active) { .chip input:checked + span { outline: 2px solid Highlight; outline-offset: -2px; } }
   .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }
   /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
   .side > .agree {
@@ -1055,6 +1063,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-radius: var(--radius-sm);
   }
   .estimate[hidden] { display: none; }
+  .est-live { display: flex; flex-direction: column; gap: 4px; }
   .estimate{scroll-margin-top:84px}
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }

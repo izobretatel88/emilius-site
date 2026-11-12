@@ -122,7 +122,10 @@ export function setupProjectViewer() {
       title.textContent = selected.name;
       inquiry.href = selected.inquiry;
       inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
-      chooseDevice('desktop');
+      // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
+      // Ширина — та же граница 700 px, что у одностолбцовой галереи.
+      const narrow = window.matchMedia('(max-width: 700px)').matches;
+      chooseDevice(narrow && selected.screens.some(screen => screen.device === 'phone') ? 'phone' : 'desktop');
       viewer.showModal();
       viewer.scrollTop = 0;
     });

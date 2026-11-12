@@ -14,21 +14,23 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       <p>Ориентир — <strong data-project-context></strong></p>
       <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
     </div>
-    <div class="field">
-    <label class="field-label" for="fb-message">Ваш проект или вопрос</label>
+    <div class="ui-field">
+    <label class="ui-field-label" for="fb-message">Ваш проект или вопрос</label>
     <textarea
+      class="ui-input"
       id="fb-message"
       name="message"
       required
       maxlength="3000"
       aria-describedby="fb-message-hint fb-message-error"
       placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
-    <p class="field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3 000.</span></p>
-    <p class="field-error" id="fb-message-error" role="alert" hidden></p>
+    <p class="ui-field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3 000.</span></p>
+    <p class="ui-field-error" id="fb-message-error" role="alert" hidden></p>
     </div>
-    <div class="field">
-    <label class="field-label" for="fb-contact">Как с вами связаться</label>
+    <div class="ui-field">
+    <label class="ui-field-label" for="fb-contact">Как с вами связаться</label>
     <input
+      class="ui-input"
       id="fb-contact"
       name="contact"
       type="text"
@@ -36,7 +38,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       aria-describedby="fb-contact-hint"
       placeholder="Telegram, телефон или почта"
     />
-    <p class="field-hint" id="fb-contact-hint">Необязательно. Оставьте контакт, если хотите получить ответ.</p>
+    <p class="ui-field-hint" id="fb-contact-hint">Необязательно. Оставьте контакт, если хотите получить ответ.</p>
     </div>
     <!-- Ловушка для ботов: человек это поле не видит -->
     <div class="trap" aria-hidden="true">
@@ -45,9 +47,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     <!-- Согласие по 152-ФЗ — отдельной галочкой, по умолчанию не отмечена -->
     <label class="agree">
       <input type="checkbox" name="consent" value="1" required aria-describedby="fb-consent-error" />
-      <span>Согласен на <a href={consent} target="_blank">обработку персональных данных</a> по <a href={privacy} target="_blank">политике конфиденциальности</a></span>
+      <span>Согласен на <a href={consent} target="_blank">обработку персональных данных<span class="visually-hidden">, откроется в новой вкладке</span></a> по <a href={privacy} target="_blank">политике конфиденциальности<span class="visually-hidden">, откроется в новой вкладке</span></a></span>
     </label>
-    <p class="field-error" id="fb-consent-error" role="alert" hidden></p>
+    <p class="ui-field-error" id="fb-consent-error" role="alert" hidden></p>
     <button class="btn-send" type="submit">
       <span class="label">Отправить</span>
       <!-- Облачко сообщения: значок Telegram — только у кнопок, которые ведут в Telegram -->
@@ -55,7 +57,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     </button>
     <p class="status" role="status" aria-live="polite" hidden></p>
     <p class="status status-error" role="alert" hidden>
-      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}</a>
+      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}<span class="visually-hidden">, откроется в новой вкладке</span></a>
     </p>
   </form>
 </section>
@@ -193,54 +195,12 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     flex-direction: column;
     gap: 12px;
   }
-  .field{display:grid;gap:7px;min-width:0}
   .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
   .project-context[hidden]{display:none}
   .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
-  .field-label{font-size:15px;font-weight:600}
-  .field-hint{font-size:13px;line-height:1.45;color:var(--ink-2)}
-  .field-error{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}
-  [aria-invalid='true']{outline:2px solid var(--ink);outline-offset:2px}
-  textarea,
-  input[type='text'] {
-    width: 100%;
-    font: inherit;
-    font-size: 16px; /* меньше 16 — iOS приближает страницу при фокусе */
-    color: var(--ink);
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    transition: border-color var(--hover);
-  }
-  textarea {
-    height: 136px;
-    resize: vertical;
-    min-height: 96px;
-  }
-  input[type='text'] {
-    height: 50px;
-  }
-  textarea::placeholder,
-  input[type='text']::placeholder {
-    color: var(--ink-3);
-  }
-  textarea:focus,
-  input[type='text']:focus {
-    border-color: var(--teal);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    textarea:hover,
-    input[type='text']:hover {
-      border-color: var(--teal);
-    }
-  }
-  /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
-  textarea:focus-visible,
-  input[type='text']:focus-visible {
-    outline: 2px solid var(--teal);
-    outline-offset: -1px;
-  }
+  /* Поля, подписи и подсказки — общие классы .ui-field*, .ui-input (layout.css); здесь только высота полей этой формы */
+  textarea.ui-input { height: 136px; }
+  .agree [aria-invalid='true'] { outline: 2px solid var(--ink); outline-offset: 2px; }
   .trap {
     position: absolute;
     left: -9999px;
@@ -282,10 +242,10 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     justify-content: space-between;
     padding-inline: 16px 14px;
     cursor: pointer;
-    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), transform 0.16s ease-out;
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), transform var(--press);
   }
   /* Нажатие: кнопка чуть проседает, как остальные кнопки сайта */
-  .btn-send:active:not(:disabled) { transform: scale(0.98); }
+  .btn-send:active:not(:disabled) { transform: scale(var(--press-scale)); }
   .btn-send svg {
     width: 22px;
     height: 22px;

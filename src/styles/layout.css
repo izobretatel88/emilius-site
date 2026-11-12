@@ -64,7 +64,7 @@
   font-weight: 600;
   text-decoration: none;
   text-align: center;
-  transition: background-color var(--hover), transform 0.16s ease-out;
+  transition: background-color var(--hover), transform var(--press);
 }
 /* Наведение — только там, где есть мышь: на телефоне касание не оставляет «залипший» цвет */
 @media (hover: hover) and (pointer: fine) {
@@ -75,7 +75,7 @@
 }
 /* Нажатие: кнопка чуть проседает — интерфейс «услышал» касание */
 .ui-button:active {
-  transform: scale(0.98);
+  transform: scale(var(--press-scale));
 }
 /* Текстовое действие: подчёркивание только при наведении и в фокусе */
 .ui-link {
@@ -153,6 +153,56 @@
   border-radius: 50%;
   background: var(--stage-ink, var(--ruler));
 }
+/* Метка этапа: точка, направление и его дни итерации; ведёт на страницу направления (проекты, образцы системы) */
+.ui-stage-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline transparent;
+  text-underline-offset: 4px;
+  transition: color var(--hover), text-decoration-color var(--hover);
+}
+.ui-stage-tag .days { font-weight: 400; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ui-stage-tag:focus-visible { color: var(--stage-ink); text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) { .ui-stage-tag:hover { color: var(--stage-ink); text-decoration-color: currentColor; } }
+/* Поле формы: подпись над полем, подсказка и ошибка под ним (форма «Обсудить проект», образцы системы) */
+.ui-field { display: grid; gap: 7px; min-width: 0; }
+.ui-field-label { font-size: 15px; font-weight: 600; }
+.ui-field-hint { font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+.ui-field-error { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.45; }
+.ui-input {
+  width: 100%;
+  height: 50px;
+  font: inherit;
+  font-size: 16px; /* меньше 16 — iOS приближает страницу при фокусе */
+  color: var(--ink);
+  background-color: var(--input-bg); /* не сокращённое background: оно стёрло бы стрелку списка из global.css */
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: border-color var(--hover);
+}
+textarea.ui-input { height: 112px; min-height: 96px; resize: vertical; }
+.ui-input::placeholder { color: var(--ink-3); }
+.ui-input:focus { border-color: var(--teal); }
+@media (hover: hover) and (pointer: fine) { .ui-input:hover { border-color: var(--teal); } }
+/* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
+.ui-input:focus-visible { outline: 2px solid var(--teal); outline-offset: -1px; }
+/* Ошибка — рамка цветом текста, а не красным: в палитре нет второго акцента */
+.ui-input[aria-invalid='true'] { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* Соседний этап внизу страницы направления: «← до этого · дни 14–26» и название этапа с точкой */
+.ui-stage-step { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 44px; color: var(--ink); text-decoration: none; }
+.ui-stage-step.next { text-align: right; }
+.ui-stage-step .dir { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ui-stage-step .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 18px; text-transform: capitalize; transition: color var(--hover); }
+.ui-stage-step.next .name { justify-content: flex-end; }
+.ui-stage-step:focus-visible .name, .ui-stage-step:active .name { color: var(--stage-ink, var(--teal-text)); }
+@media (hover: hover) and (pointer: fine) { .ui-stage-step:hover .name { color: var(--stage-ink, var(--teal-text)); } }
+@media (prefers-reduced-motion: reduce) { .ui-stage-tag, .ui-stage-step .name { transition: none; } }
 /* Линейка итерации: 52 деления — 52 дня, первое деление каждого этапа выше. Компонент IterationRuler.astro.
    Первое деление этапа всегда цветом этапа (--sec-*-ink). Все 13 дней этапа красятся классом .on (страница направления)
    или когда в общем предке [data-ruler-scope] наведена или в фокусе ссылка [data-stage-link] этого этапа. */
@@ -251,3 +301,9 @@
     gap: 8px;
   }
 }
+
+/* Общее появление: только прозрачность, без сдвига — спокойно и одинаково на всём сайте.
+   Окна просмотра, меню, раскрытые ответы и списки. При «уменьшить движение» длительность гасит global.css. */
+@keyframes ui-fade-in { from { opacity: 0; } }
+/* Пересчитанное значение (калькулятор, строка «Текущая оценка»): то же появление, класс ставит showUpdate из lib/live-estimate.ts */
+.ui-updated { animation: ui-fade-in var(--fade-in); }

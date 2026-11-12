@@ -7,10 +7,16 @@ import Footer from '../components/Footer.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import IterationRuler from '../components/IterationRuler.astro';
 import LinkList from '../components/LinkList.astro';
-import { SECTORS, ITERATION } from '../data/site';
+import { SECTORS, ITERATION, LINKS } from '../data/site';
 import { DIRECTIONS } from '../data/navigation';
+import { SERVICES } from '../data/services';
+import { href } from '../lib/urls';
 
 const pad = (n: number) => String(n).padStart(2, '0');
+// Соседние этапы показаны так, как их видит страница «Разработки»: до неё дизайн, после — маркетинг
+const devIndex = SECTORS.findIndex((s) => s.id === 'dev');
+const prev = SECTORS[devIndex - 1];
+const next = SECTORS[devIndex + 1];
 const colors = [
   { title: 'Акцент', note: 'Один акцент для действий. Бирюзовый текст — только ссылки.', tokens: [
     ['--teal', 'Рамки, колесо, кольцо фокуса'],
@@ -84,8 +90,33 @@ const colors = [
       <div class="ui-actions sample-actions">
         <a class="ui-button" href="#g-actions">Обсудить проект <span aria-hidden="true">→</span></a>
         <a class="ui-link" href="#g-actions">Смотреть проекты <span class="ui-arrow" aria-hidden="true">→</span></a>
+        <a class="ui-link" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
       </div>
+      <p class="note">Стрелка <code>→</code> — переход по сайту, <code>↗</code> — на другой сайт в новой вкладке. Стрелка только для глаз (<code>aria-hidden</code>), а программе чтения экрана ссылка наружу говорит «откроется в новой вкладке» скрытым текстом.</p>
       <p class="note focus-note">Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, 2 px, отступ 3 px (<code>--focus-ring</code>, <code>--focus-offset</code>). Нажмите Tab, чтобы увидеть его на кнопке и ссылке выше.</p>
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-fields">
+      <div class="ui-section-head"><h2 id="g-fields">Поля формы</h2></div>
+      <p class="ui-section-intro">Подпись над полем, подсказка под ним. Фон <code>--input-bg</code>, рамка <code>--input-border</code>, при наведении и в фокусе — бирюза, текст 16 px. Ошибка — рамка цветом текста: второго акцента в палитре нет.</p>
+      <!-- Образцы без формы: ничего не отправляют -->
+      <div class="ui-surface fields-sample">
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-message">Ваш проект или вопрос</label>
+          <textarea class="ui-input" id="g-message" aria-describedby="g-message-hint" placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
+          <p class="ui-field-hint" id="g-message-hint">Подсказка — 13 px, цвет <code>--ink-2</code>.</p>
+        </div>
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-contact">Как с вами связаться</label>
+          <input class="ui-input" id="g-contact" type="text" aria-describedby="g-contact-hint" placeholder="Telegram, телефон или почта" />
+          <p class="ui-field-hint" id="g-contact-hint">Поле 50 px по высоте, радиус <code>--radius-sm</code>.</p>
+        </div>
+        <div class="ui-field">
+          <label class="ui-field-label" for="g-error">Поле с ошибкой</label>
+          <input class="ui-input" id="g-error" type="text" aria-invalid="true" aria-describedby="g-error-text" value="" />
+          <p class="ui-field-error" id="g-error-text">Ошибка — 14 px, полужирный, цвет <code>--ink</code>.</p>
+        </div>
+      </div>
     </section>
 
     <section class="ui-section" aria-labelledby="g-surface">
@@ -101,6 +132,18 @@ const colors = [
       </ul>
     </section>
 
+    <section class="ui-section" aria-labelledby="g-motion">
+      <div class="ui-section-head"><h2 id="g-motion">Движение</h2></div>
+      <p class="ui-section-intro">Спокойно и коротко: смена цвета и появление — 0,2 с, нажатие — 0,16 с. Двигается только прозрачность и масштаб, ничего не пружинит. При «уменьшить движение» всё гасится, колесо стоит.</p>
+      <ul class="motion-tokens">
+        <li><code>--hover</code> 0,2 с — смена цвета при наведении и в фокусе</li>
+        <li><code>--fade-in</code> 0,2 с, сильный ease-out — появление окна, меню, ответа (<code>ui-fade-in</code>) и пересчитанного значения (<code>.ui-updated</code>)</li>
+        <li><code>--press</code> 0,16 с, <code>--press-scale</code> 0,97 — кнопка проседает при нажатии; большие плитки — <code>--press-scale-card</code> 0,99</li>
+        <li><code>--wheel-period</code> 156 с — оборот колеса</li>
+      </ul>
+      <details class="motion-sample"><summary>Раскрыть образец</summary><p>Содержимое проявляется за <code>--fade-in</code>: только прозрачность, без сдвига.</p></details>
+    </section>
+
     <section class="ui-section" aria-labelledby="g-iteration">
       <div class="ui-section-head"><h2 id="g-iteration">Итерация</h2></div>
       <p class="ui-section-intro">Линейка итерации — обод колеса, развёрнутый в строку: 52 деления по числу дней, четыре этапа по 13. Ставится только там, где показывает дни этапа.</p>
@@ -114,6 +157,15 @@ const colors = [
       <h3 class="list-title">Список направлений</h3>
       <p class="note">Компонент <code>LinkList</code> с этапом: точка цвета этапа у подписи, заголовок при наведении — цветом этапа.</p>
       <div class="ui-surface list-sample"><LinkList items={DIRECTIONS} /></div>
+      <h3 class="list-title">Метка этапа</h3>
+      <p class="note">Класс <code>.ui-stage-tag</code>: ставится у проекта, который числится кейсом направления в <code>src/data/services.ts</code>. Ведёт на страницу направления, при наведении и в фокусе — цвет этапа.</p>
+      <div class="tags">{SECTORS.map((s) => <a class="ui-stage-tag" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{SERVICES[s.id].title}</span><span class="days">дни {pad(s.from)}–{pad(s.to)}</span></a>)}</div>
+      <h3 class="list-title">Соседние этапы</h3>
+      <p class="note">Класс <code>.ui-stage-step</code>: внизу страницы направления стоят этап до и этап после, с днями итерации. Цикл замыкается: после маркетинга снова касдев.</p>
+      <nav class="steps-sample" aria-label="Образец: соседние этапы «Разработки»">
+        <a class="ui-stage-step" href={href(`services/${prev.id}/`)} data-stage={prev.id}><span class="dir">← до этого · дни {pad(prev.from)}–{pad(prev.to)}</span><span class="name"><i class="ui-stage-dot" aria-hidden="true"></i>{prev.name}</span></a>
+        <a class="ui-stage-step next" href={href(`services/${next.id}/`)} data-stage={next.id}><span class="dir">дни {pad(next.from)}–{pad(next.to)} · дальше →</span><span class="name">{next.name}<i class="ui-stage-dot" aria-hidden="true"></i></span></a>
+      </nav>
     </section>
   </main>
   <Footer />
@@ -154,6 +206,12 @@ const colors = [
   .h2-sample { font-weight: 600; }
   .sample-actions { margin-top: 0; }
   .focus-note { margin-top: 24px; }
+  .motion-tokens { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); max-width: 72ch; }
+  .motion-tokens code, .motion-sample code { font-family: var(--font-mono); font-size: 0.92em; color: var(--ink); }
+  .motion-sample { margin-top: 20px; }
+  .motion-sample summary { width: fit-content; padding-block: 11px; cursor: pointer; font-weight: 600; color: var(--teal-text); }
+  .motion-sample[open] p { animation: ui-fade-in var(--fade-in); }
+  .motion-sample p { color: var(--ink-2); max-width: 66ch; }
   .surfaces { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
   .surface-sample { padding: 26px; }
   .flat-sample { padding-top: 26px; border-top: 1px solid var(--hair); }
@@ -168,8 +226,12 @@ const colors = [
   .iterations-sample { width: 154px; }
   .guide h3.list-title { margin-top: 48px; }
   .list-sample { margin-top: 18px; padding: 4px 26px; }
+  .fields-sample { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 26px; align-items: start; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 12px; }
+  .steps-sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 640px; margin-top: 12px; }
   @media (max-width: 760px) {
     .surfaces { grid-template-columns: 1fr; }
+    .fields-sample { grid-template-columns: 1fr; padding: 20px 18px; }
     .swatches { grid-template-columns: 1fr; }
     .list-sample { padding-inline: 18px; }
   }

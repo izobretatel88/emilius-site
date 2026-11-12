@@ -1,5 +1,5 @@
 @media (prefers-color-scheme: dark){}
-.platform-comparison{ background: var(--page); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+.platform-comparison{ /* без своего фона: под сравнением те же лучи, что на всём сайте */ color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 .platform-comparison .wrap{
   max-width: 1400px; margin: 0 auto;
   padding-block: 56px 64px;
@@ -57,7 +57,9 @@
 .platform-comparison .v-site,.platform-comparison .v-mp{ font-weight: inherit; }
 .platform-comparison .v-site .sub,.platform-comparison .v-mp .sub{ font-weight: 400; }
 .platform-comparison .best-tag{ display: none; margin-top: 6px; padding: 2px 8px; border-radius:var(--radius-pill); width: fit-content;
-  background: var(--teal-btn); color: var(--on-teal); font-size: 11px; font-weight: 700; letter-spacing: 0; }
+  background: var(--teal-btn); color: var(--on-teal); font-size: var(--fs-small); font-weight: 700; letter-spacing: 0; }
+/* Ссылка к источникам под таблицей — зона нажатия 44 px, как у остальных ссылок сравнения */
+.platform-comparison a[href="#comparison-sources"]{ display: inline-flex; align-items: center; min-height: 44px; }
 .platform-comparison.mp [data-p].best{ background: var(--teal-soft); }
 .platform-comparison.mp thead th.best .best-tag{ display: block; }
 .platform-comparison [data-p].out{ color: var(--ink-2); }
@@ -69,14 +71,16 @@
 .platform-comparison .label{ flex: none; width: 170px; color: var(--ink-2); font-size: 14px; }
 .platform-comparison .seg{ display: inline-flex; padding: 4px; gap: 4px; border-radius:var(--radius-btn); background: var(--well); }
 .platform-comparison .seg button{ font: inherit; font-size: 15px; font-weight: 700; padding: 9px 16px; border: 0; border-radius:var(--radius-sm);
-  background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+  background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color var(--hover), color var(--hover), transform var(--press); }
 @media (hover: hover) and (pointer: fine) { .platform-comparison .seg button:hover{ color: var(--ink); background: var(--card); } }
 .platform-comparison .seg button[aria-pressed="true"]{ background: var(--teal-btn); color: var(--on-teal); }
+/* Высокая контрастность Windows убирает заливку — нажатую кнопку и фильтр отмечает системная рамка */
+@media (forced-colors: active){ .platform-comparison .seg button[aria-pressed="true"], .platform-comparison .chips button[aria-pressed="true"]{ outline: 2px solid Highlight; outline-offset: -2px; } }
 .platform-comparison .chips{ display: flex; flex-wrap: wrap; gap: 8px; }
 .platform-comparison .chips button{ font: inherit; font-size: 14px; padding: 7px 13px; border: 1px solid var(--hair); border-radius:var(--radius-pill);
-  background: var(--card); color: var(--ink); cursor: pointer; transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out; }
+  background: var(--card); color: var(--ink); cursor: pointer; transition: background-color var(--hover), border-color var(--hover), transform var(--press); }
 /* Отклик на нажатие, как у остальных кнопок сайта */
-.platform-comparison .seg button:active,.platform-comparison .chips button:active{ transform: scale(0.97); }
+.platform-comparison .seg button:active,.platform-comparison .chips button:active{ transform: scale(var(--press-scale)); }
 @media (hover: hover) and (pointer: fine) { .platform-comparison .chips button:hover{ border-color: var(--teal); } }
 .platform-comparison .chips button[aria-pressed="true"]{ background: var(--teal-soft); border-color: var(--teal); color: var(--teal-text); font-weight: 700; }
 .platform-comparison .seg button:focus-visible,.platform-comparison .chips button:focus-visible,.platform-comparison .reset:focus-visible{ outline: 2px solid var(--teal); outline-offset: 2px; }
@@ -84,7 +88,7 @@
 .platform-comparison .count b{ color: var(--ink); }
 .platform-comparison .reset{ font: inherit; font-size: 14px; padding: 0; border: 0; background: none; color: var(--teal-text);
   text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.platform-comparison .takeaway{ margin: 0; max-width: 78ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
+.platform-comparison .takeaway{ margin: 0; max-width: 68ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
 .platform-comparison .takeaway b{ display: block; color: var(--teal-text); }
 @media (prefers-reduced-motion: reduce){.platform-comparison .seg button,.platform-comparison .chips button{ transition: none; }}
 .platform-comparison .foot{ display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; max-width: 86ch; }
@@ -105,5 +109,6 @@
 .platform-comparison .seg button{ flex: 1; padding: 10px 8px; }
 .platform-comparison .count{ margin-left: 0; }}
 /* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
-.platform-comparison details[open]>:not(summary){animation:details-in 0.2s ease-out}
-@keyframes details-in{from{opacity:0}}
+/* Ссылки на источники — цель касания 44 px: список длинный, на телефоне ссылки шли вплотную по 32 px */
+.platform-comparison #comparison-sources li a{display:inline-flex;align-items:center;min-height:44px}
+.platform-comparison details[open]>:not(summary){animation:ui-fade-in var(--fade-in)}

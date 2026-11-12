@@ -11,9 +11,9 @@ import {SECTORS} from '../../data/site';
 import {SERVICES} from '../../data/services';
 
 // Метка этапа: проект показан как кейс направления (SERVICES[...].cases) — значит, работа шла на этом этапе итерации.
-// Берём только эту связь из данных; у проектов без неё метки нет.
-const pad2=(n:number)=>String(n).padStart(2,'0');
-const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title,days:`${pad2(s.from)}–${pad2(s.to)}`}));
+// Берём только эту связь из данных; у проектов без неё метки нет. Дни этапа на колесе (27–39 и т. п.) здесь
+// не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
+const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
 
 const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на InSales · местное SEO',updated:true},
@@ -56,12 +56,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
-        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p>{stagesOf(p.id).map(s=><a class="project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span><span class="days">дни {s.days}</span></a>)}</div>
+        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект</a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
   </div>
@@ -91,7 +91,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Каждый проект — белая карточка на сером фоне (05.11.2026, по замечанию владельца): проекты не сливаются */
   .project{min-width:0;scroll-margin-top:24px;display:flex;flex-direction:column;padding:10px 10px 22px;background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   .project>:not(.project-preview){margin-inline:16px}
-  .project>.project-inquiry{align-self:start}
+  /* Доказательство (результат) — до действия; «Хочу похожий…» прижата к низу карточки, в ряду стоит на одной линии */
+  .project>.project-inquiry{align-self:start;margin-top:auto}
+  .project-caption,.project-result{margin-bottom:8px}
   .project-featured{grid-column:1/-1}
   .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair)}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
@@ -105,14 +107,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-kind{font-size:13px;color:var(--ink-2);margin-bottom:5px}
   .project h2{font-size:28px;line-height:1.15;letter-spacing:-.02em;margin:0}
   .project-featured h2{font-size:var(--fs-h2);letter-spacing:var(--tracking-tight)}
-  .project-role{font-size:14px;line-height:1.5;color:var(--ink-2);margin-top:8px}
-  /* Метка этапа: точка цвета этапа, направление и его дни итерации; ведёт на страницу направления */
-  .project-stage{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:2px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:underline transparent;text-underline-offset:4px;transition:color var(--hover),text-decoration-color var(--hover)}
-  .project-stage .days{font-weight:400;color:var(--ink-3);font-variant-numeric:tabular-nums}
-  .project-stage:focus-visible{color:var(--stage-ink);text-decoration-color:currentColor}
-  @media (hover: hover) and (pointer: fine){.project-stage:hover{color:var(--stage-ink);text-decoration-color:currentColor}}
+  /* Что мы сделали — главное в подписи: основной кегль и полный цвет текста, а не серая сноска */
+  .project-role{font-size:var(--fs-body);line-height:1.5;color:var(--ink);margin-top:8px}
+  /* Метка этапа — общий класс .ui-stage-tag (layout.css): точка цвета этапа и направление, без дней колеса */
+  .project-stage{margin-top:2px}
   .project-site{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:14px;font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere;max-width:100%;flex-shrink:1}
-  .project-inquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;margin-top:8px;font-size:14px;font-weight:600;text-underline-offset:4px}
+  .project-inquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;font-size:14px;font-weight:600;text-underline-offset:4px}
   p.project-result{margin-bottom:0}
   .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:16px;min-height:64px}
   /* Бирюзовый — цвет ссылок: цифра красится только там, где строка ведёт на кейс */
@@ -128,8 +128,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
-  .project-viewer[open],.project-viewer[open]::backdrop{animation:viewer-in 0.2s ease-out}
-  @keyframes viewer-in{from{opacity:0}}
+  .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
   :global(html:has(.project-viewer[open])){overflow:hidden}
   .viewer-toolbar{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--hair)}
   .viewer-toolbar h2{font-size:20px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
@@ -153,8 +152,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
-  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
-  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform:scale(0.97)}
+  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
+  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   .viewer-image[data-device='phone']{padding:20px;background:var(--well)}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   @media(max-width:1000px){.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
@@ -162,16 +161,16 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project-gallery{grid-template-columns:1fr;gap:20px}
     .project{padding:8px 8px 18px}
     .project>:not(.project-preview){margin-inline:10px}
-    .project>.project-inquiry{align-self:stretch;width:auto}
+    .project>.project-inquiry{align-self:stretch;width:auto;margin-top:12px}
     .project-featured{grid-column:auto}
     .project-caption,.project-featured .project-caption{flex-direction:column;margin-top:16px}
     .project h2,.project-featured h2{font-size:26px}
     .project-role{margin-top:6px}
     .project-site{align-self:flex-start}
-    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform 0.16s ease-out}
+    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform var(--press)}
     .project-inquiry:focus-visible {background:var(--teal-btn);color:var(--on-teal)}
     /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
-    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform:scale(0.98)}
+    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform: scale(var(--press-scale))}
     @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
     .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}

@@ -10,11 +10,17 @@
 .directory-callout p { max-width:75ch; color:var(--ink-2); margin:8px 0 16px; }
 .directory-button { display:inline-flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--teal-btn); color:var(--on-teal); padding:12px 18px; border-radius:var(--radius-btn); font-weight:600; }
 @media (hover: hover) and (pointer: fine) { .directory-button:hover { background:var(--teal-btn-hover); } }
-.directory-button { transition: background-color var(--hover), transform 0.16s ease-out; }
-.directory-button:active { transform: scale(0.98); }
+.directory-button { transition: background-color var(--hover), transform var(--press); }
+.directory-button:active { transform: scale(var(--press-scale)); }
 .directory-tags { display:flex; flex-wrap:wrap; gap:4px 22px; margin-top:18px; font-size:14px; }
-.directory-tags a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:4px; }
+/* Связанные материалы — текстовые действия, как .ui-link: цвет текста, подчёркивание при наведении и в фокусе, бирюзовая стрелка (для чтения экрана скрыта) */
+.directory-tags a { display:inline-flex; align-items:center; gap:10px; min-height:44px; font-weight:600; color:var(--ink); text-decoration:underline transparent; text-underline-offset:4px; transition:color var(--hover), text-decoration-color var(--hover); }
+.directory-tags a::after { content:'→' / ''; color:var(--teal-text); }
+.directory-tags a:focus-visible { color:var(--teal-text); text-decoration-color:currentColor; }
+@media (hover: hover) and (pointer: fine) { .directory-tags a:hover { color:var(--teal-text); text-decoration-color:currentColor; } }
 .directory-callout p { line-height:1.55; }
+/* Текстовая ссылка под выводом (/compare/, /resources/): цель касания 44 px, как у остальных ссылок-действий */
+.directory-callout > a:not(.directory-button) { display:inline-flex; align-items:center; min-height:44px; }
 /* Первый раздел без линии сверху (Полезное) не прилипает к вводному тексту; ссылка «Все статьи» отстоит от списка */
 .directory > section:not([class]) { margin-top:var(--section-pad-sm); }
 .directory-section > ul.link-list + a { display:inline-flex; align-items:center; min-height:44px; margin-top:10px; font-weight:600; text-underline-offset:4px; }

@@ -1,6 +1,6 @@
 @media(prefers-color-scheme:dark){}
 .platform-comparison *{box-sizing:border-box}
-.platform-comparison{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+.platform-comparison{margin:0;/* без своего фона: под сравнением те же лучи, что на всём сайте */ color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
 .platform-comparison button,.platform-comparison input,.platform-comparison select{font:inherit;color:inherit}
 .platform-comparison button,.platform-comparison a,.platform-comparison input,.platform-comparison select,.platform-comparison summary,.platform-comparison .scroll{outline-offset:4px}
 .platform-comparison button:focus-visible,.platform-comparison a:focus-visible,.platform-comparison input:focus-visible,.platform-comparison select:focus-visible,.platform-comparison summary:focus-visible,.platform-comparison .scroll:focus-visible{outline:2px solid var(--teal-text)}
@@ -13,7 +13,7 @@
 .platform-comparison #theme{border:1px solid var(--hair);border-radius:var(--radius-sm);padding:8px 12px;background:var(--card);font-size:13px;flex-shrink:0}
 .platform-comparison h1{margin:8px 0 0;font-size:clamp(32px,4.6vw,50px);line-height:1.08;letter-spacing:-.015em;font-weight:700;text-wrap:balance}
 .platform-comparison .lead{margin:0;color:var(--ink-2);font-size:20px;line-height:1.4;max-width:65ch}
-.platform-comparison .scope{font-size:14px;color:var(--ink-2);max-width:95ch;margin:0}
+.platform-comparison .scope{font-size:14px;color:var(--ink-2);max-width:72ch;margin:0}
 .platform-comparison .panel{background:var(--card);padding:20px;border-radius:var(--radius-card);display:grid;gap:18px}
 .platform-comparison .search-row{display:grid;grid-template-columns:minmax(240px,1fr) minmax(200px,320px);gap:20px}
 .platform-comparison .field{display:grid;gap:6px}
@@ -25,19 +25,20 @@
 .platform-comparison input::placeholder{color:var(--ink-2);opacity:1}
 .platform-comparison .filter-row{display:flex;align-items:center;gap:16px;justify-content:space-between}
 .platform-comparison .chips{display:flex;flex-wrap:wrap;gap:8px}
-.platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color 160ms ease-out,color 160ms ease-out,border-color 160ms ease-out,transform 160ms ease-out}
-.platform-comparison .chips button:active{transform:scale(0.97)}
+.platform-comparison .chips button{padding:8px 13px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:var(--card);font-size:14px;transition:background-color var(--hover),color var(--hover),border-color var(--hover),transform var(--press)}
+.platform-comparison .chips button:active{transform:scale(var(--press-scale))}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .chips button:hover{border-color:var(--teal-text)} }
+@media (forced-colors: active){.platform-comparison .chips button[aria-pressed=true]{outline:2px solid Highlight;outline-offset:-2px}} /* высокая контрастность: выбранный фильтр — системной рамкой */
 .platform-comparison .chips button[aria-pressed=true]{background:var(--teal-soft);color:var(--teal-text);border-color:var(--teal-text);font-weight:700}
 .platform-comparison .reset{padding:9px 0;border:0;background:none;color:var(--teal-text);font-size:14px;text-decoration:underline;white-space:nowrap}
 .platform-comparison .explanation{background:var(--teal-soft);border-radius:var(--radius-sm);padding:18px 20px;font-size:14px}
-.platform-comparison .explanation>p{margin:0 0 10px;max-width:110ch}
+.platform-comparison .explanation>p{margin:0 0 10px;max-width:62ch}
 .platform-comparison .explanation strong{color:var(--teal-text)}
 .platform-comparison summary{color:var(--teal-text);font-weight:700;width:fit-content;min-height:44px;padding:12px 0;margin-block:-8px}
 .platform-comparison dl{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin:20px 0}
 .platform-comparison dt{font-weight:700}
 .platform-comparison dd{margin:4px 0 0;color:var(--ink-2)}
-.platform-comparison .method-note{max-width:95ch;color:var(--ink-2);margin-bottom:0}
+.platform-comparison .method-note{max-width:72ch;color:var(--ink-2);margin-bottom:0}
 .platform-comparison .table-meta{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--ink-2);font-size:14px;margin:0 0 12px}
 .platform-comparison .table-meta p{margin:0;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 .platform-comparison .card{background:var(--card);border-radius:var(--radius-card);overflow:hidden;min-width:0}
@@ -55,9 +56,9 @@
 .platform-comparison .stage{display:block;color:var(--ink-2);font-size:var(--fs-small);font-weight:400;margin-bottom:6px}
 .platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
 .platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
-.platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block}
+.platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block;min-height:44px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .feature-link:hover{color:var(--teal-text)} }
-.platform-comparison .feature-id{display:block;font-size:12px;color:var(--ink-2);margin-top:5px}
+.platform-comparison .feature-id{display:block;font-size:var(--fs-small);color:var(--ink-2);margin-top:5px}
 .platform-comparison .section-row th{padding:28px 22px 12px;border-bottom:1px solid var(--hair);background:var(--card);font-size:23px;line-height:1.3}
 .platform-comparison .section-row th>span{position:sticky;left:22px}
 .platform-comparison .section-row small{color:var(--ink-2);font-size:13px;margin-left:8px;font-weight:400}
@@ -70,7 +71,7 @@
 .platform-comparison .connection{color:var(--ink)}
 .platform-comparison .source{display:block;width:fit-content;white-space:nowrap;color:var(--teal-text);font-size:var(--fs-small);text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
-.platform-comparison .source span{font-size:11px;color:var(--ink-2);margin-left:4px}
+.platform-comparison .source span{font-size:var(--fs-small);color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
 .platform-comparison .muted{font-size:var(--fs-small)}
 .platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td{background:var(--teal-soft)}
@@ -79,12 +80,14 @@
 .platform-comparison .empty p{color:var(--ink-2)}
 .platform-comparison .empty button{border:0;border-radius:var(--radius-sm);background:var(--teal-btn);color:var(--on-teal);padding:12px 18px}
 .platform-comparison .mobile-hint{display:none}
-.platform-comparison .foot{max-width:95ch;display:grid;gap:14px;color:var(--ink-2);font-size:14px}
+.platform-comparison .foot{max-width:62ch;display:grid;gap:14px;color:var(--ink-2);font-size:14px}
 .platform-comparison .foot h2{font-size:25px;color:var(--ink);margin:12px 0 0;letter-spacing:-.01em}
 .platform-comparison .foot p{margin:0}
 .platform-comparison .sources{margin-top:4px}
-.platform-comparison .sources ul{list-style:none;padding:0;display:grid;gap:12px}
-.platform-comparison .sources li{display:flex;gap:20px;justify-content:space-between;border-bottom:1px solid var(--hair);padding-bottom:10px}
+.platform-comparison .sources ul{list-style:none;padding:0;display:grid;gap:2px}
+.platform-comparison .sources li{display:flex;align-items:center;gap:20px;justify-content:space-between;border-bottom:1px solid var(--hair);padding-bottom:2px}
+/* Ссылка на источник — цель касания 44 px; раньше строка была выше за счёт отступов, а сама ссылка — 21 px */
+.platform-comparison .sources li a{display:inline-flex;align-items:center;min-height:44px}
 .platform-comparison .sources li>span{font-size:var(--fs-small);flex-shrink:0}
 .platform-comparison .signature{padding-top:16px;font-size:13px}
 .platform-comparison .sr-only,.platform-comparison .skip:not(:focus){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
@@ -99,7 +102,7 @@
 .platform-comparison .search-row{grid-template-columns:1fr;gap:14px}
 .platform-comparison .filter-row{align-items:flex-start;flex-direction:column;gap:6px}
 .platform-comparison .chips{gap:8px}
-.platform-comparison .chips button{font-size:13px;min-height:42px;padding:8px 12px}
+.platform-comparison .chips button{font-size:13px;min-height:44px;padding:8px 12px}
 .platform-comparison .explanation{padding:16px;font-size:13px}
 .platform-comparison dl{grid-template-columns:1fr;gap:16px}
 .platform-comparison .table-meta{align-items:flex-start;flex-direction:column;gap:3px;font-size:var(--fs-small)}
@@ -109,7 +112,7 @@
 .platform-comparison .note-col{width:225px}
 .platform-comparison thead th{font-size:18px;padding:15px 14px}
 .platform-comparison thead th:first-child,.platform-comparison thead th:last-child{font-size:14px}
-.platform-comparison .stage{font-size:12px}
+.platform-comparison .stage{font-size:var(--fs-small)} /* не мельче 13 px: подписи читают */
 .platform-comparison tbody th[scope=row]{padding:15px 14px;font-size:13px}
 .platform-comparison tbody td{padding:15px 14px;font-size:13px}
 .platform-comparison .section-row th{font-size:20px;padding:24px 14px 10px}
@@ -140,5 +143,4 @@
 .platform-comparison a{color:var(--print-ink)}
 .platform-comparison .foot{max-width:none}}
 /* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
-.platform-comparison details[open]>:not(summary){animation:details-in 0.2s ease-out}
-@keyframes details-in{from{opacity:0}}
+.platform-comparison details[open]>:not(summary){animation:ui-fade-in var(--fade-in)}
