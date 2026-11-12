@@ -247,7 +247,10 @@ const organization = {
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
   .project-image:focus-visible img { filter: none; }
   .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
-  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { color: var(--teal-text); } .project-image:hover img { filter: none; } }
+  /* «Смотреть проект» — как «Смотреть крупнее» в галерее: заливается бирюзой при наведении, фокусе и касании, плавно */
+  .view-project { transition: background-color var(--hover), color var(--hover); }
+  .project-image:focus-visible .view-project, .project-image:active .view-project { background: var(--teal-btn); color: var(--on-teal); }
+  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover img { filter: none; } }
   .project-description { padding: 18px 2px 0; }
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
