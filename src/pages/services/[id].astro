@@ -169,16 +169,24 @@ const arc = (i: number) => {
 
   .cases { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   /* Проект — карточка, как на /projects/ (05.11.2026): подписи не лежат на сером фоне между снимками */
-  .case { min-width: 0; padding: 10px 10px 16px; background: var(--card); border: 2px solid var(--card-border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
-  .case-image { display: block; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: 0 0 0 1px var(--hair); }
+  /* Карточки в ряду одной высоты, адрес сайта прижат к низу — ссылки соседних кейсов на одной линии */
+  .cases > li { display: flex; }
+  .case { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 10px 10px 16px; background: var(--card); border: 2px solid var(--card-border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+  .case-image { display: block; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
+  /* Нажатие на снимок: плитка едва проседает, как превью в галерее и на главной */
+  .case-image:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .case-image { -webkit-tap-highlight-color: transparent; }
   .case-image img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
   /* Снимок — ссылка: как на главной и в /projects/, в тёмной теме приглушён и проясняется при наведении и фокусе */
   .case-image:focus-visible img { filter: none; }
   @media (hover: hover) and (pointer: fine) { .case-image:hover img { filter: none; } }
-  .case-body { padding: 16px 14px 0; display: grid; gap: 6px; justify-items: start; }
+  .case-body { flex: 1; padding: 16px 14px 0; display: grid; grid-template-rows: auto auto 1fr; gap: 6px; justify-items: start; }
+  .case-site { align-self: end; }
   .case-body h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 2px; }
-  .case-body p { font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
-  .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
+  /* Описание кейса — основной кегль, как у проектов на главной */
+  .case-body p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+  .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
   /* Один проект — снимок слева, текст справа */
   .cases.single { grid-template-columns: 1fr; }
   .cases.single .case { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }

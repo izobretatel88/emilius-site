@@ -207,6 +207,7 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"></path></svg>
         Запустить
       </span>
+      <span class="launch-auto" aria-hidden="true">Автозапуск через <span id="launchAutoSec">10</span> с</span>
     </span>
   </button>
 </div>
@@ -719,9 +720,12 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     launch.addEventListener('pointerup', ringRelease);
     launch.addEventListener('pointercancel', ringRelease);
 
+    let autoStarting = false; // запуск по истечении отсчёта, а не нажатием
     launch.addEventListener('click', (e) => {
       if (!idle) return;
       idle = false;
+      const auto = autoStarting;
+      autoStarting = false;
       // запуск мышью — курсор над колесом; с клавиатуры (detail 0) наведение не мешает
       if (e.detail > 0) hoverArmed = false;
       stage.classList.remove('is-idle');
@@ -732,9 +736,10 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       launch.tabIndex = -1;
       launch.addEventListener('transitionend', () => launch.remove(), { once: true });
       if (reduce) launch.remove();
-      // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам
+      // фокус остаётся на колесе, а не теряется вместе с кнопкой; дальше Tab — по этапам.
+      // При автозапуске фокус не забираем — разве что он был на самой кнопке.
       box.tabIndex = -1;
-      box.focus({ preventScroll: true });
+      if (!auto || document.activeElement === launch) box.focus({ preventScroll: true });
       tick();
       // 10 раз в секунду хватает: шкала сдвигается на ~0,2° за шаг, глазом не видно
       if (!reduce) window.setInterval(() => onScreen && tick(), 100);
@@ -745,6 +750,30 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         if (!ambient && selected === null && hovered === null) startAmbient(currentAngle());
       });
     });
+
+    // Автозапуск (просьба владельца 12.11.2026): под «Запустить» — «Автозапуск через 10 с».
+    // Отсчёт идёт, только пока плашка видна хотя бы на 60 %, вкладка открыта, заставка закрыта
+    // и обод не тянут; нажатие запускает раньше. Число не озвучивается каждую секунду (aria-hidden).
+    const AUTO_MS = 10000;
+    const autoSec = document.getElementById('launchAutoSec');
+    let autoLeft = AUTO_MS;
+    let autoSeen = false;
+    new IntersectionObserver(([entry]) => (autoSeen = entry.isIntersecting), { threshold: 0.6 }).observe(launch);
+    let autoPrev = performance.now();
+    const autoTimer = window.setInterval(() => {
+      const now = performance.now();
+      const dt = now - autoPrev;
+      autoPrev = now;
+      if (!idle) return window.clearInterval(autoTimer);
+      if (!autoSeen || document.hidden || document.documentElement.classList.contains('intro-open') || ringDrag) return;
+      autoLeft -= dt;
+      if (autoSec) autoSec.textContent = String(Math.max(1, Math.ceil(autoLeft / 1000)));
+      if (autoLeft <= 0) {
+        window.clearInterval(autoTimer);
+        autoStarting = true;
+        launch.click();
+      }
+    }, 200);
 
     // «Покрути колесо» (выбрано владельцем 21.10.2026): тянешь — колесо поворачивается за пальцем/мышью,
     // отпустил — спокойное вращение продолжается с этого места. Короткое касание остаётся кликом.
@@ -1227,6 +1256,14 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     background: var(--teal-btn);
     border-color: var(--teal-btn);
     color: var(--on-teal);
+  }
+  /* Строка автозапуска под кнопкой: мелко и спокойно, цифры одной ширины — строка не прыгает */
+  .launch-auto {
+    margin-top: -6px;
+    font-size: var(--fs-small);
+    line-height: 1.3;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
   }
   @media (max-width: 520px) {
     .launch-text {
