@@ -246,7 +246,7 @@ const organization = {
   .project-image:active { transform: scale(var(--press-scale-card)); }
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
   .project-image:focus-visible img { filter: none; }
-  .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
+  .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-btn); box-shadow: var(--shadow-card); }
   /* «Смотреть проект» — как «Смотреть крупнее» в галерее: заливается бирюзой при наведении, фокусе и касании, плавно */
   .view-project { transition: background-color var(--hover), color var(--hover); }
   .project-image:focus-visible .view-project, .project-image:active .view-project { background: var(--teal-btn); color: var(--on-teal); }
