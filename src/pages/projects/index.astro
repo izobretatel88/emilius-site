@@ -149,10 +149,15 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-devices[hidden],.viewer-screens[hidden],.viewer-zoom[hidden]{display:none}
   .viewer-controls :global(button),.viewer-paging button,.viewer-error button{font:inherit;font-size:var(--fs-ui);min-height:44px;padding:8px 14px;border:0;border-radius:var(--radius-sm);background:var(--well);color:var(--ink);cursor:pointer}
   .viewer-controls :global(button[aria-pressed='true']){background:var(--teal-btn);color:var(--on-teal)}
+  /* На сером поле ошибки кнопка — белая плитка, иначе сливается с фоном */
+  .viewer-error button{background:var(--card)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
   .viewer-inquiry{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
   .viewer-status{font-size:var(--fs-small);min-height:36px;padding:8px 20px;color:var(--ink-2)}
-  .viewer-error{padding:8px 20px;color:var(--ink);font-size:var(--fs-ui)}
+  /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
+  .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
+  /* Снимка нет — пустая область под ним не держит отступы и серый фон телефона */
+  .viewer-image:has(img[hidden]){padding:0}
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
