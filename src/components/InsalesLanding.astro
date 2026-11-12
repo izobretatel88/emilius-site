@@ -364,7 +364,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 </Base>
 
 <script>
-  import {updateLiveEstimate} from '../lib/live-estimate';
+  import {updateLiveEstimate,showUpdate} from '../lib/live-estimate';
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
   // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
@@ -459,11 +459,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         updateLiveEstimate(form,null);
         return;
       }
-      out('pkg').textContent = `«${last.packageName}»`;
-      out('price').textContent = `${rub(last.from)} – ${rub(last.to)}`;
+      showUpdate(out('pkg'), `«${last.packageName}»`);
+      showUpdate(out('price'), `${rub(last.from)} – ${rub(last.to)}`);
       updateLiveEstimate(form,`${rub(last.from)} – ${rub(last.to)}`);
-      out('weeks').textContent = `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`;
-      out('tariff').textContent = `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`;
+      showUpdate(out('weeks'), `${last.weeks.join('–')} ${last.weeks[1] <= 4 ? 'недели' : 'недель'}`);
+      showUpdate(out('tariff'), `«${last.tariff.name}» ${rub(last.tariff.month)}/мес`);
       box.hidden = false;
     };
     // Кнопка под пакетом: отмечаем его типичные ответы, якорь #lead прокрутит к расчёту.

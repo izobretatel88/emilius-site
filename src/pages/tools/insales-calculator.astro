@@ -42,7 +42,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
 </Directory>
 <script>
-  import {updateLiveEstimate} from '../../lib/live-estimate';
+  import {updateLiveEstimate,showUpdate} from '../../lib/live-estimate';
   const form=document.querySelector<HTMLFormElement>('#public-calculator');
   if(form){
     form.tabIndex=-1;
@@ -57,10 +57,10 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
         if(output)output.textContent=select.selectedOptions[0].textContent;
       });
       const result=data.results[data.lookup[data.keys.map((key:string)=>answers.get(key)).join('|')]];
-      document.querySelector('#calc-package')!.textContent=`«${result.packageName}»`;
-      document.querySelector('#calc-price')!.textContent=`${rub(result.from)} – ${rub(result.to)}`;
+      showUpdate(document.querySelector('#calc-package'),`«${result.packageName}»`);
+      showUpdate(document.querySelector('#calc-price'),`${rub(result.from)} – ${rub(result.to)}`);
       updateLiveEstimate(form,`${rub(result.from)} – ${rub(result.to)}`);
-      document.querySelector('#calc-weeks')!.textContent=`Ориентир: ${result.weeks.join('–')} нед.`;
+      showUpdate(document.querySelector('#calc-weeks'),`Ориентир: ${result.weeks.join('–')} нед.`);
       const link=document.querySelector<HTMLAnchorElement>('#calc-discuss')!;
       const url=new URL(link.href);
       data.keys.forEach((key:string)=>url.searchParams.set(`calc_${key}`,String(answers.get(key))));
@@ -93,4 +93,4 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 </style>
 <!-- Строка «Текущая оценка» (компонент LiveEstimate) ведёт туда же, куда ссылка над формой: когда строка показана, ссылка-дубль не нужна. Без JavaScript строки нет — ссылка остаётся. Глобально, потому что :has смотрит в чужой компонент. -->
 <style is:global>@media(max-width:700px){.calc-jump:has(+ .calculator .estimate-strip:not([hidden])){display:none}}</style>
-<style>.calculator{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}/* Вопросы — общие поля формы (.ui-field, .ui-input в layout.css), как в «Обсудить проект»; у списка справа место под стрелку */.calc-field{margin-bottom:20px}select.ui-input{padding-right:40px}.calc-result{margin:0;position:sticky;top:20px}.calc-result .calc-price{font-size:clamp(24px,3vw,34px);color:var(--ink);font-weight:700;line-height:1.25}.calc-result .calc-hint{font-size:var(--fs-small);margin-bottom:0}button[type=reset]{display:inline-flex;align-items:center;min-height:44px;font:inherit;padding:0;border:0;background:none;color:var(--teal-text);text-decoration:underline;text-underline-offset:4px;cursor:pointer}@media(max-width:700px){.calculator{grid-template-columns:minmax(0,1fr);gap:24px}.calc-result{position:static}}</style>
+<style>.calculator{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}/* Вопросы — общие поля формы (.ui-field, .ui-input в layout.css), как в «Обсудить проект»; у списка справа место под стрелку */.calc-field{margin-bottom:20px}select.ui-input{padding-right:40px}.calc-result{margin:0;position:sticky;top:20px}.calc-result .calc-price{font-size:clamp(24px,3vw,34px);color:var(--ink);font-weight:700;line-height:1.25;font-variant-numeric:tabular-nums}.calc-result .calc-hint{font-size:var(--fs-small);margin-bottom:0}button[type=reset]{display:inline-flex;align-items:center;min-height:44px;font:inherit;padding:0;border:0;background:none;color:var(--teal-text);text-decoration:underline;text-underline-offset:4px;cursor:pointer}@media(max-width:700px){.calculator{grid-template-columns:minmax(0,1fr);gap:24px}.calc-result{position:static}}</style>

@@ -305,3 +305,5 @@ textarea.ui-input { height: 112px; min-height: 96px; resize: vertical; }
 /* Общее появление: только прозрачность, без сдвига — спокойно и одинаково на всём сайте.
    Окна просмотра, меню, раскрытые ответы и списки. При «уменьшить движение» длительность гасит global.css. */
 @keyframes ui-fade-in { from { opacity: 0; } }
+/* Пересчитанное значение (калькулятор, строка «Текущая оценка»): то же появление, класс ставит showUpdate из lib/live-estimate.ts */
+.ui-updated { animation: ui-fade-in var(--fade-in); }
