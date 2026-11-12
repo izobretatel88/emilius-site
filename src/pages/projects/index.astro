@@ -63,7 +63,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span></a>}
       <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
     </article>)}
-    <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><a class="directory-button" href={href('#feedback')}>Обсудить проект</a><span class="contact-note">Расскажите, что хотите запустить или улучшить.</span></section>
+    <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
     <div class="viewer-toolbar"><h2 id="viewer-title"></h2><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
@@ -124,9 +124,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-small)}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   .gallery-contact>p{font-size:var(--fs-ui);color:var(--ink-2);margin-bottom:16px}
-  .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 28px}
+  .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 12px}
   .gallery-contact a{gap:28px}
-  .contact-note{font-size:var(--fs-ui);color:var(--ink-2);line-height:1.5;margin-top:16px;max-width:30ch}
+  /* Пояснение сразу под заголовком, кнопка — последней: сначала зачем, потом действие */
+  .gallery-contact>.contact-note{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;margin:0 0 28px;max-width:30ch}
   .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
