@@ -43,7 +43,7 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
 </footer>
 
 <style>
-  .footer-links{width:100%;max-width:var(--layout-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2);transition:color var(--hover)}@media(hover:hover) and (pointer:fine){.footer-links a:hover{color:var(--teal-text);text-decoration:underline}}@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px;font-size:13px}}
+  .footer-links{width:100%;max-width:var(--layout-width);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin:36px auto 28px;padding:28px 0;border-top:1px solid var(--hair);text-align:left;font-size:14px}.footer-links>div{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.footer-links h2{font-size:14px;color:var(--ink);font-weight:700;margin-bottom:9px}.footer-links a{text-decoration:none;padding:6px 0;color:var(--ink-2);transition:color var(--hover)}@media(hover:hover) and (pointer:fine){.footer-links a:hover{color:var(--teal-text);text-decoration:underline}}/* На телефоне ссылки тем же кеглем 14 px, что и на компьютере: строки по 44 px, мельче 14 текст в них теряется */@media(max-width:700px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 20px;margin-top:20px}}
   footer {
     display: flex;
     flex-direction: column;
@@ -66,7 +66,7 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
   .site-iterations{width:154px;margin:18px auto 8px}
   .legal-links{display:flex;justify-content:center;flex-wrap:wrap;gap:0 20px;font-size:13px}
   .legal-links a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
-  @media(max-width:380px){.footer-links{font-size:14px;gap:24px 16px}.legal-links{column-gap:16px}}
+  @media(max-width:380px){.footer-links{gap:24px 16px}.legal-links{column-gap:16px}}
   .arda {
     display: block;
     margin-top: 10px;
