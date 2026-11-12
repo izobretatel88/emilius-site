@@ -979,8 +979,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color var(--hover), color var(--hover);
+    transition: background-color var(--hover), color var(--hover), border-color var(--hover), transform var(--press);
   }
+  /* Пункт меню разделов проседает при нажатии, как кнопки и переключатели: на телефоне наведения нет, отклик — только этот */
+  .jump a:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) { .jump a:hover { color: var(--ink); background: var(--well); } }
   .jump a.is-here { color: var(--teal-text); background: var(--well); }
   .jump .jump-cta { margin-left: 4px; border: 1px solid var(--teal); color: var(--ink); }
