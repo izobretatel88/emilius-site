@@ -95,7 +95,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project>.project-inquiry{align-self:start;margin-top:auto}
   .project-caption,.project-result{margin-bottom:8px}
   .project-featured{grid-column:1/-1}
-  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair)}
+  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair);transition:transform var(--press)}
+  /* Нажатие на превью: большая плитка едва проседает, как карточки «Полезного» и услуг */
+  .project-preview:active{transform:scale(var(--press-scale-card))}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
   .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:13px;font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
@@ -139,6 +141,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-image[data-scale='actual'] img{width:var(--screen-width);max-width:none}
   .viewer-image img[hidden]{display:none}
   .viewer-image[aria-busy='true'] img{visibility:hidden}
+  /* Снимок проявляется после загрузки и при смене «Компьютер / Телефон» — тем же движением, что само окно, без рывка */
+  .viewer-image[aria-busy='false'] img{animation:ui-fade-in var(--fade-in)}
   .viewer-image:focus-visible{outline-offset:-3px}
   .viewer-controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:12px 20px;border-bottom:1px solid var(--hair)}
   .viewer-devices,.viewer-screens,.viewer-zoom{display:flex;flex-wrap:wrap;gap:4px}
@@ -182,5 +186,5 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
   }
-  @media(prefers-reduced-motion:reduce){.project-preview img,.preview-action,.project-inquiry{transition:none}}
+  @media(prefers-reduced-motion:reduce){.project-preview,.project-preview img,.preview-action,.project-inquiry{transition:none}.project-preview:active{transform:none}}
 </style>

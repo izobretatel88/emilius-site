@@ -216,7 +216,10 @@ const organization = {
   .client-strip a { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; color: var(--ink-2); font-size: 13px; text-align: center; overflow-wrap: anywhere; }
   .client-strip a:focus-visible span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; } }
-  .client-strip img { object-fit: contain; width: 150px; max-width: 100%; height: 36px; filter: grayscale(1); opacity: .65; }
+  .client-strip img { object-fit: contain; width: 150px; max-width: 100%; height: 36px; filter: grayscale(1); opacity: .65; transition: opacity var(--hover); }
+  .client-strip span { transition: color var(--hover); }
+  /* Логотип загорается плавно — при наведении, фокусе с клавиатуры и касании */
+  .client-strip a:focus-visible img, .client-strip a:active img { opacity: 1; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover img { opacity: 1; } }
   @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
   :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
@@ -239,7 +242,8 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); }
+  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); transition: transform var(--press); }
+  .project-image:active { transform: scale(var(--press-scale-card)); }
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
   .project-image:focus-visible img { filter: none; }
   .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: 13px; border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
