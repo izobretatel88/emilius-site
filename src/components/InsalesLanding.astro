@@ -691,6 +691,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   /* Нажатие на плитку магазина: едва проседает, как превью проектов в галерее и на направлениях */
   .shop:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .shop { -webkit-tap-highlight-color: transparent; }
   .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
   /* В тёмной теме снимок приглушён и проясняется при наведении и фокусе — как все снимки проектов */
   .shop:focus-visible img { filter: none; }

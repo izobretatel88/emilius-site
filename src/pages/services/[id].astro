@@ -175,6 +175,8 @@ const arc = (i: number) => {
   .case-image { display: block; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
   /* Нажатие на снимок: плитка едва проседает, как превью в галерее и на главной */
   .case-image:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .case-image { -webkit-tap-highlight-color: transparent; }
   .case-image img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
   /* Снимок — ссылка: как на главной и в /projects/, в тёмной теме приглушён и проясняется при наведении и фокусе */
   .case-image:focus-visible img { filter: none; }

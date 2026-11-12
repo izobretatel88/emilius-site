@@ -98,6 +98,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair);transition:transform var(--press)}
   /* Нажатие на превью: большая плитка едва проседает, как карточки «Полезного» и услуг */
   .project-preview:active{transform:scale(var(--press-scale-card))}
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .project-preview,a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
   .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}

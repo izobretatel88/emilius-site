@@ -244,6 +244,8 @@ const organization = {
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); transition: transform var(--press); }
   .project-image:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
   .project-image:focus-visible img { filter: none; }
   .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-btn); box-shadow: var(--shadow-card); }
