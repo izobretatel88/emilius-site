@@ -34,6 +34,10 @@ const projects=JSON.parse(html.match(/<script\b[^>]*id="project-media"[^>]*>([\s
 projects.duman.screens.push({...projects.duman.screens[0],label:'Тестовый экран',src:'/test-only.webp'});
 const links=Object.keys(projects).map(id=>{const l=new Element();l.dataset.projectPreview=id;return l;});
 const originalDocument=globalThis.document;
+const originalWindow=globalThis.window;
+// Ширина экрана для окна просмотра: на узком (до 700 px) проект открывается мобильным снимком, если он есть
+let narrowScreen=false;
+globalThis.window={matchMedia:query=>({matches:narrowScreen&&query==='(max-width: 700px)'})};
 const originalTimeout=globalThis.setTimeout;
 const originalClearTimeout=globalThis.clearTimeout;
 const timers=new Map();let timerId=0;
@@ -126,6 +130,16 @@ try {
    viewer.close();
    assert(focused===link);
  }
+ narrowScreen=true;
+ for(const link of links){
+   link.emit('click',click);
+   const item=projects[link.dataset.projectPreview];
+   const expected=item.screens.some(screen=>screen.device==='phone')?'phone':'desktop';
+   assert.equal(elements['.viewer-image'].dataset.device,expected,`${item.name}: narrow screen must open ${expected}`);
+   if(elements.img.onload)elements.img.onload();
+   viewer.close();
+ }
+ narrowScreen=false;
  links[0].emit('click',click);
  const inside={button:0,clientX:30,clientY:30};
  const outside={button:0,clientX:5,clientY:5};
@@ -140,5 +154,5 @@ try {
  viewer.emit('pointerdown',outside);viewer.emit('click',outside);
  assert(!viewer.open && focused===links[0],'Backdrop click must close and return focus');
  assert.equal(timers.size,0);
- console.log('Viewer controller passed: modifier click, paging, scale, devices, stale load, error/retry, timeout/recovery, close/focus and single-option controls. No browser or network used.');
-} finally {globalThis.document=originalDocument;globalThis.setTimeout=originalTimeout;globalThis.clearTimeout=originalClearTimeout;}
+ console.log('Viewer controller passed: modifier click, paging, scale, devices, stale load, error/retry, timeout/recovery, close/focus, single-option controls and phone shot on narrow screens. No browser or network used.');
+} finally {globalThis.window=originalWindow;globalThis.document=originalDocument;globalThis.setTimeout=originalTimeout;globalThis.clearTimeout=originalClearTimeout;}
