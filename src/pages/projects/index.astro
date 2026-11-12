@@ -60,7 +60,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
-      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
+      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне InSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
       <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
