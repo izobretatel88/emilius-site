@@ -182,7 +182,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
     .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform: scale(var(--press-scale))}
     @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
-    .project-result{font-size:15px}
+    /* У адреса сайта своя зона нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
+    .project-caption{margin-bottom:0}
+    .project-result{font-size:15px;margin-top:12px}
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
     .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
