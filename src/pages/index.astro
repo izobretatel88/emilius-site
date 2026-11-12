@@ -123,7 +123,7 @@ const organization = {
             <div class="project-description">
               <h3 id={`case-${project.id}`}>{project.name}</h3>
               {project.id === 'wizzu' ? (
-                <p><strong class="project-result">С 0 до 2 000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
+                <p><strong class="project-result">С 0 до 2000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
               ) : (
                 <p>Фронтенд, интеграции с InSales и собственные модули для ювелирного бренда.</p>
               )}
@@ -213,10 +213,13 @@ const organization = {
   }
 
   .client-strip { list-style: none; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 40px; padding: 28px 90px 36px; }
-  .client-strip a { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; color: var(--ink-2); font-size: 13px; text-align: center; overflow-wrap: anywhere; }
+  .client-strip a { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; color: var(--ink-2); font-size: var(--fs-small); text-align: center; overflow-wrap: anywhere; }
   .client-strip a:focus-visible span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; } }
-  .client-strip img { object-fit: contain; width: 150px; max-width: 100%; height: 36px; filter: grayscale(1); opacity: .65; }
+  .client-strip img { object-fit: contain; width: 150px; max-width: 100%; height: 36px; filter: grayscale(1); opacity: .65; transition: opacity var(--hover); }
+  .client-strip span { transition: color var(--hover); }
+  /* Логотип загорается плавно — при наведении, фокусе с клавиатуры и касании */
+  .client-strip a:focus-visible img, .client-strip a:active img { opacity: 1; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover img { opacity: 1; } }
   @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
   :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
@@ -239,17 +242,23 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); }
+  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); transition: transform var(--press); }
+  .project-image:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
   .project-image:focus-visible img { filter: none; }
-  .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: 13px; border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
-  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { color: var(--teal-text); } .project-image:hover img { filter: none; } }
+  .view-project { position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-btn); box-shadow: var(--shadow-card); }
+  /* «Смотреть проект» — как «Смотреть крупнее» в галерее: заливается бирюзой при наведении, фокусе и касании, плавно */
+  .view-project { transition: background-color var(--hover), color var(--hover); }
+  .project-image:focus-visible .view-project, .project-image:active .view-project { background: var(--teal-btn); color: var(--on-teal); }
+  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover img { filter: none; } }
   .project-description { padding: 18px 2px 0; }
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
   .project-description .project-inquiry { color: var(--teal-text); }
   .project-description h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 8px; }
-  .project-description p { font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+  .project-description p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
   .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform var(--press); }

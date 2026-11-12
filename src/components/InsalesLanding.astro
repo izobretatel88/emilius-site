@@ -687,13 +687,21 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     background: var(--well);
     color: var(--ink);
     text-decoration: none;
-    transition: background-color var(--hover);
+    transition: background-color var(--hover), transform var(--press);
   }
-  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; filter: var(--img-dim); }
+  /* Нажатие на плитку магазина: едва проседает, как превью проектов в галерее и на направлениях */
+  .shop:active { transform: scale(var(--press-scale-card)); }
+  /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
+  .shop { -webkit-tap-highlight-color: transparent; }
+  .shop img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
+  /* В тёмной теме снимок приглушён и проясняется при наведении и фокусе — как все снимки проектов */
+  .shop:focus-visible img { filter: none; }
+  @media (hover: hover) and (pointer: fine) { .shop:hover img, .case-shot:hover img { filter: none; } }
   .shop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 14px 16px 16px; }
   .shop-name { font-size: 18px; font-weight: 700; }
-  .shop-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
-  .shop-link { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--teal-text); }
+  /* Что за магазин — основной кегль, как подписи проектов в галерее и на направлениях */
+  .shop-what { font-size: var(--fs-body); color: var(--ink-2); line-height: 1.45; }
+  .shop-link { margin-top: 4px; font-size: var(--fs-ui); font-weight: 600; color: var(--teal-text); }
   /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
   a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
@@ -705,10 +713,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Кейс Happy Animal: сверху скриншот и что сделали, снизу позиции по местным запросам */
   .case { border-radius: var(--radius-sm); overflow: hidden; background: var(--well); }
   .case-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
-  .case-shot img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; filter: var(--img-dim); }
+  .case-shot img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; filter: var(--img-dim); transition: filter var(--hover); }
   .case-body { display: flex; flex-direction: column; gap: 8px; padding: 22px 24px; }
   .case-name { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; line-height: 1.1; }
-  .case-body .shop-what { font-size: 15px; }
   .case-done { gap: 6px; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
   .case-done li::before { top: 0.5em; width: 6px; height: 6px; }
   .case-pos { display: flex; flex-direction: column; gap: 10px; padding: 20px 24px 22px; border-top: 1px solid var(--hair); }
