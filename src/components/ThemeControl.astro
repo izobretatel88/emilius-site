@@ -48,5 +48,7 @@
   @media(hover:hover) and (pointer:fine){input:hover+span{color:var(--ink)}}
   input:focus-visible+span{outline:2px solid var(--teal-text);outline-offset:2px}
   @media(prefers-reduced-motion:reduce){span{transition:none}}
+  /* Высокая контрастность Windows убирает фон и тень — выбранную тему отмечает системная рамка */
+  @media(forced-colors:active){input:checked+span{outline:2px solid Highlight;outline-offset:-2px}}
   @media(max-width:360px){span{padding-inline:12px}}
 </style>

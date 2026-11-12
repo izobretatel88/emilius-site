@@ -1035,6 +1035,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .chip input:active + span { transform: scale(var(--press-scale)); }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
   .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
+  /* Высокая контрастность Windows: цвет рамки и фона пропадает — выбранный ответ отмечает системная рамка */
+  @media (forced-colors: active) { .chip input:checked + span { outline: 2px solid Highlight; outline-offset: -2px; } }
   .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }
   /* .side > .agree — сильнее общего «.side > label» (поля в столбик) */
   .side > .agree {

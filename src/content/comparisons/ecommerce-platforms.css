@@ -74,6 +74,8 @@
   background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color var(--hover), color var(--hover), transform var(--press); }
 @media (hover: hover) and (pointer: fine) { .platform-comparison .seg button:hover{ color: var(--ink); background: var(--card); } }
 .platform-comparison .seg button[aria-pressed="true"]{ background: var(--teal-btn); color: var(--on-teal); }
+/* Высокая контрастность Windows убирает заливку — нажатую кнопку и фильтр отмечает системная рамка */
+@media (forced-colors: active){ .platform-comparison .seg button[aria-pressed="true"], .platform-comparison .chips button[aria-pressed="true"]{ outline: 2px solid Highlight; outline-offset: -2px; } }
 .platform-comparison .chips{ display: flex; flex-wrap: wrap; gap: 8px; }
 .platform-comparison .chips button{ font: inherit; font-size: 14px; padding: 7px 13px; border: 1px solid var(--hair); border-radius:var(--radius-pill);
   background: var(--card); color: var(--ink); cursor: pointer; transition: background-color var(--hover), border-color var(--hover), transform var(--press); }
