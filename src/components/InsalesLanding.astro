@@ -254,8 +254,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           </article>
         ))}
       </div>
-      <p class="small">{glue(PLATFORM_NOTE)}</p>
-      <p class="small">{glue(NOT_INCLUDED)}</p>
+      <p class="small price-terms">{glue(PLATFORM_NOTE)}</p>
+      <p class="small price-terms">{glue(NOT_INCLUDED)}</p>
     </section>
 
     <div class="cols">
@@ -658,6 +658,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
   .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
   .block > .small { max-width: 68ch; line-height: 1.5; }
+  /* Условия цены под пакетами — часть цены, а не сноска: читаются вторым цветом текста, а не самым бледным */
+  .block > .price-terms { font-size: 15px; color: var(--ink-2); }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
   /* Строки отделены чертой: четыре обещания и четыре ситуации не сливаются в один абзац */
   .item {
