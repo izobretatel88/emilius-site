@@ -7,7 +7,7 @@ import Footer from '../components/Footer.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import IterationRuler from '../components/IterationRuler.astro';
 import LinkList from '../components/LinkList.astro';
-import { SECTORS, ITERATION } from '../data/site';
+import { SECTORS, ITERATION, LINKS } from '../data/site';
 import { DIRECTIONS } from '../data/navigation';
 import { SERVICES } from '../data/services';
 import { href } from '../lib/urls';
@@ -90,7 +90,9 @@ const colors = [
       <div class="ui-actions sample-actions">
         <a class="ui-button" href="#g-actions">Обсудить проект <span aria-hidden="true">→</span></a>
         <a class="ui-link" href="#g-actions">Смотреть проекты <span class="ui-arrow" aria-hidden="true">→</span></a>
+        <a class="ui-link" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
       </div>
+      <p class="note">Стрелка <code>→</code> — переход по сайту, <code>↗</code> — на другой сайт в новой вкладке. Стрелка только для глаз (<code>aria-hidden</code>), а программе чтения экрана ссылка наружу говорит «откроется в новой вкладке» скрытым текстом.</p>
       <p class="note focus-note">Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, 2 px, отступ 3 px (<code>--focus-ring</code>, <code>--focus-offset</code>). Нажмите Tab, чтобы увидеть его на кнопке и ссылке выше.</p>
     </section>
 
@@ -128,6 +130,18 @@ const colors = [
         <li><span class="radius r-btn"></span><code>--radius-btn</code> 13 px — кнопки</li>
         <li><span class="radius r-sm"></span><code>--radius-sm</code> 10 px — поля, картинки</li>
       </ul>
+    </section>
+
+    <section class="ui-section" aria-labelledby="g-motion">
+      <div class="ui-section-head"><h2 id="g-motion">Движение</h2></div>
+      <p class="ui-section-intro">Спокойно и коротко: смена цвета и появление — 0,2 с, нажатие — 0,16 с. Двигается только прозрачность и масштаб, ничего не пружинит. При «уменьшить движение» всё гасится, колесо стоит.</p>
+      <ul class="motion-tokens">
+        <li><code>--hover</code> 0,2 с — смена цвета при наведении и в фокусе</li>
+        <li><code>--fade-in</code> 0,2 с, сильный ease-out — появление окна, меню, ответа (<code>ui-fade-in</code>) и пересчитанного значения (<code>.ui-updated</code>)</li>
+        <li><code>--press</code> 0,16 с, <code>--press-scale</code> 0,97 — кнопка проседает при нажатии; большие плитки — <code>--press-scale-card</code> 0,99</li>
+        <li><code>--wheel-period</code> 156 с — оборот колеса</li>
+      </ul>
+      <details class="motion-sample"><summary>Раскрыть образец</summary><p>Содержимое проявляется за <code>--fade-in</code>: только прозрачность, без сдвига.</p></details>
     </section>
 
     <section class="ui-section" aria-labelledby="g-iteration">
@@ -192,6 +206,12 @@ const colors = [
   .h2-sample { font-weight: 600; }
   .sample-actions { margin-top: 0; }
   .focus-note { margin-top: 24px; }
+  .motion-tokens { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); max-width: 72ch; }
+  .motion-tokens code, .motion-sample code { font-family: var(--font-mono); font-size: 0.92em; color: var(--ink); }
+  .motion-sample { margin-top: 20px; }
+  .motion-sample summary { width: fit-content; padding-block: 11px; cursor: pointer; font-weight: 600; color: var(--teal-text); }
+  .motion-sample[open] p { animation: ui-fade-in var(--fade-in); }
+  .motion-sample p { color: var(--ink-2); max-width: 66ch; }
   .surfaces { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
   .surface-sample { padding: 26px; }
   .flat-sample { padding-top: 26px; border-top: 1px solid var(--hair); }
