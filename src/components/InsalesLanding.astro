@@ -327,10 +327,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         ))}
         </div>
         <div class="side">
-        <div class="estimate" id="lead-estimate" aria-live="polite" hidden>
+        <div class="estimate" id="lead-estimate" hidden>
+          <!-- Пакет, цена и срок — одна живая область: после пересчёта читается одной фразой, как в калькуляторе -->
+          <div class="est-live" aria-live="polite" aria-atomic="true">
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
           <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
+          </div>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>
         <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
@@ -1054,6 +1057,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-radius: var(--radius-sm);
   }
   .estimate[hidden] { display: none; }
+  .est-live { display: flex; flex-direction: column; gap: 4px; }
   .estimate{scroll-margin-top:84px}
   .est-pkg { font-size: 15px; color: var(--ink-2); }
   .est-pkg b { color: var(--ink); }
