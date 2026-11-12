@@ -49,7 +49,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#s-8`;
     color: var(--ink-2);
     font-size: 15px;
     line-height: 1.4;
-    transition: opacity 0.2s ease-out;
+    transition: opacity var(--fade-in);
     @starting-style { opacity: 0; }
   }
   .cookie-notice[hidden] { display: none; }

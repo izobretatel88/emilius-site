@@ -929,7 +929,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-right: 2px solid var(--ink-3);
     border-bottom: 2px solid var(--ink-3);
     transform: rotate(45deg);
-    transition: transform 0.2s ease, border-color var(--hover);
+    transition: transform var(--fade-in), border-color var(--hover); /* поворот — той же кривой, что проявление ответа */
   }
   details[open] summary { color: var(--teal-text); }
   /* Стрелка поднимается через transform, а не margin: поворот и сдвиг идут одним плавным движением */

@@ -244,7 +244,7 @@ const jsonLd = [
     border-right: 2px solid currentColor;
     border-bottom: 2px solid currentColor;
     transform: translateY(-2px) rotate(45deg);
-    transition: transform 0.2s ease-out;
+    transition: transform var(--fade-in); /* поворот — той же кривой, что проявление списка */
   }
   .toc details[open] > .toc-title::after { transform: translateY(2px) rotate(225deg); }
   .toc details[open] > .toc-title { margin-bottom: 0; }
