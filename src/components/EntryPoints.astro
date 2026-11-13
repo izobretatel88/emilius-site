@@ -11,6 +11,14 @@ import { SECTORS } from '../data/site';
 import { ENTRY_POINTS } from '../data/entry-points';
 import { href } from '../lib/urls';
 
+interface Props {
+  title?: string;
+  level?: 'h2' | 'h3'; // h3 внутри секции главной, h2 на /services/
+}
+const { title = 'С чего начнём?', level = 'h3' } = Astro.props;
+const Heading = level;
+const Sub = level === 'h2' ? 'h3' : 'h4';
+const Small = level === 'h2' ? 'h4' : 'h5';
 const pad = (n: number) => String(n).padStart(2, '0');
 // «Начнём с …» — родительный падеж этапа
 const GENITIVE: Record<string, string> = { custdev: 'касдева', design: 'дизайна', dev: 'разработки', marketing: 'маркетинга' };
@@ -25,7 +33,7 @@ const items = ENTRY_POINTS.map((e) => {
 ---
 <div class="entry" data-entry>
   <div class="entry-head">
-    <h3 id="t-entry">С чего начнём?</h3>
+    <Heading id="t-entry">{title}</Heading>
     <p>В круг можно войти с любого дня. Выберите, что происходит сейчас, — покажем, с чего начнётся ваша итерация.</p>
   </div>
 
@@ -45,7 +53,7 @@ const items = ENTRY_POINTS.map((e) => {
       <div class="entry-panel" id={`entry-${e.id}`} data-panel={e.id} data-stage={e.stage} role="region" aria-label={`${e.label}: начнём с ${e.genitive}`}>
         <div class="entry-start">
           <p class="entry-day"><span class="ui-stage-dot"></span>Войдём в круг с дня {pad(e.from)}</p>
-          <h4>Начнём с {e.genitive}</h4>
+          <Sub class="entry-title">Начнём с {e.genitive}</Sub>
           <p class="entry-why">{e.why}</p>
           <ol class="entry-cycle" aria-label="Ваш круг">
             {e.cycle.map((s, n) => (
@@ -57,21 +65,22 @@ const items = ENTRY_POINTS.map((e) => {
         </div>
         <div class="entry-plan">
           <div>
-            <h5>Первые шаги</h5>
+            <Small class="entry-sub">Первые шаги</Small>
             <ul>{e.steps.map((t) => <li>{t}</li>)}</ul>
           </div>
           <div>
-            <h5>Что получите</h5>
+            <Small class="entry-sub">Что получите</Small>
             <ul>{e.result.map((t) => <li>{t}</li>)}</ul>
           </div>
           <div class="ui-actions entry-actions">
-            <a class="ui-button" href={`?start=${e.id}#feedback`} data-entry-cta={e.id}>Обсудить такой старт <span aria-hidden="true">→</span></a>
+            <a class="ui-button" href={href(`?start=${e.id}#feedback`)} data-entry-cta={e.id}>Обсудить такой старт <span aria-hidden="true">→</span></a>
             <a class="ui-link" href={href(`services/${e.stage}/`)} data-stage-link={e.stage}>Об этапе «{e.stageName}» <span class="ui-arrow" aria-hidden="true">→</span></a>
           </div>
         </div>
       </div>
     ))}
   </div>
+  <p class="entry-other">Нет вашей ситуации? <a class="ui-link" href={href('#feedback')}>Опишите задачу своими словами <span class="ui-arrow" aria-hidden="true">→</span></a></p>
 </div>
 
 <script>
@@ -104,7 +113,7 @@ const items = ENTRY_POINTS.map((e) => {
 
 <style>
   .entry { margin-top: 44px; }
-  .entry-head h3 { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 10px; }
+  .entry-head :is(h2, h3) { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 10px; }
   .entry-head p { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; margin: 0; }
 
   .entry-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 16px; padding: 0; border: 0; min-width: 0; }
@@ -140,7 +149,7 @@ const items = ENTRY_POINTS.map((e) => {
   .entry:has(input[value='idea']:checked) [data-panel='idea'] { display: grid; animation: ui-fade-in var(--fade-in); }
 
   .entry-day { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; margin: 0 0 10px; }
-  .entry-panel h4 { font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 14px; }
+  .entry-title { font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 14px; }
   .entry-why { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; margin: 0 0 22px; }
   .entry-cycle { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; font-size: 14px; color: var(--ink-3); }
   .entry-cycle li { display: inline-flex; align-items: center; gap: 6px; }
@@ -149,11 +158,12 @@ const items = ENTRY_POINTS.map((e) => {
   .entry-cycle li.again { color: var(--ink-3); }
 
   .entry-plan { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 28px; align-content: start; }
-  .entry-plan h5 { font-size: 13px; font-weight: 600; color: var(--ink-3); margin: 0 0 10px; }
+  .entry-sub { font-size: 13px; font-weight: 600; color: var(--ink-3); margin: 0 0 10px; }
   .entry-plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .entry-plan li { position: relative; padding-left: 18px; font-size: 16px; line-height: 1.45; }
   .entry-plan li::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--stage-ink); }
   .entry-actions { grid-column: 1 / -1; margin-top: 8px; }
+  .entry-other { margin: 18px 0 0; font-size: 15px; color: var(--ink-3); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 
   @media (prefers-reduced-motion: reduce) {
     .entry-panel { animation: none !important; }
@@ -163,7 +173,7 @@ const items = ENTRY_POINTS.map((e) => {
   }
   @media (max-width: 760px) {
     .entry { margin-top: 32px; }
-    .entry-head h3 { font-size: 25px; }
+    .entry-head :is(h2, h3) { font-size: 25px; }
     .entry-head p { font-size: 16px; }
     /* На телефоне ситуации — лента, которую листают вбок: экран не забивается пятью рядами таблеток */
     .entry-options { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--layout-gutter)); padding-inline: var(--layout-gutter); scroll-padding-inline: var(--layout-gutter); scrollbar-width: none; scroll-snap-type: x proximity; }
@@ -172,7 +182,7 @@ const items = ENTRY_POINTS.map((e) => {
     .entry-chip span { white-space: nowrap; }
     .entry-card { padding: 22px 20px 24px; }
     .entry-ruler { margin-bottom: 20px; }
-    .entry-panel h4 { font-size: 28px; }
+    .entry-title { font-size: 28px; }
     .entry-why { font-size: 16px; }
     .entry-plan { grid-template-columns: minmax(0, 1fr); gap: 20px; }
     .entry-actions { flex-direction: column; align-items: stretch; }
