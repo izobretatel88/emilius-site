@@ -952,6 +952,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
   h2[id] { scroll-margin-top: 96px; }
+  /* Переход из галереи «5 из 5 … →» на #case-happyanimal: кейс не уходит под таблетку навигации */
+  .case[id] { scroll-margin-top: 96px; }
   .jump {
     position: fixed;
     top: 12px;
