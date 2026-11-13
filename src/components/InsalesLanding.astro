@@ -703,7 +703,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .shop-what { font-size: var(--fs-body); color: var(--ink-2); line-height: 1.45; }
   .shop-link { margin-top: 4px; font-size: var(--fs-ui); font-weight: 600; color: var(--teal-text); }
   /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
-  a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
+  /* Ссылка на сайт кейса: стрелка ↗ через 8 px, как у адресов в кейсах на страницах услуг (во flex пробел перед стрелкой схлопывается) */
+  a.shop-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
   /* Плитки стоят на сером --well внутри белой карточки раздела: при наведении темнеют до --hair, а не растворяются в белом */
   @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--hair); } }
