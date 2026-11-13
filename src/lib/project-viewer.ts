@@ -130,6 +130,9 @@ export function setupProjectViewer() {
   };
 
   document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]').forEach(link => {
+    // Со скриптом ссылка открывает окно, а не уходит на картинку — сообщаем это программам чтения экрана.
+    // Без скрипта атрибута нет: ссылка честно ведёт на файл снимка.
+    link.setAttribute('aria-haspopup', 'dialog');
     link.addEventListener('click', event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       const selected = projects[link.dataset.projectPreview!];
