@@ -134,7 +134,11 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .gallery-contact a{gap:28px}
   /* Пояснение сразу под заголовком, кнопка — последней: сначала зачем, потом действие */
   .gallery-contact>.contact-note{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;margin:0 0 28px;max-width:30ch}
-  .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
+  .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;height:calc(100svh - 40px);max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
+  /* Окно постоянной высоты во весь экран: при смене «Компьютер / Телефон» и экранов не прыгает, серое поле снимка занимает остаток */
+  .project-viewer[open]{display:flex;flex-direction:column}
+  .project-viewer[open]>*{flex-shrink:0}
+  .project-viewer[open]>.viewer-image{flex-grow:1}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
   .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
@@ -172,6 +176,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */
   .viewer-image{padding:20px;background:var(--well)}
+  /* Короткий снимок — по центру поля по высоте; длинный начинается сверху (auto-поля во flex не уводят его за край) */
+  .viewer-image{display:flex;flex-direction:column}
+  .viewer-image img{margin-block:auto}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   /* До 1000 px адрес сайта стоит столбиком со своей зоной нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
   @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
@@ -194,7 +201,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
     .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
-    .project-viewer{width:calc(100% - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
+    .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
     .viewer-toolbar{padding:8px 12px}
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
