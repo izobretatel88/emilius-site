@@ -11,7 +11,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   <h2 id="t-feedback">Обсудить проект</h2>
   <form method="post" action={action} novalidate data-direct={direct}>
     <div class="project-context" hidden>
-      <p>Ориентир — <strong data-project-context></strong></p>
+      <div><p>Ориентир — <strong data-project-context></strong></p><p class="project-ask" data-project-ask hidden></p></div>
       <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
     </div>
     <div class="ui-field">
@@ -81,8 +81,11 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     updateLength();
     const context=form.querySelector<HTMLElement>('.project-context')!;
     const contextName=context.querySelector<HTMLElement>('[data-project-context]')!;
+    // Подсказка к ситуации: что рассказать, чтобы ответ был по делу (think-different, итерация 9)
+    const contextAsk=context.querySelector<HTMLElement>('[data-project-ask]')!;
+    const showAsk=(item:{ask?:string}|null)=>{contextAsk.textContent=item?.ask?`Для точного ответа напишите: ${item.ask}.`:'';contextAsk.hidden=!item?.ask;};
     // Ориентир заявки: проект из галереи (?project=) или ситуация из «С чего начнём?» (?start=)
-    let selectedProject:{name:string;message:string}|null=null;
+    let selectedProject:{name:string;message:string;ask?:string}|null=null;
     const prefixOf=(item:{message:string})=>`${item.message}\n\n`;
     const clearProject=()=>{
       if(selectedProject&&message.value.startsWith(prefixOf(selectedProject)))message.value=message.value.slice(prefixOf(selectedProject).length);
@@ -90,7 +93,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       context.hidden=true;
       updateLength();
     };
-    const applyInquiry=(item:{name:string;message:string}|null)=>{
+    const applyInquiry=(item:{name:string;message:string;ask?:string}|null)=>{
       if(!item)return;
       // Прежний автотекст заменяем новым; набранное человеком не трогаем
       if(selectedProject&&message.value.startsWith(prefixOf(selectedProject)))message.value=message.value.slice(prefixOf(selectedProject).length);
@@ -98,6 +101,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       message.value=own.trim()?`${prefixOf(item)}${own}`:prefixOf(item);
       selectedProject=item;
       contextName.textContent=item.name;
+      showAsk(item);
       context.hidden=false;
       updateLength();
     };
@@ -105,7 +109,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     const initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'))??topicInquiry(params.get('topic'));
     if(initial){
       // Сохранённый браузером текст важнее автозаполнения
-      if(message.value.trim()){selectedProject=initial;contextName.textContent=initial.name;context.hidden=false;}
+      if(message.value.trim()){selectedProject=initial;contextName.textContent=initial.name;showAsk(initial);context.hidden=false;}
       else applyInquiry(initial);
     }
     window.addEventListener('emilius:inquiry',(event)=>{
@@ -222,6 +226,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   }
   .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
   .project-context[hidden]{display:none}
+  .project-context p{margin:0}.project-ask{margin-top:4px!important;color:var(--ink-2);line-height:1.45}
   .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
   /* Поля, подписи и подсказки — общие классы .ui-field*, .ui-input (layout.css); здесь только высота полей этой формы */
   textarea.ui-input { height: 136px; }

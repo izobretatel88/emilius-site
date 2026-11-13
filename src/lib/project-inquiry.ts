@@ -29,7 +29,7 @@ export function inquiryMessage(current: string, id: string | null) {
 // Принимаем только известную ситуацию — текст из адреса в форму не переносим.
 export function startInquiry(id: string | null) {
   const entry = entryPoint(id);
-  return entry ? { name: entry.label, message: entry.message } : null;
+  return entry ? { name: entry.label, message: entry.message, ask: entry.ask } : null;
 }
 
 // Направление (?stage=<id>): «Обсудить задачу» со страницы этапа ведёт в форму главной,
