@@ -28,7 +28,7 @@ const defaults=Object.fromEntries(entries.map(([key,[,options]])=>[key,key==='ch
 const initial=results[lookup[entries.map(([key])=>defaults[key]).join('|')]];
 const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 ---
-<Directory title="Калькулятор магазина на InSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
+<Directory title="Калькулятор магазина на inSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
   <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>
   <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина"><LiveEstimate target="#calc-result" />{entries.map(([key,[label,options]])=><div class="ui-field calc-field"><label class="ui-field-label" for={`calc-${key}`}>{label}</label><select class="ui-input" id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
   <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title">

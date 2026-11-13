@@ -28,7 +28,7 @@
 }
 .platform-comparison thead th:first-child{ left: 0; z-index: 3; width: 200px; box-shadow: inset -1px 0 var(--hair); }
 /* От 1280 px карточка шириной 1190 px: таблица помещается целиком, без обрезанной колонки OpenCart. Самое длинное название — WooCommerce, ему колонка шире */
-/* Шапка держится при прокрутке страницы, как в сравнении InSales и KIT: от 1280 px таблица помещается целиком, поэтому блок перестаёт листаться сам и sticky-шапка цепляется за окно. Уже — таблица листается внутри блока высотой в экран */
+/* Шапка держится при прокрутке страницы, как в сравнении inSales и KIT: от 1280 px таблица помещается целиком, поэтому блок перестаёт листаться сам и sticky-шапка цепляется за окно. Уже — таблица листается внутри блока высотой в экран */
 @media (min-width: 1280px){ .platform-comparison .card:has(>.scroll){ overflow: clip; } .platform-comparison .scroll{ overflow: visible; max-height: none; } }
 @media (min-width: 1280px){ .platform-comparison table{ min-width: 0; } .platform-comparison thead th:first-child{ width: 170px; } .platform-comparison thead th[data-p="6"]{ width: 136px; } }
 /* Под ступень — место на две строки, прижатое к низу: названия платформ стоят в одну линию, даже если «Сложные процессы» переносится */

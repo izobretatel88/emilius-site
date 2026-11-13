@@ -16,67 +16,67 @@
   },
   "sources": {
     "I1": {
-      "title": "InSales: обзор функций",
+      "title": "inSales: обзор функций",
       "url": "https://www.insales.ru/page/features",
       "accessed": "2026-10-31"
     },
     "I2": {
-      "title": "InSales: Ультра",
+      "title": "inSales: Ультра",
       "url": "https://www.insales.ru/page/ultra",
       "accessed": "2026-10-31"
     },
     "I3": {
-      "title": "InSales: маркетинг и SEO",
+      "title": "inSales: маркетинг и SEO",
       "url": "https://www.insales.ru/seo",
       "accessed": "2026-10-31"
     },
     "I4": {
-      "title": "InSales: маркетплейсы",
+      "title": "inSales: маркетплейсы",
       "url": "https://www.insales.ru/page/marketplace",
       "accessed": "2026-10-31"
     },
     "I5": {
-      "title": "InSales: магазин приложений",
+      "title": "inSales: магазин приложений",
       "url": "https://www.insales.ru/collection/apps",
       "accessed": "2026-10-31"
     },
     "I6": {
-      "title": "InSales: доставка",
+      "title": "inSales: доставка",
       "url": "https://www.insales.ru/page/delivery",
       "accessed": "2026-10-31"
     },
     "I7": {
-      "title": "InSales: редактор сайта",
+      "title": "inSales: редактор сайта",
       "url": "https://www.insales.ru/collection/doc-dizayn/product/redaktor-sayta-new",
       "accessed": "2026-10-31"
     },
     "I8": {
-      "title": "InSales: избранное",
+      "title": "inSales: избранное",
       "url": "https://www.insales.ru/collection/doc-js/product/izbrannoe",
       "accessed": "2026-10-31"
     },
     "I9": {
-      "title": "InSales: JS-компоненты",
+      "title": "inSales: JS-компоненты",
       "url": "https://www.insales.ru/collection/doc-js",
       "accessed": "2026-10-31"
     },
     "I10": {
-      "title": "InSales: ИИ-аналитик",
+      "title": "inSales: ИИ-аналитик",
       "url": "https://www.insales.ru/page/ai-analyst",
       "accessed": "2026-10-31"
     },
     "I11": {
-      "title": "InSales: диалоги",
+      "title": "inSales: диалоги",
       "url": "https://www.insales.ru/page/dialogues-plus",
       "accessed": "2026-10-31"
     },
     "I12": {
-      "title": "InSales: тарифы",
+      "title": "inSales: тарифы",
       "url": "https://www.insales.ru/signup",
       "accessed": "2026-10-31"
     },
     "I13": {
-      "title": "InSales: виджеты",
+      "title": "inSales: виджеты",
       "url": "https://www.insales.ru/collection/vidzhety/product/infojson",
       "accessed": "2026-10-31"
     },
@@ -266,57 +266,57 @@
       "accessed": "2026-10-31"
     },
     "I14": {
-      "title": "InSales: полный перечень возможностей",
+      "title": "inSales: полный перечень возможностей",
       "url": "https://www.insales.ru/collection/doc-obschaya-informatsiya/product/polnyy-spisok-vozmozhnostey-platformy",
       "accessed": "2026-10-31"
     },
     "I15": {
-      "title": "InSales: платёжные сервисы",
+      "title": "inSales: платёжные сервисы",
       "url": "https://www.insales.ru/collection/apps-platezhnye-servisy",
       "accessed": "2026-10-31"
     },
     "I16": {
-      "title": "InSales: amoCRM",
+      "title": "inSales: amoCRM",
       "url": "https://www.insales.ru/collection/apps-crm/product/amocrm",
       "accessed": "2026-10-31"
     },
     "I17": {
-      "title": "InSales: база клиентов",
+      "title": "inSales: база клиентов",
       "url": "https://www.insales.ru/collection/doc-klienty",
       "accessed": "2026-10-31"
     },
     "I18": {
-      "title": "InSales: импорт и восстановление данных",
+      "title": "inSales: импорт и восстановление данных",
       "url": "https://www.insales.ru/collection/doc-chasto-zadavaemye-voprosy/product/kak-sdelat-rezervnoe-kopirovanie-ili-vosstanovlenie-dannyh",
       "accessed": "2026-10-31"
     },
     "I19": {
-      "title": "InSales: обмен с МоимСкладом",
+      "title": "inSales: обмен с МоимСкладом",
       "url": "https://www.insales.ru/collection/integratsiya-s-moysklad",
       "accessed": "2026-10-31"
     },
     "I20": {
-      "title": "InSales: обмен заказами 1С",
+      "title": "inSales: обмен заказами 1С",
       "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/nastroyka-vzaimodeystviya-s-1s-novogo-magazina-na-primere-upravlenie-torgovley-11",
       "accessed": "2026-10-31"
     },
     "I21": {
-      "title": "InSales: обмен статусами",
+      "title": "inSales: обмен статусами",
       "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/obnovlenie-statusov-obrabotki-i-oplaty-zakazov-iz-1s",
       "accessed": "2026-10-31"
     },
     "I22": {
-      "title": "InSales: прочие расширения",
+      "title": "inSales: прочие расширения",
       "url": "https://www.insales.ru/collection/apps-prochee",
       "accessed": "2026-10-31"
     },
     "I23": {
-      "title": "InSales: документация",
+      "title": "inSales: документация",
       "url": "https://www.insales.ru/collection/documentation",
       "accessed": "2026-10-31"
     },
     "I24": {
-      "title": "InSales: конверсия товаров",
+      "title": "inSales: конверсия товаров",
       "url": "https://www.insales.ru/collection/apps-prodazhi/product/konversiya-tovarov",
       "accessed": "2026-10-31"
     },
@@ -421,42 +421,42 @@
       "accessed": "2026-10-31"
     },
     "I25": {
-      "title": "InSales: кассы и платёжные интеграции",
+      "title": "inSales: кассы и платёжные интеграции",
       "url": "https://www.insales.ru/collection/apps-platezhnye-sistemy",
       "accessed": "2026-10-31"
     },
     "I26": {
-      "title": "InSales: цены и варианты обмена 1С",
+      "title": "inSales: цены и варианты обмена 1С",
       "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/osnovnye-prichiny-pochemu-mogut-ne-sozdavatsya-tovary-prishedshie-iz-1s",
       "accessed": "2026-10-31"
     },
     "I27": {
-      "title": "InSales: идентификация импорта",
+      "title": "inSales: идентификация импорта",
       "url": "https://www.insales.ru/collection/doc-import-export/product/sposoby-identifikatsii-tovarov-pri-importe-iz-csvxlsxlsx",
       "accessed": "2026-10-31"
     },
     "I28": {
-      "title": "InSales: ИИ-инструменты товара",
+      "title": "inSales: ИИ-инструменты товара",
       "url": "https://www.insales.ru/collection/tovary/product/ai-instrumenty-v-kartochke-tovara",
       "accessed": "2026-10-31"
     },
     "I29": {
-      "title": "InSales: корзина",
+      "title": "inSales: корзина",
       "url": "https://www.insales.ru/collection/nastrojki-vidzhetov/product/vidjeti-korzini",
       "accessed": "2026-10-31"
     },
     "I30": {
-      "title": "InSales: языковые версии",
+      "title": "inSales: языковые версии",
       "url": "https://www.insales.ru/collection/doc-nastroyki-magazina/product/yazykovye-versii-magazina",
       "accessed": "2026-10-31"
     },
     "I31": {
-      "title": "InSales: сопоставление существующего каталога 1С",
+      "title": "inSales: сопоставление существующего каталога 1С",
       "url": "https://www.insales.ru/collection/doc-sinhronizatsiya-s-1s/product/nastroyka-sinhronizatsii-s-1s-uzhe-suschestvuyuschego-magazina-na-insales",
       "accessed": "2026-10-31"
     },
     "I32": {
-      "title": "InSales: мобильный бэк-офис iOS и Android",
+      "title": "inSales: мобильный бэк-офис iOS и Android",
       "url": "https://www.insales.ru/page/mobile",
       "accessed": "2026-11-01"
     }
@@ -640,7 +640,7 @@
       "kit": "НП",
       "insales_source": "I7",
       "kit_source": "",
-      "note": "У InSales HTML/CSS/JS/Liquid; у KIT подтверждён код секций."
+      "note": "У inSales HTML/CSS/JS/Liquid; у KIT подтверждён код секций."
     },
     {
       "id": "F019",
@@ -670,7 +670,7 @@
       "kit": "Да",
       "insales_source": "I8",
       "kit_source": "K13",
-      "note": "InSales сохраняет товары, а не выбранные варианты."
+      "note": "inSales сохраняет товары, а не выбранные варианты."
     },
     {
       "id": "F022",
@@ -780,7 +780,7 @@
       "kit": "Да",
       "insales_source": "I1",
       "kit_source": "K3",
-      "note": "InSales: подборки через категории; механики наполнения различаются."
+      "note": "inSales: подборки через категории; механики наполнения различаются."
     },
     {
       "id": "F033",
@@ -890,7 +890,7 @@
       "kit": "Да",
       "insales_source": "I27",
       "kit_source": "K6",
-      "note": "InSales: артикулы подтверждены; применение штрихкода как отдельного идентификатора требует проверки."
+      "note": "inSales: артикулы подтверждены; применение штрихкода как отдельного идентификатора требует проверки."
     },
     {
       "id": "F044",
@@ -1110,7 +1110,7 @@
       "kit": "Да",
       "insales_source": "I27",
       "kit_source": "K6",
-      "note": "InSales: имя, артикул товара/варианта, ID варианта. Штрихкод этим источником не подтверждён."
+      "note": "inSales: имя, артикул товара/варианта, ID варианта. Штрихкод этим источником не подтверждён."
     },
     {
       "id": "F066",
@@ -1140,7 +1140,7 @@
       "kit": "Да",
       "insales_source": "I26",
       "kit_source": "K6",
-      "note": "InSales: ручной обмен запускается со стороны 1С."
+      "note": "inSales: ручной обмен запускается со стороны 1С."
     },
     {
       "id": "F069",
@@ -1180,7 +1180,7 @@
       "kit": "Инт.",
       "insales_source": "I2",
       "kit_source": "K8",
-      "note": "InSales показывает отдельную опцию 1С; у KIT требуется модуль."
+      "note": "inSales показывает отдельную опцию 1С; у KIT требуется модуль."
     },
     {
       "id": "F073",
@@ -1250,7 +1250,7 @@
       "kit": "Инт.",
       "insales_source": "I21",
       "kit_source": "K6",
-      "note": "InSales: направление обмена зависит от версии интеграции; в новых аккаунтах возможен только InSales → МойСклад."
+      "note": "inSales: направление обмена зависит от версии интеграции; в новых аккаунтах возможен только inSales → МойСклад."
     },
     {
       "id": "F080",
@@ -1270,7 +1270,7 @@
       "kit": "Инт.",
       "insales_source": "I26",
       "kit_source": "K7",
-      "note": "InSales: сопоставление типа цены 1С с ценой магазина."
+      "note": "inSales: сопоставление типа цены 1С с ценой магазина."
     },
     {
       "id": "F082",
@@ -1280,7 +1280,7 @@
       "kit": "Инт.",
       "insales_source": "I26",
       "kit_source": "K7",
-      "note": "InSales распознаёт варианты по ID и свойствам. Одинаковые наборы свойств не создают разные варианты."
+      "note": "inSales распознаёт варианты по ID и свойствам. Одинаковые наборы свойств не создают разные варианты."
     },
     {
       "id": "F083",
@@ -1420,7 +1420,7 @@
       "kit": "Частично",
       "insales_source": "I1",
       "kit_source": "K1",
-      "note": "InSales: быстрый заказ/заявка; KIT: автозаполнение чекаута. Это разные механики."
+      "note": "inSales: быстрый заказ/заявка; KIT: автозаполнение чекаута. Это разные механики."
     },
     {
       "id": "F097",
@@ -1500,7 +1500,7 @@
       "kit": "Да",
       "insales_source": "",
       "kit_source": "K15",
-      "note": "У InSales подтверждены сопутствующие товары, но показ именно в чекауте здесь не подтверждён."
+      "note": "У inSales подтверждены сопутствующие товары, но показ именно в чекауте здесь не подтверждён."
     },
     {
       "id": "F105",
@@ -1600,7 +1600,7 @@
       "kit": "Да",
       "insales_source": "I18",
       "kit_source": "K17",
-      "note": "InSales: платная услуга поддержки с ограничениями данных; KIT: импорт Excel."
+      "note": "inSales: платная услуга поддержки с ограничениями данных; KIT: импорт Excel."
     },
     {
       "id": "F115",
@@ -2000,7 +2000,7 @@
       "kit": "Инт.",
       "insales_source": "I5",
       "kit_source": "K15",
-      "note": "У InSales в «Ультра» пометка «скоро», но в каталоге есть приложение; конкретный способ подключения уточнить."
+      "note": "У inSales в «Ультра» пометка «скоро», но в каталоге есть приложение; конкретный способ подключения уточнить."
     },
     {
       "id": "F155",
@@ -2010,7 +2010,7 @@
       "kit": "Инт.",
       "insales_source": "I2",
       "kit_source": "K15",
-      "note": "InSales: на странице тарифа «скоро», не считать доступной."
+      "note": "inSales: на странице тарифа «скоро», не считать доступной."
     },
     {
       "id": "F156",
@@ -2200,7 +2200,7 @@
       "kit": "Да",
       "insales_source": "I18",
       "kit_source": "K26",
-      "note": "InSales: услуга поддержки с ограничениями и согласованием формата; KIT: встроенный Excel-импорт."
+      "note": "inSales: услуга поддержки с ограничениями и согласованием формата; KIT: встроенный Excel-импорт."
     },
     {
       "id": "F175",
@@ -2210,7 +2210,7 @@
       "kit": "Да",
       "insales_source": "I17",
       "kit_source": "K26",
-      "note": "InSales: признак подписки; KIT также экспортирует дату и время."
+      "note": "inSales: признак подписки; KIT также экспортирует дату и время."
     },
     {
       "id": "F176",
@@ -2290,7 +2290,7 @@
       "kit": "Да",
       "insales_source": "I22",
       "kit_source": "K22",
-      "note": "InSales: GetPrime — цифровые сертификаты; KIT: встроенные карты."
+      "note": "inSales: GetPrime — цифровые сертификаты; KIT: встроенные карты."
     },
     {
       "id": "F184",
@@ -2310,7 +2310,7 @@
       "kit": "Да",
       "insales_source": "I2",
       "kit_source": "K23",
-      "note": "У InSales комплекты с ценой; механики отличаются."
+      "note": "У inSales комплекты с ценой; механики отличаются."
     },
     {
       "id": "F186",
@@ -2470,7 +2470,7 @@
       "kit": "Да",
       "insales_source": "I2",
       "kit_source": "K47",
-      "note": "KIT: встроенные email, задержка, интервал и промокод; CRM не обязательна. InSales: платная опция."
+      "note": "KIT: встроенные email, задержка, интервал и промокод; CRM не обязательна. inSales: платная опция."
     },
     {
       "id": "F202",
@@ -2860,7 +2860,7 @@
       "kit": "НП",
       "insales_source": "I24",
       "kit_source": "",
-      "note": "InSales: отдельное приложение. Наличие Метрики KIT не доказывает готовый отчёт конверсии каждого SKU."
+      "note": "inSales: отдельное приложение. Наличие Метрики KIT не доказывает готовый отчёт конверсии каждого SKU."
     },
     {
       "id": "F241",
@@ -2980,7 +2980,7 @@
       "kit": "Код",
       "insales_source": "I28",
       "kit_source": "K35",
-      "note": "InSales: встроенная генерация/редактирование текста. KIT: внешние скиллы; генерация SEO выделена отдельно."
+      "note": "inSales: встроенная генерация/редактирование текста. KIT: внешние скиллы; генерация SEO выделена отдельно."
     },
     {
       "id": "F253",
@@ -2990,7 +2990,7 @@
       "kit": "Да",
       "insales_source": "I10",
       "kit_source": "K1",
-      "note": "InSales: маркетплейсы; KIT: заявленный помощник платформы."
+      "note": "inSales: маркетплейсы; KIT: заявленный помощник платформы."
     },
     {
       "id": "F254",
@@ -3030,7 +3030,7 @@
       "kit": "Да",
       "insales_source": "I1",
       "kit_source": "K34",
-      "note": "InSales: продажа услуг в общем обзоре, привязка услуги к товару не доказана. KIT: заявка без включения стоимости в оплату."
+      "note": "inSales: продажа услуг в общем обзоре, привязка услуги к товару не доказана. KIT: заявка без включения стоимости в оплату."
     },
     {
       "id": "F258",
@@ -3100,7 +3100,7 @@
       "kit": "НП",
       "insales_source": "I32",
       "kit_source": "",
-      "note": "InSales: iOS и Android — управление заказами, каталогом и просмотр продаж. Актуальную версию и ссылки установки уточняйте у InSales. У KIT отдельное приложение управления не подтверждено в изученной справке; приложение продавца Яндекс Маркета не считается приложением KIT. Перепроверено 01.11.2026."
+      "note": "inSales: iOS и Android — управление заказами, каталогом и просмотр продаж. Актуальную версию и ссылки установки уточняйте у inSales. У KIT отдельное приложение управления не подтверждено в изученной справке; приложение продавца Яндекс Маркета не считается приложением KIT. Перепроверено 01.11.2026."
     },
     {
       "id": "F265",
@@ -3730,7 +3730,7 @@
       "kit": "НП",
       "insales_source": "I28",
       "kit_source": "",
-      "note": "InSales: рекомендации по заполнению, повторная проверка и скрытие рекомендации."
+      "note": "inSales: рекомендации по заполнению, повторная проверка и скрытие рекомендации."
     },
     {
       "id": "F328",
@@ -3740,7 +3740,7 @@
       "kit": "Код",
       "insales_source": "I28",
       "kit_source": "K35",
-      "note": "InSales: встроенный инструмент; KIT: внешние скиллы/API."
+      "note": "inSales: встроенный инструмент; KIT: внешние скиллы/API."
     },
     {
       "id": "F329",
@@ -3770,7 +3770,7 @@
       "kit": "Нет",
       "insales_source": "I23",
       "kit_source": "K44",
-      "note": "KIT формирует canonical автоматически, ручная правка запрещена; InSales: есть отдельная инструкция."
+      "note": "KIT формирует canonical автоматически, ручная правка запрещена; inSales: есть отдельная инструкция."
     },
     {
       "id": "F332",
@@ -3790,7 +3790,7 @@
       "kit": "Да",
       "insales_source": "I14",
       "kit_source": "K42",
-      "note": "InSales: загрузка из файла; KIT: XLS."
+      "note": "inSales: загрузка из файла; KIT: XLS."
     },
     {
       "id": "F334",
@@ -3800,7 +3800,7 @@
       "kit": "Да",
       "insales_source": "I23",
       "kit_source": "K45",
-      "note": "KIT: до 10 файлов по 100 МБ; InSales: размещение ссылок на файлы, не аналог штатного поля документов. InSales: в этом проходе подтверждено только соответствующим разделом документации."
+      "note": "KIT: до 10 файлов по 100 МБ; inSales: размещение ссылок на файлы, не аналог штатного поля документов. inSales: в этом проходе подтверждено только соответствующим разделом документации."
     },
     {
       "id": "F335",
@@ -3820,7 +3820,7 @@
       "kit": "Да",
       "insales_source": "I23",
       "kit_source": "K53",
-      "note": "KIT: добавить или заменить, с ограничением общего числа изображений. InSales: в этом проходе подтверждено только соответствующим разделом документации."
+      "note": "KIT: добавить или заменить, с ограничением общего числа изображений. inSales: в этом проходе подтверждено только соответствующим разделом документации."
     },
     {
       "id": "F337",
@@ -3830,7 +3830,7 @@
       "kit": "НП",
       "insales_source": "I29",
       "kit_source": "",
-      "note": "InSales: для авторизованного покупателя; описана логика замены содержимого."
+      "note": "inSales: для авторизованного покупателя; описана логика замены содержимого."
     },
     {
       "id": "F338",
@@ -3840,7 +3840,7 @@
       "kit": "НП",
       "insales_source": "I29",
       "kit_source": "",
-      "note": "InSales: актуальные темы 4-го поколения; ссылка существует 30 дней."
+      "note": "inSales: актуальные темы 4-го поколения; ссылка существует 30 дней."
     },
     {
       "id": "F339",
@@ -3890,7 +3890,7 @@
       "kit": "Инт.",
       "insales_source": "I26",
       "kit_source": "K49",
-      "note": "InSales: состояния/отчёты обмена; KIT: лог запросов с идентификатором."
+      "note": "inSales: состояния/отчёты обмена; KIT: лог запросов с идентификатором."
     },
     {
       "id": "F344",

@@ -7,7 +7,7 @@ export type ServiceRow = { id: string; title: string; note: string; href: string
 export const SERVICE_ROWS: ServiceRow[] = [
   {
     id: 'insales-shop',
-    title: 'Магазин на шаблоне InSales',
+    title: 'Магазин на шаблоне inSales',
     note: `За 3–5 недель · от\u00a0${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')}\u00a0000\u00a0₽`,
     href: 'services/insales-shop/',
     icon: 'cart',

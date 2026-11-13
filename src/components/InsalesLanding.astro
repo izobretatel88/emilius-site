@@ -1,6 +1,6 @@
 ---
 import LiveEstimate from './LiveEstimate.astro';
-// Лендинг услуги «Магазин на шаблоне InSales». Две версии первого экрана: общая и для селлеров.
+// Лендинг услуги «Магазин на шаблоне inSales». Две версии первого экрана: общая и для селлеров.
 import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
@@ -60,7 +60,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`}
   description={hero.lead}
   ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
-  ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на InSales' : 'Свой интернет-магазин на InSales за 3–5 недель: телефон с живым магазином'}
+  ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на inSales' : 'Свой интернет-магазин на inSales за 3–5 недель: телефон с живым магазином'}
 >
 
 
@@ -71,7 +71,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   </nav>
 
   <main class="page ui-shell">
-    <Breadcrumbs items={variant==='shop' ? [{title:'Услуги',href:'services/'},{title:'Магазин на InSales'}] : [{title:'Услуги',href:'services/'},{title:'Магазин на InSales',href:'services/insales-shop/'},{title:'Для селлеров'}]} />
+    <Breadcrumbs items={variant==='shop' ? [{title:'Услуги',href:'services/'},{title:'Магазин на inSales'}] : [{title:'Услуги',href:'services/'},{title:'Магазин на inSales',href:'services/insales-shop/'},{title:'Для селлеров'}]} />
     <section class="card hero">
       <div class="hero-main">
       <p class="eyebrow">{hero.eyebrow}</p>
@@ -131,7 +131,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <ul class="dots got">{RESULT.map((r) => <li>{r}</li>)}</ul>
     </section>
 
-    <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на InSales -->
+    <!-- Примеры: сначала магазины на шаблоне — ровно про эту услугу, затем остальные работы на inSales -->
     <section class="card block" aria-labelledby="t-examples">
       <h2 id="t-examples">Магазины, которые мы сделали</h2>
       <!-- Свежая работа — кейс «магазин + SEO»: что сделали и позиции по местным запросам -->
@@ -165,7 +165,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <p class="small">{FRESH_SHOP.positionsNote}</p>
         </div>
       </article>
-      <p class="sub-lead">На шаблоне InSales — как в этой услуге:</p>
+      <p class="sub-lead">На шаблоне inSales — как в этой услуге:</p>
       <ul class="shops">
         {TEMPLATE_SHOPS.map((x) => (
           <li>
@@ -180,7 +180,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           </li>
         ))}
       </ul>
-      <p class="sub-lead">Ещё магазины и интеграции на InSales:</p>
+      <p class="sub-lead">Ещё магазины и интеграции на inSales:</p>
       <ul class="more-shops">
         {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
         {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
@@ -266,7 +266,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </section>
       <section class="card block" aria-labelledby="t-yours">
         <h2 id="t-yours">Всё оформлено на вас</h2>
-        <p>Аккаунт InSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши.</p>
+        <p>Аккаунт inSales, домен, Яндекс Метрика, договор эквайринга — на ваше имя с первого дня. Тема и данные ваши.</p>
         <h2 class="sub">Честно про трафик</h2>
         <p>Сайт — касса и витрина, а не поток покупателей. До оплаты разберём, откуда придут первые 100 покупателей: подписчики, база клиентов, офлайн-точка, реклама. Если источника нет, скажем и предложим, с чего начать.</p>
         <p>Есть офлайн-точка — начнём с местного SEO, как <a href={`#case-${FRESH_SHOP.id}`}>у {FRESH_SHOP.name}</a>. Это отдельная работа, в пакеты не входит.</p>
@@ -288,15 +288,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     </section>
 
     <section class="card block" aria-labelledby="t-choice">
-      <h2 id="t-choice">InSales, Tilda, Яндекс KIT или самому?</h2>
+      <h2 id="t-choice">inSales, Tilda, Яндекс KIT или самому?</h2>
       <LinkList items={[
         {title:'Сравнить восемь платформ',description:'Сценарии, затраты и ограничения.',href:'compare/ecommerce-platforms/'},
-        {title:'InSales и Яндекс KIT подробно',description:'348 функций со статусами, оговорками и источниками.',href:'compare/insales-vs-yandex-kit/'},
+        {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами, оговорками и источниками.',href:'compare/insales-vs-yandex-kit/'},
         {title:'Рассчитать состав проекта',description:'Предварительный бюджет и срок по семи ответам.',href:'tools/insales-calculator/'},
         ...(variant==='seller' && hasStockArticle ? [{title:'Как устроены единые остатки',description:'Сайт, маркетплейсы и учётная система.',href:'blog/edinye-ostatki-wb-ozon-insales/'}] : []),
       ]} />
       <dl class="choice">
-        {CHOICE.map(([c, a]) => <div class:list={[{ fit: a === 'InSales' }]}><dt>{c}</dt><dd>{a}</dd></div>)}
+        {CHOICE.map(([c, a]) => <div class:list={[{ fit: a === 'inSales' }]}><dt>{c}</dt><dd>{a}</dd></div>)}
       </dl>
     </section>
 
@@ -311,7 +311,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <h2 id="t-lead">Посчитаем ваш магазин</h2>
       <p>Ответьте на 7 вопросов — сразу покажем пакет, цену и срок по тем же нормам, по которым считаем смету.</p>
       <form method="post" action={action} novalidate data-norms={norms} data-variant={variant}>
-        <input type="hidden" name="message" value={`Заявка на диагностику InSales (${variant})`} />
+        <input type="hidden" name="message" value={`Заявка на диагностику inSales (${variant})`} />
         <!-- Компьютер: вопросы слева, справа цена и контакты — закреплены, цена видна при каждом ответе -->
         <div class="quiz">
         <LiveEstimate target="#lead-estimate" landing />
@@ -332,7 +332,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <div class="est-live" aria-live="polite" aria-atomic="true">
           <p class="est-pkg">Пакет <b data-out="pkg"></b></p>
           <p class="est-price num" data-out="price"></p>
-          <p class="est-meta"><span data-out="weeks"></span> · тариф InSales <span data-out="tariff"></span> — отдельно, платите InSales напрямую</p>
+          <p class="est-meta"><span data-out="weeks"></span> · тариф inSales <span data-out="tariff"></span> — отдельно, платите inSales напрямую</p>
           </div>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>

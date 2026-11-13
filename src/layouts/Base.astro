@@ -130,7 +130,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
     <script is:inline>
       // Общие цели Метрики (аудит трафика и целей 11.11.2026), одним обработчиком на весь документ:
       // tg-click — любая ссылка на Telegram, с параметрами page и place: data-goal-place ближайшего блока,
-      // fab, nav, footer, id раздела или page. compare-to-landing — со страниц сравнений на лендинг InSales.
+      // fab, nav, footer, id раздела или page. compare-to-landing — со страниц сравнений на лендинг inSales.
       // Без счётчика emiGoal нет — ничего не происходит.
       document.addEventListener('click', function (e) {
         var a = e.target instanceof Element ? e.target.closest('a[href]') : null;

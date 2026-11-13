@@ -8,8 +8,8 @@ export const DIRECTIONS = ['custdev', 'design', 'dev', 'marketing'].map(id => ({
 }));
 export const MATERIALS = [
   { title: 'Какую платформу выбрать для магазина', description: 'Восемь платформ: сценарии, ограничения и стоимость. Данные на 30 октября 2026.', href: 'compare/ecommerce-platforms/', label: 'Сравнение' },
-  { title: 'InSales и Яндекс KIT: функции подробно', description: '348 пунктов, 19 разделов, способы подключения и официальные источники. Данные на 31 октября 2026.', href: 'compare/insales-vs-yandex-kit/', label: 'Сравнение' },
-  { title: 'Калькулятор магазина на InSales', description: 'Семь вопросов о каталоге и интеграциях — ориентир по бюджету и сроку запуска.', href: 'tools/insales-calculator/', label: 'Инструмент' },
+  { title: 'inSales и Яндекс KIT: функции подробно', description: '348 пунктов, 19 разделов, способы подключения и официальные источники. Данные на 31 октября 2026.', href: 'compare/insales-vs-yandex-kit/', label: 'Сравнение' },
+  { title: 'Калькулятор магазина на inSales', description: 'Семь вопросов о каталоге и интеграциях — ориентир по бюджету и сроку запуска.', href: 'tools/insales-calculator/', label: 'Инструмент' },
 ];
 export const RELATED: Record<string, {title: string; description: string; href: string}[]> = {
   custdev: [

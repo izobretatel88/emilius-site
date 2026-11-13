@@ -15,21 +15,21 @@ import detailScript from '../content/comparisons/insales-kit.js?raw';
 interface Props {kind:'general'|'detail';}
 const {kind}=Astro.props;
 const detailed=kind==='detail';
-const title=detailed?'InSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
-const description=detailed?'348 функций InSales и Яндекс KIT: способы подключения, ограничения и официальные источники.':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
+const title=detailed?'inSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
+const description=detailed?'348 функций inSales и Яндекс KIT: способы подключения, ограничения и официальные источники.':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
 const html=detailed?detailHtml:generalHtml;
 const css=detailed?detailCss:generalCss;
 const script=detailed?detailScript:generalScript;
 const related=[
-  detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'InSales и Яндекс KIT подробно',description:'348 функций, ограничения и источники.',href:'compare/insales-vs-yandex-kit/'},
-  {title:'Оценить запуск на InSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
+  detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'inSales и Яндекс KIT подробно',description:'348 функций, ограничения и источники.',href:'compare/insales-vs-yandex-kit/'},
+  {title:'Оценить запуск на inSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
   {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
 ];
 ---
 <Base title={`${title} — Emilius Agency`} description={description}>
   <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
     <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
-    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на InSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
+    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
   </main><Footer />
   <style is:global set:html={css} />
   <script is:inline set:html={script} />

@@ -45,7 +45,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
         <span class="menu-group">Направления</span>
         <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} data-stage={item.stage} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
         <span class="menu-group">Готовое решение</span>
-        <a href={href('services/insales-shop/')}>Магазин на InSales</a>
+        <a href={href('services/insales-shop/')}>Магазин на inSales</a>
         <span class="menu-group">Материалы и инструменты</span>
         <a href={href('compare/')}>Сравнения платформ</a>
         <a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>
