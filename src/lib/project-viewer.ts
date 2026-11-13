@@ -40,7 +40,9 @@ export function setupProjectViewer() {
   // обе кнопки дают одну картинку, и пара переключателей без действия убирается.
   const updateZoom = () => {
     const screen = screens()[index];
-    const box = imageBox.clientWidth;
+    // Ширина под снимок — без внутренних полей области (серое поле вокруг снимка)
+    const style = typeof getComputedStyle === 'function' ? getComputedStyle(imageBox) : null;
+    const box = imageBox.clientWidth - (style ? (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0) : 0);
     const fits = !!screen && box > 0 && box >= screen.width;
     zoomControl.hidden = device === 'phone' || fits;
     if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');

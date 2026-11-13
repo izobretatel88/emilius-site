@@ -170,7 +170,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
   .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
   .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
-  .viewer-image[data-device='phone']{padding:20px;background:var(--well)}
+  /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */
+  .viewer-image{padding:20px;background:var(--well)}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   /* До 1000 px адрес сайта стоит столбиком со своей зоной нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
   @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
