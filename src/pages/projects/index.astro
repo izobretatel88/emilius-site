@@ -167,6 +167,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-error button{background:var(--card)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
   .viewer-inquiry{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
+  /* Переключателей нет (один вид, снимок помещается) — ссылка не висит одна у правого края пустой полосы, а встаёт в начало, под название */
+  .viewer-controls:not(:has(>[role='group']:not([hidden]))) .viewer-inquiry{margin-left:0}
   .viewer-status{font-size:var(--fs-small);min-height:36px;padding:8px 20px;color:var(--ink-2)}
   /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
   .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
