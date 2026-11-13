@@ -25,9 +25,9 @@ const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
   // Роли — из карточки партнёра inSales (стенд /extra/insales-stend/, 13.11.2026)
   zalina:{kind:'Авторская одежда',role:'Фронтенд по готовому дизайну · доработки',updated:true},
   mnogoles:{kind:'Пиломатериалы от производителя',role:'Магазин с нуля · калькуляторы',updated:true},
-  almatennis:{kind:'Теннисный магазин в Москве',role:'Магазин на готовой теме inSales'},
-  'ss-sk':{kind:'Системы безопасности в Сочи',role:'Магазин на готовой теме inSales'},
-  nsorganic:{kind:'Грибы и травы',role:'Магазин на готовой теме inSales'},
+  almatennis:{kind:'Теннисный магазин в Москве',role:'Магазин на готовой теме inSales',updated:true},
+  'ss-sk':{kind:'Системы безопасности в Сочи',role:'Магазин на готовой теме inSales',updated:true},
+  nsorganic:{kind:'Грибы и травы',role:'Магазин на готовой теме inSales',updated:true},
 };
 // Магазины из карточки партнёра inSales: ссылки и названия — из данных лендинга, без повтора
 const shop=(name:string)=>MORE_SHOPS.find(x=>x.name===name)!;
