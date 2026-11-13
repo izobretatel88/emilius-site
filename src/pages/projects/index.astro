@@ -227,6 +227,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .gallery-contact{padding:28px;min-height:290px}
     .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
     .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
+    /* Только снимок компьютера (переключателя вида нет): окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
+    .project-viewer[open]:has(.viewer-devices[hidden]):has(.viewer-image[data-device='desktop']){height:fit-content}
     .viewer-toolbar{padding:8px 12px}
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
