@@ -145,6 +145,6 @@ select {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important; /* лента телефонов на лендинге InSales листается без плавной прокрутки */
+    scroll-behavior: auto !important; /* лента телефонов на лендинге inSales листается без плавной прокрутки */
   }
 }
