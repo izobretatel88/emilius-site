@@ -178,6 +178,11 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
   .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
+  /* Наведение мышью: серая кнопка темнеет до линии разделителя, выбранная — до тёмного бирюзового, как на лендинге InSales */
+  @media (hover: hover) and (pointer: fine) {
+    .viewer-toolbar button:hover,.viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
+    .viewer-controls :global(button[aria-pressed='true']:hover){background:var(--teal-btn-hover)}
+  }
   .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */
   .viewer-image{padding:20px;background:var(--well)}
