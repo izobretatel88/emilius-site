@@ -139,6 +139,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-viewer[open]{display:flex;flex-direction:column}
   .project-viewer[open]>*{flex-shrink:0}
   .project-viewer[open]>.viewer-image{flex-grow:1}
+  /* Снимок не загрузился — всё поле отдаём сообщению, оно встаёт по центру; пустая область снимка не растёт под ним */
+  .project-viewer[open]>.viewer-error:not([hidden]){flex-grow:1}
+  .project-viewer[open]>.viewer-image:has(img[hidden]){flex-grow:0}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
   .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
