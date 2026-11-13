@@ -782,14 +782,17 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .phones::-webkit-scrollbar { display: none; }
   .phones li { flex: 0 0 188px; scroll-snap-align: start; }
   /* position: relative — скрытая подпись «откроется в новой вкладке» остаётся внутри ленты и не растягивает страницу вбок */
-  .phone-card { position: relative; display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
+  .phone-card { position: relative; display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; transition: transform var(--press); -webkit-tap-highlight-color: transparent; }
+  /* Как карточки магазинов выше: нажатие чуть проседает, снимок проясняется при наведении и фокусе */
+  .phone-card:active { transform: scale(var(--press-scale-card)); }
+  .phone-card:focus-visible .phone img { filter: none; }
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
-  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); transition: filter var(--hover); }
   .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
-  @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } }
+  @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } .phone-card:hover .phone img { filter: none; } }
   .phone-card:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
