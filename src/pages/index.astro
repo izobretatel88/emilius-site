@@ -242,7 +242,8 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); transition: transform var(--press); }
+  /* Тонкая линия по краю, как у превью на /projects/: светлый снимок (LimeMart) не растворяется в фоне страницы */
+  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
   .project-image:active { transform: scale(var(--press-scale-card)); }
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
