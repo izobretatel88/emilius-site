@@ -9,7 +9,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 
 <section class="card feedback" id="feedback" tabindex="-1" aria-labelledby="t-feedback">
   <h2 id="t-feedback">Обсудить проект</h2>
-  <form method="post" action={action} novalidate>
+  <form method="post" action={action} novalidate data-direct={direct}>
     <div class="project-context" hidden>
       <p>Ориентир — <strong data-project-context></strong></p>
       <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
@@ -174,8 +174,12 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         });
         const data = await res.json().catch(() => ({ ok: false }));
         if (!res.ok || !data.ok) throw new Error(data.error || String(res.status));
+        // Человек должен знать, куда придёт ответ. Без контакта ответить нельзя — говорим об этом прямо.
+        const contact=(form.querySelector<HTMLInputElement>('#fb-contact')?.value||'').trim();
         form.reset();
-        show(ok, 'Спасибо! Сообщение у нас.');
+        show(ok, contact
+          ? `Спасибо! Сообщение у нас. Ответим сюда: ${contact}.`
+          : `Спасибо! Сообщение у нас. Контакт вы не оставили — если ждёте ответа, напишите нам в Telegram: ${form.dataset.direct}.`);
         // Цели Метрики (JavaScript-события): заявка с главной ушла / не ушла. Без счётчика emiGoal нет.
         (window as any).emiGoal?.('feedback-sent');
       } catch {

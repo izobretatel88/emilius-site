@@ -75,6 +75,11 @@ const items = ENTRY_POINTS.map((e) => {
 </div>
 
 <script>
+  // Ссылка ?start=<id> (её можно переслать) сразу открывает эту ситуацию
+  const startId = new URLSearchParams(location.search).get('start');
+  const startInput = startId ? document.querySelector<HTMLInputElement>(`[data-entry] input[name="entry"][value="${CSS.escape(startId)}"]`) : null;
+  if (startInput) startInput.checked = true;
+
   // Без перезагрузки: форма на этой же странице получает ситуацию событием, страница плавно уходит к форме.
   document.querySelectorAll<HTMLAnchorElement>('[data-entry-cta]').forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -139,7 +144,7 @@ const items = ENTRY_POINTS.map((e) => {
   .entry-why { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; margin: 0 0 22px; }
   .entry-cycle { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; font-size: 14px; color: var(--ink-3); }
   .entry-cycle li { display: inline-flex; align-items: center; gap: 6px; }
-  .entry-cycle li + li::before { content: '→'; margin-right: 4px; color: var(--ink-3); }
+  .entry-cycle li:not(:last-child)::after { content: '→'; margin-left: 4px; color: var(--ink-3); font-weight: 400; } /* стрелка в конце строки, а не в начале следующей */
   .entry-cycle li.now { color: var(--ink); font-weight: 600; }
   .entry-cycle li.again { color: var(--ink-3); }
 
