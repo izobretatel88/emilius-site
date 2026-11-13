@@ -7,7 +7,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#s-8`;
 
 <div class="cookie-notice" role="region" aria-label="Cookie" hidden>
   <p>
-    Используем cookie Яндекс Метрики для статистики. Продолжая, вы соглашаетесь с этим.
+    Используем cookie Яндекс Метрики для статистики. Продолжая, вы&nbsp;согласны.
     <a href={privacy}>Подробнее</a>
   </p>
   <button type="button">Понятно</button>
@@ -65,8 +65,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#s-8`;
     padding-inline: 18px;
     border: 0;
     border-radius: var(--radius-btn);
-    background: var(--teal-btn);
-    color: var(--on-teal);
+    background: var(--well);
+    color: var(--ink);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
@@ -74,16 +74,21 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/#s-8`;
   }
   .cookie-notice button:active { transform: scale(var(--press-scale)); }
   @media (hover: hover) and (pointer: fine) {
-    .cookie-notice button:hover { background: var(--teal-btn-hover); }
+    .cookie-notice button:hover { background: var(--hair); }
   }
-  /* Телефон: плашка на всю ширину у нижнего края, компактнее; «Написать» прячется, пока она открыта */
+  /* Телефон: плашка на всю ширину у нижнего края, в две строки (была в четыре — закрывала пятую часть экрана);
+     «Написать» прячется, пока она открыта */
   @media (max-width: 600px) {
     .cookie-notice {
-      right: max(16px, env(safe-area-inset-right));
+      left: max(8px, env(safe-area-inset-left));
+      right: max(8px, env(safe-area-inset-right));
+      bottom: max(8px, env(safe-area-inset-bottom));
       width: auto;
-      gap: 12px;
-      padding: 12px 12px 12px 16px;
-      font-size: 14px;
+      gap: 10px;
+      padding: 8px 8px 8px 14px;
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      line-height: 1.35;
     }
     .cookie-notice button { padding-inline: 14px; }
   }

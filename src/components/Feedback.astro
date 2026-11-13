@@ -63,7 +63,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 </section>
 
 <script>
-  import {projectInquiry, inquiryMessage} from '../lib/project-inquiry';
+  import {projectInquiry, startInquiry} from '../lib/project-inquiry';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
@@ -80,28 +80,47 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     form.addEventListener('reset',()=>requestAnimationFrame(updateLength));
     updateLength();
     const context=form.querySelector<HTMLElement>('.project-context')!;
-    const selectedId=new URLSearchParams(location.search).get('project');
-    const selectedProject=projectInquiry(selectedId);
-    if(selectedProject){
-      message.value=inquiryMessage(message.value,selectedId);
-      context.querySelector('[data-project-context]')!.textContent=selectedProject.name;
+    const contextName=context.querySelector<HTMLElement>('[data-project-context]')!;
+    // Ориентир заявки: проект из галереи (?project=) или ситуация из «С чего начнём?» (?start=)
+    let selectedProject:{name:string;message:string}|null=null;
+    const prefixOf=(item:{message:string})=>`${item.message}\n\n`;
+    const clearProject=()=>{
+      if(selectedProject&&message.value.startsWith(prefixOf(selectedProject)))message.value=message.value.slice(prefixOf(selectedProject).length);
+      selectedProject=null;
+      context.hidden=true;
+      updateLength();
+    };
+    const applyInquiry=(item:{name:string;message:string}|null)=>{
+      if(!item)return;
+      // Прежний автотекст заменяем новым; набранное человеком не трогаем
+      if(selectedProject&&message.value.startsWith(prefixOf(selectedProject)))message.value=message.value.slice(prefixOf(selectedProject).length);
+      const own=message.value;
+      message.value=own.trim()?`${prefixOf(item)}${own}`:prefixOf(item);
+      selectedProject=item;
+      contextName.textContent=item.name;
       context.hidden=false;
       updateLength();
-      const clearProject=()=>{
-        const prefix=`${selectedProject.message}\n\n`;
-        if(message.value.startsWith(prefix))message.value=message.value.slice(prefix.length);
-        context.hidden=true;
-        updateLength();
-      };
-      context.querySelector('[data-clear-project]')!.addEventListener('click',()=>{
-        clearProject();
-        const current = new URL(location.href);
-        current.searchParams.delete('project');
-        history.replaceState(history.state, '', current);
-        message.focus({preventScroll:true});
-      });
-      form.addEventListener('reset',()=>{context.hidden=true;});
+    };
+    const params=new URLSearchParams(location.search);
+    const initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'));
+    if(initial){
+      // Сохранённый браузером текст важнее автозаполнения
+      if(message.value.trim()){selectedProject=initial;contextName.textContent=initial.name;context.hidden=false;}
+      else applyInquiry(initial);
     }
+    window.addEventListener('emilius:inquiry',(event)=>{
+      const detail=(event as CustomEvent<{start?:string}>).detail;
+      applyInquiry(startInquiry(detail?.start??null));
+    });
+    context.querySelector('[data-clear-project]')!.addEventListener('click',()=>{
+      clearProject();
+      const current = new URL(location.href);
+      current.searchParams.delete('project');
+      current.searchParams.delete('start');
+      history.replaceState(history.state, '', current);
+      message.focus({preventScroll:true});
+    });
+    form.addEventListener('reset',()=>{selectedProject=null;context.hidden=true;});
     const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
       field.setAttribute('aria-invalid',String(Boolean(text)));
       el.textContent=text;

@@ -1,3 +1,4 @@
+import { entryPoint } from '../data/entry-points';
 // Принимаем только известный проект: текст из URL в форму не переносим.
 const PROJECT_INQUIRIES: Record<string, {name: string; message: string}> = {
   happyanimal: {name: 'Happy Animal', message: 'Хочу похожий магазин, как Happy Animal.'},
@@ -22,4 +23,11 @@ export function projectInquiry(id: string | null) {
 export function inquiryMessage(current: string, id: string | null) {
   const project = projectInquiry(id);
   return current.trim() || !project ? current : `${project.message}\n\n`;
+}
+
+// Ситуация из блока «С чего начнём?» (?start=<id>): то же поведение, что у проекта.
+// Принимаем только известную ситуацию — текст из адреса в форму не переносим.
+export function startInquiry(id: string | null) {
+  const entry = entryPoint(id);
+  return entry ? { name: entry.label, message: entry.message } : null;
 }
