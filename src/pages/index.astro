@@ -10,12 +10,15 @@ import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
 import { SECTORS, LINKS } from '../data/site';
 import { PROJECTS } from '../data/projects';
+import { FRESH_SHOP } from '../data/insales';
 import { SERVICE_ROWS } from '../data/services-list';
 import EntryPoints from '../components/EntryPoints.astro';
 import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
-const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
+// Оба кейса на главной — с цифрой (think-different, 14.11.2026): Happy Animal вместо Aloha Gaia,
+// у которой результата в цифрах нет. Aloha Gaia остаётся в полосе клиентов и на /projects/.
+const selected = [{ id: FRESH_SHOP.id, name: FRESH_SHOP.name }, PROJECTS.find(p => p.id === 'wizzu')!];
 // Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
 // sameAs — только свои публичные профили; телефон и адрес не указываем, их нет на сайте.
 const abs = (p: string) => new URL(href(p), Astro.site).href;
@@ -122,7 +125,7 @@ const organization = {
               {project.id === 'wizzu' ? (
                 <p><strong class="project-result">С 0 до 2000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
               ) : (
-                <p>Фронтенд, интеграции с inSales и собственные модули для ювелирного бренда.</p>
+                <p><strong class="project-result">5 из 5 местных запросов — в топ-5 Яндекса.</strong> Магазин на inSales и местное SEO для зоомагазина в Гольяново. <span class="project-source">Москва, 01.10.2026, Топвизор</span></p>
               )}
               <!-- Метка заявки сохраняет отдельную запись истории WebKit после снятия кейса. -->
               <a class="project-inquiry ui-link" href={`?project=${project.id}&inquiry=1#feedback`} aria-label={`Хочу похожий магазин — ${project.name}`}>
@@ -244,6 +247,7 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover img { filter: none; } }
   .project-description { padding: 18px 2px 0; }
   .project-result { color: var(--ink); font-weight: 700; }
+  .project-source { display: block; margin-top: 4px; font-size: var(--fs-small); color: var(--ink-3); }
   .project-inquiry { margin-top: 8px; }
   .project-description .project-inquiry { color: var(--teal-text); }
   .project-description h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 8px; }
