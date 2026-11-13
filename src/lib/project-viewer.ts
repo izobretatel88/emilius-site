@@ -35,6 +35,18 @@ export function setupProjectViewer() {
     viewer.scrollTop = 0;
   };
 
+  // «По ширине» и «100%» различаются, только когда снимок шире окна. Снимок уже помещается целиком —
+  // обе кнопки дают одну картинку, и пара переключателей без действия убирается.
+  const updateZoom = () => {
+    const screen = screens()[index];
+    const box = imageBox.clientWidth;
+    const fits = !!screen && box > 0 && box >= screen.width;
+    zoomControl.hidden = device === 'phone' || fits;
+    if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');
+  };
+  // Ширина окна известна после открытия и меняется при повороте экрана.
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (project) updateZoom(); }).observe(imageBox);
+
   const render = () => {
     const list = screens();
     const screen = list[index];
@@ -84,7 +96,7 @@ export function setupProjectViewer() {
       button.setAttribute('aria-pressed', String(button.dataset.device === device));
     });
     devicesControl.hidden = new Set(project.screens.map(item => item.device)).size < 2;
-    zoomControl.hidden = device === 'phone';
+    updateZoom();
     screensControl.hidden = list.length < 2;
     screensControl.querySelectorAll<HTMLButtonElement>('button').forEach((button, i) => {
       button.setAttribute('aria-pressed', String(i === index));
