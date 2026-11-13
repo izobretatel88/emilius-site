@@ -90,7 +90,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <picture>
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
-        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
       </figure>
     </section>
 
@@ -145,7 +145,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <h3 class="case-name" id="t-case">{FRESH_SHOP.name}</h3>
             <p class="shop-what">{FRESH_SHOP.what}</p>
             <ul class="dots case-done">{FRESH_SHOP.done.map((d) => <li>{d}</li>)}</ul>
-            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span></a>
+            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
           </div>
         </div>
         <div class="case-pos">
@@ -174,7 +174,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
               <span class="shop-body">
                 <span class="shop-name">{x.name}</span>
                 <span class="shop-what">{x.what}</span>
-                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span></span>
+                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></span>
               </span>
             </a>
           </li>
@@ -182,10 +182,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </ul>
       <p class="sub-lead">Ещё магазины и интеграции на InSales:</p>
       <ul class="more-shops">
-        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
-        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
+        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></li>)}
+        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span></a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -206,7 +206,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <a class="phone-card" href={x.url} target="_blank" rel="noopener">
               <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="520" height="1071" loading="lazy" decoding="async" /></span>
               <span class="phone-name">{x.name} <span aria-hidden="true">↗</span></span>
-              <span class="phone-what">{x.what}</span>
+              <span class="phone-what">{x.what}</span><span class="visually-hidden">, откроется в новой вкладке</span>
             </a>
           </li>
         ))}
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span></a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></span>
           </figcaption>
         </figure>
       </div>
@@ -781,7 +781,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .phones::-webkit-scrollbar { display: none; }
   .phones li { flex: 0 0 188px; scroll-snap-align: start; }
-  .phone-card { display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
+  /* position: relative — скрытая подпись «откроется в новой вкладке» остаётся внутри ленты и не растягивает страницу вбок */
+  .phone-card { position: relative; display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
   .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); }
