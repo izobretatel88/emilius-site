@@ -6,9 +6,10 @@ name: Deploy preview to GitHub Pages
 #   /emilius-site/extra/       — ветка extra (клиентские материалы, статика как есть), если она есть
 #   /emilius-site/dev-ui/      — ветка dev-ui (правки интерфейса на проверку, отдельно от dev), если она есть
 #   /emilius-site/ds/          — ветка ds-v2 (развитие дизайн-системы, отдельно от dev и dev-ui), если она есть
+#   /emilius-site/think/       — ветка claude/think-different (эксперимент, отдельно от dev), если она есть
 # Публикует всегда main: окружение github-pages разрешает деплой только из неё.
 # Пуш в dev или extra запускает этот workflow через dev-trigger.yml / extra-trigger.yml.
-# После пуша в dev-ui или ds-v2 запускать вручную: gh workflow run deploy.yml --ref main
+# После пуша в dev-ui, ds-v2 или claude/think-different запускать вручную: gh workflow run deploy.yml --ref main
 
 on:
   push:
@@ -64,6 +65,13 @@ jobs:
           ref: ds-v2
           path: dssite
 
+      - id: thinkbranch
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: claude/think-different
+          path: thinksite
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -94,6 +102,13 @@ jobs:
         run: npm ci && npm run build && mkdir -p ../site/dist/ds && cp -R dist/. ../site/dist/ds/
         env:
           BASE_PATH: /${{ github.event.repository.name }}/ds
+
+      - name: Сборка claude/think-different
+        if: steps.thinkbranch.outcome == 'success'
+        working-directory: thinksite
+        run: npm ci && npm run build && mkdir -p ../site/dist/think && cp -R dist/. ../site/dist/think/
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/think
 
       - name: Ветка extra (без сборки)
         if: steps.extrabranch.outcome == 'success'
