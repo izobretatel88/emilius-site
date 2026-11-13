@@ -57,7 +57,6 @@ export function setupProjectViewer() {
     const list = screens();
     const screen = list[index];
     if (!project || !screen) return;
-    const currentProject = project;
     const version = ++request;
     clearTimeout(loadingTimer);
     error.hidden = true;
@@ -72,7 +71,8 @@ export function setupProjectViewer() {
       if (version !== request) return;
       clearTimeout(loadingTimer);
       imageBox.setAttribute('aria-busy', 'false');
-      status.textContent = `${currentProject.name} · ${description}${list.length > 1 ? ` · ${index + 1} из ${list.length}` : ''}`;
+      // Название проекта уже в заголовке окна — в строке только вид, экран и номер
+      status.textContent = `${description}${list.length > 1 ? ` · ${index + 1} из ${list.length}` : ''}`;
     };
     image.onload = ready;
     const fail = () => {
