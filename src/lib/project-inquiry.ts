@@ -31,3 +31,16 @@ export function startInquiry(id: string | null) {
   const entry = entryPoint(id);
   return entry ? { name: entry.label, message: entry.message } : null;
 }
+
+// Направление (?stage=<id>): «Обсудить задачу» со страницы этапа ведёт в форму главной,
+// и форма помнит, откуда пришёл человек.
+const STAGE_INQUIRIES: Record<string, {name: string; message: string}> = {
+  custdev: {name: 'Касдев', message: 'Хочу обсудить касдев: исследование клиентов.'},
+  design: {name: 'Дизайн', message: 'Хочу обсудить дизайн: путь клиента и интерфейс.'},
+  dev: {name: 'Разработка', message: 'Хочу обсудить разработку.'},
+  marketing: {name: 'Маркетинг', message: 'Хочу обсудить маркетинг: привлечение и аналитику.'},
+};
+export function stageInquiry(id: string | null) {
+  if (!id || !Object.hasOwn(STAGE_INQUIRIES, id)) return null;
+  return STAGE_INQUIRIES[id];
+}

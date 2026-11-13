@@ -12,6 +12,7 @@ import LinkList from '../../components/LinkList.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import IterationRuler from '../../components/IterationRuler.astro';
 import { href } from '../../lib/urls';
+import { ENTRY_POINTS } from '../../data/entry-points';
 
 export function getStaticPaths() {
   return SECTORS.map((s) => ({ params: { id: s.id } }));
@@ -27,6 +28,8 @@ const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter(
 // Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
 const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal']);
 const pad = (n: number) => String(n).padStart(2, '0');
+// Ситуации клиента, которые начинаются с этого этапа (блок «С чего начнём?» на главной)
+const situations = ENTRY_POINTS.filter((e) => e.stage === id);
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.
 // Текущий этап окрашен, остальные нейтральные.
@@ -62,9 +65,15 @@ const arc = (i: number) => {
       <h1 class="ui-h1">{service.title}</h1>
       <p class="ui-lead">{service.lead}</p>
       <div class="ui-actions">
-        <a class="ui-button" href={href('#feedback')}>Обсудить задачу <span aria-hidden="true">→</span></a>
+        <a class="ui-button" href={href(`?stage=${sector.id}#feedback`)}>Обсудить задачу <span aria-hidden="true">→</span></a>
         {service.offer && <a class="ui-link" href={href(service.offer.href)}>{service.offer.title} <span class="ui-arrow" aria-hidden="true">→</span></a>}
       </div>
+      {situations.length > 0 && (
+        <p class="situations">
+          <span class="situations-label">Узнаёте себя?</span>
+          {situations.map((e) => <a href={href(`?start=${e.id}#feedback`)}>{e.label} <span class="ui-arrow" aria-hidden="true">→</span></a>)}
+        </p>
+      )}
       <div class="opening-ruler"><IterationRuler stage={sector.id} /></div>
     </header>
 
@@ -213,4 +222,10 @@ const arc = (i: number) => {
     .cycle { grid-template-columns: 1fr 1fr; }
     .telegram { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
   }
+  /* «Узнаёте себя?» — ситуации словами клиента, ведут в форму с готовой первой строкой */
+  .situations { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-top: 18px; font-size: 15px; }
+  .situations-label { color: var(--ink-3); }
+  .situations a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); text-decoration: underline transparent; text-underline-offset: 4px; transition: text-decoration-color var(--hover); }
+  .situations a:focus-visible { text-decoration-color: currentColor; }
+  @media (hover: hover) and (pointer: fine) { .situations a:hover { text-decoration-color: currentColor; } }
 </style>
