@@ -30,6 +30,7 @@ export function setupProjectViewer() {
   const screens = () => project?.screens.filter(screen => screen.device === device) ?? [];
   const setScale = (scale: 'fit' | 'actual') => {
     imageBox.dataset.scale = scale;
+    imageBox.tabIndex = scale === 'actual' ? 0 : -1;
     zoomButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scale === scale)));
     imageBox.scrollTop = imageBox.scrollLeft = 0;
     viewer.scrollTop = 0;
@@ -43,6 +44,9 @@ export function setupProjectViewer() {
     const fits = !!screen && box > 0 && box >= screen.width;
     zoomControl.hidden = device === 'phone' || fits;
     if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');
+    // Область снимка — остановка Tab, только когда в ней есть что прокручивать вбок (снимок в 100% шире окна).
+    // Иначе это пустая остановка; фокус из «Повторить» по-прежнему можно поставить на неё программно.
+    imageBox.tabIndex = !fits && imageBox.dataset.scale === 'actual' ? 0 : -1;
   };
   // Ширина окна известна после открытия и меняется при повороте экрана.
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (project) updateZoom(); }).observe(imageBox);

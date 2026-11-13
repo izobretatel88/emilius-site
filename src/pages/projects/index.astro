@@ -75,7 +75,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     </div>
     <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
-    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="0" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
+    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
   </dialog>
   <script type="application/json" id="project-media" set:html={JSON.stringify(media)} />
