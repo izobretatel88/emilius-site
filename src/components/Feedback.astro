@@ -63,7 +63,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 </section>
 
 <script>
-  import {projectInquiry, startInquiry, stageInquiry} from '../lib/project-inquiry';
+  import {projectInquiry, startInquiry, stageInquiry, topicInquiry} from '../lib/project-inquiry';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
@@ -102,7 +102,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       updateLength();
     };
     const params=new URLSearchParams(location.search);
-    const initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'));
+    const initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'))??topicInquiry(params.get('topic'));
     if(initial){
       // Сохранённый браузером текст важнее автозаполнения
       if(message.value.trim()){selectedProject=initial;contextName.textContent=initial.name;context.hidden=false;}
@@ -118,6 +118,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       current.searchParams.delete('project');
       current.searchParams.delete('start');
       current.searchParams.delete('stage');
+      current.searchParams.delete('topic');
       history.replaceState(history.state, '', current);
       message.focus({preventScroll:true});
     });

@@ -44,3 +44,13 @@ export function stageInquiry(id: string | null) {
   if (!id || !Object.hasOwn(STAGE_INQUIRIES, id)) return null;
   return STAGE_INQUIRIES[id];
 }
+
+// Тема со страниц сравнений (?topic=<id>): «Помогите выбрать платформу» приходит в форму с первой строкой.
+const TOPIC_INQUIRIES: Record<string, {name: string; message: string}> = {
+  platform: {name: 'Выбор платформы', message: 'Помогите выбрать платформу для магазина.'},
+  'insales-kit': {name: 'inSales или Яндекс KIT', message: 'Помогите выбрать между inSales и Яндекс KIT.'},
+};
+export function topicInquiry(id: string | null) {
+  if (!id || !Object.hasOwn(TOPIC_INQUIRIES, id)) return null;
+  return TOPIC_INQUIRIES[id];
+}

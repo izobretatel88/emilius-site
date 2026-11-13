@@ -125,6 +125,16 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         document.addEventListener('emi:theme', sync);
       })();
     </script>
+    <script is:inline>
+      // Переход к форме главной с любой страницы («Обсудить задачу», «Хочу похожий», «Помогите выбрать»):
+      // человек уже выбрал действие — заставка (Intro.astro) не должна перекрыть форму. Ставим её же отметку
+      // «видел в этом визите», как она сама делает для ?project= (think-different, итерация 5).
+      document.addEventListener('click', function (e) {
+        var a = e.target instanceof Element ? e.target.closest('a[href*="#feedback"]') : null;
+        if (!a) return;
+        try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (err) {}
+      }, true);
+    </script>
     <WriteButton />
     {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <CookieNotice />}
     <script is:inline>
