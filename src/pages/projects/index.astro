@@ -5,7 +5,7 @@
    внешний сайт — отдельная ссылка. Только подтверждённые роли и результаты. */
 import Directory from '../../layouts/Directory.astro';
 import {PROJECTS} from '../../data/projects';
-import {FRESH_SHOP} from '../../data/insales';
+import {FRESH_SHOP,TEMPLATE_SHOPS,MORE_SHOPS} from '../../data/insales';
 import {href} from '../../lib/urls';
 import {SECTORS} from '../../data/site';
 import {SERVICES} from '../../data/services';
@@ -22,11 +22,24 @@ const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
   wizzu:{kind:'Доставка продуктов',role:'Сайт-витрина · интеграции',updated:true},
   geekboards:{kind:'Механические клавиатуры и аксессуары',role:'Развитие магазина · фронтенд'},
   navalishenskoe:{kind:'Отдых в Сочи',role:'Развитие сайта · SEO'},
+  // Роли — из карточки партнёра inSales (стенд /extra/insales-stend/, 13.11.2026)
+  zalina:{kind:'Авторская одежда',role:'Фронтенд по готовому дизайну · доработки',updated:true},
+  mnogoles:{kind:'Пиломатериалы от производителя',role:'Магазин с нуля · калькуляторы',updated:true},
+  almatennis:{kind:'Теннисный магазин в Москве',role:'Магазин на готовой теме inSales'},
+  'ss-sk':{kind:'Системы безопасности в Сочи',role:'Магазин на готовой теме inSales'},
+  nsorganic:{kind:'Грибы и травы',role:'Магазин на готовой теме inSales'},
 };
+// Магазины из карточки партнёра inSales: ссылки и названия — из данных лендинга, без повтора
+const shop=(name:string)=>MORE_SHOPS.find(x=>x.name===name)!;
+const template=(id:string)=>{const x=TEMPLATE_SHOPS.find(t=>t.id===id)!;return {id,name:x.name,shot:`cases/${id}.webp`,url:x.url,domain:x.domain};};
 const projects=[
   PROJECTS.find(p=>p.id==='alohagaia')!,
   {id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},
-  ...['duman','wizzu','geekboards','navalishenskoe'].map(id=>PROJECTS.find(p=>p.id===id)!),
+  ...['duman','wizzu','geekboards'].map(id=>PROJECTS.find(p=>p.id===id)!),
+  {id:'zalina',name:shop('Zalina Verkhovskaya').name,shot:'cases/gallery/zalina-800.webp',url:shop('Zalina Verkhovskaya').url,domain:shop('Zalina Verkhovskaya').domain},
+  {id:'mnogoles',name:shop('Многолес').name,shot:'cases/gallery/mnogoles-800.webp',url:shop('Многолес').url,domain:shop('Многолес').domain},
+  ...['almatennis','ss-sk','nsorganic'].map(template),
+  PROJECTS.find(p=>p.id==='navalishenskoe')!,
 ].map(p=>{
   const meta=captions[p.id];
   return {...p,...meta,
@@ -37,13 +50,13 @@ const projects=[
 });
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
 // магазин сети («Вкусдом»), поэтому не выдаём его за мобильный LimeMart.
-const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069};
+const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
   inquiry:href(`?project=${p.id}#feedback`),
   screens:[
     {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height},
-    ...(phoneHeights[p.id]?[{device:'phone',label:p.id==='geekboards'?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id]}]:[]),
+    ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id]}]:[]),
   ],
 }]));
 ---
@@ -56,7 +69,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
-        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
+        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
@@ -129,6 +142,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   @media (hover: hover) and (pointer: fine) { a.project-result:hover .result-arrow {transform:translateX(3px)} }
   .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-small)}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+  /* Нечётное число карточек после крупной: приглашение остаётся без пары — растягиваем на ряд, без пустой половины */
+  .gallery-contact:nth-child(even){grid-column:1/-1;min-height:0}
   .gallery-contact>p{font-size:var(--fs-ui);color:var(--ink-2);margin-bottom:16px}
   .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 12px}
   .gallery-contact a{gap:28px}
