@@ -13,6 +13,7 @@ import { LINKS } from '../data/site';
 </aside>
 
 <script>
+  import { stageInquiry, topicInquiry, startInquiry } from '../lib/project-inquiry';
   const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
   if (fab) {
     // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
@@ -20,6 +21,22 @@ import { LINKS } from '../data/site';
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
     const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
+    // Черновик сообщения по теме страницы (think-different, итерация 7): Telegram открывает чат с набранным текстом.
+    // Двойники выше найдены по исходному адресу — замена адреса их не ломает.
+    const base = fab.href;
+    const setDraft = (text: string | null) => { fab.href = text ? `${base}?text=${encodeURIComponent(text)}` : base; };
+    const path = location.pathname;
+    const h1 = document.querySelector('h1')?.textContent?.trim().replace(/\s+/g, ' ');
+    const stage = path.match(/\/services\/(custdev|design|dev|marketing)\/$/);
+    if (stage) setDraft(stageInquiry(stage[1])?.message ?? null);
+    else if (/\/services\/insales-shop\/seller\/$/.test(path)) setDraft('Хочу свой сайт рядом с WB и Ozon.');
+    else if (/\/services\/insales-shop\/$/.test(path)) setDraft('Хочу обсудить магазин на inSales.');
+    else if (/\/compare\/insales-vs-yandex-kit\/$/.test(path)) setDraft(topicInquiry('insales-kit')?.message ?? null);
+    else if (/\/compare\/ecommerce-platforms\/$/.test(path)) setDraft(topicInquiry('platform')?.message ?? null);
+    else if (/\/blog\/[^/]+\/$/.test(path) && h1) setDraft(`Вопрос по статье «${h1}».`);
+    // На главной кнопка следует за выбором в «С чего начнём?» — только после выбора самим человеком
+    document.querySelectorAll<HTMLInputElement>('[data-entry] input[name="entry"]').forEach((input) =>
+      input.addEventListener('change', () => setDraft(startInquiry(input.value)?.message ?? null)));
     const compact = matchMedia('(max-width: 480px)');
     // Пока открыта плашка о cookie, на телефоне она занимает низ экрана — кнопка ждёт «Понятно»
     const phone = matchMedia('(max-width: 600px)');
