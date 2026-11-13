@@ -34,11 +34,11 @@ export function startInquiry(id: string | null) {
 
 // Направление (?stage=<id>): «Обсудить задачу» со страницы этапа ведёт в форму главной,
 // и форма помнит, откуда пришёл человек.
-const STAGE_INQUIRIES: Record<string, {name: string; message: string}> = {
-  custdev: {name: 'Касдев', message: 'Хочу обсудить касдев: исследование клиентов.'},
-  design: {name: 'Дизайн', message: 'Хочу обсудить дизайн: путь клиента и интерфейс.'},
-  dev: {name: 'Разработка', message: 'Хочу обсудить разработку.'},
-  marketing: {name: 'Маркетинг', message: 'Хочу обсудить маркетинг: привлечение и аналитику.'},
+const STAGE_INQUIRIES: Record<string, {name: string; message: string; ask: string}> = {
+  custdev: {name: 'Касдев', message: 'Хочу обсудить касдев: исследование клиентов.', ask: 'кто ваши клиенты и какой вопрос о них сейчас главный'},
+  design: {name: 'Дизайн', message: 'Хочу обсудить дизайн: путь клиента и интерфейс.', ask: 'ссылку на сайт или прототип и что в нём нужно изменить'},
+  dev: {name: 'Разработка', message: 'Хочу обсудить разработку.', ask: 'на чём сайт или что строим, какие интеграции нужны и к какому сроку'},
+  marketing: {name: 'Маркетинг', message: 'Хочу обсудить маркетинг: привлечение и аналитику.', ask: 'ссылку на сайт, откуда приходят покупатели сейчас и что уже пробовали'},
 };
 export function stageInquiry(id: string | null) {
   if (!id || !Object.hasOwn(STAGE_INQUIRIES, id)) return null;
@@ -46,9 +46,9 @@ export function stageInquiry(id: string | null) {
 }
 
 // Тема со страниц сравнений (?topic=<id>): «Помогите выбрать платформу» приходит в форму с первой строкой.
-const TOPIC_INQUIRIES: Record<string, {name: string; message: string}> = {
-  platform: {name: 'Выбор платформы', message: 'Помогите выбрать платформу для магазина.'},
-  'insales-kit': {name: 'inSales или Яндекс KIT', message: 'Помогите выбрать между inSales и Яндекс KIT.'},
+const TOPIC_INQUIRIES: Record<string, {name: string; message: string; ask: string}> = {
+  platform: {name: 'Выбор платформы', message: 'Помогите выбрать платформу для магазина.', ask: 'сколько товаров, где продаёте сейчас и нужен ли учёт: 1С, МойСклад, маркетплейсы'},
+  'insales-kit': {name: 'inSales или Яндекс KIT', message: 'Помогите выбрать между inSales и Яндекс KIT.', ask: 'сколько товаров, где продаёте сейчас и какие функции важны'},
 };
 export function topicInquiry(id: string | null) {
   if (!id || !Object.hasOwn(TOPIC_INQUIRIES, id)) return null;
