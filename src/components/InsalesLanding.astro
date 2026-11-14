@@ -305,6 +305,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <div class="faq">
         {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
       </div>
+      <!-- Вопроса нет в списке — спросить сразу, с началом сообщения (think-different, итерация 64) -->
+      <p class="faq-ask" data-goal-place="faq">Не нашли свой вопрос? <a href={`${LINKS.direct}?text=${encodeURIComponent(variant === 'seller' ? 'Вопрос про сайт рядом с WB и Ozon: ' : 'Вопрос про магазин на inSales: ')}`} target="_blank" rel="noopener">Спросите в Telegram&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></p>
     </section>
 
     <section class="card block lead-form ui-surface" id="lead" aria-labelledby="t-lead">
@@ -965,6 +967,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .faq { display: flex; flex-direction: column; }
   /* Частые вопросы — строки со стрелкой, как в настройках iPhone; стрелка поворачивается при раскрытии */
   details { border-top: 1px solid var(--hair); }
+  .faq-ask { margin: 16px 0 0; color: var(--ink-2); }
+  .faq-ask a { display: inline-flex; align-items: center; min-height: 44px; color: var(--teal-text); text-underline-offset: 4px; }
   details:first-child { border-top: 0; }
   summary {
     list-style: none;
