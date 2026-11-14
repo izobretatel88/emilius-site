@@ -498,6 +498,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       share.addEventListener('click', async () => {
         const url = new URL(location.origin + location.pathname);
         for (const [k, v] of Object.entries(answers())) if (v) url.searchParams.set(`calc_${k}`, v);
+        url.hash = 'lead'; // получатель сразу видит расчёт, а не начало лендинга
         const text = `Магазин на inSales: пакет ${out('pkg').textContent}, ${out('price').textContent}, ${out('weeks').textContent}`;
         shareStatus.textContent = '';
         try {
