@@ -70,10 +70,12 @@
     mode = 'all';
     update(true, preserveHash);
   }
-  function readURL() {
+  // first === true — первый запуск: панель уже видна, пока грузится таблица, и набранное за это время не стираем
+  function readURL(first) {
     const params = new URL(location.href).searchParams;
-    search.value = params.get('q') || '';
-    group.value = [...group.options].some(option => option.value === params.get('group')) ? params.get('group') : '';
+    const keep = first === true;
+    search.value = params.get('q') || (keep ? search.value : '');
+    group.value = [...group.options].some(option => option.value === params.get('group')) ? params.get('group') : keep ? group.value : '';
     mode = buttons.some(button => button.dataset.mode === params.get('mode')) ? params.get('mode') : 'all';
     update(false);
     revealAnchor();
@@ -105,5 +107,5 @@
     history.pushState(null, '', url);
     revealAnchor();
   }));
-  readURL();
+  readURL(true);
 })();
