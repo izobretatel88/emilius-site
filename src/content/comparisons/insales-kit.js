@@ -46,6 +46,13 @@
     count.textContent = shown === rows.length ? `Показаны все ${rows.length} пунктов` : `Показано ${shown} из ${rows.length} пунктов`;
     if (swapped) count.textContent += ` по запросу «${swapped}»`;
     empty.hidden = shown !== 0;
+    // Пустой поиск — не тупик: вопрос уходит в Telegram с тем, что человек искал (think-different, итерация 46)
+    const ask = empty.querySelector('[data-empty-ask]');
+    if (ask && shown === 0) {
+      const q = search.value.trim().slice(0, 100);
+      const text = q ? `В сравнении inSales и Яндекс KIT не нашлось «${q}». Есть это на какой-нибудь из платформ?` : 'В сравнении inSales и Яндекс KIT не нашлось нужной функции. Подскажете, есть ли она?';
+      ask.href = `https://t.me/emillively?text=${encodeURIComponent(text)}`;
+    }
     scroll.querySelector('table').hidden = shown === 0;
     document.querySelector('.mobile-hint').hidden = shown === 0;
     if (writeURL) {

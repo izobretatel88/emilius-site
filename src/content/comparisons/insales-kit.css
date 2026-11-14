@@ -78,6 +78,7 @@
 .platform-comparison .empty{padding:40px 24px;text-align:center}
 .platform-comparison .empty h2{font-size:24px;margin:0}
 .platform-comparison .empty p{color:var(--ink-2)}
+.platform-comparison .empty-ask{margin:16px 0 0}
 .platform-comparison .empty button{border:0;border-radius:var(--radius-sm);background:var(--teal-btn);color:var(--on-teal);padding:12px 18px}
 .platform-comparison .mobile-hint{display:none}
 .platform-comparison .foot{max-width:62ch;display:grid;gap:14px;color:var(--ink-2);font-size:14px}
