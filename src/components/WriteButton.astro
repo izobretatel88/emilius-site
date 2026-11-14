@@ -39,7 +39,17 @@ import { LINKS } from '../data/site';
     else if (/\/services\/insales-shop\/seller\/$/.test(path)) setDraft('Хочу свой сайт рядом с WB и Ozon.');
     else if (/\/services\/insales-shop\/$/.test(path)) setDraft('Хочу обсудить магазин на inSales.');
     else if (/\/compare\/insales-vs-yandex-kit\/$/.test(path)) setDraft(topicInquiry('insales-kit')?.message ?? null);
-    else if (/\/compare\/ecommerce-platforms\/$/.test(path)) setDraft(topicInquiry('platform')?.message ?? null);
+    else if (/\/compare\/ecommerce-platforms\/$/.test(path)) {
+      // В черновик — что человек отметил в сравнении: режим расчёта и важное бизнесу (think-different, итерация 25)
+      const topic = topicInquiry('platform')?.message ?? '';
+      const compareDraft = () => {
+        const mode = document.querySelector('[data-mode][aria-pressed="true"]')?.textContent?.trim();
+        const needs = [...document.querySelectorAll('#chips [aria-pressed="true"]')].map((b) => b.textContent?.trim()).filter(Boolean);
+        return [topic, mode && `Стоимость для: ${mode}.`, needs.length && `Важно: ${needs.join(', ')}.`].filter(Boolean).join(' ');
+      };
+      setDraft(topic);
+      ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => setDraft(compareDraft()), true));
+    }
     else if (/\/blog\/[^/]+\/$/.test(path) && h1) setDraft(`Вопрос по статье «${h1}».`);
     // Калькулятор: в черновик — расчёт с экрана, чтобы не пересказывать его в чате (think-different, итерация 22).
     // Собираем в момент нажатия: человек мог поменять ответы.
