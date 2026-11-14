@@ -66,7 +66,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     </button>
     <p class="status" role="status" aria-live="polite" hidden></p>
     <p class="status status-error" role="alert" hidden>
-      Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{direct}<span class="visually-hidden">, откроется в новой вкладке</span></a>
+      Не получилось отправить. Отправьте то же сообщение в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram>{direct}<span class="visually-hidden">, откроется в новой вкладке, текст уже набран</span></a>
     </p>
   </form>
 </section>
@@ -218,6 +218,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         (window as any).emiGoal?.('feedback-sent');
       } catch {
         (window as any).emiGoal?.('feedback-fail');
+        // Тот же текст — в черновик Telegram: заявка не теряется, копировать вручную не нужно (think-different, итерация 31)
+        const failLink=fail.querySelector<HTMLAnchorElement>('[data-fail-telegram]');
+        if(failLink)failLink.href=`${failLink.href.split('?')[0]}?text=${encodeURIComponent(contextualMessage.slice(0,1500))}`;
         // Текст не стираем — его можно скопировать и отправить в Telegram.
         show(fail);
       } finally {
