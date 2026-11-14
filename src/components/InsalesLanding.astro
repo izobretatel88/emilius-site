@@ -454,6 +454,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       const input = [...form.querySelectorAll<HTMLInputElement>('input[type=radio]')].find(i=>i.name===name && i.value===value);
       if (input) input.checked = true;
     }
+    // Ответы — в адрес страницы, как в калькуляторе (think-different, итерации 49–50): обновление страницы
+    // и пересланная ссылка открывают тот же расчёт. Пишем только по действию человека, контакты не трогаем.
+    const writeURL = () => {
+      const url = new URL(location.href);
+      for (const [k, v] of Object.entries(answers())) {
+        if (v) url.searchParams.set(`calc_${k}`, v); else url.searchParams.delete(`calc_${k}`);
+      }
+      history.replaceState(history.state, '', url.href);
+    };
     const update = () => {
       try {
         last = quickEstimate(answers(), catalog);
@@ -477,10 +486,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           if (r) r.checked = true;
         });
         update();
+        writeURL();
       }),
     );
     form.addEventListener('change', (e) => {
       update();
+      if ((e.target as HTMLInputElement).type === 'radio') writeURL();
       // Первое изменение ответа — человек начал считать.
       if (!touched && (e.target as HTMLInputElement).type === 'radio') {
         touched = true;
