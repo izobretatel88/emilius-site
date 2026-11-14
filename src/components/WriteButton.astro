@@ -63,6 +63,19 @@ import { LINKS } from '../data/site';
       };
       ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => setDraft(calcDraft()), true));
     }
+    // Лендинги inSales: если человек менял ответы расчёта, «Написать» добавляет его ориентир (think-different, итерация 42).
+    // Пока ответы не трогали, ориентир по умолчанию не выдаём за расчёт человека.
+    const leadPkg = document.querySelector('[data-out="pkg"]');
+    const leadForm = document.querySelector('#lead form');
+    if (leadPkg && leadForm) {
+      let touched = false;
+      leadForm.addEventListener('change', () => { touched = true; });
+      const pageDraft = new URL(fab.href).searchParams.get('text') ?? '';
+      const read = (key: string) => document.querySelector(`[data-out="${key}"]`)?.textContent?.trim().replace(/\s+/g, ' ') ?? '';
+      ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => {
+        if (touched) setDraft(`${pageDraft} Ориентир с сайта: пакет ${read('pkg')}, ${read('price')}, ${read('weeks')}.`.trim());
+      }, true));
+    }
     // Галерея: после просмотра проекта в окне «Написать» несёт «Хочу похожий магазин, как …» (think-different, итерация 41).
     // Окно само ставит проект в адрес своей кнопки «Хочу похожий» — следим за ним.
     const viewerInquiry = document.querySelector<HTMLAnchorElement>('.viewer-inquiry');
