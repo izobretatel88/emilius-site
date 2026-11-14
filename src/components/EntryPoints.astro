@@ -202,11 +202,9 @@ const items = ENTRY_POINTS.map((e) => {
     .entry { margin-top: 32px; }
     .entry-head :is(h2, h3) { font-size: 25px; }
     .entry-head p { font-size: 16px; }
-    /* На телефоне ситуации — лента, которую листают вбок: экран не забивается пятью рядами таблеток */
-    .entry-options { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--layout-gutter)); padding-inline: var(--layout-gutter); scroll-padding-inline: var(--layout-gutter); scrollbar-width: none; scroll-snap-type: x proximity; }
-    .entry-options::-webkit-scrollbar { display: none; }
-    .entry-chip { flex: none; scroll-snap-align: start; }
-    .entry-chip span { white-space: nowrap; }
+    /* На телефоне ситуации переносятся строками (think-different, итерация 74). В ленте вбок была видна
+       одна ситуация из пяти, а на главной лента ещё и обрезалась о край карточки колеса. */
+    .entry-options { gap: 6px; }
     .entry-card { padding: 22px 20px 24px; }
     .entry-ruler { margin-bottom: 20px; }
     .entry-title { font-size: 28px; }
