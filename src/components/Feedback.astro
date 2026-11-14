@@ -226,9 +226,19 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         try{sessionStorage.removeItem(DRAFT_KEY);}catch{}
         // После отправки форма не зовёт «начать» заново: готовые строки и срок ответа прячутся до нового текста (итерация 39)
         form.classList.add('is-sent');
-        show(ok, contact
-          ? `Спасибо! Сообщение у нас. Ответим сюда: ${contact}.`
-          : `Спасибо! Сообщение у нас. Контакт вы не оставили — если ждёте ответа, напишите нам в Telegram: ${form.dataset.direct}.`);
+        if(contact)show(ok,`Спасибо! Сообщение у нас. Ответим сюда: ${contact}.`);
+        else{
+          // Без контакта ответить нельзя: даём ссылку в Telegram с тем же сообщением — одно нажатие, и мы знаем, о чём речь
+          // (think-different, итерация 40). Ссылку собираем узлами, без innerHTML.
+          show(ok,'Спасибо! Сообщение у нас. Контакт вы не оставили — если ждёте ответа, напишите нам в Telegram: ');
+          const direct=fail.querySelector<HTMLAnchorElement>('[data-fail-telegram]')?.href.split('?')[0]??'';
+          const link=document.createElement('a');
+          link.href=`${direct}?text=${encodeURIComponent(`Заявка с сайта, контакт не указан:\n\n${contextualMessage.trim().slice(0,1400)}`)}`;
+          link.target='_blank';link.rel='noopener';link.dataset.goalPlace='form-no-contact';
+          link.textContent=form.dataset.direct??'';
+          const hint=document.createElement('span');hint.className='visually-hidden';hint.textContent=', откроется в новой вкладке, текст уже набран';
+          link.append(hint);ok.append(link,'.');
+        }
         // Цели Метрики (JavaScript-события): заявка с главной ушла / не ушла. Без счётчика emiGoal нет.
         (window as any).emiGoal?.('feedback-sent');
       } catch {
