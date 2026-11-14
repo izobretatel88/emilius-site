@@ -844,6 +844,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li:has(a:active) { transform: scale(var(--press-scale)); background: var(--hair); }
   /* Вся «таблетка» 44 px — ссылка, а не только буквы домена (итерация 63): нажатие по краю тоже открывает сайт */
   .more-shops li { position: relative; }
+  /* Печать сметы (итерация 68): на листе ответы и ориентир, без пустых полей контакта, согласия и кнопки отправки */
+  @media print {
+    .side > :not(.estimate) { display: none !important; }
+  }
   .more-shops a { -webkit-tap-highlight-color: transparent; }
   .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--hair); } }
