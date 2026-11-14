@@ -82,7 +82,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
         <p class="note">{CTA_NOTE}</p>
       </div>
-      {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}<span class="visually-hidden">, откроется в новой вкладке</span></a> — {SELLER_QUICK.rest}.</p>}
+      {variant === 'seller' && <p class="quick">Или <a href={`${LINKS.direct}?text=${encodeURIComponent(SELLER_QUICK.draft)}`} target="_blank" rel="noopener">{SELLER_QUICK.link}<span class="visually-hidden">, откроется в новой вкладке, начало сообщения уже набрано</span></a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{glue(other.text)}</a>
       </div>
       <!-- Справа — живой магазин. На телефоне он под кнопкой и обрезан сверху: витрина видна, «Посчитать» остаётся на первом экране -->
