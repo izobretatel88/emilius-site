@@ -79,9 +79,12 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 
 <script>
   import {projectInquiry, startInquiry, stageInquiry, topicInquiry} from '../lib/project-inquiry';
+  import {contactHint} from '../lib/contact-hint';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
+    const contactField = form.querySelector<HTMLInputElement>('#fb-contact');
+    if (contactField) contactHint(contactField);
     const agree = form.querySelector<HTMLInputElement>('input[name="consent"]')!;
     const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
     const label = button.querySelector('.label')!;
