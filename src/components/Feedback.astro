@@ -13,7 +13,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   <form method="post" action={action} novalidate data-direct={direct}>
     <div class="project-context" hidden>
       <div><p>Ориентир — <strong data-project-context></strong></p><p class="project-ask" data-project-ask hidden></p></div>
-      <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
+      <button type="button" data-clear-project aria-label="Убрать ориентир заявки">Убрать <span aria-hidden="true">×</span></button>
     </div>
     <!-- Пустое поле — самое трудное место формы. Готовая первая строка по ситуации (think-different, итерация 16).
          Без JavaScript не показываем: кнопки работают только со скриптом. -->
