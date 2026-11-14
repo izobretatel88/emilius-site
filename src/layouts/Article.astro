@@ -111,6 +111,8 @@ const jsonLd = [
     <div class="body" data-post={post.id}>
       <Fragment set:html={html} />
     </div>
+    <!-- «Поделиться статьёй» (think-different, итерация 59): на телефоне системное меню, на компьютере копирование чистого адреса. Без скрипта кнопки нет. -->
+    <p class="article-share" data-share-url={canonical} data-share-title={d.h1}><button type="button" hidden>Поделиться статьёй</button><span role="status" aria-live="polite"></span></p>
     <section class="article-next" aria-labelledby="t-article-next"><h2 id="t-article-next">Следующий шаг</h2><LinkList items={nextSteps} /></section>
   </main>
 
@@ -122,6 +124,22 @@ const jsonLd = [
 
   <Footer />
 </Base>
+
+<script is:inline>
+  (function () {
+    var box = document.querySelector('.article-share');
+    if (!box || !(navigator.share || navigator.clipboard)) return;
+    var btn = box.querySelector('button'), status = box.querySelector('span');
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      var url = location.origin + location.pathname, title = box.getAttribute('data-share-title');
+      status.textContent = '';
+      var done = function () { if (window.emiGoal) window.emiGoal('article-share', { page: location.pathname }); };
+      if (navigator.share && matchMedia('(pointer: coarse)').matches) navigator.share({ title: title, url: url }).then(done, function () {});
+      else navigator.clipboard.writeText(url).then(function () { status.textContent = 'Ссылка скопирована'; done(); }, function () {});
+    });
+  })();
+</script>
 
 <script is:inline>
   // Кнопка «Скопировать» у блоков кода (промпты, ТЗ): без скрипта блок остаётся обычным текстом
@@ -210,6 +228,10 @@ const jsonLd = [
     padding-top: 16px;
   }
   /* «Следующий шаг» — отдельная секция под линией, как на остальных страницах */
+  .article-share { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 32px 0 0; }
+  .article-share button { min-height: 44px; padding: 0; border: 0; background: none; color: var(--teal-text); font: inherit; font-size: 15px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  .article-share button[hidden] { display: none; }
+  .article-share span { font-size: 15px; color: var(--ink-2); }
   .article-next { margin-top: var(--section-pad); padding-top: var(--section-pad); border-top: 1px solid var(--hair); }
   .article-next h2 { font-size: var(--fs-h2-sm); line-height: 1.15; letter-spacing: var(--tracking-tight); margin: 0 0 8px; }
   .article > * {
