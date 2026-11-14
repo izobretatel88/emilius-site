@@ -186,6 +186,7 @@ const organization = {
   }
 
   .client-strip { list-style: none; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 40px; padding: 28px 90px 36px; }
+  .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
   .client-strip a { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 44px; color: var(--ink-2); font-size: var(--fs-small); text-align: center; overflow-wrap: anywhere; }
   .client-strip a:focus-visible span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover span { color: var(--teal-text); text-decoration: underline; text-underline-offset: .2em; } }
