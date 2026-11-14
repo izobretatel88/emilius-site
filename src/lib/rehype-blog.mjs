@@ -86,6 +86,23 @@ export function rehypeBlog(options = {}) {
           }
         }
         if (child.tagName === 'table') {
+          // На телефоне таблица от трёх колонок складывается в карточки (think-different, итерация 69):
+          // ячейке нужна подпись своей колонки — data-label из заголовка. Явные роли ARIA сохраняют
+          // таблицу для экранного диктора, когда CSS меняет display у строк и ячеек.
+          const els = (node) => (node.children || []).filter((k) => k.type === 'element');
+          const role = { table: 'table', thead: 'rowgroup', tbody: 'rowgroup', tr: 'row', th: 'columnheader', td: 'cell' };
+          let labels = [];
+          const mark = (node) => {
+            for (const el of els(node)) {
+              const p = el.properties || (el.properties = {});
+              if (role[el.tagName]) p.role = role[el.tagName];
+              if (el.tagName === 'thead') labels = els(els(el)[0] || {}).map((th) => textOf(th).replace(/\s+/g, ' ').trim());
+              if (el.tagName === 'tr' && !els(el).some((c) => c.tagName === 'th')) els(el).forEach((td, i) => { if (labels[i]) td.properties = { ...(td.properties || {}), dataLabel: labels[i] }; });
+              mark(el);
+            }
+          };
+          (child.properties ||= {}).role = 'table';
+          mark(child);
           // tabindex: широкую таблицу можно листать стрелками, не только мышью и пальцем
           return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: tableLabel() }, children: [child] };
         }
