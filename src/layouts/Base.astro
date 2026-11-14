@@ -130,7 +130,7 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
       // человек уже выбрал действие — заставка (Intro.astro) не должна перекрыть форму. Ставим её же отметку
       // «видел в этом визите», как она сама делает для ?project= (think-different, итерация 5).
       document.addEventListener('click', function (e) {
-        var a = e.target instanceof Element ? e.target.closest('a[href*="#feedback"]') : null;
+        var a = e.target instanceof Element ? e.target.closest('a[href*="#feedback"], a[href*="#t-entry"]') : null;
         if (!a) return;
         try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (err) {}
       }, true);

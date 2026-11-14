@@ -41,6 +41,8 @@ const discuss = isHome ? '#feedback' : href('#feedback');
       </summary>
       <div class="menu-links">
         <a class="menu-discuss" href={discuss}>Обсудить проект <span aria-hidden="true">→</span></a>
+        <!-- Для тех, кто не знает, какое направление нужно: выбор ситуации у колеса (think-different, итерация 17) -->
+        <a href={isHome ? '#t-entry' : href('#t-entry')}>С чего начать?</a>
         {primary.map(item => <a href={href(item.href)} aria-current={state(item)}>{item.title}</a>)}
         <span class="menu-group">Направления</span>
         <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} data-stage={item.stage} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
