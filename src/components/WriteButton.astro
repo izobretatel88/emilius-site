@@ -19,7 +19,7 @@ import { LINKS } from '../data/site';
     // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её. Ссылки с черновиком (?text=) — тоже двойники.
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
-    const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main a[href^="${fab.getAttribute('href')}?text="], main form button[type="submit"]`)];
+    const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main a[href^="${fab.getAttribute('href')}?text="], main form button[type="submit"], a[data-write-twin]`)];
     const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
     // Черновик сообщения по теме страницы (think-different, итерация 7): Telegram открывает чат с набранным текстом.
     // Двойники выше найдены по исходному адресу — замена адреса их не ломает.

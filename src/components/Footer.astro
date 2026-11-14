@@ -26,7 +26,7 @@ const homeLink = (fragment: string) => localHomeLinks ? fragment : href(fragment
     <div><h2>Направления</h2>{DIRECTIONS.map(item => <a class="stage-link" href={href(item.href)} data-stage={item.stage}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
     <div><h2>Готовые решения</h2><a href={href('services/insales-shop/')}>Магазин на inSales</a><a href={href('services/insales-shop/seller/')}>Для селлеров WB и Ozon</a><a href={href('services/')}>Все услуги</a></div>
     <div><h2>Полезное</h2><a href={href('compare/')}>Сравнения платформ</a><a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>{hasBlog && <a href={href('blog/')}>Блог</a>}<a href={href('resources/')}>Все материалы</a></div>
-    <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={homeLink('#t-wheel')}>Как работаем</a><a href={homeLink('#t-contact')}>Контакты</a></div>
+    <div><h2>Агентство</h2><a href={href('projects/')}>Проекты</a><a href={homeLink('#t-wheel')}>Как работаем</a><a href={homeLink('#t-contact')}>Контакты</a><a href={LINKS.direct} target="_blank" rel="noopener" data-write-twin data-goal-place="footer">Написать в Telegram<span class="visually-hidden">, откроется в новой вкладке</span></a></div>
   </nav>
   <ThemeControl />
   <p>© {year} | Emilius Agency</p>
