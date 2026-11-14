@@ -840,7 +840,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover), transform var(--press); }
   /* Отклик на нажатие — как у карточек магазинов выше: таблетка чуть проседает */
   .more-shops li:has(a:active) { transform: scale(var(--press-scale)); background: var(--hair); }
+  /* Вся «таблетка» 44 px — ссылка, а не только буквы домена (итерация 63): нажатие по краю тоже открывает сайт */
+  .more-shops li { position: relative; }
   .more-shops a { -webkit-tap-highlight-color: transparent; }
+  .more-shops a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--hair); } }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; white-space: nowrap; }
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
