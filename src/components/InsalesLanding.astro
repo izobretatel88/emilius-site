@@ -335,6 +335,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <p class="est-meta"><span data-out="weeks"></span> · тариф inSales <span data-out="tariff"></span> — отдельно, платите inSales напрямую</p>
           </div>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
+          <p class="est-share-row"><button type="button" class="est-share" hidden>Поделиться расчётом</button><span class="est-share-status" role="status" aria-live="polite"></span></p>
         </div>
         <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
         <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="lead-contact-hint lead-contact-error" /></label>
@@ -489,6 +490,23 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         writeURL();
       }),
     );
+    // «Поделиться расчётом», как в калькуляторе (think-different, итерация 54): ссылка несёт только семь ответов, без контактов
+    const share = box.querySelector<HTMLButtonElement>('.est-share');
+    const shareStatus = box.querySelector<HTMLElement>('.est-share-status');
+    if (share && shareStatus && (navigator.share || navigator.clipboard)) {
+      share.hidden = false;
+      share.addEventListener('click', async () => {
+        const url = new URL(location.origin + location.pathname);
+        for (const [k, v] of Object.entries(answers())) if (v) url.searchParams.set(`calc_${k}`, v);
+        const text = `Магазин на inSales: пакет ${out('pkg').textContent}, ${out('price').textContent}, ${out('weeks').textContent}`;
+        shareStatus.textContent = '';
+        try {
+          if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: 'Расчёт магазина на inSales', text, url: url.href });
+          else { await navigator.clipboard.writeText(url.href); shareStatus.textContent = 'Ссылка скопирована'; }
+          goal('calc-share', { variant });
+        } catch {}
+      });
+    }
     form.addEventListener('change', (e) => {
       update();
       if ((e.target as HTMLInputElement).type === 'radio') writeURL();
@@ -1100,6 +1118,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border-radius: var(--radius-sm);
   }
   .estimate[hidden] { display: none; }
+  .est-share-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:4px 0 0}
+  .est-share{min-height:44px;padding:0;border:0;background:none;color:var(--teal-text);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+  .est-share[hidden]{display:none}
+  .est-share-status{font-size:14px;color:var(--ink-2)}
   .est-live { display: flex; flex-direction: column; gap: 4px; }
   .estimate{scroll-margin-top:84px}
   .est-pkg { font-size: 15px; color: var(--ink-2); }
