@@ -306,7 +306,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   .starters button{min-height:44px;padding:0 14px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:none;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;transition:background-color var(--hover),transform var(--press)}
   .starters button:active{transform:scale(var(--press-scale))}
   @media (hover: hover) and (pointer: fine){.starters button:hover{background:var(--well)}}
-  @media (max-width:600px){.starters-row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px}.starters-row::-webkit-scrollbar{display:none}.starters button{flex:none}}
+  /* На телефоне ситуации переносятся строками (think-different, итерация 72). Лента вбок из итерации 16
+     показывала полторы ситуации из пяти: «Сайт устарел» обрезалось на полуслове, три остальные не было видно вовсе. */
+  @media (max-width:600px){.starters-row{gap:6px}.starters button{padding:0 12px}}
   .project-context p{margin:0}.project-ask{margin-top:4px!important;color:var(--ink-2);line-height:1.45}
   .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
   /* Поля, подписи и подсказки — общие классы .ui-field*, .ui-input (layout.css); здесь только высота полей этой формы */
