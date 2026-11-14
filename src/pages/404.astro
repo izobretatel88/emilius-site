@@ -7,6 +7,22 @@ import LinkList from '../components/LinkList.astro';
 import { LINKS } from '../data/site';
 import { SERVICE_ROWS } from '../data/services-list';
 import { href } from '../lib/urls';
+import { getPosts } from '../lib/blog';
+
+// Известные адреса для подсказки «Похоже, вы искали…» (think-different, итерация 57): опечатка или обрезанная ссылка
+// ведёт не в общий список, а на ближайшую страницу. Только существующие страницы сайта.
+const posts = await getPosts();
+const routes: [string, string][] = [
+  ['services', 'Услуги'], ['services/custdev', 'Касдев'], ['services/design', 'Дизайн'], ['services/dev', 'Разработка'],
+  ['services/marketing', 'Маркетинг'], ['services/insales-shop', 'Магазин на шаблоне inSales'],
+  ['services/insales-shop/seller', 'Магазин рядом с WB и Ozon'], ['tools', 'Инструменты'],
+  ['tools/insales-calculator', 'Калькулятор магазина на inSales'], ['compare', 'Сравнения платформ'],
+  ['compare/ecommerce-platforms', 'Сравнение платформ для интернет-магазина'],
+  ['compare/insales-vs-yandex-kit', 'inSales и Яндекс KIT'], ['projects', 'Проекты'], ['resources', 'Полезное'],
+  ['privacy', 'Политика конфиденциальности'], ['consent', 'Согласие на обработку данных'],
+  ...(posts.length ? [['blog', 'Блог'] as [string, string]] : []),
+  ...posts.map((p) => [`blog/${p.id}`, p.data.h1] as [string, string]),
+];
 
 const paths = [
   ...SERVICE_ROWS.map((r) => ({ title: r.title, description: r.note, href: r.href })),
@@ -21,6 +37,7 @@ const paths = [
     <header class="ui-opening">
       <p class="ui-eyebrow">Ошибка 404</p>
       <h1 class="ui-h1">Страница не найдена</h1>
+      <p class="lost-guess" data-lost-guess hidden>Похоже, вы искали <a href="#"></a></p>
       <p class="ui-lead">Проверьте адрес или выберите нужный раздел ниже. Можно вернуться на главную или написать нам.</p>
       <div class="ui-actions">
         <a class="ui-button" href={href()}>На главную</a>
@@ -36,6 +53,45 @@ const paths = [
   <Footer />
 </Base>
 
+<script is:inline define:vars={{ routes, base: href() }}>
+  // Ближайшая страница к неверному адресу: расстояние по буквам между адресами и между последними частями адреса.
+  // Подсказка показывается, только если совпадение уверенное. Без JavaScript — общий список ниже.
+  (function () {
+    var box = document.querySelector('[data-lost-guess]');
+    if (!box) return;
+    var path = location.pathname;
+    try { path = decodeURIComponent(path); } catch (e) {}
+    path = path.toLowerCase();
+    if (path.indexOf(base) === 0) path = path.slice(base.length);
+    path = path.replace(/\.html?$/, '').replace(/^\/+|\/+$/g, '');
+    if (!path) return;
+    var lev = function (a, b) {
+      var prev = [], cur, i, j;
+      for (j = 0; j <= b.length; j++) prev[j] = j;
+      for (i = 1; i <= a.length; i++) {
+        cur = [i];
+        for (j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        prev = cur;
+      }
+      return prev[b.length];
+    };
+    var last = function (p) { return p.split('/').pop(); };
+    var best = null, bestScore = Infinity;
+    routes.forEach(function (r) {
+      var score = Math.min(lev(path, r[0]), lev(last(path), last(r[0])) + (path.split('/').length === r[0].split('/').length ? 0 : 1));
+      // Обрезанная ссылка: адрес — начало существующего (не короче 4 букв в последней части)
+      if (last(path).length >= 4 && r[0].indexOf(path) === 0 && r[0] !== path) score = Math.min(score, 1);
+      var limit = Math.max(2, Math.floor(last(r[0]).length * 0.3));
+      if (score <= limit && score < bestScore) { best = r; bestScore = score; }
+    });
+    if (!best) return;
+    var a = box.querySelector('a');
+    a.href = base + best[0] + '/';
+    a.textContent = '«' + best[1] + '» →';
+    box.hidden = false;
+  })();
+</script>
+
 <script is:inline>
   // Черновик в Telegram с адресом, который не открылся: человеку не нужно объяснять, что он искал,
   // а мы узнаём о битой ссылке (think-different, итерация 19). Без JavaScript — обычная ссылка в чат.
@@ -49,6 +105,8 @@ const paths = [
 
 <style>
   .lost .ui-opening { padding-top: 16px; }
+  .lost-guess { margin: 0 0 12px; font-size: var(--fs-lead); }
+  .lost-guess a { color: var(--teal-text); text-underline-offset: 4px; }
   .paths { padding: 0 26px; }
   @media (max-width: 600px) {
     .paths { padding-inline: 18px; }
