@@ -242,7 +242,8 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); transition: transform var(--press); }
+  /* Тонкая линия по краю, как у превью на /projects/: светлый снимок (LimeMart) не растворяется в фоне страницы */
+  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
   .project-image:active { transform: scale(var(--press-scale-card)); }
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
@@ -257,7 +258,7 @@ const organization = {
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
   .project-description .project-inquiry { color: var(--teal-text); }
-  .project-description h3 { font-size: var(--fs-h3); font-weight: 600; margin: 0 0 8px; }
+  .project-description h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 8px; }
   .project-description p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
