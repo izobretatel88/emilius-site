@@ -13,6 +13,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import IterationRuler from '../../components/IterationRuler.astro';
 import { href } from '../../lib/urls';
 import { ENTRY_POINTS } from '../../data/entry-points';
+import { stageInquiry } from '../../lib/project-inquiry';
 
 export function getStaticPaths() {
   return SECTORS.map((s) => ({ params: { id: s.id } }));
@@ -30,6 +31,9 @@ const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal']);
 const pad = (n: number) => String(n).padStart(2, '0');
 // Ситуации клиента, которые начинаются с этого этапа (блок «С чего начнём?» на главной)
 const situations = ENTRY_POINTS.filter((e) => e.stage === id);
+// Telegram с готовым черновиком по направлению — как в форме (?stage=), think-different, итерация 18
+const stageDraft = stageInquiry(id);
+const telegramHref = stageDraft ? `${LINKS.direct}?text=${encodeURIComponent(stageDraft.message)}` : LINKS.direct;
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.
 // Текущий этап окрашен, остальные нейтральные.
@@ -143,7 +147,7 @@ const arc = (i: number) => {
 
     <nav class="cycle ui-section" aria-label="Этапы цикла">
       <a class="ui-stage-step" href={href(`services/${prev.id}/`)} data-stage={prev.id}><span class="dir">← до этого · дни {pad(prev.from)}–{pad(prev.to)}</span><span class="name"><i class="ui-stage-dot" aria-hidden="true"></i>{prev.name}</span></a>
-      <a class="ui-link telegram" href={LINKS.direct} target="_blank" rel="noopener">Обсудить в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
+      <a class="ui-link telegram" href={telegramHref} target="_blank" rel="noopener">Обсудить в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке, текст уже набран</span></a>
       <a class="ui-stage-step next" href={href(`services/${next.id}/`)} data-stage={next.id}><span class="dir">дни {pad(next.from)}–{pad(next.to)} · дальше →</span><span class="name">{next.name}<i class="ui-stage-dot" aria-hidden="true"></i></span></a>
     </nav>
   </main>
