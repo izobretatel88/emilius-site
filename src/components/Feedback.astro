@@ -115,7 +115,13 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       updateLength();
     };
     const params=new URLSearchParams(location.search);
-    const initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'))??topicInquiry(params.get('topic'));
+    let initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'))??topicInquiry(params.get('topic'));
+    // Со сравнения платформ: отмеченное там дописываем к теме (Comparison.astro кладёт его в память вкладки, итерация 26)
+    try{
+      const saved=JSON.parse(sessionStorage.getItem('emilius-inquiry-note')??'null');
+      sessionStorage.removeItem('emilius-inquiry-note');
+      if(initial&&saved&&saved.topic===params.get('topic')&&typeof saved.note==='string')initial={...initial,message:`${initial.message} ${saved.note.slice(0,500)}`};
+    }catch{}
     if(initial){
       // Сохранённый браузером текст важнее автозаполнения
       if(message.value.trim()){selectedProject=initial;contextName.textContent=initial.name;showAsk(initial);context.hidden=false;}

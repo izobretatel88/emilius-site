@@ -29,10 +29,22 @@ const related=[
 <Base title={`${title} — Emilius Agency`} description={description}>
   <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
     <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
-    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href(`?topic=${detailed?'insales-kit':'platform'}#feedback`)}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
+    <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href(`?topic=${detailed?'insales-kit':'platform'}#feedback`)} data-compare-help={detailed?'insales-kit':'platform'}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
   </main><Footer />
   <style is:global set:html={css} />
   <script is:inline set:html={script} />
+  <script is:inline>
+    // Отмеченное в сравнении («Сайт + WB и Ozon», «Нужна 1С») переходит в форму вместе с темой — через память вкладки,
+    // а не через адрес: в адрес текст не кладём (think-different, итерация 26)
+    document.addEventListener('click', function (e) {
+      var a = e.target instanceof Element ? e.target.closest('[data-compare-help]') : null;
+      if (!a) return;
+      var mode = document.querySelector('[data-mode][aria-pressed="true"]');
+      var needs = Array.prototype.map.call(document.querySelectorAll('#chips [aria-pressed="true"]'), function (b) { return b.textContent.trim(); });
+      var note = [mode ? 'Стоимость для: ' + mode.textContent.trim() + '.' : '', needs.length ? 'Важно: ' + needs.join(', ') + '.' : ''].filter(Boolean).join(' ');
+      try { note ? sessionStorage.setItem('emilius-inquiry-note', JSON.stringify({ topic: a.getAttribute('data-compare-help'), note: note })) : sessionStorage.removeItem('emilius-inquiry-note'); } catch (err) {}
+    }, true);
+  </script>
 </Base>
 <style>
   :global(body:has(>.comparison-page)){row-gap:16px}
