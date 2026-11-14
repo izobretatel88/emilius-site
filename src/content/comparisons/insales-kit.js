@@ -10,11 +10,22 @@
   const empty = document.querySelector('#empty');
   const scroll = document.querySelector('.scroll');
   const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е').replaceAll('1c', '1с');
+  // Запрос, набранный не в той раскладке («jcnfnrb» → «остатки»), и привычные написания («сдек», «cdek», «сео»):
+  // раньше они давали пустой список, хотя функции есть (think-different, итерация 45).
+  const ALIASES = { сдек: 'сдэк', cdek: 'сдэк', сео: 'seo', срм: 'crm', апи: 'api', озон: 'ozon', вб: 'wb', moysklad: 'мойсклад' };
+  const EN = "qwertyuiop[]asdfghjkl;'zxcvbnm,.`", RU = 'йцукенгшщзхъфывапролджэячсмитьбюё';
+  const swapLayout = value => [...value.toLowerCase()].map(c => { const i = EN.indexOf(c); return i < 0 ? c : RU[i]; }).join('');
+  const termsOf = value => normalize(value.trim()).replace(/мой\s+склад/g, 'мойсклад').split(/\s+/).filter(Boolean).map(t => ALIASES[t] ?? t);
+  const anyMatch = terms => rows.some(row => terms.every(term => row.searchText.includes(term)));
   let mode = 'all';
   rows.forEach(row => { row.searchText = normalize(row.dataset.search); });
 
   function update(writeURL = true, preserveHash = false) {
-    const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+    let terms = termsOf(search.value), swapped = '';
+    if (terms.length && /[a-z]/i.test(search.value) && !anyMatch(terms)) {
+      const alt = termsOf(swapLayout(search.value));
+      if (anyMatch(alt)) { terms = alt; swapped = alt.join(' '); }
+    }
     let shown = 0;
     for (const section of sections) {
       let sectionCount = 0;
@@ -33,6 +44,7 @@
     }
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
     count.textContent = shown === rows.length ? `Показаны все ${rows.length} пунктов` : `Показано ${shown} из ${rows.length} пунктов`;
+    if (swapped) count.textContent += ` по запросу «${swapped}»`;
     empty.hidden = shown !== 0;
     scroll.querySelector('table').hidden = shown === 0;
     document.querySelector('.mobile-hint').hidden = shown === 0;
