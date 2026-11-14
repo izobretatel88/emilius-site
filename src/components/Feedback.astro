@@ -123,6 +123,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     const ownText=()=>selectedProject&&message.value.startsWith(prefixOf(selectedProject))?message.value.slice(prefixOf(selectedProject).length):message.value;
     let restored=false;
     try{const saved=sessionStorage.getItem(DRAFT_KEY);if(saved&&!message.value.trim()){message.value=saved.slice(0,message.maxLength);restored=true;updateLength();}}catch{}
+    message.addEventListener('input',()=>form.classList.remove('is-sent'));
     message.addEventListener('input',()=>{try{const t=ownText();t.trim()?sessionStorage.setItem(DRAFT_KEY,t):sessionStorage.removeItem(DRAFT_KEY);}catch{}});
     const params=new URLSearchParams(location.search);
     let initial=projectInquiry(params.get('project'))??startInquiry(params.get('start'))??stageInquiry(params.get('stage'))??topicInquiry(params.get('topic'));
@@ -223,6 +224,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
         const contact=(form.querySelector<HTMLInputElement>('#fb-contact')?.value||'').trim();
         form.reset();
         try{sessionStorage.removeItem(DRAFT_KEY);}catch{}
+        // После отправки форма не зовёт «начать» заново: готовые строки и срок ответа прячутся до нового текста (итерация 39)
+        form.classList.add('is-sent');
         show(ok, contact
           ? `Спасибо! Сообщение у нас. Ответим сюда: ${contact}.`
           : `Спасибо! Сообщение у нас. Контакт вы не оставили — если ждёте ответа, напишите нам в Telegram: ${form.dataset.direct}.`);
@@ -271,6 +274,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   .project-context[hidden]{display:none}
   .send-note{margin:-4px 0 0;font-size:14px;color:var(--ink-2);text-align:center}
   .starters[hidden]{display:none}
+  form.is-sent .starters,form.is-sent .send-note{display:none}
   .starters p{margin:0 0 8px;font-size:14px;color:var(--ink-2);line-height:1.45}
   .starters-row{display:flex;flex-wrap:wrap;gap:8px}
   .starters button{min-height:44px;padding:0 14px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:none;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;transition:background-color var(--hover),transform var(--press)}
