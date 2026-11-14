@@ -135,6 +135,19 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (err) {}
       }, true);
     </script>
+    <!-- Адрес страницы на распечатке и в PDF (think-different, итерация 66): с листа можно вернуться к той же странице,
+         у калькулятора и лендингов — к тому же расчёту (ответы живут в адресе). На экране строки нет. -->
+    <p class="print-url" aria-hidden="true"></p>
+    <script is:inline>
+      addEventListener('beforeprint', function () {
+        var p = document.querySelector('.print-url');
+        if (!p) return;
+        var u = new URL(location.href);
+        [...u.searchParams.keys()].forEach(function (k) { if (/^(utm_|yclid|gclid)/.test(k)) u.searchParams.delete(k); });
+        u.hash = '';
+        p.textContent = 'Страница: ' + u.href;
+      });
+    </script>
     <WriteButton />
     {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <CookieNotice />}
     <script is:inline>
@@ -182,6 +195,10 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
   }
   :global(main:focus) {
     outline: none;
+  }
+  .print-url { display: none; }
+  @media print {
+    .print-url { display: block; margin: 24px 0 0; font-size: 12px; color: var(--print-ink); word-break: break-all; }
   }
   .dev-badge {
     position: fixed;
