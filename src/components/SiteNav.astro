@@ -19,6 +19,12 @@ const state = (item: typeof primary[number]) =>
   current === normalize(href(item.href)) ? 'page'
   : item.sections.some(path => current.startsWith(normalize(href(path)) + '/') || current === normalize(href(path))) ? 'location'
   : undefined;
+// Ссылки второго уровня в меню телефона тоже говорят «вы здесь» (think-different, итерация 89): в статье блога
+// раньше выделялось только «Полезное», а «Блог» — нет; на лендинге inSales — «Услуги», но не «Магазин на inSales».
+const mark = (path: string) => {
+  const target = normalize(href(path));
+  return current === target ? 'page' : current.startsWith(target + '/') ? 'location' : undefined;
+};
 // На главной форма рядом — якорь без перезагрузки; с внутренних страниц — к форме на главной
 const discuss = isHome ? '#feedback' : href('#feedback');
 ---
@@ -47,11 +53,11 @@ const discuss = isHome ? '#feedback' : href('#feedback');
         <span class="menu-group">Направления</span>
         <div class="menu-pair">{DIRECTIONS.map(item => <a href={href(item.href)} data-stage={item.stage} aria-current={current === normalize(href(item.href)) ? 'page' : undefined}><i class="ui-stage-dot" aria-hidden="true"></i>{item.title}</a>)}</div>
         <span class="menu-group">Готовое решение</span>
-        <a href={href('services/insales-shop/')}>Магазин на inSales</a>
+        <a href={href('services/insales-shop/')} aria-current={mark('services/insales-shop/')}>Магазин на inSales</a>
         <span class="menu-group">Материалы и инструменты</span>
-        <a href={href('compare/')}>Сравнения платформ</a>
-        <a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>
-        {hasBlog && <a href={href('blog/')}>Блог</a>}
+        <a href={href('compare/')} aria-current={mark('compare/')}>Сравнения платформ</a>
+        <a href={href('tools/insales-calculator/')} aria-current={mark('tools/insales-calculator/')}>Калькулятор магазина</a>
+        {hasBlog && <a href={href('blog/')} aria-current={mark('blog/')}>Блог</a>}
       </div>
     </details>
   </nav>
