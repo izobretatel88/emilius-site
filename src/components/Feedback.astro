@@ -90,9 +90,16 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     const messageError=form.querySelector<HTMLElement>('#fb-message-error')!;
     const consentError=form.querySelector<HTMLElement>('#fb-consent-error')!;
     const length=form.querySelector<HTMLElement>('#fb-length')!;
-    const updateLength=()=>{length.textContent=`Осталось ${(message.maxLength-message.value.length).toLocaleString('ru-RU')}.`;};
+    // Поле растёт вместе с текстом (think-different, итерация 56): подставленный контекст и длинное сообщение видны целиком,
+    // без прокрутки внутри поля — на телефоне её почти не видно, а растянуть поле пальцем нельзя. Предел — 60% высоты экрана.
+    const minHeight=message.offsetHeight||136;
+    const fit=()=>{
+      message.style.height='auto';
+      message.style.height=`${Math.min(Math.max(message.scrollHeight+2,minHeight),Math.round(innerHeight*0.6))}px`;
+    };
+    const updateLength=()=>{length.textContent=`Осталось ${(message.maxLength-message.value.length).toLocaleString('ru-RU')}.`;fit();};
     message.addEventListener('input',updateLength);
-    form.addEventListener('reset',()=>requestAnimationFrame(updateLength));
+    form.addEventListener('reset',()=>setTimeout(updateLength));
     updateLength();
     const context=form.querySelector<HTMLElement>('.project-context')!;
     const contextName=context.querySelector<HTMLElement>('[data-project-context]')!;
