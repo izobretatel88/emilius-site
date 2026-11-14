@@ -41,6 +41,18 @@ import { LINKS } from '../data/site';
     else if (/\/compare\/insales-vs-yandex-kit\/$/.test(path)) setDraft(topicInquiry('insales-kit')?.message ?? null);
     else if (/\/compare\/ecommerce-platforms\/$/.test(path)) setDraft(topicInquiry('platform')?.message ?? null);
     else if (/\/blog\/[^/]+\/$/.test(path) && h1) setDraft(`Вопрос по статье «${h1}».`);
+    // Калькулятор: в черновик — расчёт с экрана, чтобы не пересказывать его в чате (think-different, итерация 22).
+    // Собираем в момент нажатия: человек мог поменять ответы.
+    else if (/\/tools\/insales-calculator\/$/.test(path)) {
+      const calcDraft = () => {
+        const text = (sel: string) => document.querySelector(sel)?.textContent?.trim().replace(/\s+/g, ' ') ?? '';
+        const params = [...document.querySelectorAll('.calc-summary dl > div')]
+          .map((row) => `${row.querySelector('dt')?.textContent?.trim()}: ${row.querySelector('dd')?.textContent?.trim()}`)
+          .join('; ');
+        return `Расчёт из калькулятора: пакет ${text('#calc-package')}, ${text('#calc-price')}, ${text('#calc-weeks').replace(/^О/, 'о').replace(/\.$/, '')}. ${params}. Хочу обсудить.`;
+      };
+      ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => setDraft(calcDraft()), true));
+    }
     // На главной кнопка следует за выбором в «С чего начнём?» — только после выбора самим человеком
     document.querySelectorAll<HTMLInputElement>('[data-entry] input[name="entry"]').forEach((input) =>
       input.addEventListener('change', () => setDraft(startInquiry(input.value)?.message ?? null)));
