@@ -248,12 +248,11 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-index a:focus-visible{box-shadow:0 0 0 1px var(--teal)}
   @media (hover:hover) and (pointer:fine){.project-index a:hover{box-shadow:0 0 0 1px var(--ink-3)}}
   .project{scroll-margin-top:24px}
+  /* На телефоне оглавление — сетка в две колонки (think-different, итерация 73). Лента вбок из итерации 11
+     показывала 2 проекта из 11, третий обрезался у края экрана: ниши «сразу» видно не было. */
   @media (max-width:760px){
-    .project-index{margin-inline:calc(-1 * var(--layout-gutter))}
-    .project-index ul{flex-wrap:nowrap;overflow-x:auto;padding-inline:var(--layout-gutter);scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:var(--layout-gutter)}
-    .project-index ul::-webkit-scrollbar{display:none}
-    .project-index li{flex:none;scroll-snap-align:start}
-    .project-index a{white-space:nowrap}
+    .project-index ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .project-index a{height:100%;padding:8px 12px}
   }
   @media (prefers-reduced-motion:reduce){.project-index a{transition:none}}
 </style>
