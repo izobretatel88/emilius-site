@@ -68,8 +68,10 @@ import { LINKS } from '../data/site';
     const leadPkg = document.querySelector('[data-out="pkg"]');
     const leadForm = document.querySelector('#lead form');
     if (leadPkg && leadForm) {
-      let touched = false;
+      // «Тронут» и расчёт, пришедший ссылкой с ответами (calc_*), и кнопки под пакетами: они отмечают ответы без change (итерация 51)
+      let touched = [...new URL(location.href).searchParams.keys()].some((key) => key.startsWith('calc_'));
       leadForm.addEventListener('change', () => { touched = true; });
+      document.querySelectorAll('[data-preset]').forEach((a) => a.addEventListener('click', () => { touched = true; }));
       const pageDraft = new URL(fab.href).searchParams.get('text') ?? '';
       const read = (key: string) => document.querySelector(`[data-out="${key}"]`)?.textContent?.trim().replace(/\s+/g, ' ') ?? '';
       ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => {
