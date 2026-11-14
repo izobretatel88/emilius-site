@@ -94,6 +94,9 @@ const related=[
   .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:8px;padding-inline:14px}
   .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
   .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
+  /* AdvantShop теперь часть Альфа‑Селлер: его страницы переадресуют на alfaseller.ru (think-different, итерация 88).
+     Под старым названием — новое, мелко, тоном подписи этапа: иначе «Источник» приводит на сайт с другим именем */
+  .platform-comparison :global(thead .renamed){display:block;margin-top:2px;color:var(--ink-3);font-size:var(--fs-small);font-weight:400;letter-spacing:0;line-height:1.3}
   .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}
   /* Официальные источники под таблицей: ссылки по 18 px шли с шагом 22 px — на телефоне легко попасть в соседнюю (WCAG 2.5.8) */
   .platform-comparison :global(#comparison-sources summary){min-height:44px;padding-block:11px;cursor:pointer}
