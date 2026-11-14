@@ -90,7 +90,8 @@ const related=[
     .platform-comparison :global(.platform-col){width:31%}
     .platform-comparison :global(.note-col){width:0}
     .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
-    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere}
+    /* Перенос по слогам с дефисом (think-different, итерация 75): в узкой колонке «Информационные» рвалось как «Информационны / е» — 189 слов на странице. overflow-wrap остаётся для кодов и слов через косую черту */
+    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:10 4 4}
     .platform-comparison :global(.status){display:block;font-size:13px}
     .platform-comparison :global(.scroll td>.status){display:block}
     .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
