@@ -13,7 +13,7 @@ import { LINKS } from '../data/site';
 </aside>
 
 <script>
-  import { stageInquiry, topicInquiry, startInquiry } from '../lib/project-inquiry';
+  import { stageInquiry, topicInquiry, startInquiry, projectInquiry } from '../lib/project-inquiry';
   const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
   if (fab) {
     // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
@@ -63,6 +63,14 @@ import { LINKS } from '../data/site';
       };
       ['pointerdown', 'focus', 'click'].forEach((type) => fab.addEventListener(type, () => setDraft(calcDraft()), true));
     }
+    // Галерея: после просмотра проекта в окне «Написать» несёт «Хочу похожий магазин, как …» (think-different, итерация 41).
+    // Окно само ставит проект в адрес своей кнопки «Хочу похожий» — следим за ним.
+    const viewerInquiry = document.querySelector<HTMLAnchorElement>('.viewer-inquiry');
+    if (viewerInquiry) new MutationObserver(() => {
+      const id = new URL(viewerInquiry.href).searchParams.get('project');
+      const item = projectInquiry(id);
+      if (item) setDraft(item.message);
+    }).observe(viewerInquiry, { attributes: true, attributeFilter: ['href'] });
     // На главной кнопка следует за выбором в «С чего начнём?» — только после выбора самим человеком
     document.querySelectorAll<HTMLInputElement>('[data-entry] input[name="entry"]').forEach((input) =>
       input.addEventListener('change', () => setDraft(startInquiry(input.value)?.message ?? null)));
