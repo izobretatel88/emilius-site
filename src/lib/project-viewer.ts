@@ -21,6 +21,13 @@ export function setupProjectViewer() {
   const paging = viewer.querySelector<HTMLElement>('.viewer-paging')!;
   const previous = viewer.querySelector<HTMLButtonElement>('[data-prev-screen]')!;
   const next = viewer.querySelector<HTMLButtonElement>('[data-next-screen]')!;
+  // Листание проектов прямо в окне (think-different, итерация 87): соседние проекты галереи по именам,
+  // ←/→ на клавиатуре и смахивание по снимку. Раньше, чтобы посмотреть следующий проект, окно закрывали,
+  // искали карточку ниже и открывали снова.
+  const projectNav = viewer.querySelector<HTMLElement>('.viewer-projects');
+  const prevProject = viewer.querySelector<HTMLButtonElement>('[data-prev-project]');
+  const nextProject = viewer.querySelector<HTMLButtonElement>('[data-next-project]');
+  const projectCount = viewer.querySelector<HTMLElement>('.viewer-count');
   let opener: HTMLAnchorElement | null = null;
   let project: ProjectMedia | null = null;
   let device: Device = 'desktop';
@@ -129,29 +136,99 @@ export function setupProjectViewer() {
     render();
   };
 
-  document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]').forEach(link => {
+  // Проекты в порядке галереи — у кого есть снимки
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]')]
+    .filter(link => projects[link.dataset.projectPreview!]?.screens.length);
+  let current = -1;
+  let preferred: Device = 'desktop';
+  const nameOf = (link?: HTMLAnchorElement) => (link ? projects[link.dataset.projectPreview!].name : '');
+  const updateProjectNav = () => {
+    if (!projectNav || !prevProject || !nextProject || !projectCount) return;
+    projectNav.hidden = links.length < 2;
+    const before = links[current - 1];
+    const after = links[current + 1];
+    prevProject.disabled = !before;
+    nextProject.disabled = !after;
+    prevProject.querySelector<HTMLElement>('[data-name]')!.textContent = nameOf(before);
+    nextProject.querySelector<HTMLElement>('[data-name]')!.textContent = nameOf(after);
+    // Имя проекта — только для экранного диктора: при листании заголовок окна меняется молча
+    const hidden = document.createElement('span');
+    hidden.className = 'visually-hidden';
+    hidden.textContent = `${project?.name ?? ''}, `;
+    projectCount.replaceChildren(hidden, `${current + 1} из ${links.length}`);
+  };
+  const show = (link: HTMLAnchorElement, at: 'first' | 'last' = 'first') => {
+    const selected = projects[link.dataset.projectPreview!];
+    opener = link;
+    project = selected;
+    current = links.indexOf(link);
+    title.textContent = selected.name;
+    inquiry.href = selected.inquiry;
+    inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
+    // Вид, который человек выбрал, держится при листании: проект без снимка телефона покажем с компьютера,
+    // а следующий — снова в выбранном виде.
+    const has = (value: Device) => selected.screens.some(screen => screen.device === value);
+    chooseDevice(has(preferred) ? preferred : has('desktop') ? 'desktop' : 'phone');
+    if (at === 'last' && screens().length > 1) { index = screens().length - 1; render(); }
+    updateProjectNav();
+  };
+  // Один шаг вперёд или назад: сначала по экранам проекта, на краю — к соседнему проекту
+  const step = (delta: 1 | -1) => {
+    if (!project) return false;
+    if (index + delta >= 0 && index + delta < screens().length) { index += delta; render(); return true; }
+    const link = links[current + delta];
+    if (!link) return false;
+    show(link, delta < 0 ? 'last' : 'first');
+    return true;
+  };
+  // Кнопка, на которой стоял фокус, могла пропасть (у нового проекта нет снимка телефона, это последний проект):
+  // фокус переходит на снимок — диктор прочитает имя проекта и экран.
+  const keepFocus = () => {
+    const active = document.activeElement as HTMLElement | null;
+    if (active && viewer.contains(active) && active !== viewer && !active.closest('[hidden]') && !(active as HTMLButtonElement).disabled) return;
+    imageBox.focus({preventScroll: true});
+  };
+
+  links.forEach(link => {
     // Со скриптом ссылка открывает окно, а не уходит на картинку — сообщаем это программам чтения экрана.
     // Без скрипта атрибута нет: ссылка честно ведёт на файл снимка.
     link.setAttribute('aria-haspopup', 'dialog');
     link.addEventListener('click', event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-      const selected = projects[link.dataset.projectPreview!];
-      if (!selected?.screens.length) return;
       event.preventDefault();
-      opener = link;
-      project = selected;
-      title.textContent = selected.name;
-      inquiry.href = selected.inquiry;
-      inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
       // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
       // Ширина — та же граница 700 px, что у одностолбцовой галереи.
-      const narrow = window.matchMedia('(max-width: 700px)').matches;
-      chooseDevice(narrow && selected.screens.some(screen => screen.device === 'phone') ? 'phone' : 'desktop');
+      preferred = window.matchMedia('(max-width: 700px)').matches ? 'phone' : 'desktop';
+      show(link);
       viewer.showModal();
       viewer.scrollTop = 0;
     });
   });
+  prevProject?.addEventListener('click', () => { if (links[current - 1]) { show(links[current - 1]); keepFocus(); } });
+  nextProject?.addEventListener('click', () => { if (links[current + 1]) { show(links[current + 1]); keepFocus(); } });
+  document.addEventListener('keydown', event => {
+    if (!viewer.open || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing) return;
+    // Снимок в «100%» шире окна: стрелки на нём прокручивают его вбок, как и раньше
+    if (event.target === imageBox && imageBox.dataset.scale === 'actual') return;
+    if (step(event.key === 'ArrowRight' ? 1 : -1)) { event.preventDefault(); keepFocus(); }
+  });
+  // Смахивание по снимку: заметный сдвиг вбок и почти без вертикали — иначе это прокрутка окна
+  let touch: {x: number; y: number} | null = null;
+  imageBox.addEventListener('touchstart', event => {
+    touch = event.touches.length === 1 ? {x: event.touches[0].clientX, y: event.touches[0].clientY} : null;
+  }, {passive: true});
+  imageBox.addEventListener('touchcancel', () => { touch = null; });
+  imageBox.addEventListener('touchend', event => {
+    const start = touch;
+    touch = null;
+    if (!start || event.touches.length || imageBox.dataset.scale === 'actual') return;
+    const dx = event.changedTouches[0].clientX - start.x;
+    const dy = event.changedTouches[0].clientY - start.y;
+    if (Math.abs(dx) > 56 && Math.abs(dx) > 2 * Math.abs(dy)) step(dx < 0 ? 1 : -1);
+  }, {passive: true});
   deviceButtons.forEach(button => button.addEventListener('click', () => {
+    preferred = button.dataset.device as Device;
     if (device !== button.dataset.device) chooseDevice(button.dataset.device as Device);
   }));
   zoomButtons.forEach(button => button.addEventListener('click', () => setScale(button.dataset.scale as 'fit' | 'actual')));
@@ -187,6 +264,10 @@ export function setupProjectViewer() {
     request += 1;
     clearTimeout(loadingTimer);
     image.onload = image.onerror = null;
+    // После листания окно закрывается на том проекте, который смотрели: галерея доходит до его карточки
+    if (opener && opener.getBoundingClientRect().bottom < 0 || opener && opener.getBoundingClientRect().top > window.innerHeight) {
+      opener.scrollIntoView({block: 'center'});
+    }
     opener?.focus({preventScroll: true});
   });
 }
