@@ -67,6 +67,8 @@
 .platform-comparison thead th.out .why{ display: block; }
 .platform-comparison thead th.out .best-tag{ display: none !important; }
 .platform-comparison .panel{ display: grid; gap: 14px; padding: 16px 20px; border-radius:var(--radius-card); background: var(--card); }
+/* Кнопки панели работают только со скриптом: без него панель не показываем, вывод под ней и таблица остаются */
+@media (scripting: none){ .platform-comparison .panel{ display: none; } }
 .platform-comparison .row{ display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .platform-comparison .label{ flex: none; width: 170px; color: var(--ink-2); font-size: 14px; }
 .platform-comparison .seg{ display: inline-flex; padding: 4px; gap: 4px; border-radius:var(--radius-btn); background: var(--well); }
