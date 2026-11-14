@@ -24,7 +24,14 @@ import { LINKS } from '../data/site';
     // Черновик сообщения по теме страницы (think-different, итерация 7): Telegram открывает чат с набранным текстом.
     // Двойники выше найдены по исходному адресу — замена адреса их не ломает.
     const base = fab.href;
-    const setDraft = (text: string | null) => { fab.href = text ? `${base}?text=${encodeURIComponent(text)}` : base; };
+    // Ссылки страницы в тот же чат без текста («Написать» в «Связи», запасная ссылка у Эми) несут тот же черновик,
+    // что и плавающая: какой кнопкой человек ни напишет, тема уже набрана (think-different, итерация 21)
+    const plain = twins.filter((el): el is HTMLAnchorElement => el instanceof HTMLAnchorElement && el.getAttribute('href') === fab.getAttribute('href'));
+    const setDraft = (text: string | null) => {
+      const target = text ? `${base}?text=${encodeURIComponent(text)}` : base;
+      fab.href = target;
+      plain.forEach((a) => { a.href = target; });
+    };
     const path = location.pathname;
     const h1 = document.querySelector('h1')?.textContent?.trim().replace(/\s+/g, ' ');
     const stage = path.match(/\/services\/(custdev|design|dev|marketing)\/$/);
