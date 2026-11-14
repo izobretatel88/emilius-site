@@ -150,7 +150,8 @@ const jsonLd = [
       btn.className = 'copy';
       btn.textContent = 'Скопировать';
       btn.addEventListener('click', function () {
-        var text = pre.innerText;
+        // Только текст шаблона: кнопка лежит внутри <pre>, и раньше в буфер уходило и «Скопировать» (итерация 84)
+        var text = (pre.querySelector('code') || pre).innerText.replace(/\s+$/, '');
         var done = function () {
           btn.textContent = 'Скопировано';
           setTimeout(function () { btn.textContent = 'Скопировать'; }, 2000);
