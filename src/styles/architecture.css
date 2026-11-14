@@ -4,10 +4,10 @@
 .directory > ul.link-list, .directory > section:not(.directory-callout) > ul.link-list { background:var(--card); border-radius:var(--radius-card); padding:0 26px; margin-top:18px; }
 .directory-section { margin-top:var(--section-pad); padding-top:var(--section-pad); border-top:1px solid var(--hair); }
 .directory-section h2, .directory > section > h2 { font-size:var(--fs-h2); line-height:1.15; letter-spacing:var(--tracking-tight); margin-bottom:12px; }
-.directory-section > p { color:var(--ink-2); max-width:75ch; }
+.directory-section > p { color:var(--ink-2); max-width:calc(75 * var(--ch)); }
 .directory-callout { background:var(--card); border-radius:var(--radius-card); box-shadow:var(--shadow-card); padding:30px 32px; margin-top:var(--section-pad); }
 .directory-callout h2 { font-size:27px; line-height:1.2; letter-spacing:-.02em; }
-.directory-callout p { max-width:75ch; color:var(--ink-2); margin:8px 0 16px; }
+.directory-callout p { max-width:calc(75 * var(--ch)); color:var(--ink-2); margin:8px 0 16px; }
 .directory-button { display:inline-flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--teal-btn); color:var(--on-teal); padding:12px 18px; border-radius:var(--radius-btn); font-weight:600; }
 @media (hover: hover) and (pointer: fine) { .directory-button:hover { background:var(--teal-btn-hover); } }
 .directory-button { transition: background-color var(--hover), transform var(--press); }

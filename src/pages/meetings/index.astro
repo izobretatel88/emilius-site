@@ -157,7 +157,7 @@ const driveUse = [
     font-size: clamp(18px, 2vw, 20px);
     line-height: 1.5;
     color: var(--ink-2);
-    max-width: 60ch;
+    max-width: calc(60 * var(--ch));
   }
   .docs {
     display: flex;
@@ -233,7 +233,7 @@ const driveUse = [
   .note {
     color: var(--ink-2);
     font-size: 15px;
-    max-width: 60ch;
+    max-width: calc(60 * var(--ch));
   }
   code {
     font-size: 0.9em;

@@ -631,7 +631,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Иерархия: крупный заголовок первого экрана, разделы заметно выше текста — в системе главной */
   h1 { font-size: var(--fs-h1); font-weight: 600; line-height: 1.1; letter-spacing: -0.035em; text-wrap: balance; }
   .block p, .item p, .shop-what, .lead { text-wrap: pretty; }
-  .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
+  .lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.5; color: var(--ink-2); max-width: calc(58 * var(--ch)); }
   h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.15; letter-spacing: var(--tracking-tight); text-wrap: balance; }
   h2.sub {
     font-size: clamp(20px, 2.4vw, 24px);
@@ -711,7 +711,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .block.plain { padding: 8px 0 0; }
   /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
   .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
-  .block > .small { max-width: 68ch; line-height: 1.5; }
+  .block > .small { max-width: calc(68 * var(--ch)); line-height: 1.5; }
   /* Условия цены под пакетами — часть цены, а не сноска: читаются вторым цветом текста, а не самым бледным */
   .block > .price-terms { font-size: 15px; color: var(--ink-2); }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
@@ -1022,7 +1022,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   @media (hover: hover) and (pointer: fine) { summary:hover { color: var(--teal-text); } }
   @media (hover: hover) and (pointer: fine) { summary:hover::after { border-color: var(--teal); } }
   summary:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
-  details p { max-width: 68ch; padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
+  details p { max-width: calc(68 * var(--ch)); padding: 2px 32px 16px 0; margin-top: 0; color: var(--ink-2); }
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
   h2[id] { scroll-margin-top: 96px; }

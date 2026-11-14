@@ -38,7 +38,7 @@
   font-size: var(--fs-lead);
   line-height: 1.5;
   color: var(--ink-2);
-  max-width: 62ch; /* около 70 знаков в строке при 19 px */
+  max-width: calc(62 * var(--ch)); /* около 70 знаков в строке при 19 px */
   margin-top: 20px;
   text-wrap: pretty;
 }
@@ -135,7 +135,7 @@
 }
 .ui-section-intro {
   color: var(--ink-2);
-  max-width: 66ch;
+  max-width: calc(66 * var(--ch));
   margin: -16px 0 28px;
 }
 

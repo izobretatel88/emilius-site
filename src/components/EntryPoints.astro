@@ -129,7 +129,7 @@ const items = ENTRY_POINTS.map((e) => {
   .entry { margin-top: 44px; }
   .entry-head :is(h2, h3) { scroll-margin-top: 24px; }
   .entry-head :is(h2, h3) { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 10px; }
-  .entry-head p { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 62ch; margin: 0; }
+  .entry-head p { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: calc(62 * var(--ch)); margin: 0; }
 
   .entry-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 16px; padding: 0; border: 0; min-width: 0; }
   .entry-chip { position: relative; }
@@ -165,7 +165,7 @@ const items = ENTRY_POINTS.map((e) => {
 
   .entry-day { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; margin: 0 0 10px; }
   .entry-title { font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 14px; }
-  .entry-why { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; margin: 0 0 22px; }
+  .entry-why { font-size: 17px; line-height: 1.5; color: var(--ink-2); max-width: calc(46 * var(--ch)); margin: 0 0 22px; }
   .entry-cycle { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; font-size: 14px; color: var(--ink-3); }
   .entry-cycle li { display: inline-flex; align-items: center; gap: 6px; }
   .entry-cycle li:not(:last-child)::after { content: '→'; margin-left: 4px; color: var(--ink-3); font-weight: 400; } /* стрелка в конце строки, а не в начале следующей */
