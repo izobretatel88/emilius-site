@@ -351,7 +351,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
         <p class="status" data-fail role="alert" hidden>
-          Не получилось отправить. Отправьте расчёт в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram>{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке, расчёт уже набран</span></a>
+          Не получилось отправить. Отправьте расчёт в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram data-goal-place="form-fail">{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке, расчёт уже набран</span></a>
         </p>
         </div>
       </form>
