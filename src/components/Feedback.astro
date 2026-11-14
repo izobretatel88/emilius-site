@@ -64,6 +64,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       <!-- Облачко сообщения: значок Telegram — только у кнопок, которые ведут в Telegram -->
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 3.5h14A2.5 2.5 0 0 1 21.5 6v9a2.5 2.5 0 0 1-2.5 2.5h-7.2l-4.6 3.6c-.7.5-1.7 0-1.7-.9v-2.7H5A2.5 2.5 0 0 1 2.5 15V6A2.5 2.5 0 0 1 5 3.5Zm2.5 5a1 1 0 0 0 0 2h9a1 1 0 1 0 0-2h-9Zm0 4a1 1 0 1 0 0 2h5.5a1 1 0 1 0 0-2H7.5Z"></path></svg>
     </button>
+    <!-- Предложение владельцу (think-different, итерация 33): срок ответа — тот же, что у формы лендинга inSales.
+         Ожидание — главный страх перед отправкой. Если для заявок с главной правило другое — поправить или убрать строку. -->
+    <p class="send-note">Ответим в течение часа в рабочее время.</p>
     <p class="status" role="status" aria-live="polite" hidden></p>
     <p class="status status-error" role="alert" hidden>
       Не получилось отправить. Отправьте то же сообщение в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram>{direct}<span class="visually-hidden">, откроется в новой вкладке, текст уже набран</span></a>
@@ -257,6 +260,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   }
   .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
   .project-context[hidden]{display:none}
+  .send-note{margin:-4px 0 0;font-size:14px;color:var(--ink-2);text-align:center}
   .starters[hidden]{display:none}
   .starters p{margin:0 0 8px;font-size:14px;color:var(--ink-2);line-height:1.45}
   .starters-row{display:flex;flex-wrap:wrap;gap:8px}
