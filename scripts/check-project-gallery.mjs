@@ -17,7 +17,9 @@ const html = readFileSync('dist/projects/index.html', 'utf8');
 const serialized = html.match(/<script\b[^>]*id="project-media"[^>]*>([\s\S]*?)<\/script>/)?.[1];
 assert(serialized, 'project-media manifest missing');
 const projects = JSON.parse(serialized);
-assert.equal(Object.keys(projects).length, 6);
+// 6 исходных + 5 из карточки партнёра inSales (13.11.2026). Mansen не показываем: сайт ушёл с inSales.
+assert.equal(Object.keys(projects).length, 11);
+assert(!projects.mansen);
 let screens = 0;
 for (const [id, project] of Object.entries(projects)) {
   assert.equal(projectInquiry(id).name, project.name);

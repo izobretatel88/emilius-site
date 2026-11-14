@@ -5,7 +5,7 @@
    внешний сайт — отдельная ссылка. Только подтверждённые роли и результаты. */
 import Directory from '../../layouts/Directory.astro';
 import {PROJECTS} from '../../data/projects';
-import {FRESH_SHOP} from '../../data/insales';
+import {FRESH_SHOP,TEMPLATE_SHOPS,MORE_SHOPS} from '../../data/insales';
 import {href} from '../../lib/urls';
 import {SECTORS} from '../../data/site';
 import {SERVICES} from '../../data/services';
@@ -20,13 +20,26 @@ const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
   duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales'},
   wizzu:{kind:'Доставка продуктов',role:'Сайт-витрина · интеграции',updated:true},
-  geekboards:{kind:'Механические клавиатуры и аксессуары',role:'Развитие магазина · фронтенд'},
-  navalishenskoe:{kind:'Отдых в Сочи',role:'Развитие сайта · SEO'},
+  geekboards:{kind:'Механические клавиатуры и аксессуары',role:'Развитие магазина · фронтенд',updated:true},
+  navalishenskoe:{kind:'Отдых в Сочи',role:'Развитие сайта · SEO',updated:true},
+  // Роли — из карточки партнёра inSales (стенд /extra/insales-stend/, 13.11.2026)
+  zalina:{kind:'Авторская одежда',role:'Фронтенд по готовому дизайну · доработки',updated:true},
+  mnogoles:{kind:'Пиломатериалы от производителя',role:'Магазин с нуля · калькуляторы',updated:true},
+  almatennis:{kind:'Теннисный магазин в Москве',role:'Магазин на готовой теме inSales',updated:true},
+  'ss-sk':{kind:'Системы безопасности в Сочи',role:'Магазин на готовой теме inSales',updated:true},
+  nsorganic:{kind:'Грибы и травы',role:'Магазин на готовой теме inSales',updated:true},
 };
+// Магазины из карточки партнёра inSales: ссылки и названия — из данных лендинга, без повтора
+const shop=(name:string)=>MORE_SHOPS.find(x=>x.name===name)!;
+const template=(id:string)=>{const x=TEMPLATE_SHOPS.find(t=>t.id===id)!;return {id,name:x.name,shot:`cases/${id}.webp`,url:x.url,domain:x.domain};};
 const projects=[
   PROJECTS.find(p=>p.id==='alohagaia')!,
   {id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},
-  ...['duman','wizzu','geekboards','navalishenskoe'].map(id=>PROJECTS.find(p=>p.id===id)!),
+  ...['duman','wizzu','geekboards'].map(id=>PROJECTS.find(p=>p.id===id)!),
+  {id:'zalina',name:shop('Zalina Verkhovskaya').name,shot:'cases/gallery/zalina-800.webp',url:shop('Zalina Verkhovskaya').url,domain:shop('Zalina Verkhovskaya').domain},
+  {id:'mnogoles',name:shop('Многолес').name,shot:'cases/gallery/mnogoles-800.webp',url:shop('Многолес').url,domain:shop('Многолес').domain},
+  ...['almatennis','ss-sk','nsorganic'].map(template),
+  PROJECTS.find(p=>p.id==='navalishenskoe')!,
 ].map(p=>{
   const meta=captions[p.id];
   return {...p,...meta,
@@ -37,13 +50,13 @@ const projects=[
 });
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
 // магазин сети («Вкусдом»), поэтому не выдаём его за мобильный LimeMart.
-const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069};
+const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
   inquiry:href(`?project=${p.id}#feedback`),
   screens:[
     {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height},
-    ...(phoneHeights[p.id]?[{device:'phone',label:p.id==='geekboards'?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id]}]:[]),
+    ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id]}]:[]),
   ],
 }]));
 ---
@@ -56,7 +69,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
-        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
+        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
         <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
@@ -75,7 +88,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     </div>
     <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
-    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="0" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
+    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
   </dialog>
   <script type="application/json" id="project-media" set:html={JSON.stringify(media)} />
@@ -129,12 +142,21 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   @media (hover: hover) and (pointer: fine) { a.project-result:hover .result-arrow {transform:translateX(3px)} }
   .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-small)}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+  /* Нечётное число карточек после крупной: приглашение остаётся без пары — растягиваем на ряд, без пустой половины */
+  .gallery-contact:nth-child(even){grid-column:1/-1;min-height:0}
   .gallery-contact>p{font-size:var(--fs-ui);color:var(--ink-2);margin-bottom:16px}
   .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 12px}
   .gallery-contact a{gap:28px}
   /* Пояснение сразу под заголовком, кнопка — последней: сначала зачем, потом действие */
   .gallery-contact>.contact-note{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;margin:0 0 28px;max-width:30ch}
-  .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
+  .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;height:calc(100svh - 40px);max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
+  /* Окно постоянной высоты во весь экран: при смене «Компьютер / Телефон» и экранов не прыгает, серое поле снимка занимает остаток */
+  .project-viewer[open]{display:flex;flex-direction:column}
+  .project-viewer[open]>*{flex-shrink:0}
+  .project-viewer[open]>.viewer-image{flex-grow:1}
+  /* Снимок не загрузился — всё поле отдаём сообщению, оно встаёт по центру; пустая область снимка не растёт под ним */
+  .project-viewer[open]>.viewer-error:not([hidden]){flex-grow:1}
+  .project-viewer[open]>.viewer-image:has(img[hidden]){flex-grow:0}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
   .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
@@ -160,6 +182,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-error button{background:var(--card)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
   .viewer-inquiry{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
+  /* Переключателей нет (один вид, снимок помещается) — ссылка не висит одна у правого края пустой полосы, а встаёт в начало, под название */
+  .viewer-controls:not(:has(>[role='group']:not([hidden]))) .viewer-inquiry{margin-left:0}
   .viewer-status{font-size:var(--fs-small);min-height:36px;padding:8px 20px;color:var(--ink-2)}
   /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
   .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
@@ -169,8 +193,17 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
   .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
+  /* Наведение мышью: серая кнопка темнеет до линии разделителя, выбранная — до тёмного бирюзового, как на лендинге inSales */
+  @media (hover: hover) and (pointer: fine) {
+    .viewer-toolbar button:hover,.viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
+    .viewer-controls :global(button[aria-pressed='true']:hover){background:var(--teal-btn-hover)}
+  }
   .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
-  .viewer-image[data-device='phone']{padding:20px;background:var(--well)}
+  /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */
+  .viewer-image{padding:20px;background:var(--well)}
+  /* Короткий снимок — по центру поля по высоте; длинный начинается сверху (auto-поля во flex не уводят его за край) */
+  .viewer-image{display:flex;flex-direction:column}
+  .viewer-image img{margin-block:auto}
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   /* До 1000 px адрес сайта стоит столбиком со своей зоной нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
   @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
@@ -193,7 +226,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
     .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
-    .project-viewer{width:calc(100% - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
+    .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
+    /* Только снимок компьютера (переключателя вида нет): окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
+    .project-viewer[open]:has(.viewer-devices[hidden]):has(.viewer-image[data-device='desktop']){height:fit-content}
     .viewer-toolbar{padding:8px 12px}
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}

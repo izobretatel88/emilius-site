@@ -30,16 +30,33 @@ export function setupProjectViewer() {
   const screens = () => project?.screens.filter(screen => screen.device === device) ?? [];
   const setScale = (scale: 'fit' | 'actual') => {
     imageBox.dataset.scale = scale;
+    imageBox.tabIndex = scale === 'actual' ? 0 : -1;
     zoomButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.scale === scale)));
     imageBox.scrollTop = imageBox.scrollLeft = 0;
     viewer.scrollTop = 0;
   };
 
+  // «По ширине» и «100%» различаются, только когда снимок шире окна. Снимок уже помещается целиком —
+  // обе кнопки дают одну картинку, и пара переключателей без действия убирается.
+  const updateZoom = () => {
+    const screen = screens()[index];
+    // Ширина под снимок — без внутренних полей области (серое поле вокруг снимка)
+    const style = typeof getComputedStyle === 'function' ? getComputedStyle(imageBox) : null;
+    const box = imageBox.clientWidth - (style ? (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0) : 0);
+    const fits = !!screen && box > 0 && box >= screen.width;
+    zoomControl.hidden = device === 'phone' || fits;
+    if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');
+    // Область снимка — остановка Tab, только когда в ней есть что прокручивать вбок (снимок в 100% шире окна).
+    // Иначе это пустая остановка; фокус из «Повторить» по-прежнему можно поставить на неё программно.
+    imageBox.tabIndex = !fits && imageBox.dataset.scale === 'actual' ? 0 : -1;
+  };
+  // Ширина окна известна после открытия и меняется при повороте экрана.
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (project) updateZoom(); }).observe(imageBox);
+
   const render = () => {
     const list = screens();
     const screen = list[index];
     if (!project || !screen) return;
-    const currentProject = project;
     const version = ++request;
     clearTimeout(loadingTimer);
     error.hidden = true;
@@ -54,7 +71,8 @@ export function setupProjectViewer() {
       if (version !== request) return;
       clearTimeout(loadingTimer);
       imageBox.setAttribute('aria-busy', 'false');
-      status.textContent = `${currentProject.name} · ${description}${list.length > 1 ? ` · ${index + 1} из ${list.length}` : ''}`;
+      // Название проекта уже в заголовке окна — в строке только вид, экран и номер
+      status.textContent = `${description}${list.length > 1 ? ` · ${index + 1} из ${list.length}` : ''}`;
     };
     image.onload = ready;
     const fail = () => {
@@ -84,7 +102,7 @@ export function setupProjectViewer() {
       button.setAttribute('aria-pressed', String(button.dataset.device === device));
     });
     devicesControl.hidden = new Set(project.screens.map(item => item.device)).size < 2;
-    zoomControl.hidden = device === 'phone';
+    updateZoom();
     screensControl.hidden = list.length < 2;
     screensControl.querySelectorAll<HTMLButtonElement>('button').forEach((button, i) => {
       button.setAttribute('aria-pressed', String(i === index));
@@ -112,6 +130,9 @@ export function setupProjectViewer() {
   };
 
   document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]').forEach(link => {
+    // Со скриптом ссылка открывает окно, а не уходит на картинку — сообщаем это программам чтения экрана.
+    // Без скрипта атрибута нет: ссылка честно ведёт на файл снимка.
+    link.setAttribute('aria-haspopup', 'dialog');
     link.addEventListener('click', event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       const selected = projects[link.dataset.projectPreview!];

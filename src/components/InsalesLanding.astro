@@ -90,7 +90,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <picture>
           <img src={href(`cases/mobile/${heroShop.id}.webp`)} alt={`Мобильная версия ${heroShop.domain}`} width="520" height="1071" fetchpriority="high" decoding="async" />
         </picture>
-        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
+        <figcaption><a href={heroShop.url} target="_blank" rel="noopener">{heroShop.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a> — {heroShop.what[0].toLowerCase() + heroShop.what.slice(1)}</figcaption>
       </figure>
     </section>
 
@@ -145,7 +145,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <h3 class="case-name" id="t-case">{FRESH_SHOP.name}</h3>
             <p class="shop-what">{FRESH_SHOP.what}</p>
             <ul class="dots case-done">{FRESH_SHOP.done.map((d) => <li>{d}</li>)}</ul>
-            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span></a>
+            <a class="shop-link" href={FRESH_SHOP.url} target="_blank" rel="noopener">{FRESH_SHOP.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
           </div>
         </div>
         <div class="case-pos">
@@ -174,7 +174,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
               <span class="shop-body">
                 <span class="shop-name">{x.name}</span>
                 <span class="shop-what">{x.what}</span>
-                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span></span>
+                <span class="shop-link">{x.domain} <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></span>
               </span>
             </a>
           </li>
@@ -182,10 +182,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       </ul>
       <p class="sub-lead">Ещё магазины и интеграции на inSales:</p>
       <ul class="more-shops">
-        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a></li>)}
-        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span></a>&nbsp;— {x.what}</li>)}
+        {MORE_SHOPS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></li>)}
+        {INTEGRATIONS.map((x) => <li><a href={x.url} target="_blank" rel="noopener">{x.domain}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>&nbsp;— {x.what}</li>)}
       </ul>
-      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span></a></>)}</p>
+      <p class="proof">{PROOF_LINKS.map((l) => <><a href={l.url} target="_blank" rel="noopener">{l.text}&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></>)}</p>
     </section>
 
     <!-- Мобильные версии: лента телефонов во всю ширину карточки, на десктопе — стрелки, на телефоне — свайп -->
@@ -206,7 +206,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
             <a class="phone-card" href={x.url} target="_blank" rel="noopener">
               <span class="phone"><img src={href(`cases/mobile/${x.id}.webp`)} alt={`Мобильная версия ${x.domain}`} width="520" height="1071" loading="lazy" decoding="async" /></span>
               <span class="phone-name">{x.name} <span aria-hidden="true">↗</span></span>
-              <span class="phone-what">{x.what}</span>
+              <span class="phone-what">{x.what}</span><span class="visually-hidden">, откроется в новой вкладке</span>
             </a>
           </li>
         ))}
@@ -234,7 +234,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <blockquote>«{VIDEO_REVIEW.quote}»</blockquote>
           <figcaption>
             <b id="review-who">{VIDEO_REVIEW.who}</b>
-            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span></a></span>
+            <span><span>{VIDEO_REVIEW.project}</span><a href={VIDEO_REVIEW.url} target="_blank" rel="noopener">wizzu.ru <span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></span>
           </figcaption>
         </figure>
       </div>
@@ -703,7 +703,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .shop-what { font-size: var(--fs-body); color: var(--ink-2); line-height: 1.45; }
   .shop-link { margin-top: 4px; font-size: var(--fs-ui); font-weight: 600; color: var(--teal-text); }
   /* Ссылка на сайт кейса стоит отдельно — зона нажатия 44 px, как у остальных ссылок */
-  a.shop-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; }
+  /* Ссылка на сайт кейса: стрелка ↗ через 8 px, как у адресов в кейсах на страницах услуг (во flex пробел перед стрелкой схлопывается) */
+  a.shop-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 0; }
   .shop .shop-link { margin-top: auto; }
   /* Плитки стоят на сером --well внутри белой карточки раздела: при наведении темнеют до --hair, а не растворяются в белом */
   @media (hover: hover) and (pointer: fine) { .shop:hover { background: var(--hair); } }
@@ -780,18 +781,25 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .phones::-webkit-scrollbar { display: none; }
   .phones li { flex: 0 0 188px; scroll-snap-align: start; }
-  .phone-card { display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; }
+  /* position: relative — скрытая подпись «откроется в новой вкладке» остаётся внутри ленты и не растягивает страницу вбок */
+  .phone-card { position: relative; display: flex; flex-direction: column; gap: 3px; color: var(--ink); text-decoration: none; transition: transform var(--press); -webkit-tap-highlight-color: transparent; }
+  /* Как карточки магазинов выше: нажатие чуть проседает, снимок проясняется при наведении и фокусе */
+  .phone-card:active { transform: scale(var(--press-scale-card)); }
+  .phone-card:focus-visible .phone img { filter: none; }
   /* Телефон — макет владельца целиком, со своей рамкой: экран не обрезаем */
   .phone { display: block; margin-bottom: 10px; }
-  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); }
+  .phone img { display: block; width: 100%; height: auto; aspect-ratio: 520 / 1071; filter: var(--img-dim); transition: filter var(--hover); }
   .phone-name { font-size: 16px; font-weight: 700; line-height: 1.25; min-height: 2.5em; transition: color var(--hover); }
   .phone-name span { font-weight: 400; color: var(--ink-3); }
   .phone-what { font-size: 14px; color: var(--ink-2); line-height: 1.4; min-height: 2.8em; text-wrap: pretty; }
-  @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } }
+  @media (hover: hover) and (pointer: fine) { .phone-card:hover .phone-name { color: var(--teal-text); } .phone-card:hover .phone img { filter: none; } }
   .phone-card:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: var(--radius-card); }
   .more-shops { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   /* Таблетка целиком — зона нажатия не меньше 44 px (ссылка растянута на всю таблетку ниже) */
-  .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover); }
+  .more-shops li { display: flex; align-items: center; gap: 0.3em; min-height: 44px; font-size: 14px; color: var(--ink-2); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--well); transition: background-color var(--hover), transform var(--press); }
+  /* Отклик на нажатие — как у карточек магазинов выше: таблетка чуть проседает */
+  .more-shops li:has(a:active) { transform: scale(var(--press-scale)); background: var(--hair); }
+  .more-shops a { -webkit-tap-highlight-color: transparent; }
   @media (hover: hover) and (pointer: fine) { .more-shops li:hover { background: var(--hair); } }
   .more-shops a { font-weight: 600; color: var(--teal-text); text-decoration: none; white-space: nowrap; }
   /* Нажимается вся плашка, а не только домен высотой 17 px: ссылка растянута на плашку */
@@ -951,6 +959,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .lead-form { scroll-margin-top: 76px; }
   /* Переход по навигации: заголовок раздела не уходит под таблетку */
   h2[id] { scroll-margin-top: 96px; }
+  /* Переход из галереи «5 из 5 … →» на #case-happyanimal: кейс не уходит под таблетку навигации */
+  .case[id] { scroll-margin-top: 96px; }
   .jump {
     position: fixed;
     top: 12px;
