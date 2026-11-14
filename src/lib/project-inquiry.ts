@@ -1,4 +1,4 @@
-import { entryPoint } from '../data/entry-points';
+import { entryPoint } from '../data/entry-points.ts';
 // Принимаем только известный проект: текст из URL в форму не переносим.
 const PROJECT_INQUIRIES: Record<string, {name: string; message: string}> = {
   happyanimal: {name: 'Happy Animal', message: 'Хочу похожий магазин, как Happy Animal.'},

@@ -62,6 +62,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 ---
 <Directory title="Проекты" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие.">
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
+  <!-- Оглавление (think-different, итерация 11): ниши видны сразу, без 13 экранов прокрутки на телефоне -->
+  <nav class="project-index" aria-label="Проекты на странице">
+    <ul role="list">{projects.map(p=><li><a href={`#${p.id}`}><strong>{p.name}</strong><span>{p.kind}</span></a></li>)}</ul>
+  </nav>
   <div class="project-gallery">
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
       <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
@@ -235,4 +239,21 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-inquiry{margin-left:0}
   }
   @media(prefers-reduced-motion:reduce){.project-preview,.project-preview img,.preview-action,.project-inquiry,.result-arrow{transition:none}.project-preview:active{transform:none}a.project-result .result-arrow{transform:none!important}}
+  .project-index{margin:0 0 28px}
+  .project-index ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+  .project-index a{display:flex;flex-direction:column;justify-content:center;min-height:44px;padding:8px 14px;border-radius:var(--radius-sm);background:var(--card);box-shadow:0 0 0 1px var(--hair);color:var(--ink);text-decoration:none;line-height:1.25;transition:box-shadow var(--hover),transform var(--press);-webkit-tap-highlight-color:transparent}
+  .project-index strong{font-size:15px;font-weight:600}
+  .project-index span{font-size:var(--fs-small);color:var(--ink-3)}
+  .project-index a:active{transform:scale(var(--press-scale))}
+  .project-index a:focus-visible{box-shadow:0 0 0 1px var(--teal)}
+  @media (hover:hover) and (pointer:fine){.project-index a:hover{box-shadow:0 0 0 1px var(--ink-3)}}
+  .project{scroll-margin-top:24px}
+  @media (max-width:760px){
+    .project-index{margin-inline:calc(-1 * var(--layout-gutter))}
+    .project-index ul{flex-wrap:nowrap;overflow-x:auto;padding-inline:var(--layout-gutter);scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:var(--layout-gutter)}
+    .project-index ul::-webkit-scrollbar{display:none}
+    .project-index li{flex:none;scroll-snap-align:start}
+    .project-index a{white-space:nowrap}
+  }
+  @media (prefers-reduced-motion:reduce){.project-index a{transition:none}}
 </style>
