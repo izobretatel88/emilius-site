@@ -14,9 +14,13 @@ const PROJECT_INQUIRIES: Record<string, {name: string; message: string}> = {
   navalishenskoe: {name: 'Навалишенское', message: 'Хочу похожий сайт, как «Навалишенское».'},
 };
 
+// Подсказка «что написать» — как у ситуаций и направлений (think-different, итерация 27)
+const PROJECT_ASK = 'что продаёте и сколько примерно товаров, есть ли сайт сейчас и к какому сроку нужен магазин';
+const SITE_ASK = 'ссылку на сайт, если он есть, что в нём не устраивает и какой результат нужен';
+
 export function projectInquiry(id: string | null) {
   if (!id || !Object.hasOwn(PROJECT_INQUIRIES, id)) return null;
-  return PROJECT_INQUIRIES[id];
+  return { ...PROJECT_INQUIRIES[id], ask: id === 'navalishenskoe' ? SITE_ASK : PROJECT_ASK };
 }
 
 // Сохранённый или набранный текст всегда важнее автозаполнения.
