@@ -1,5 +1,6 @@
 ---
 import { LINKS } from '../data/site';
+import { ENTRY_POINTS } from '../data/entry-points';
 const base = import.meta.env.BASE_URL;
 const action = `${base}${base.endsWith('/') ? '' : '/'}api/lead.php`;
 const direct = LINKS.direct.replace('https://t.me/', '@');
@@ -13,6 +14,14 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     <div class="project-context" hidden>
       <div><p>Ориентир — <strong data-project-context></strong></p><p class="project-ask" data-project-ask hidden></p></div>
       <button type="button" data-clear-project aria-label="Убрать выбранный проект">Убрать <span aria-hidden="true">×</span></button>
+    </div>
+    <!-- Пустое поле — самое трудное место формы. Готовая первая строка по ситуации (think-different, итерация 16).
+         Без JavaScript не показываем: кнопки работают только со скриптом. -->
+    <div class="starters" data-starters hidden>
+      <p id="fb-starters">Не знаете, с чего начать? Выберите ситуацию — первая строка появится сама.</p>
+      <div class="starters-row" role="group" aria-labelledby="fb-starters">
+        {ENTRY_POINTS.map((e) => <button type="button" data-start={e.id}>{e.label}</button>)}
+      </div>
     </div>
     <div class="ui-field">
     <label class="ui-field-label" for="fb-message">Ваш проект или вопрос</label>
@@ -127,6 +136,19 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       message.focus({preventScroll:true});
     });
     form.addEventListener('reset',()=>{selectedProject=null;context.hidden=true;});
+    // Готовые первые строки видны, пока у заявки нет ориентира
+    const starters=form.querySelector<HTMLElement>('[data-starters]')!;
+    const syncStarters=()=>{starters.hidden=!context.hidden;};
+    new MutationObserver(syncStarters).observe(context,{attributes:true,attributeFilter:['hidden']});
+    syncStarters();
+    starters.addEventListener('click',(event)=>{
+      const id=(event.target as HTMLElement).closest<HTMLButtonElement>('[data-start]')?.dataset.start;
+      if(!id)return;
+      applyInquiry(startInquiry(id));
+      (window as any).emiGoal?.('form-starter',{start:id});
+      message.focus();
+      message.setSelectionRange(message.value.length,message.value.length);
+    });
     const fieldError=(field:HTMLInputElement|HTMLTextAreaElement,el:HTMLElement,text='')=>{
       field.setAttribute('aria-invalid',String(Boolean(text)));
       el.textContent=text;
@@ -226,6 +248,13 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
   }
   .project-context{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--well);border-radius:var(--radius-sm);font-size:14px}
   .project-context[hidden]{display:none}
+  .starters[hidden]{display:none}
+  .starters p{margin:0 0 8px;font-size:14px;color:var(--ink-2);line-height:1.45}
+  .starters-row{display:flex;flex-wrap:wrap;gap:8px}
+  .starters button{min-height:44px;padding:0 14px;border:1px solid var(--hair);border-radius:var(--radius-pill);background:none;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;transition:background-color var(--hover),transform var(--press)}
+  .starters button:active{transform:scale(var(--press-scale))}
+  @media (hover: hover) and (pointer: fine){.starters button:hover{background:var(--well)}}
+  @media (max-width:600px){.starters-row{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px}.starters-row::-webkit-scrollbar{display:none}.starters button{flex:none}}
   .project-context p{margin:0}.project-ask{margin-top:4px!important;color:var(--ink-2);line-height:1.45}
   .project-context button{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;color:var(--teal-text);font:inherit;cursor:pointer;flex-shrink:0}
   /* Поля, подписи и подсказки — общие классы .ui-field*, .ui-input (layout.css); здесь только высота полей этой формы */
