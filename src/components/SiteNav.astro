@@ -73,6 +73,17 @@ const discuss = isHome ? '#feedback' : href('#feedback');
       if (focusWasInMenu) document.querySelector<HTMLAnchorElement>('.site-nav .wordmark')?.focus();
     });
   }
+  // Главные залитые кнопки страницы: когда одна из них на экране, кнопка шапки уступает (итерация 58)
+  const navAction = document.querySelector<HTMLElement>('.site-nav .nav-action');
+  const primaries = [...document.querySelectorAll<HTMLElement>('main .ui-button, main .directory-button, main a.cta')];
+  if (navAction && primaries.length && 'IntersectionObserver' in window) {
+    const seen = new Set<Element>();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? seen.add(entry.target) : seen.delete(entry.target)));
+      navAction.classList.toggle('is-quiet', seen.size > 0);
+    });
+    primaries.forEach((el) => io.observe(el));
+  }
 </script>
 <style>
   .site-header { border-bottom: 1px solid var(--hair); }
@@ -89,7 +100,10 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   .nav-links a[aria-current], .menu-links a[aria-current] { color: var(--teal-text); font-weight: 700; }
   .site-nav .nav-action { font-size: 14px; min-height: 44px; padding: 10px 20px; color: var(--on-teal); }
   /* Правило `a { transition: color }` выше перебивало переходы .ui-button: цвет при наведении менялся рывком, нажатие — без перехода */
-  .site-nav .nav-action { transition: background-color var(--hover), transform var(--press); }
+  .site-nav .nav-action { transition: background-color var(--hover), color var(--hover), box-shadow var(--hover), transform var(--press); }
+  /* Пока на экране главная кнопка страницы, кнопка шапки становится контурной: залитая на экране одна (дизайн-система, §1 п. 3; think-different, итерация 58) */
+  .site-nav .nav-action.is-quiet { background: transparent; color: var(--teal-text); box-shadow: inset 0 0 0 1.5px var(--teal-btn); }
+  @media (hover: hover) and (pointer: fine) { .site-nav .nav-action.is-quiet:hover { background: var(--teal-btn); color: var(--on-teal); } }
   .nav-menu { display: none; }
   .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 4px; }
   @media (max-width: 1000px) {
