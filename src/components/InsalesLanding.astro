@@ -351,7 +351,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
         <p class="status" role="status" aria-live="polite" hidden></p>
         <p class="status" data-fail role="alert" hidden>
-          Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке</span></a>
+          Не получилось отправить. Отправьте расчёт в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram>{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке, расчёт уже набран</span></a>
         </p>
         </div>
       </form>
@@ -528,6 +528,15 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         ok.hidden = false;
         goal('lead-sent', { variant, package: last?.packageName, from: last?.from, touched });
       } catch {
+        // Расчёт не теряется: тот же текст (без служебных строк) — в черновик Telegram (think-different, итерация 32)
+        const failLink=fail.querySelector<HTMLAnchorElement>('[data-fail-telegram]');
+        if(failLink){
+          const draft=String(fd.get('message')||'').split('\n')
+            .filter((line)=>line.trim()&&!/^(Источник|Ответы):/.test(line)&&!/: —$/.test(line))
+            .map((line)=>line.replace(/\s*\((shop|seller)\)$/,'').replace(/, [\d.]+ ч,/,','));
+          draft.push(`Контакт: ${contact.value.trim()}`);
+          failLink.href=`${failLink.href.split('?')[0]}?text=${encodeURIComponent(draft.join('\n').slice(0,1500))}`;
+        }
         fail.hidden = false;
         goal('lead-fail', { variant });
       } finally {
