@@ -24,7 +24,7 @@ const paths = [
       <p class="ui-lead">Проверьте адрес или выберите нужный раздел ниже. Можно вернуться на главную или написать нам.</p>
       <div class="ui-actions">
         <a class="ui-button" href={href()}>На главную</a>
-        <a class="ui-link" href={LINKS.direct} target="_blank" rel="noopener">Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
+        <a class="ui-link" href={LINKS.direct} target="_blank" rel="noopener" data-lost-telegram>Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a>
       </div>
     </header>
     <nav class="ui-section" aria-labelledby="t-paths">
@@ -35,6 +35,17 @@ const paths = [
 
   <Footer />
 </Base>
+
+<script is:inline>
+  // Черновик в Telegram с адресом, который не открылся: человеку не нужно объяснять, что он искал,
+  // а мы узнаём о битой ссылке (think-different, итерация 19). Без JavaScript — обычная ссылка в чат.
+  (function () {
+    var a = document.querySelector('[data-lost-telegram]');
+    if (!a) return;
+    var text = 'Не открылась страница ' + location.origin + location.pathname + ' — подскажите, где найти нужное?';
+    a.href = a.getAttribute('href') + '?text=' + encodeURIComponent(text);
+  })();
+</script>
 
 <style>
   .lost .ui-opening { padding-top: 16px; }
