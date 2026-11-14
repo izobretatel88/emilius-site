@@ -14,8 +14,9 @@ import { href } from '../lib/urls';
 interface Props {
   title?: string;
   level?: 'h2' | 'h3'; // h3 внутри секции главной, h2 на /services/
+  compact?: boolean; // рядом с колесом на главной: без линейки (её роль играет колесо), шагов и результата
 }
-const { title = 'С чего начнём?', level = 'h3' } = Astro.props;
+const { title = 'С чего начнём?', level = 'h3', compact = false } = Astro.props;
 const Heading = level;
 const Sub = level === 'h2' ? 'h3' : 'h4';
 const Small = level === 'h2' ? 'h4' : 'h5';
@@ -33,7 +34,7 @@ const items = ENTRY_POINTS.map((e) => {
   return { ...e, from: stage.from, to: stage.to, stageName: stage.name, genitive: GENITIVE[e.stage], cycle };
 });
 ---
-<div class="entry" data-entry>
+<div class:list={["entry", { compact }]} data-entry>
   <div class="entry-head">
     <Heading id="t-entry">{title}</Heading>
     <p>В круг можно войти с любого дня. Выберите, что происходит сейчас, — покажем, с чего начнётся ваша итерация.</p>
@@ -50,7 +51,7 @@ const items = ENTRY_POINTS.map((e) => {
   </fieldset>
 
   <div class="entry-card ui-surface">
-    <div class="entry-ruler" aria-hidden="true"><IterationRuler /></div>
+    {!compact && <div class="entry-ruler" aria-hidden="true"><IterationRuler /></div>}
     {items.map((e) => (
       <div class="entry-panel" id={`entry-${e.id}`} data-panel={e.id} data-stage={e.stage} role="region" aria-label={`${e.label}: начнём с ${e.genitive}`}>
         <div class="entry-start">
@@ -66,6 +67,7 @@ const items = ENTRY_POINTS.map((e) => {
           </ol>
         </div>
         <div class="entry-plan">
+          {!compact && <>
           <div>
             <Small class="entry-sub">Первые шаги</Small>
             <ul>{e.steps.map((t) => <li>{t}</li>)}</ul>
@@ -74,6 +76,7 @@ const items = ENTRY_POINTS.map((e) => {
             <Small class="entry-sub">Что получите</Small>
             <ul>{e.result.map((t) => <li>{t}</li>)}</ul>
           </div>
+          </>}
           <div class="ui-actions entry-actions">
             <a class="ui-button" href={href(`?start=${e.id}#feedback`)} data-entry-cta={e.id}>Обсудить такой старт <span aria-hidden="true">→</span></a>
             <a class="ui-link" href={telegram(e.message)} target="_blank" rel="noopener" data-goal-place="entry">Написать в Telegram <span class="ui-arrow" aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке, текст уже набран</span></a>
@@ -91,6 +94,14 @@ const items = ENTRY_POINTS.map((e) => {
   const startId = new URLSearchParams(location.search).get('start');
   const startInput = startId ? document.querySelector<HTMLInputElement>(`[data-entry] input[name="entry"][value="${CSS.escape(startId)}"]`) : null;
   if (startInput) startInput.checked = true;
+
+  // Выбор самим человеком поворачивает колесо продукта к этапу входа (если колесо на странице)
+  document.querySelectorAll<HTMLInputElement>('[data-entry] input[name="entry"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const stage = input.closest('[data-entry]')?.querySelector<HTMLElement>(`[data-panel="${input.value}"]`)?.dataset.stage;
+      if (stage) window.dispatchEvent(new CustomEvent('emilius:wheel-stage', { detail: { stage } }));
+    });
+  });
 
   // Без перезагрузки: форма на этой же странице получает ситуацию событием, страница плавно уходит к форме.
   document.querySelectorAll<HTMLAnchorElement>('[data-entry-cta]').forEach((link) => {
@@ -169,6 +180,18 @@ const items = ENTRY_POINTS.map((e) => {
   .entry-actions { grid-column: 1 / -1; margin-top: 8px; }
   .entry-other { margin: 18px 0 0; font-size: 15px; color: var(--ink-3); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 
+  /* Рядом с колесом: одна колонка, без карточки — карточка уже вокруг колеса */
+  .entry.compact { margin-top: 0; }
+  .entry.compact .entry-head p { font-size: 15px; }
+  .entry.compact .entry-options { margin: 16px 0 14px; gap: 6px; }
+  .entry.compact .entry-chip span { min-height: 40px; padding: 6px 12px; font-size: 14px; }
+  .entry.compact .entry-card { padding: 0; background: none; box-shadow: none; border-radius: 0; }
+  .entry.compact .entry-panel { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .entry.compact .entry-title { font-size: 26px; }
+  .entry.compact .entry-why { font-size: 15px; margin-bottom: 14px; }
+  .entry.compact .entry-plan { grid-template-columns: minmax(0, 1fr); }
+  .entry.compact .entry-actions { margin-top: 0; gap: 10px 24px; }
+  .entry.compact .entry-other { font-size: 14px; }
   @media (prefers-reduced-motion: reduce) {
     .entry-panel { animation: none !important; }
   }

@@ -831,6 +831,16 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       box.addEventListener('pointercancel', release);
     }
 
+    // Колесо поворачивается к этапу, с которого начнётся итерация клиента (think-different, итерация 13):
+    // блок «С чего начнём?» рядом шлёт emilius:wheel-stage с id этапа. Если колесо ещё на плашке — запускаем.
+    window.addEventListener('emilius:wheel-stage', (event) => {
+      const id = (event as CustomEvent<{ stage?: string }>).detail?.stage;
+      const i = SECTORS.findIndex((x) => x.id === id);
+      if (i < 0) return;
+      // как автозапуск: фокус остаётся у того, кто выбрал ситуацию, а не уходит на колесо
+      if (idle) { autoStarting = true; launch.click(); }
+      select(i);
+    });
   }
 </script>
 

@@ -55,20 +55,9 @@ const organization = {
         <noscript>
           <p class="wheel-fallback">Для запуска колеса нужен JavaScript. О каждом этапе можно прочитать по ссылкам.</p>
         </noscript>
-        <div class="method">
-          <h3>Одна команда. <span>Весь цикл продукта.</span></h3>
-          <ol class="stages" role="list">
-            {SECTORS.map(stage => (
-              <li>
-                <a href={href(`services/${stage.id}/`)} aria-label={`${stage.name}, дни ${stage.from}–${stage.to}`}>
-                  <span class="day-range">{String(stage.from).padStart(2, '0')}–{stage.to}</span>
-                  <span class="stage-name">{stage.name}</span>
-                  <span class="ui-arrow" aria-hidden="true">→</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </div>
+        <!-- Колесо становится личным (think-different, итерация 13): выбор ситуации поворачивает колесо к этапу входа.
+             Раньше здесь был список этапов — он дублировал секторы колеса и ссылки ниже. -->
+        <div class="method"><EntryPoints compact /></div>
       </div>
       <p class="demo-note">
         <span class="demo-caption">Модель итерации — от вопроса до следующего шага.</span>
@@ -102,7 +91,6 @@ const organization = {
           </div>
         </a>
       ))}
-      <EntryPoints />
     </section>
 
     <section class="ui-section" id="projects" tabindex="-1" aria-labelledby="t-projects">
@@ -170,7 +158,6 @@ const organization = {
 
 <style>
   :global(body.home) { gap: 0; padding-bottom: 88px; }
-  .stages a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
   /* Первый экран (выбор владельца 04.11.2026): миссия с переносом после «людям»; надпись «Наша миссия» убрана 05.11.2026 по просьбе владельца,
      вторая часть тише. Срок и цена магазина — в блоке услуг. */
 
@@ -190,23 +177,7 @@ const organization = {
   .wheel-area :global(.wheel-launch:focus-visible .launch-cta) { color: var(--on-teal); border-color: var(--teal-btn); }
   @media (hover: hover) and (pointer: fine) { .wheel-area :global(.wheel-launch:hover .launch-cta) { color: var(--on-teal); border-color: var(--teal-btn); } }
   .method { padding-right: 20px; }
-  .method h3 { font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: var(--tracking-tight); margin: 0 0 26px; }
-  .method h3 span { display: block; }
-  .stages { list-style: none; padding: 0; margin: 0; }
-  .stages a { display: grid; grid-template-columns: 78px 1fr 20px; align-items: center; gap: 12px; min-height: 60px; border-bottom: 1px solid var(--hair); }
-  .stages li:last-child a { border: 0; }
-  .day-range { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink-3); }
-  .stage-name { font-size: 18px; text-transform: capitalize; }
-  .stages a:focus-visible .stage-name { text-decoration: underline; text-underline-offset: .2em; }
-  @media (hover: hover) and (pointer: fine) { .stages a:hover .stage-name { text-decoration: underline; text-underline-offset: .2em; } }
   .wheel-area :global(.has-active .sector-label:not(.is-active)) { fill: var(--ink-2); opacity: 1; }
-  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="0"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(1) .stage-name,
-  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="1"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(2) .stage-name,
-  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="2"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(3) .stage-name,
-  :global(.product-demo:has(.wheel-stage:not(.is-idle) .sector-label[data-sector="3"]:is(.has-active .is-active, .wheel-box:not(.has-active) .is-now))) .stages li:nth-child(4) .stage-name {
-    color: var(--teal-text);
-    font-weight: 700;
-  }
   .demo-note { border-top: 1px solid var(--hair); padding: 16px 0; font-size: 13px; color: var(--ink-3); }
   .demo-gesture { display: none; }
   @media (prefers-reduced-motion: no-preference) {
@@ -278,7 +249,6 @@ const organization = {
   }
   @media (max-width: 1000px) {
     .demo-body { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; }
-    .method h3 { font-size: 26px; }
     .method { padding-right: 0; }
     .client-strip { padding-inline: 32px; gap: 28px; }
     .service-feature { gap: 24px; }
@@ -292,14 +262,7 @@ const organization = {
     .demo-top > span { font-size: 12px; }
     .demo-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .wheel-area { padding-inline: 14px; margin-inline: -18px; }
-    .method { padding: 20px 0 16px; border-top: 1px solid var(--hair); }
-    .method h3 { font-size: 25px; margin-bottom: 16px; }
-    .method h3 span { display: inline; }
-    .stages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
-    .stages a { grid-template-columns: 42px minmax(0, 1fr) auto; min-height: 48px; gap: 6px; border-bottom: 1px solid var(--hair); }
-    .stages li:nth-last-child(-n+2) a { border: 0; }
-    .stage-name { font-size: 15px; }
-    .day-range { font-size: 12px; }
+    .method { padding: 20px 0 20px; border-top: 1px solid var(--hair); }
     .demo-note { padding-block: 14px; }
     .client-strip { padding: 24px 0 28px; gap: 14px; }
     .client-strip img { height: 28px; }
@@ -316,8 +279,6 @@ const organization = {
   }
   @media (max-width: 400px) {
     .client-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .stages { grid-template-columns: minmax(0, 1fr); }
-    .stages li:nth-last-child(2) a { border-bottom: 1px solid var(--hair); }
   }
   @media (max-width: 360px) {
     :global(body.home .write-fab) { display: none; }
