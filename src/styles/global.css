@@ -158,6 +158,10 @@ select {
   .estimate-strip, .footer-links, .theme-control, .site-iterations, .arda,
   .calc-jump, .calc-back, .calc-share-row, .est-share-row, .article-share, .toc,
   iframe { display: none !important; }
+  /* На бумаге и в PDF не нажать (think-different, итерация 101): служебная строка итераций под шкалой,
+     ссылки на документы в подвале, «Следующий шаг» статьи, кнопки и ссылки-чипсы разделов, «Сбросить ответы» */
+  .site-iterations-text, .legal-links, .article-next, .directory-button, .directory-tags, .calc-hint,
+  form button[type='reset'] { display: none !important; }
   .ui-surface, .card, .directory-callout { box-shadow: none !important; border: 1px solid var(--hair); }
   .calc-result, .estimate, figure, table { break-inside: avoid; }
 }
