@@ -152,8 +152,9 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         p.textContent = 'Страница: ' + u.href;
       });
     </script>
-    <WriteButton />
+    {/* Плашка cookie раньше «Написать»: её скрипт ставит класс cookie-open до того, как кнопка попадёт на экран (итерация 97) */}
     {!/\/(os|meetings)(\/|$)/.test(Astro.url.pathname) && <CookieNotice />}
+    <WriteButton />
     <script is:inline>
       // Общие цели Метрики (аудит трафика и целей 11.11.2026), одним обработчиком на весь документ:
       // tg-click — любая ссылка на Telegram, с параметрами page и place: data-goal-place ближайшего блока,
