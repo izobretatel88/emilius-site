@@ -38,6 +38,12 @@ const other = variant === 'shop'
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 // Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
 const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
+// Частые вопросы для поисковиков — тот же список, что на странице (think-different, итерация 102), как FAQPage в статьях блога.
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
 // Заголовок не рвётся на «интернет-|магазин» и «3–|5»: word joiner после дефиса и вокруг тире между цифрами.
 const nobreak = (t: string) => t.replace(/(\S)-(\S)/g, '$1-\u2060$2').replace(/(\d)–(\d)/g, '$1\u2060–\u2060$2');
 // «Посчитать» под пакетом заполняет калькулятор типичными ответами этого пакета — человек сразу видит его цену.
@@ -65,6 +71,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   description={hero.lead}
   ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
   ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на inSales' : 'Свой интернет-магазин на inSales за 3–5 недель: телефон с живым магазином'}
+  jsonLd={faqLd}
 >
 
 
