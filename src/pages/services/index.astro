@@ -5,7 +5,7 @@ import {DIRECTIONS} from '../../data/navigation';
 import {SERVICE_ROWS} from '../../data/services-list';
 import EntryPoints from '../../components/EntryPoints.astro';
 ---
-<Directory title="Услуги" description="Исследуем потребности, проектируем интерфейсы, разрабатываем продукт и помогаем ему расти. Можно начать с того этапа, который нужен вашей команде сейчас.">
+<Directory title="Услуги" pageTitle="Услуги: касдев, дизайн, разработка и маркетинг" description="Исследуем потребности, проектируем интерфейсы, разрабатываем продукт и помогаем ему расти. Можно начать с того этапа, который нужен вашей команде сейчас.">
   <LinkList items={DIRECTIONS} />
   <section class="directory-section"><h2>Готовые решения</h2><p>Для задач, у которых уже понятны результат и состав работ.</p><LinkList items={SERVICE_ROWS.map(s=>({title:s.title,description:s.note,href:s.href}))} /></section>
   <!-- «Неясно, с чего начать?» — вместо пустой формы выбор ситуации (think-different, итерация 3) -->
