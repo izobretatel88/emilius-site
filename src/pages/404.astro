@@ -84,6 +84,12 @@ const paths = [
       var limit = Math.max(2, Math.floor(last(r[0]).length * 0.3));
       if (score <= limit && score < bestScore) { best = r; bestScore = score; }
     });
+    // Адрес не узнан целиком, но раздел в нём есть: /blog/старое-название/ ведёт в блог, а не в общий список,
+    // где блога нет (think-different, итерация 107). Статью переименовали — человек найдёт её в разделе.
+    if (!best && path.indexOf('/') > 0) {
+      var section = path.split('/')[0];
+      routes.forEach(function (r) { if (r[0] === section) best = r; });
+    }
     if (!best) return;
     var a = box.querySelector('a');
     a.href = base + best[0] + '/';
