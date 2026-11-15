@@ -20,7 +20,9 @@ import { LINKS } from '../data/site';
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её. Ссылки с черновиком (?text=) — тоже двойники.
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main a[href^="${fab.getAttribute('href')}?text="], main form button[type="submit"], a[data-write-twin]`)];
-    const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
+    // На телефоне формы целиком под защитой (think-different, итерация 131): кнопка стояла на стрелке выпадающих списков
+    // калькулятора, и нажатие открывало Telegram вместо списка; на лендинге и главной — поверх полей контакта и текста.
+    const protectedSections = [...document.querySelectorAll('[data-hide-write-button], main form')];
     // Черновик сообщения по теме страницы (think-different, итерация 7): Telegram открывает чат с набранным текстом.
     // Двойники выше найдены по исходному адресу — замена адреса их не ломает.
     const base = fab.href;
