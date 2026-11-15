@@ -51,6 +51,19 @@ export function rehypeBlog(options = {}) {
     return `Таблица: ${heading}${n > 1 ? ` (${n})` : ''}`;
   };
 
+  // Якоря разделов латиницей (think-different, итерация 133): у кириллических ссылка на раздел превращалась
+  // в «#%D0%BA%D0%BE…» на сотню знаков. Тот же перевод букв, что у вопросов лендинга (итерация 111).
+  // Свой id ставим до Astro: его плагин заголовков существующий id не трогает.
+  const TR = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' };
+  const ids = new Set();
+  const slug = (text) => {
+    const base = [...text.toLowerCase()].map((c) => TR[c] ?? c).join('').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').split('-').slice(0, 6).join('-') || 'razdel';
+    let id = base, n = 2;
+    while (ids.has(id)) id = `${base}-${n++}`;
+    ids.add(id);
+    return id;
+  };
+
   const walk = (node) => {
     if (!node.children) return;
     node.children = node.children.map((child) => {
@@ -85,7 +98,10 @@ export function rehypeBlog(options = {}) {
             ];
           }
         }
-        if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
+        if (/^h[2-4]$/.test(child.tagName)) {
+          heading = textOf(child).replace(/\s+/g, ' ').trim();
+          if (!props.id) props.id = slug(heading);
+        }
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
         // Пункт списка, который начинается со ссылки на ещё не вышедшую статью, убираем целиком
         // (think-different, итерация 71): в «Читайте также» он стоял серым текстом среди ссылок и не открывался.
@@ -171,6 +187,7 @@ export function rehypeBlog(options = {}) {
   return (tree) => {
     heading = '';
     used.clear();
+    ids.clear();
     walk(tree);
     eagerLead(tree);
     wrapImages(tree);
