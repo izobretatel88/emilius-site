@@ -7,6 +7,10 @@
   const sections = [...document.querySelectorAll('tbody[data-group]')];
   const rows = [...document.querySelectorAll('[data-feature]')];
   const count = document.querySelector('#count');
+  // Итог поиска для программы чтения экрана — после паузы в наборе (think-different, итерация 116). Раньше живым был
+  // сам счётчик, и на каждую букву звучало «Показано 343 из 348… 84 из 348… 72 из 348». Видимый счётчик меняется сразу.
+  const countSay = document.querySelector('#count-say');
+  let sayTimer = 0;
   const empty = document.querySelector('#empty');
   const scroll = document.querySelector('.scroll');
   const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е').replaceAll('1c', '1с');
@@ -46,6 +50,10 @@
     count.textContent = shown === rows.length ? `Показаны все ${rows.length} пунктов` : `Показано ${shown} из ${rows.length} пунктов`;
     if (swapped) count.textContent += ` по запросу «${swapped}»`;
     empty.hidden = shown !== 0;
+    if (countSay && writeURL) {
+      clearTimeout(sayTimer);
+      sayTimer = setTimeout(() => { countSay.textContent = shown === 0 ? 'Таких функций не найдено' : count.textContent; }, 600);
+    }
     // Пустой поиск — не тупик: вопрос уходит в Telegram с тем, что человек искал (think-different, итерация 46)
     const ask = empty.querySelector('[data-empty-ask]');
     if (ask && shown === 0) {
