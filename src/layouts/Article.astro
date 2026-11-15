@@ -104,6 +104,26 @@ const jsonLd = [
             var d = document.currentScript.previousElementSibling, wide = matchMedia('(min-width: 1180px)');
             var sync = function () { if (wide.matches) d.open = true; };
             sync(); wide.addEventListener('change', sync);
+            // Боковое содержание отмечает раздел, который сейчас читают (think-different, итерация 110):
+            // раньше все пункты были одинаково бирюзовыми, и по колонке нельзя было понять, где ты в статье.
+            // Текущий — последний заголовок, ушедший выше трети экрана. Только на широком экране: на телефоне содержание свёрнуто.
+            var links = [].slice.call(d.querySelectorAll('a'));
+            // Заголовки ищем при первой прокрутке: скрипт стоит до текста статьи, и при его запуске их ещё нет
+            var heads = null, current = -1, queued = false;
+            var mark = function () {
+              queued = false;
+              if (!heads) heads = links.map(function (a) { return document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); });
+              var i = -1;
+              if (wide.matches) heads.forEach(function (h, n) { if (h && h.getBoundingClientRect().top < innerHeight / 3) i = n; });
+              if (i === current) return;
+              if (links[current]) links[current].removeAttribute('aria-current');
+              if (links[i]) links[i].setAttribute('aria-current', 'location');
+              current = i;
+            };
+            var queue = function () { if (!queued) { queued = true; requestAnimationFrame(mark); } };
+            addEventListener('scroll', queue, { passive: true });
+            wide.addEventListener('change', queue);
+            addEventListener('load', queue);
           })();
         </script>
       </nav>
@@ -364,6 +384,10 @@ const jsonLd = [
     .article > .toc ol {
       font-size: 14px;
     }
+    /* Раздел, который сейчас читают: цветом текста, без смены начертания — строки в колонке не перескакивают */
+    .toc a { transition: color var(--hover); }
+    .toc a[aria-current] { color: var(--ink); }
+    .toc li:has(> a[aria-current])::marker { color: var(--teal-text); }
     /* В боковой колонке содержание всегда раскрыто: заголовок — подпись, а не переключатель */
     .toc-title { pointer-events: none; cursor: default; min-height: 0; margin-block: 0 8px; }
     .toc details[open] > .toc-title { margin-bottom: 8px; }
