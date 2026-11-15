@@ -142,6 +142,23 @@ const jsonLd = [
 </script>
 
 <script is:inline>
+  // Таблица в фокусе с клавиатуры, только когда её правда нужно листать (think-different, итерация 106).
+  // В разметке tabindex стоит у каждой таблицы: без скрипта широкую всё равно можно листать стрелками.
+  // Но ни одна из 15 таблиц блога не шире колонки, на телефоне они карточки: Tab останавливался на рамке,
+  // где делать нечего, по пять лишних шагов на статью. Ширину проверяем и при повороте экрана.
+  (function () {
+    var wraps = document.querySelectorAll('.article .table-wrap');
+    if (!wraps.length || !window.ResizeObserver) return;
+    var check = function (wrap) {
+      if (wrap.scrollWidth > wrap.clientWidth + 1) wrap.setAttribute('tabindex', '0');
+      else if (document.activeElement !== wrap) wrap.removeAttribute('tabindex');
+    };
+    var ro = new ResizeObserver(function (entries) { entries.forEach(function (e) { check(e.target); }); });
+    wraps.forEach(function (wrap) { check(wrap); ro.observe(wrap); });
+  })();
+</script>
+
+<script is:inline>
   // Кнопка «Скопировать» у блоков кода (промпты, ТЗ): без скрипта блок остаётся обычным текстом
   (function () {
     document.querySelectorAll('.article pre').forEach(function (pre) {
