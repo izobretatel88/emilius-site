@@ -6,6 +6,8 @@ import Footer from '../components/Footer.astro';
 import LinkList from '../components/LinkList.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { ruDate, type Post } from '../lib/blog';
+// Цена в «Следующем шаге» — из калькулятора, а не вписана руками: поменяется пакет — поменяется и здесь
+import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
 
 interface Props {
   post: Post;
@@ -26,7 +28,7 @@ const NEXT_OVERRIDES: Record<string, {title: string; description: string; href: 
 const nextSteps = NEXT_OVERRIDES[post.id] ?? [
   marketplaces
     ? {title:'Магазин рядом с WB и Ozon',description:'Свой сайт и единые остатки с площадками.',href:utm('services/insales-shop/seller/')}
-    : {title:'Магазин на шаблоне inSales',description:'За 3–5 недель, от 75 000 ₽. Состав и цену фиксируем до старта.',href:utm('services/insales-shop/')},
+    : {title:'Магазин на шаблоне inSales',description:`За 3–5 недель, от\u00a0${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')}\u00a0000\u00a0₽. Состав и цену фиксируем до старта.`,href:utm('services/insales-shop/')},
   {title:'Посчитать свой магазин',description:'Семь вопросов о каталоге и интеграциях — ориентир по бюджету и сроку.',href:utm('tools/insales-calculator/')},
   post.id === 'vybor-platformy-magazina'
     ? {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами и источниками.',href:'compare/insales-vs-yandex-kit/'}
@@ -155,8 +157,12 @@ const jsonLd = [
       var url = location.origin + location.pathname, title = box.getAttribute('data-share-title');
       status.textContent = '';
       var done = function () { if (window.emiGoal) window.emiGoal('article-share', { page: location.pathname }); };
-      if (navigator.share && matchMedia('(pointer: coarse)').matches) navigator.share({ title: title, url: url }).then(done, function () {});
-      else navigator.clipboard.writeText(url).then(function () { status.textContent = 'Ссылка скопирована'; done(); }, function () {});
+      // Статус с паузой — повтор тоже озвучивается; ошибку не прячем (think-different, итерация 120, как в калькуляторе).
+      // Отмена системного «Поделиться» — не ошибка.
+      var say = function (t) { setTimeout(function () { status.textContent = t; }, 100); };
+      var fail = function (e) { if (!e || e.name !== 'AbortError') say('Не получилось. Адрес статьи — в строке браузера'); };
+      if (navigator.share && matchMedia('(pointer: coarse)').matches) navigator.share({ title: title, url: url }).then(done, fail);
+      else navigator.clipboard.writeText(url).then(function () { say('Ссылка скопирована'); done(); }, fail);
     });
   })();
 </script>
