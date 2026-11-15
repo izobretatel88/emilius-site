@@ -6,7 +6,8 @@ import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import { SECTORS, LINKS } from '../../data/site';
 import { SERVICES } from '../../data/services';
-import { PROJECTS } from '../../data/projects';
+import { PROJECTS, type Project } from '../../data/projects';
+import { FRESH_SHOP } from '../../data/insales';
 import { RELATED } from '../../data/navigation';
 import LinkList from '../../components/LinkList.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -25,7 +26,17 @@ const sector = SECTORS[index];
 const service = SERVICES[id];
 const prev = SECTORS[(index + SECTORS.length - 1) % SECTORS.length];
 const next = SECTORS[(index + 1) % SECTORS.length];
-const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter((p) => !!p);
+// Happy Animal живёт в data/insales.ts, а не в PROJECTS: на «Маркетинге» это кейс местного SEO с цифрой,
+// формулировка та же, что на главной (think-different, итерация 96).
+type Case = Project & { result?: string; source?: string };
+const fresh: Case = {
+  id: FRESH_SHOP.id, name: FRESH_SHOP.name, logo: '', shot: 'cases/happyanimal.webp', url: FRESH_SHOP.url, domain: FRESH_SHOP.domain,
+  about: 'Магазин на inSales и местное SEO для зоомагазина в Гольяново.',
+  did: 'Семантика, страницы услуг и местное SEO: район и метро в заголовках и текстах.',
+  result: '5 из 5 местных запросов — в топ-5 Яндекса.',
+  source: 'Москва, 01.10.2026, Топвизор',
+};
+const cases: Case[] = service.cases.map((c) => (c === fresh.id ? fresh : PROJECTS.find((p) => p.id === c))).filter((p): p is Case => !!p);
 // Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
 const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal']);
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -129,7 +140,7 @@ const arc = (i: number) => {
                 </a>
                 <div class="case-body">
                   <h3 id={`case-${p.id}`}>{p.name}</h3>
-                  <p>{p.about}</p>
+                  {p.result ? <p><strong class="case-result">{p.result}</strong> {p.about} <span class="case-source">{p.source}</span></p> : <p>{p.about}</p>}
                   {cases.length === 1 && <p>{p.did}</p>}
                   <a class="case-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
                 </div>
@@ -199,6 +210,9 @@ const arc = (i: number) => {
   .case-body h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 2px; }
   /* Описание кейса — основной кегль, как у проектов на главной */
   .case-body p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: calc(52 * var(--ch)); }
+  /* Результат в цифрах — как у кейсов на главной: жирным в начале описания, источник мелкой строкой */
+  .case-result { color: var(--ink); font-weight: 700; }
+  .case-source { display: block; margin-top: 4px; font-size: var(--fs-small); color: var(--ink-3); }
   .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
   /* Один проект — снимок слева, текст справа */
   .cases.single { grid-template-columns: 1fr; }
