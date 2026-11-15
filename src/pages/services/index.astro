@@ -4,10 +4,19 @@ import LinkList from '../../components/LinkList.astro';
 import {DIRECTIONS} from '../../data/navigation';
 import {SERVICE_ROWS} from '../../data/services-list';
 import EntryPoints from '../../components/EntryPoints.astro';
+import { PACKAGES } from '../../../docs/insales-service/calc/estimate.js';
+
+// В «Готовых решениях» — и лендинг для продавцов WB и Ozon (think-different, итерация 109): он есть в меню и в подвале,
+// а здесь продавец видел только общий магазин. Только на этой странице: на главной из SERVICE_ROWS собирается
+// большая карточка с текстом общего магазина. Цена — из калькулятора (пакет «Селлер»), срок — как на лендинге.
+const ready = [
+  ...SERVICE_ROWS.map(s=>({title:s.title,description:s.note,href:s.href})),
+  {title:'Магазин рядом с WB и Ozon',description:`За 3–5 недель · от\u00a0${(PACKAGES.P.min / 1000).toLocaleString('ru-RU')}\u00a0000\u00a0₽`,href:'services/insales-shop/seller/'},
+];
 ---
 <Directory title="Услуги" pageTitle="Услуги: касдев, дизайн, разработка и маркетинг" description="Исследуем потребности, проектируем интерфейсы, разрабатываем продукт и помогаем ему расти. Можно начать с того этапа, который нужен вашей команде сейчас.">
   <LinkList items={DIRECTIONS} />
-  <section class="directory-section"><h2>Готовые решения</h2><p>Для задач, у которых уже понятны результат и состав работ.</p><LinkList items={SERVICE_ROWS.map(s=>({title:s.title,description:s.note,href:s.href}))} /></section>
+  <section class="directory-section"><h2>Готовые решения</h2><p>Для задач, у которых уже понятны результат и состав работ.</p><LinkList items={ready} /></section>
   <!-- «Неясно, с чего начать?» — вместо пустой формы выбор ситуации (think-different, итерация 3) -->
   <section class="directory-section services-entry"><EntryPoints title="Неясно, с чего начать?" level="h2" /></section>
 </Directory>
