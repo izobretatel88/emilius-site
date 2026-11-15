@@ -53,6 +53,10 @@ const projects=[
     width:meta.updated?1600:640,height:meta.updated?1000:400,
   };
 });
+// Описание для поиска и мессенджеров называет проекты (think-different, итерация 123): раньше в выдаче было
+// «Магазины и сайты, над которыми мы работали» — ни одного имени, хотя их ищут по названию. Имена — из списка выше.
+const shown=5;
+const metaDescription=`Магазины на inSales и сайты на Tilda: ${projects.slice(0,shown).map(p=>p.name).join(', ')} и ещё ${projects.length-shown}. Фронтенд, интеграции и развитие.`;
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
 // магазин сети («Вкусдом»), поэтому не выдаём его за мобильный LimeMart.
 const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
@@ -65,7 +69,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   ],
 }]));
 ---
-<Directory title="Проекты" pageTitle="Проекты: магазины на inSales и сайты на Tilda" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие.">
+<Directory title="Проекты" pageTitle="Проекты: магазины на inSales и сайты на Tilda" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие." metaDescription={metaDescription}>
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <!-- Оглавление (think-different, итерация 11): ниши видны сразу, без 13 экранов прокрутки на телефоне -->
   <nav class="project-index" aria-label="Проекты на странице">
