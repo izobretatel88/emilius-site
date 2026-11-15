@@ -46,7 +46,7 @@ const related=[
   {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
 ];
 ---
-<Base title={`${title} — Эмилиус Эдженси`} description={description} bodyClass="comparison">
+<Base title={`${title} — Эмилиус Эдженси`} description={description} bodyClass="comparison" ogImage={detailed?'og/compare-insales-kit.jpg':'og/compare-platforms.jpg'} ogImageAlt={detailed?'inSales и Яндекс KIT: 348 функций построчно':'Сравнение восьми платформ для интернет-магазина'}>
   <!-- Стили сравнения — до содержимого, а не в конце <body> (итерация 90): после таблицы на 486 КБ они применялись
        через несколько секунд, и до этого телефон показывал таблицу без оформления, а потом вёрстка прыгала.
        Не в <head>: там они встали бы раньше общих стилей сайта и проиграли бы им в каскаде -->

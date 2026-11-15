@@ -1,7 +1,8 @@
 // Собирает фирменные картинки из PNG логотипа владельца (public/brand/logo.png,
 // готовится scripts/logo-from-png.py — знак не перерисовываем):
 //   public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png,
-//   public/brand/logo-mark.png, public/og.jpg, public/og/insales.jpg, public/og/insales-seller.jpg
+//   public/brand/logo-mark.png, public/og.jpg, public/og/insales.jpg, public/og/insales-seller.jpg,
+//   public/og/calculator.jpg, public/og/compare-platforms.jpg, public/og/compare-insales-kit.jpg
 //
 // Запуск: npm run build && npm run brand
 // Картинки рисует установленный Google Chrome в headless-режиме,
@@ -137,6 +138,33 @@ const CARDS = [
     chips: [from(PACKAGES.P.min), '3–5 недель', 'площадки работают как раньше'],
     phone: 'duman',
   },
+  // Калькулятор и сравнения (think-different, итерация 118): ссылку «Поделиться расчётом» и сравнения пересылают
+  // в мессенджерах, а миниатюра была общая — колесо агентства, по ней не понять, что внутри калькулятор.
+  // Справа вместо телефона — карточка с тем, что человек получит. Цифры — из калькулятора и со страниц сравнений.
+  {
+    file: 'calculator.jpg',
+    eyebrow: 'Калькулятор магазина на inSales',
+    title: 'Сколько стоит ваш магазин на inSales',
+    sub: 'Семь вопросов — ориентир по бюджету и сроку',
+    chips: ['контакты не нужны'],
+    panel: `<div class="k">Ориентир</div><div class="v">Пакет «${PACKAGES.S.name}»</div><div class="big">${from(PACKAGES.S.min)}</div><div class="k">3–4 недели</div>`,
+  },
+  {
+    file: 'compare-platforms.jpg',
+    eyebrow: 'Сравнение платформ',
+    title: 'Какую платформу выбрать для магазина',
+    sub: 'Сценарии, ограничения и стоимость владения за 3 года',
+    chips: ['8 платформ', 'данные на 30.10.2026'],
+    panel: ['Tilda', 'Яндекс KIT', 'inSales', 'Shop-Script', 'AdvantShop', '1С-Битрикс', 'WooCommerce', 'OpenCart'].map((n) => `<div class="row">${n}</div>`).join(''),
+  },
+  {
+    file: 'compare-insales-kit.jpg',
+    eyebrow: 'Сравнение функций',
+    title: 'inSales и Яндекс KIT: функции подробно',
+    sub: 'Способы подключения, ограничения и официальные источники',
+    chips: ['19 разделов', 'данные на 31.10.2026'],
+    panel: `<div class="vs">inSales</div><div class="k">и</div><div class="vs">Яндекс KIT</div><div class="big">348</div><div class="k">функций построчно</div>`,
+  },
 ];
 mkdirSync(join(PUB, 'og'), { recursive: true });
 const fontFace = (w) =>
@@ -156,7 +184,13 @@ const cardCss = `
   .chip{background:var(--card);border:1px solid var(--hair);border-radius:13px;padding:9px 18px;font-weight:600;font-size:21px}
   .chip.price{background:var(--teal-btn);border-color:var(--teal-btn);color:var(--on-teal)}
   .phone{width:292px;height:594px;border-radius:50px;background:#16181a;padding:12px;box-sizing:border-box;box-shadow:var(--shadow-pop)}
-  .phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:39px;background:#fff}`;
+  .phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:39px;background:#fff}
+  .panel{width:292px;box-sizing:border-box;background:var(--card);border:1px solid var(--hair);border-radius:var(--radius-card);box-shadow:var(--shadow-pop);padding:30px 28px;display:flex;flex-direction:column;gap:8px}
+  .panel .k{font-size:20px;color:var(--ink-2)}
+  .panel .v,.panel .vs{font-size:26px;font-weight:600}
+  .panel .big{font-size:44px;font-weight:700;color:var(--teal-text);letter-spacing:-.02em;margin-top:6px}
+  .panel .row{font-size:22px;font-weight:600;padding:6px 0;border-bottom:1px solid var(--hair)}
+  .panel .row:last-child{border-bottom:0}`;
 for (const c of CARDS) {
   const body = `
     <div class="left">
@@ -165,11 +199,11 @@ for (const c of CARDS) {
       <div class="sub">${c.sub}</div>
       <div class="chips">${c.chips.map((x, i) => `<span class="chip${i === 0 ? ' price' : ''}">${x}</span>`).join('')}</div>
     </div>
-    <div class="phone"><img src="file://${join(PUB, 'cases', 'mobile', `${c.phone}.webp`)}" alt=""></div>`;
+    ${c.panel ? `<div class="panel">${c.panel}</div>` : `<div class="phone"><img src="file://${join(PUB, 'cases', 'mobile', `${c.phone}.webp`)}" alt=""></div>`}`;
   const html = page(body, cardCss).replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
   const png = join(TMP, `${c.file}.png`);
   shoot(html, png, 1200, 630);
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og', c.file)]);
 }
 
-console.log('Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg, og/insales.jpg, og/insales-seller.jpg');
+console.log(`Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg, ${CARDS.map((c) => `og/${c.file}`).join(', ')}`);
