@@ -73,7 +73,11 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     <!-- Предложение владельцу (think-different, итерация 33): срок ответа — тот же, что у формы лендинга inSales.
          Ожидание — главный страх перед отправкой. Если для заявок с главной правило другое — поправить или убрать строку. -->
     <p class="send-note">Ответим в течение часа в рабочее время.</p>
-    <p class="status" role="status" aria-live="polite" hidden></p>
+    <!-- Ответ «Спасибо! Сообщение у нас…» озвучивается через постоянную невидимую область (think-different, итерация 114):
+         текст в элементе, который до этого был скрыт, программы чтения экрана часто пропускают — живая область должна
+         быть на странице до того, как в ней меняется текст. Видимая плашка ниже — для глаз. -->
+    <p class="visually-hidden" role="status" aria-live="polite" data-announce></p>
+    <p class="status" hidden></p>
     <p class="status status-error" role="alert" hidden>
       Не получилось отправить. Отправьте то же сообщение в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener" data-fail-telegram data-goal-place="form-fail">{direct}<span class="visually-hidden">, откроется в новой вкладке, текст уже набран</span></a>
     </p>
@@ -258,6 +262,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
           const hint=document.createElement('span');hint.className='visually-hidden';hint.textContent=', откроется в новой вкладке, текст уже набран';
           link.append(hint);ok.append(link,'.');
         }
+        const announce=form.querySelector<HTMLElement>('[data-announce]');
+        if(announce){announce.textContent='';window.setTimeout(()=>{announce.textContent=ok.textContent?.trim()??'';},100);}
         // Цели Метрики (JavaScript-события): заявка с главной ушла / не ушла. Без счётчика emiGoal нет.
         (window as any).emiGoal?.('feedback-sent');
       } catch {
