@@ -38,6 +38,10 @@ const other = variant === 'shop'
 const plans = variant === 'seller' ? [PLANS[2], PLANS[1], PLANS[0]] : PLANS;
 // Селлеру первыми — его вопросы: кабинеты, замена площадки, остатки.
 const faq = variant === 'seller' ? [...SELLER_FAQ, ...FAQ] : FAQ;
+// У каждого вопроса свой адрес: #faq-chey-budet-magazin (think-different, итерация 111). Менеджер отвечает в чате ссылкой
+// на ответ, и вопрос открывается сразу. Адрес — из текста вопроса латиницей, поэтому не сдвигается, если вопросы переставить.
+const TR: Record<string, string> = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya' };
+const faqId = (q: string) => 'faq-' + [...q.toLowerCase()].map((c) => TR[c] ?? c).join('').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').split('-').slice(0, 5).join('-');
 // Частые вопросы для поисковиков — тот же список, что на странице (think-different, итерация 102), как FAQPage в статьях блога.
 const faqLd = {
   '@context': 'https://schema.org',
@@ -321,8 +325,28 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="block flat" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
-        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{glue(a)}</p></details>)}
+        {faq.map(([q, a]) => <details id={faqId(q)}><summary>{q}</summary><p>{glue(a)}</p></details>)}
       </div>
+      <script is:inline>
+        // Ссылка с #faq-… открывает свой вопрос; открытый вопрос пишет свой адрес в строку браузера — его можно скопировать.
+        // Только replaceState: кнопка «Назад» не ходит по открытым вопросам. Без скрипта ссылка ведёт к закрытому вопросу.
+        (function () {
+          var box = document.currentScript.previousElementSibling;
+          var openFromHash = function () {
+            var d = location.hash.indexOf('#faq-') === 0 && document.getElementById(location.hash.slice(1));
+            if (d && d.tagName === 'DETAILS' && box.contains(d)) { d.open = true; d.scrollIntoView({ block: 'start' }); }
+          };
+          openFromHash();
+          addEventListener('hashchange', openFromHash);
+          box.addEventListener('toggle', function (e) {
+            var d = e.target, url = new URL(location.href);
+            if (d.open) url.hash = d.id;
+            else if (url.hash === '#' + d.id) url.hash = '';
+            else return;
+            history.replaceState(history.state, '', url.hash ? url.href : url.pathname + url.search);
+          }, true);
+        })();
+      </script>
       <!-- Вопроса нет в списке — спросить сразу, с началом сообщения (think-different, итерация 64) -->
       <p class="faq-ask" data-goal-place="faq">Не нашли свой вопрос? <a href={`${LINKS.direct}?text=${encodeURIComponent(variant === 'seller' ? 'Вопрос про сайт рядом с WB и Ozon: ' : 'Вопрос про магазин на inSales: ')}`} target="_blank" rel="noopener">Спросите в Telegram&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></p>
     </section>
@@ -1035,6 +1059,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   h2[id] { scroll-margin-top: 96px; }
   /* Переход из галереи «5 из 5 … →» на #case-happyanimal: кейс не уходит под таблетку навигации */
   .case[id] { scroll-margin-top: 96px; }
+  /* Вопрос по ссылке #faq-… встаёт ниже плавающей навигации по лендингу, как заголовки разделов */
+  .faq details[id] { scroll-margin-top: 96px; }
   .jump {
     position: fixed;
     top: 12px;
