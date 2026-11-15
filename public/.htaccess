@@ -35,6 +35,10 @@ ErrorDocument 404 /404.html
   RewriteRule ^sitemap\.xml$ https://emilius.agency/sitemap-index.xml [L,R=301]
   # Внешние ссылки на старые разделы (аудит Вебмастера 05.11.2026): /ru/ — с партнёрской карточки inSales
   # и zalina.me, /career, /careers, /jobs — с Хабр Карьеры. Своих страниц нет, ведём на главную.
+  # Кто пришёл на /ru/ из каталога партнёров inSales, ищет магазин на inSales — сразу на лендинг
+  # (think-different, итерация 103). 302, а не 301: браузер не запоминает его для переходов с других сайтов.
+  RewriteCond %{HTTP_REFERER} ^https?://([a-z0-9-]+\.)*insales\.ru(/|$) [NC]
+  RewriteRule ^ru(/.*)?$ https://emilius.agency/services/insales-shop/?utm_source=insales&utm_medium=partner-catalog [L,R=302]
   RewriteRule ^ru(/.*)?$ https://emilius.agency/ [L,R=301]
   RewriteRule ^(career|careers|jobs)/?$ https://emilius.agency/ [L,R=301]
 </IfModule>
