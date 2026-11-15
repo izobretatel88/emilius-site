@@ -114,6 +114,17 @@
     url.hash = link.hash;
     history.pushState(null, '', url);
     revealAnchor();
+    // Ссылка на строку сразу в буфере (think-different, итерация 132): раньше нажатие молча меняло адрес,
+    // а стрелка ↗ обещала новую вкладку. Короткая отметка рядом с кодом и фраза для программ чтения экрана.
+    const id = link.querySelector('.feature-id');
+    if (!id || !navigator.clipboard) return;
+    navigator.clipboard.writeText(url.href).then(() => {
+      const code = link.hash.slice(1);
+      id.textContent = `${code} · ссылка скопирована`;
+      if (countSay) { countSay.textContent = ''; setTimeout(() => { countSay.textContent = `Ссылка на ${code} скопирована`; }, 100); }
+      clearTimeout(id._t);
+      id._t = setTimeout(() => { id.textContent = `${code} #`; }, 2000);
+    }, () => {});
   }));
   readURL(true);
 })();
