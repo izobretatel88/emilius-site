@@ -428,7 +428,11 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
         const id = e.target.querySelector('h2')?.id;
-        if (id && e.isIntersecting) links.forEach((a, k) => a.classList.toggle('is-here', k === id));
+        // Текущий раздел — не только цветом: aria-current для программ чтения экрана, как в содержании статей (think-different, итерация 117)
+        if (id && e.isIntersecting) links.forEach((a, k) => {
+          a.classList.toggle('is-here', k === id);
+          if (k === id) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+        });
       }),
       { rootMargin: '-45% 0px -50% 0px' },
     );
