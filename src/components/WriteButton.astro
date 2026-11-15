@@ -95,11 +95,44 @@ import { LINKS } from '../data/site';
     const cookieOpen = () => phone.matches && document.documentElement.classList.contains('cookie-open');
     const seen = new Set<Element>();
     let typing = false;
+    // Таблицы сравнения (think-different, итерация 129): на экранах до ~1440 px кнопка стояла поверх последней колонки
+    // и закрывала статусы и «Источник ↗» KIT и OpenCart. Пока низ экрана над таблицей: помещается круглая иконка
+    // рядом с таблицей — сжимаемся до неё, не помещается — прячемся до конца таблицы. На 1920 px всё как было.
+    const tables = [...document.querySelectorAll<HTMLElement>('.platform-comparison table')];
+    let overTable: 'none' | 'compact' | 'hide' = 'none';
+    const measureTables = () => {
+      if (!tables.length) return;
+      const vw = document.documentElement.clientWidth, vh = innerHeight, gap = 8;
+      const right = vw - 16, band = [vh - 16 - 48, vh - 16];
+      const wide = fab.classList.contains('is-compact') ? fullWidth : fab.offsetWidth;
+      let next: typeof overTable = 'none';
+      for (const t of tables) {
+        // Видимая часть таблицы: на узких экранах она листается внутри рамки .scroll
+        const r = t.getBoundingClientRect(), box = (t.closest('.scroll') ?? t).getBoundingClientRect();
+        const top = Math.max(r.top, box.top), bottom = Math.min(r.bottom, box.bottom);
+        if (bottom <= band[0] || top >= band[1] || t.hidden || t.closest('[hidden]')) continue;
+        const edge = Math.min(r.right, box.right, vw);
+        next = edge + gap <= right - wide ? 'none' : edge + gap <= right - 48 ? 'compact' : 'hide';
+        if (next !== 'none') break;
+      }
+      if (next !== overTable) { overTable = next; update(); }
+    };
+    const fullWidth = fab.offsetWidth;
     const update = () => {
       const sectionVisible = compact.matches && protectedSections.some(section => seen.has(section));
       const contactVisible = twins.some(twin => seen.has(twin));
-      fab.classList.toggle('is-hidden', sectionVisible || contactVisible || typing || cookieOpen() || !!document.querySelector('.mobile-menu[open]'));
+      fab.classList.toggle('is-compact', overTable === 'compact');
+      fab.classList.toggle('is-hidden', overTable === 'hide' || sectionVisible || contactVisible || typing || cookieOpen() || !!document.querySelector('.mobile-menu[open]'));
     };
+    if (tables.length) {
+      let queued = false;
+      const queue = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; measureTables(); }); } };
+      addEventListener('scroll', queue, { passive: true });
+      addEventListener('resize', queue);
+      // Таблица на телефоне листается внутри своей рамки — её прокрутка тоже двигает строки под кнопкой
+      document.querySelectorAll('.platform-comparison .scroll').forEach((el) => el.addEventListener('scroll', queue, { passive: true }));
+      measureTables();
+    }
     document.addEventListener('emi:menu', update);
     document.addEventListener('emi:cookie', update);
     phone.addEventListener('change', update);
@@ -165,6 +198,8 @@ import { LINKS } from '../data/site';
     outline: var(--focus-ring);
     outline-offset: 3px;
   }
+  /* Над таблицей сравнения — только иконка, как на телефоне (итерация 129) */
+  .write-fab.is-compact { width: 48px; justify-content: center; padding: 0; font-size: 0; gap: 0; }
   .write-fab.is-hidden {
     opacity: 0;
     visibility: hidden;
