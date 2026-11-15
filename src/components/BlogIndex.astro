@@ -38,10 +38,11 @@ const listCover = (c: string) => {
     <p class="ui-lead">Исследования, дизайн, разработка и маркетинг продуктов. Начинаем с практических материалов о запуске интернет-магазинов и работе с маркетплейсами.</p>
     </header>
     <ul class="posts">
-      {posts.map((p) => (
+      {posts.map((p, i) => (
         <li class="post ui-surface">
           <a href={href(`blog/${p.id}/`)} class="cover-link" tabindex="-1" aria-hidden="true">
-            <img src={cover(listCover(p.data.cover))} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+            {/* Обложка первой карточки — в первом экране: грузим сразу и с высоким приоритетом (итерация 99) */}
+            <img src={cover(listCover(p.data.cover))} alt="" width="1200" height="630" loading={i === 0 ? undefined : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
           </a>
           <div class="text">
             <h2><a href={href(`blog/${p.id}/`)}>{p.data.h1}</a></h2>

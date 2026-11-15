@@ -144,10 +144,23 @@ export function rehypeBlog(options = {}) {
     });
   };
 
+  // Картинка, с которой статья начинается, — первый экран: её грузим сразу и раньше остального
+  // (think-different, итерация 99). С loading="lazy" браузер ждал раскладки и брал её последней:
+  // на телефоне обложка «Как выбрать платформу» появлялась через 1,3 с после текста.
+  const eagerLead = (tree) => {
+    const first = (tree.children || []).find((k) => k.type === 'element');
+    if (!first || (first.tagName !== 'p' && first.tagName !== 'figure')) return;
+    const img = (first.children || []).find((k) => k.type === 'element');
+    if (!img || img.tagName !== 'img') return;
+    delete img.properties.loading;
+    img.properties.fetchPriority = 'high';
+  };
+
   return (tree) => {
     heading = '';
     used.clear();
     walk(tree);
+    eagerLead(tree);
     wrapImages(tree);
   };
 }
