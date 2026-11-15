@@ -435,6 +435,12 @@ const jsonLd = [
   .body :global(a) {
     text-underline-offset: 3px;
   }
+  /* Стрелка внешней ссылки — без подчёркивания и чуть мельче текста, как «Источник ↗» в сравнениях */
+  .body :global(.ext-arrow) {
+    display: inline-block;
+    font-size: 0.85em;
+    text-decoration: none;
+  }
   .body :global(hr) {
     margin: 36px 0 0;
     border: 0;
