@@ -29,10 +29,11 @@ function apply() {
   box.replaceChildren(Object.assign(document.createElement("b"), { textContent: lead }), document.createTextNode(text));
 
   let fitting = 0;
+  const fitNames = [];
   NAMES.forEach((name, i) => {
     const reasons = FILTERS.filter(f => active.has(f.id) && f.out[name]).map(f => f.out[name]);
     const out = reasons.length > 0;
-    if (!out) fitting++;
+    if (!out) { fitting++; fitNames.push(name); }
     document.querySelectorAll(`[data-p="${i}"]`).forEach(c => {
       c.classList.toggle("out", out);
       c.classList.toggle("best", name === BEST && !out);
@@ -42,7 +43,16 @@ function apply() {
 
   const count = document.getElementById("count");
   count.replaceChildren();
-  count.append("Без отмеченных ограничений: ", Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` }));
+  const total = Object.assign(document.createElement("b"), { textContent: `${fitting} из ${NAMES.length}` });
+  // Осталось четыре или меньше — называем их (think-different, итерация 128): «1 из 8» не говорило, какая это платформа,
+  // и на телефоне, где видны две колонки, её приходилось искать перебором пар. Больше четырёх — строка была бы длиннее экрана.
+  // Число и названия — в одном элементе: #count — flex, и отдельным куском тире уезжало бы в начало новой строки.
+  const named = active.size && fitting > 0 && fitting <= 4;
+  if (named) {
+    const fit = document.createElement("span");
+    fit.append(total, "\u00a0— " + fitNames.join(", ") + (active.size ? "\u00a0·\u00a0" : ""));
+    count.append("Без отмеченных ограничений: ", fit);
+  } else count.append("Без отмеченных ограничений: ", total);
   if (active.size) {
     const reset = Object.assign(document.createElement("button"), { type: "button", className: "reset", textContent: "Сбросить" });
     reset.addEventListener("click", () => {
@@ -53,7 +63,8 @@ function apply() {
       writeURL();
       document.getElementById(returnTo)?.focus();
     });
-    count.append(" · ", reset);
+    // С названиями «·» уже стоит в конце их строки: отдельным куском он повисал бы в начале строки перед «Сбросить»
+    if (named) count.append(reset); else count.append(" · ", reset);
   }
   try { localStorage.setItem("emilius-platform-mode-v1", mode); } catch (e) {}
 }
