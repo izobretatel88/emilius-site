@@ -64,6 +64,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
 
 <script>
   import {projectInquiry, inquiryMessage} from '../lib/project-inquiry';
+  import {stampForm} from '../lib/form-stamp';
   const form = document.querySelector<HTMLFormElement>('#feedback form');
   if (form) {
     const message = form.querySelector<HTMLTextAreaElement>('textarea')!;
@@ -145,7 +146,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       const controller=new AbortController();
       const timeout=window.setTimeout(()=>controller.abort(),15000);
       try {
-        const payload=new FormData(form);
+        const payload=stampForm(new FormData(form));
         payload.set('message',contextualMessage);
         const res = await fetch(form.action, {
           method: 'POST',
