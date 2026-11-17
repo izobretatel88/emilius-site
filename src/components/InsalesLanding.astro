@@ -368,6 +368,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <script>
   import {updateLiveEstimate,showUpdate} from '../lib/live-estimate';
+  import {stampForm} from '../lib/form-stamp';
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
   // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
@@ -504,7 +505,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         return;
       }
       // lead.php принимает message + contact: ответы и ориентир собираем в текст сообщения.
-      const fd = new FormData(form);
+      const fd = stampForm(new FormData(form));
       const a = answers();
       const msg = form.querySelector<HTMLInputElement>('[name=message]')!.value;
       fd.set('message', [

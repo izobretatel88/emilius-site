@@ -16,6 +16,7 @@ const MAX_MESSAGE = 3000;
 const MAX_CONTACT = 200;
 const RATE_LIMIT = 5;       // заявок
 const RATE_WINDOW = 600;    // за 10 минут с одного адреса
+const MIN_FILL = 3;         // секунд от открытия страницы до отправки
 
 $wantsJson = str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
 
@@ -48,6 +49,15 @@ if ($origin !== '' && parse_url($origin, PHP_URL_HOST) !== ($_SERVER['HTTP_HOST'
 // Ловушка для ботов: невидимое поле, человек его не заполняет.
 if (trim((string)($_POST['website'] ?? '')) !== '') {
     reply(200, ['ok' => true]);
+}
+
+// Метка страницы: скрипт формы добавляет fill — сколько секунд страница была открыта (src/lib/form-stamp.ts).
+// Без метки форму отправили в обход страницы — так приходил спам 13.11 и 18.11.2026, прошедший ловушку.
+// Быстрее MIN_FILL секунд человек форму не заполнит. Человек без JavaScript увидит ошибку и ссылку на Telegram.
+$fill = $_POST['fill'] ?? null;
+if (!is_string($fill) || !ctype_digit($fill) || (int)$fill < MIN_FILL) {
+    error_log('lead.php: отклонено как спам (' . (is_string($fill) && ctype_digit($fill) ? 'слишком быстро' : 'без метки страницы') . ')');
+    reply(422, ['ok' => false, 'error' => 'spam']);
 }
 
 // Без отмеченного согласия на обработку данных (152-ФЗ) сообщение не принимаем.
