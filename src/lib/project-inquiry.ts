@@ -10,6 +10,7 @@ const PROJECT_INQUIRIES: Record<string, {name: string; message: string}> = {
   almatennis: {name: 'Almatennis', message: 'Хочу похожий магазин, как Almatennis.'},
   'ss-sk': {name: 'СС-СК', message: 'Хочу похожий магазин, как СС-СК.'},
   nsorganic: {name: 'NSOrganic', message: 'Хочу похожий магазин, как NSOrganic.'},
+  'marine-garden': {name: 'Marine Garden Sochi', message: 'Хочу похожий лендинг, как Marine Garden Sochi.'},
   navalishenskoe: {name: 'Навалишенское', message: 'Хочу похожий сайт, как «Навалишенское».'},
 };
 

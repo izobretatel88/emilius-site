@@ -142,7 +142,7 @@ export function setupProjectViewer() {
       project = selected;
       title.textContent = selected.name;
       inquiry.href = selected.inquiry;
-      inquiry.textContent = link.dataset.projectPreview === 'navalishenskoe' ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
+      inquiry.textContent = ['navalishenskoe', 'marine-garden'].includes(link.dataset.projectPreview ?? '') ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
       // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
       // Ширина — та же граница 700 px, что у одностолбцовой галереи.
       const narrow = window.matchMedia('(max-width: 700px)').matches;

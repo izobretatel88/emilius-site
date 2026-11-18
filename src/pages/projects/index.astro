@@ -15,7 +15,9 @@ import {SERVICES} from '../../data/services';
 // не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
 const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
 
-const captions:Record<string,{kind:string;role:string;updated?:boolean}> = {
+const captions:Record<string,{kind:string;role:string;updated?:boolean;video?:string;site?:boolean;height?:number}> = {
+  // Лендинг: запись прокрутки сайта (18.11.2026) — играет в превью при наведении мыши
+  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,video:'video/gallery/marine-garden.mp4',site:true,height:860},
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на inSales · местное SEO',updated:true},
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
   duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales'},
@@ -34,6 +36,8 @@ const shop=(name:string)=>MORE_SHOPS.find(x=>x.name===name)!;
 const template=(id:string)=>{const x=TEMPLATE_SHOPS.find(t=>t.id===id)!;return {id,name:x.name,shot:`cases/${id}.webp`,url:x.url,domain:x.domain};};
 const projects=[
   PROJECTS.find(p=>p.id==='alohagaia')!,
+  // Адрес лендинга пока не знаем — карточка без ссылки на сайт
+  {id:'marine-garden',name:'Marine Garden Sochi',shot:'cases/gallery/marine-garden-800.webp',url:'',domain:''},
   {id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},
   ...['duman','wizzu','geekboards'].map(id=>PROJECTS.find(p=>p.id===id)!),
   {id:'zalina',name:shop('Zalina Verkhovskaya').name,shot:'cases/gallery/zalina-800.webp',url:shop('Zalina Verkhovskaya').url,domain:shop('Zalina Verkhovskaya').domain},
@@ -45,7 +49,7 @@ const projects=[
   return {...p,...meta,
     image:meta.updated?`cases/gallery/${p.id}-1600.webp`:p.shot,
     small:meta.updated?`cases/gallery/${p.id}-800.webp`:undefined,
-    width:meta.updated?1600:640,height:meta.updated?1000:400,
+    width:meta.updated?1600:640,height:meta.height??(meta.updated?1000:400),
   };
 });
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
@@ -66,15 +70,16 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
       <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
         <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} fetchpriority={index===0?'high':undefined} decoding={index===0?undefined:'async'} />
+        {p.video && <video class="preview-video" src={href(p.video)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" width={p.width} height={p.height}></video>}
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
-        <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>
+        {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.domain}</a>}
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'||p.site?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'||p.site?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
@@ -96,6 +101,25 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 <script>
   import {setupProjectViewer} from '../../lib/project-viewer';
   setupProjectViewer();
+  // Видео в превью: играет, пока курсор над карточкой, и гаснет до снимка, когда курсор ушёл.
+  // Только мышь (на телефоне наведения нет) и без «уменьшения движения» в системе.
+  const canHover=matchMedia('(hover: hover) and (pointer: fine)');
+  const calm=matchMedia('(prefers-reduced-motion: reduce)');
+  document.querySelectorAll<HTMLVideoElement>('.preview-video').forEach((video)=>{
+    const preview=video.closest<HTMLElement>('.project-preview');
+    if(!preview) return;
+    let timer=0;
+    preview.addEventListener('pointerenter',()=>{
+      if(!canHover.matches||calm.matches) return;
+      clearTimeout(timer);
+      video.play().then(()=>preview.classList.add('is-playing')).catch(()=>{});
+    });
+    preview.addEventListener('pointerleave',()=>{
+      preview.classList.remove('is-playing');
+      // после затухания — на начало, чтобы следующее наведение начиналось с первого экрана
+      timer=window.setTimeout(()=>{video.pause();video.currentTime=0;},200);
+    });
+  });
 </script>
 <style>
   .gallery-intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;margin-bottom:24px;padding-top:12px;border-top:1px solid var(--hair);font-size:var(--fs-ui);color:var(--ink-2)}
@@ -114,7 +138,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-preview,a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
-  .preview-action{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
+  /* Видео лежит поверх снимка и проявляется за 0.2 с, когда пошло воспроизведение */
+  .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;transition:opacity var(--hover)}
+  .project-preview.is-playing .preview-video{opacity:1}
+  .preview-action{position:absolute;z-index:1;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
   @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} .project-preview:hover img {filter:none} }
   .project-preview:focus-visible img {filter:none}
