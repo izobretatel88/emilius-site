@@ -15,9 +15,9 @@ import {SERVICES} from '../../data/services';
 // не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
 const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
 
-const captions:Record<string,{kind:string;role:string;updated?:boolean;video?:string;site?:boolean;height?:number}> = {
-  // Лендинг: запись прокрутки сайта (18.11.2026) — играет в превью при наведении мыши
-  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,video:'video/gallery/marine-garden.mp4',site:true,height:860},
+const captions:Record<string,{kind:string;role:string;updated?:boolean;site?:boolean;height?:number}> = {
+  // Лендинг: видео — запись прокрутки владельца (18.11.2026), адреса сайта пока нет
+  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,site:true,height:860},
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на inSales · местное SEO',updated:true},
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
   duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales'},
@@ -47,6 +47,8 @@ const projects=[
 ].map(p=>{
   const meta=captions[p.id];
   return {...p,...meta,
+    // Прокрутка сайта для превью при наведении: scripts/record-gallery.mjs
+    video:`video/gallery/${p.id}.mp4`,
     image:meta.updated?`cases/gallery/${p.id}-1600.webp`:p.shot,
     small:meta.updated?`cases/gallery/${p.id}-800.webp`:undefined,
     width:meta.updated?1600:640,height:meta.height??(meta.updated?1000:400),
