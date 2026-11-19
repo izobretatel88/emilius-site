@@ -212,3 +212,4 @@
 @media print{.platform-comparison .choose-more::after{content:none}}
 /* Фокус с клавиатуры не прячется под шапкой и заголовком раздела: пока фокус в таблице, страница оставляет им место */
 @media (min-width:960px){html:has(.platform-comparison .scroll tbody :focus-visible){scroll-padding-top:calc(var(--thead-h,73px) + 64px)}}
+@media print{.platform-comparison .section-row{transform:none!important}}

@@ -116,5 +116,27 @@
   let openedForPrint = [];
   window.addEventListener('beforeprint', () => { openedForPrint = [...document.querySelectorAll('.platform-comparison details:not([open])')]; openedForPrint.forEach(d => { d.open = true; }); });
   window.addEventListener('afterprint', () => { openedForPrint.forEach(d => { d.open = false; }); openedForPrint = []; });
+  // Следующий раздел выталкивает заголовок предыдущего вверх, а не наезжает на него
+  if (head) {
+    const sectionRows = [...document.querySelectorAll('.section-row')];
+    let ticking = false;
+    const push = () => {
+      ticking = false;
+      sectionRows.forEach(row => { row.style.transform = ''; });
+      const visible = sectionRows.filter(row => !row.closest('tbody').hidden);
+      const limit = head.querySelector('th').getBoundingClientRect().bottom;
+      const tops = visible.map(row => row.getBoundingClientRect().top);
+      visible.forEach((row, i) => {
+        if (i + 1 >= visible.length) return;
+        const height = row.offsetHeight;
+        const shift = tops[i + 1] - limit - height;
+        if (shift < 0 && tops[i] <= limit + 1) row.style.transform = `translateY(${Math.max(shift, -height)}px)`;
+      });
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(push); } };
+    window.addEventListener('scroll', onScroll, {passive: true});
+    scroll.addEventListener('scroll', onScroll, {passive: true});
+    if ('ResizeObserver' in window) new ResizeObserver(onScroll).observe(scroll.querySelector('table')); // фильтр меняет высоту таблицы
+  }
   readURL();
 })();
