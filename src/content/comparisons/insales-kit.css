@@ -201,3 +201,12 @@
 /* Дата и объём — компактные плашки под вводным абзацем вместо отдельной строки и абзаца мелким шрифтом */
 .platform-comparison .facts{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .platform-comparison .facts li{margin:0;background:var(--well);color:var(--ink-2);border-radius:var(--radius-pill);padding:5px 12px;font-size:13px;line-height:1.4}
+/* Пункт «Когда что выбрать» — целиком кликабельный блок с подсветкой, как карточки на главной; ведёт к строке таблицы */
+.platform-comparison .choose ul{list-style:none;padding:0;gap:2px;margin:0 -12px}
+.platform-comparison .choose li{position:relative;padding:9px 12px 9px 30px;border-radius:var(--radius-sm);transition:background-color var(--hover)}
+.platform-comparison .choose li::before{content:"";position:absolute;left:14px;top:calc(9px + .72em - 3px);width:6px;height:6px;border-radius:50%;background:var(--ink-2)}
+.platform-comparison .choose-more::after{content:"";position:absolute;inset:0;border-radius:inherit}
+@media (hover: hover) and (pointer: fine){.platform-comparison .choose li:hover{background:var(--well)}.platform-comparison .choose li:hover .choose-more{color:var(--teal-text)}}
+.platform-comparison .choose li:has(.choose-more:focus-visible){outline:2px solid var(--teal-text);outline-offset:0}
+.platform-comparison .choose-more:focus-visible{outline:none}
+@media print{.platform-comparison .choose-more::after{content:none}}
