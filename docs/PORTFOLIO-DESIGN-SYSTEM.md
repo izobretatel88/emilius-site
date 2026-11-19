@@ -125,6 +125,7 @@
 | `public/cases/gallery/{id}-1600.webp`, `-1200.webp`, `-800.webp` | 1600×1000 / 1200×750 / 800×500 | Первый кадр той же записи, без потерь |
 | `public/video/gallery/phone/{id}.mp4`, `.webp` | 780×1328 (iPhone 13, 2×), CRF 32; `.webp` — первый кадр | `node scripts/record-gallery.mjs --phone {id}` |
 | `public/cases/mobile/{id}.webp` | 520 px | Мобильные снимки владельца (каталог) |
+| `public/og/projects.jpg` | 1200×630 | Миниатюра ссылки на `/projects/`: шесть снимков галереи 800 px. `npm run brand`, раздел 7 `scripts/build-brand.mjs`. Пересняли галерею — пересобрать |
 
 Правила записи (в скрипте):
 
