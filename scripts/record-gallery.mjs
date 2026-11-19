@@ -117,6 +117,10 @@ async function record(browser, id) {
   if (!PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `public/video/gallery/${id}.mp4`, '-an',
     '-vf', 'scale=640:-2:flags=lanczos', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-crf', '31', '-preset', 'slow', '-movflags', '+faststart', `public/video/gallery/${id}-640.mp4`]);
+  // Постер мобильного видео — первый кадр: в окне просмотра вместо пустого поля, пока видео грузится
+  // (у проектов с мобильным снимком постером служит он сам)
+  if (PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `${SHOT.outDir}/${id}.mp4`, '-frames:v', '1',
+    '-c:v', 'libwebp', '-quality', '75', `${SHOT.outDir}/${id}.webp`]);
   rmSync(dir, { recursive: true, force: true });
   console.log(id, `${(n / FPS).toFixed(1)} с, прокрутка ${dist}px`);
 }

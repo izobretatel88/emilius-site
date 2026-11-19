@@ -80,7 +80,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id],date:PHONE_SHOT_DATE}]:[]),
     // poster — снимок того же вида, пока видео грузится
     {device:'desktop',kind:'video',label:'Видео',src:href(p.video),width:1280,height:p.whole?688:800,date:videoDates[p.id]??VIDEO_DATE,poster:href(p.small ?? p.image)},
-    ...(p.url?[{device:'phone',kind:'video',label:'Видео',src:href(`video/gallery/phone/${p.id}.mp4`),width:390,height:844,date:PHONE_VIDEO_DATE,poster:phoneHeights[p.id]?href(`cases/mobile/${p.id}.webp`):undefined}]:[]),
+    ...(p.url?[{device:'phone',kind:'video',label:'Видео',src:href(`video/gallery/phone/${p.id}.mp4`),width:390,height:844,date:PHONE_VIDEO_DATE,poster:href(phoneHeights[p.id]?`cases/mobile/${p.id}.webp`:`video/gallery/phone/${p.id}.webp`)}]:[]),
   ],
 }]));
 ---
