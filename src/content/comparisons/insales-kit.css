@@ -165,3 +165,6 @@
 @media (forced-colors:active){.platform-comparison .si{background:CanvasText}}
 .platform-comparison .kit-answers-show{margin:0;font-size:15px}
 .platform-comparison .kit-answers-show a{display:inline-flex;align-items:center;min-height:44px;font-weight:700}
+.platform-comparison .kit-answers-back{margin:-6px 0 0;font-size:14px}
+.platform-comparison .kit-answers-back:not([hidden]){animation:ui-fade-in var(--fade-in)}
+.platform-comparison .kit-answers-back a{display:inline-block;padding-block:12px;line-height:1.4}

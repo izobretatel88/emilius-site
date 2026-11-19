@@ -86,5 +86,17 @@
     history.pushState(null, '', url);
     revealAnchor();
   }));
+  // «Ответ KIT» в строке ведёт к блоку ответов; оттуда — ссылка обратно к той же строке
+  const back = document.querySelector('.kit-answers-back');
+  if (back) {
+    const backLink = back.querySelector('a');
+    document.querySelectorAll('tr[data-feature] a[href="#kit-answers"]').forEach(link => link.addEventListener('click', () => {
+      const row = link.closest('tr[data-feature]');
+      backLink.hash = row.id;
+      backLink.querySelector('span').textContent = `${row.id}: ${row.querySelector('.feature-link').firstChild.textContent}`;
+      back.hidden = false;
+    }));
+    backLink.addEventListener('click', () => { requestAnimationFrame(() => document.getElementById(backLink.hash.slice(1))?.querySelector('.feature-link')?.focus({preventScroll: true})); });
+  }
   readURL();
 })();
