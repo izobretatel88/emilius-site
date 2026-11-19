@@ -36,7 +36,7 @@
       shown += sectionCount;
     }
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
-    count.textContent = shown === rows.length ? `Показаны все ${rows.length} пунктов` : `Показано ${shown} из ${rows.length} пунктов`;
+    count.textContent = shown === rows.length ? `Показаны все ${rows.length} функций` : `Показано ${shown} из ${rows.length} функций`;
     empty.hidden = shown !== 0;
     scroll.querySelector('table').hidden = shown === 0;
     document.querySelector('.mobile-hint').hidden = shown === 0;
