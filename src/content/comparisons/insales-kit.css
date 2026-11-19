@@ -74,7 +74,7 @@
 .platform-comparison .source span{font-size:var(--fs-small);color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
 .platform-comparison .muted{font-size:var(--fs-small)}
-.platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td{background:var(--teal-soft)}
+.platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td,.platform-comparison .scroll tr:target+.mobile-note-row>td{background:var(--teal-soft)}
 .platform-comparison .empty{padding:40px 24px;text-align:center}
 .platform-comparison .empty h2{font-size:24px;margin:0}
 .platform-comparison .empty p{color:var(--ink-2)}
