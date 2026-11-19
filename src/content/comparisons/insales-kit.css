@@ -193,3 +193,8 @@
   .platform-comparison .scroll{max-height:none}
   .platform-comparison tr{break-inside:avoid}
 }
+/* Как читать статусы — свёрнутая плашка в одну строку, раскрывается по клику */
+.platform-comparison .explanation{padding:2px 18px}
+.platform-comparison .explanation summary{margin-block:0;padding:10px 0;font-weight:600}
+.platform-comparison .explanation:has(details[open]){padding-bottom:18px}
+.platform-comparison .explanation-lead{margin:4px 0 12px;max-width:62ch}
