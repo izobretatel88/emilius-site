@@ -144,3 +144,11 @@
 .platform-comparison .foot{max-width:none}}
 /* Раскрытый блок проявляется за 0.2 с, как FAQ лендинга и меню */
 .platform-comparison details[open]>:not(summary){animation:ui-fade-in var(--fade-in)}
+/* Ответы Яндекс KIT 19.11.2026: короткие итоги по темам, на них ссылается источник K58 в таблице */
+.platform-comparison .kit-answers{background:var(--card);border-radius:var(--radius-card);padding:24px;display:grid;gap:14px;scroll-margin-top:16px}
+.platform-comparison .kit-answers h2{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
+.platform-comparison .kit-answers-lead,.platform-comparison .kit-answers-note{margin:0;color:var(--ink-2);font-size:14px;line-height:1.45;max-width:72ch}
+.platform-comparison .kit-answers-list{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px 28px}
+.platform-comparison .kit-answers-list li{font-size:15px;line-height:1.45;padding-top:12px;border-top:1px solid var(--hair)}
+.platform-comparison .kit-answers-list strong{font-weight:700}
+@media(max-width:760px){.platform-comparison .kit-answers{padding:18px 16px}.platform-comparison .kit-answers h2{font-size:21px}}
