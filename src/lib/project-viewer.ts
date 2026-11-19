@@ -2,7 +2,7 @@ type Device = 'desktop' | 'phone';
 // Снимок или видео прокрутки — второй переключатель, независимый от вида «Компьютер / Телефон»
 type Kind = 'shot' | 'video';
 type Screen = {device: Device; kind?: Kind; label: string; src: string; width: number; height: number; date?: string; poster?: string};
-type ProjectMedia = {name: string; inquiry: string; site: {url: string; domain: string} | null; screens: Screen[]};
+type ProjectMedia = {name: string; role?: string; label?: string; inquiry: string; site: {url: string; domain: string} | null; screens: Screen[]};
 
 export function setupProjectViewer() {
   const viewer = document.querySelector<HTMLDialogElement>('.project-viewer');
@@ -19,7 +19,7 @@ export function setupProjectViewer() {
   const noteDate = viewer.querySelector<HTMLElement>('.viewer-date');
   const noteSiteWrap = viewer.querySelector<HTMLElement>('.viewer-site-wrap');
   const noteSite = viewer.querySelector<HTMLAnchorElement>('.viewer-site');
-  const noteDot = viewer.querySelector<HTMLElement>('.viewer-dot');
+  const role = viewer.querySelector<HTMLElement>('.viewer-role');
   const error = viewer.querySelector<HTMLElement>('.viewer-error')!;
   const inquiry = viewer.querySelector<HTMLAnchorElement>('.viewer-inquiry')!;
   const screensControl = viewer.querySelector<HTMLElement>('.viewer-screens')!;
@@ -102,9 +102,9 @@ export function setupProjectViewer() {
     if (note && noteDate) {
       note.hidden = !screen.date;
       noteDate.textContent = screen.date ? `Снято ${screen.date}.` : '';
-      if (noteSiteWrap && noteSite && noteDot) {
+      // Нет адреса сайта (Marine Garden) — оговорку «живой сайт мог измениться» не пишем: проверить негде
+      if (noteSiteWrap && noteSite) {
         noteSiteWrap.hidden = !project.site;
-        noteDot.hidden = !!project.site;
         if (project.site) {
           noteSite.href = project.site.url;
           noteSite.textContent = project.site.domain;
@@ -213,7 +213,8 @@ export function setupProjectViewer() {
       project = selected;
       title.textContent = selected.name;
       inquiry.href = selected.inquiry;
-      inquiry.textContent = ['navalishenskoe', 'marine-garden'].includes(link.dataset.projectPreview ?? '') ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
+      inquiry.textContent = selected.label ?? 'Хочу похожий магазин';
+      if (role) role.textContent = selected.role ?? '';
       // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
       // Ширина — та же граница 700 px, что у одностолбцовой галереи.
       const narrow = window.matchMedia('(max-width: 700px)').matches;

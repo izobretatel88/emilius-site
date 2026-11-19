@@ -10,7 +10,7 @@ const PROJECT_INQUIRIES: Record<string, {name: string; message: string}> = {
   almatennis: {name: 'Almatennis', message: 'Хочу похожий магазин, как Almatennis.'},
   'ss-sk': {name: 'СС-СК', message: 'Хочу похожий магазин, как СС-СК.'},
   nsorganic: {name: 'NSOrganic', message: 'Хочу похожий магазин, как NSOrganic.'},
-  'marine-garden': {name: 'Marine Garden Sochi', message: 'Хочу похожий лендинг, как Marine Garden Sochi.'},
+  'marine-garden': {name: 'Marine Garden Sochi', message: 'Хочу похожий сайт, как Marine Garden Sochi.'},
   navalishenskoe: {name: 'Навалишенское', message: 'Хочу похожий сайт, как «Навалишенское».'},
 };
 
@@ -23,4 +23,11 @@ export function projectInquiry(id: string | null) {
 export function inquiryMessage(current: string, id: string | null) {
   const project = projectInquiry(id);
   return current.trim() || !project ? current : `${project.message}\n\n`;
+}
+
+// Что предлагаем повторить: интернет-магазин или сайт. Один источник для кнопки карточки,
+// окна просмотра, страниц направлений и текста заявки — подписи не расходятся.
+const SITES = new Set(['marine-garden', 'navalishenskoe']);
+export function similarLabel(id: string) {
+  return SITES.has(id) ? 'Хочу похожий сайт' : 'Хочу похожий магазин';
 }

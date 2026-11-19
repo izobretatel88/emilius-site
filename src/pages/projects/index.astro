@@ -10,6 +10,7 @@ import {FRESH_SHOP,TEMPLATE_SHOPS,MORE_SHOPS} from '../../data/insales';
 import {href} from '../../lib/urls';
 import {SECTORS} from '../../data/site';
 import {SERVICES} from '../../data/services';
+import {similarLabel} from '../../lib/project-inquiry';
 
 // Метка этапа: проект показан как кейс направления (SERVICES[...].cases) — значит, работа шла на этом этапе итерации.
 // Берём только эту связь из данных; у проектов без неё метки нет. Дни этапа на колесе (27–39 и т. п.) здесь
@@ -76,6 +77,9 @@ const VIDEO_DATE='19.11.2026';
 const PHONE_VIDEO_DATE='19.11.2026';
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
+  // Подпись под названием в окне: что сделали — чтобы роль не терялась в момент самого пристального взгляда
+  role:p.role,
+  label:similarLabel(p.id),
   inquiry:href(`?project=${p.id}#feedback`),
   site:p.url?{url:p.url,domain:p.site ?? p.domain}:null,
   screens:[
@@ -97,22 +101,22 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         data-project-preview={p.id}
         label={`Смотреть крупнее: ${p.name}`}
         whole={p.whole}
-        image={{src:href(p.image),srcset:p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined,sizes:index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px',width:p.width,height:p.height,alt:`Скриншот сайта ${p.name}`,eager:index===0}}
+        image={{src:href(p.image),srcset:p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined,sizes:index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px',width:p.width,height:p.height,alt:`Главная страница сайта ${p.name}`,eager:index===0}}
         video={p.video?{src:href(p.video),small:href(p.video.replace('.mp4','-640.mp4'))}:undefined}
         action="Смотреть крупнее"
       />
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
-        {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>}
+        {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>}
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${p.id==='navalishenskoe'||p.landing?'Хочу похожий сайт':'Хочу похожий магазин'} — ${p.name}`}>{p.id==='navalishenskoe'||p.landing?'Хочу похожий сайт':'Хочу похожий магазин'}</a>
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
-    <div class="viewer-toolbar"><h2 id="viewer-title"></h2><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
+    <div class="viewer-toolbar"><div class="viewer-heading"><h2 id="viewer-title">{projects[0].name}</h2><p class="viewer-role"></p></div><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
     <div class="viewer-controls">
       <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
       <div class="viewer-modes" role="group" aria-label="Снимок или видео"><button type="button" data-mode="shot" aria-pressed="true">Снимок</button><button type="button" data-mode="video" aria-pressed="false">Видео</button></div>
@@ -122,10 +126,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     </div>
     <div class="viewer-meta">
       <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
-      <p class="viewer-note"><span class="viewer-date"></span> Живой сайт мог измениться<span class="viewer-site-wrap">: <a class="viewer-site" href="#" target="_blank" rel="noopener"></a></span><span class="viewer-dot">.</span></p>
+      <p class="viewer-note"><span class="viewer-date"></span><span class="viewer-site-wrap"> Живой сайт мог измениться: <a class="viewer-site" href="#" target="_blank" rel="noopener"></a></span></p>
     </div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
-    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /><video class="viewer-video" hidden controls muted loop playsinline preload="none"></video></div>
+    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Главная страница сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /><video class="viewer-video" hidden controls muted loop playsinline preload="none"></video></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
   </dialog>
   <script type="application/json" id="project-media" set:html={JSON.stringify(media)} />
@@ -155,7 +159,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
   .project-caption>div{min-width:0;flex:1 1 220px}
   .project-kind{font-size:var(--fs-small);color:var(--ink-2);margin-bottom:5px}
-  .project h2{font-size:28px;line-height:1.15;letter-spacing:-.02em;margin:0}
+  .project h2{font-size:var(--fs-h2-sm);line-height:1.15;letter-spacing:-.02em;margin:0}
   .project-featured h2{font-size:var(--fs-h2);letter-spacing:var(--tracking-tight)}
   /* Что мы сделали — главное в подписи: основной кегль и полный цвет текста, а не серая сноска */
   .project-role{font-size:var(--fs-body);line-height:1.5;color:var(--ink);margin-top:8px}
@@ -195,7 +199,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
   :global(html:has(.project-viewer[open])){overflow:hidden}
   .viewer-toolbar{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--hair)}
-  .viewer-toolbar h2{font-size:20px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+  .viewer-heading{min-width:0}
+  .viewer-toolbar h2{font-size:var(--fs-h3);line-height:1.2;overflow-wrap:anywhere}
+  .viewer-role{margin:2px 0 0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.4}
+  .viewer-role:empty{display:none}
   .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:var(--fs-ui);cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm);flex-shrink:0}
   .viewer-toolbar button span{font-size:24px}
   .viewer-image{overflow:auto}
@@ -225,7 +232,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-status{font-size:var(--fs-small);min-height:20px;color:var(--ink-2)}
   .viewer-note{margin:0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.5}
   .viewer-note a{font-weight:600;text-underline-offset:3px}
-  .viewer-site-wrap[hidden],.viewer-dot[hidden]{display:none}
+  /* Ссылка в строке мелким кеглем: зона нажатия растянута до 44 px по высоте, строка не раздвигается */
+  .viewer-site{display:inline-block;padding-block:14px;margin-block:-14px}
+  .viewer-site-wrap[hidden]{display:none}
   /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
   .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
   /* Снимка нет — пустая область под ним не держит отступы и серый фон телефона */
@@ -262,14 +271,13 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
     .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform: scale(var(--press-scale))}
     @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
-    .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
     .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
     /* Нет снимка с телефона, открыт снимок компьютера: окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
     .project-viewer[open][data-phone-shot='false']:has(.viewer-image[data-device='desktop'][data-kind='shot']){height:fit-content}
     .viewer-toolbar{padding:8px 12px}
-    .viewer-toolbar h2{font-size:18px}
+    .viewer-toolbar h2{font-size:var(--fs-lead-sm)}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
     .viewer-meta{padding:6px 12px}
