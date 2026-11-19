@@ -87,6 +87,10 @@ async function record(browser, id) {
     '-vf', `scale=${OUT.width}:${OUT.height}:flags=lanczos`, '-an', '-c:v', 'libx264', '-profile:v', 'high',
     '-pix_fmt', 'yuv420p', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart',
     `public/video/gallery/${id}.mp4`]);
+  // Лёгкая копия 640 px для телефона и узких превью (src/lib/preview-video.ts)
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `public/video/gallery/${id}.mp4`, '-an',
+    '-vf', 'scale=640:-2:flags=lanczos', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+    '-crf', '31', '-preset', 'slow', '-movflags', '+faststart', `public/video/gallery/${id}-640.mp4`]);
   rmSync(dir, { recursive: true, force: true });
   console.log(id, `${(n / FPS).toFixed(1)} с, прокрутка ${dist}px`);
 }

@@ -118,7 +118,7 @@ const organization = {
                 loading="lazy"
                 alt={`Главная страница магазина ${project.name}`}
               />
-              <video class="preview-video" src={href(`video/gallery/${project.id}.mp4`)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" width="1280" height="800"></video>
+              <video class="preview-video" data-src={href(`video/gallery/${project.id}.mp4`)} data-src-small={href(`video/gallery/${project.id}-640.mp4`)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" width="1280" height="800"></video>
               <span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span>
             </a>
             <div class="project-description">
