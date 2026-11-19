@@ -69,7 +69,13 @@
     if (target.hidden || target.closest('tbody').hidden) reset(true);
     requestAnimationFrame(() => {
       scroll.scrollLeft = 0;
-      target.scrollIntoView({block: 'start'});
+      // На телефоне у таблицы своя прокрутка: показываем таблицу с шапкой, а строку ставим сразу под шапкой
+      if (scroll.scrollHeight > scroll.clientHeight + 1) {
+        scroll.scrollIntoView({block: 'start', behavior: 'instant'});
+        scroll.scrollBy({top: target.getBoundingClientRect().top - scroll.querySelector('thead th').getBoundingClientRect().bottom, behavior: 'instant'});
+      } else {
+        target.scrollIntoView({block: 'start'});
+      }
     });
   }
   form.hidden = false;
