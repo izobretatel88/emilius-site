@@ -101,7 +101,7 @@ const arc = (i: number) => {
 
     {cases.length > 0 && (
       <section class="ui-section" id="cases" aria-labelledby="t-cases">
-        <div class="ui-section-head"><h2 id="t-cases">Проекты</h2><a class="ui-link" href={href('projects/')}>Все проекты <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+        <div class="ui-section-head"><h2 id="t-cases">Проекты</h2><a class="ui-link" href={href('projects/')}>Все проекты</a></div>
         <ul class:list={['cases', { single: cases.length === 1 }]} role="list">
           {cases.map((p) => (
             <li>
@@ -114,16 +114,15 @@ const arc = (i: number) => {
                     : {src:href(p.shot),width:640,height:400,alt:`Главная страница сайта ${p.name}`}}
                   video={{src:href(`video/gallery/${p.id}.mp4`),small:href(`video/gallery/${p.id}-640.mp4`),width:1280,height:800}}
                   action="Смотреть проект"
-                  arrow
                 />
                 <div class="case-body">
                   <h3 id={`case-${p.id}`}>{p.name}</h3>
                   <p>{p.about}</p>
                   {/* Что сделали — у каждого кейса, полным цветом текста: главное в подписи (дизайн-система портфолио, §3.2) */}
                   <p class="case-did">{p.did}</p>
-                  <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
+                  <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}<span class="site-arrow" aria-hidden="true">↗</span></a>
                   {/* Действие на кейсе — как в галерее и на главной: заявка с выбранным проектом (аудит 19.11.2026) */}
-                  <a class="project-inquiry case-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
+                  <a class="project-inquiry case-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
                 </div>
               </article>
             </li>

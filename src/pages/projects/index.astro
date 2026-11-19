@@ -13,10 +13,25 @@ import {SERVICES} from '../../data/services';
 import {similarLabel} from '../../lib/project-inquiry';
 import {PREVIEW_SIZES,previewSrcset} from '../../lib/preview-sizes';
 
-// Метка этапа: проект показан как кейс направления (SERVICES[...].cases) — значит, работа шла на этом этапе итерации.
-// Берём только эту связь из данных; у проектов без неё метки нет. Дни этапа на колесе (27–39 и т. п.) здесь
-// не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
-const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
+// Направления — у каждого проекта, по одной схеме (19.11.2026, владелец): этапы колеса, которые мы вели в проекте,
+// и «No-code» у магазинов на готовой теме. Метка этапа ведёт на страницу направления. Дни этапа на колесе
+// (27–39 и т. п.) не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
+type Stage='custdev'|'design'|'dev'|'marketing';
+const STAGES:Record<string,{stages:Stage[];nocode?:boolean}>={
+  alohagaia:{stages:['design','dev']},
+  'marine-garden':{stages:['design','dev']},
+  happyanimal:{stages:['dev','marketing']},
+  duman:{stages:['design','dev']},
+  wizzu:{stages:['dev']},
+  geekboards:{stages:['dev']},
+  zalina:{stages:['design','dev']},
+  mnogoles:{stages:['design','dev']},
+  almatennis:{stages:['design','dev'],nocode:true},
+  'ss-sk':{stages:['design','dev'],nocode:true},
+  nsorganic:{stages:['design','dev'],nocode:true},
+  navalishenskoe:{stages:['design','dev','marketing']},
+};
+const stagesOf=(id:string)=>SECTORS.filter(s=>STAGES[id].stages.includes(s.id as Stage)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
 
 const captions:Record<string,{kind:string;role:string;updated?:boolean;landing?:boolean;height?:number;whole?:boolean}> = {
   // Лендинг: видео — запись прокрутки владельца (18.11.2026), адреса сайта пока нет
@@ -113,12 +128,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         action="Смотреть крупнее"
       />
       <div class="project-caption">
-        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
-        {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>}
+        <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p><p class="project-stages">{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}{STAGES[p.id].nocode && <span class="project-nocode">No-code</span>}</p></div>
+        {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}<span class="site-arrow" aria-hidden="true">↗</span></a>}
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
-      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
+      {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span></a>}
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
     </article>)}
     <script type="application/ld+json" set:html={JSON.stringify(projectsLd)} />
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь <br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
@@ -130,7 +145,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       <div class="viewer-modes" role="group" aria-label="Снимок или видео"><button type="button" data-mode="shot" aria-pressed="true">Снимок</button><button type="button" data-mode="video" aria-pressed="false">Видео</button></div>
       <div class="viewer-screens" role="group" aria-label="Экраны сайта"></div>
       <div class="viewer-zoom" role="group" aria-label="Масштаб снимка"><button type="button" data-scale="fit" aria-pressed="true" aria-controls="viewer-canvas">По ширине</button><button type="button" data-scale="actual" aria-pressed="false" aria-controls="viewer-canvas">100%</button></div>
-      <a class="viewer-inquiry" href={href('#feedback')}><span class="viewer-inquiry-text">Хочу похожий магазин</span><span aria-hidden="true">→</span></a>
+      <a class="viewer-inquiry" href={href('#feedback')}><span class="viewer-inquiry-text">Хочу похожий магазин</span></a>
     </div>
     <div class="viewer-meta">
       <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -148,6 +163,22 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   setupProjectViewer();
   // Видео прокрутки в превью — при наведении мыши и фокусе с клавиатуры
   setupPreviewVideos();
+  // Плитка: каждая карточка занимает столько рядов по 4 px, сколько её высота, — сетка сама ставит короткую
+  // под короткой и не оставляет пустот. На телефоне один столбец — плитка не нужна
+  const gallery = document.querySelector<HTMLElement>('.project-gallery');
+  const wide = window.matchMedia('(min-width: 701px)');
+  if (gallery && 'ResizeObserver' in window) {
+    const ROW = 4, GAP = 28;
+    const tiles = [...gallery.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.tagName !== 'SCRIPT');
+    const layout = () => {
+      gallery.classList.toggle('is-tiled', wide.matches);
+      for (const tile of tiles) tile.style.gridRowEnd = wide.matches ? `span ${Math.ceil((tile.getBoundingClientRect().height + GAP) / ROW)}` : '';
+    };
+    const observer = new ResizeObserver(() => requestAnimationFrame(layout));
+    tiles.forEach(tile => observer.observe(tile));
+    wide.addEventListener('change', layout);
+    layout();
+  }
 </script>
 <style>
   .gallery-intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;margin-bottom:24px;padding-top:12px;border-top:1px solid var(--hair);font-size:var(--fs-ui);color:var(--ink-2)}
@@ -160,8 +191,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project>.project-inquiry{align-self:start;margin-top:auto}
   .project-caption,.project-result{margin-bottom:8px}
   .project-featured{grid-column:1/-1}
+  /* Плитка (19.11.2026, владелец): карточки разной высоты без пустот — короткая поднимается к соседу сверху.
+     Скрипт ниже задаёт каждой карточке высоту в мелких рядах сетки; без скрипта — обычная сетка */
+  .project-gallery.is-tiled{grid-auto-rows:4px;row-gap:0}
+  .project-gallery.is-tiled>*{align-self:start;margin-bottom:28px}
   /* Превью — общий компонент ProjectPreview (src/styles/portfolio.css); в галерее оно открывает окно просмотра */
-  .project :global(.project-preview){cursor:zoom-in}
+  .project :global(.project-preview){cursor:pointer}
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   a.project-result,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
@@ -173,7 +208,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-role{font-size:var(--fs-body);line-height:1.5;color:var(--ink);margin-top:8px}
   /* Метка этапа — общий класс .ui-stage-tag (layout.css): точка цвета этапа и направление, без дней колеса */
   /* Между метками 16 px — вдвое больше, чем точка ↔ своё слово: иначе точка следующей метки липнет к предыдущему слову («Дизайн• Разработка») */
-  .project-stage{margin-top:2px;margin-right:16px}
+  .project-stages{display:flex;flex-wrap:wrap;align-items:center;gap:0 16px;margin:2px 0 0}
+  .project-stage{margin:0}
+  /* «No-code» — уточнение к этапам, не этап колеса: без точки и цвета, серым */
+  .project-nocode{display:inline-flex;align-items:center;min-height:44px;font-size:var(--fs-ui);color:var(--ink-2)}
   /* Адрес сайта — общий класс .project-site (src/styles/portfolio.css) */
   .project-site{flex-shrink:1}
   /* «Хочу похожий…» — общий класс .project-inquiry (src/styles/portfolio.css) */
@@ -181,9 +219,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Строка результата — общий класс .project-result (src/styles/portfolio.css) */
   /* Бирюзовый — цвет ссылок: цифра красится только там, где строка ведёт на кейс */
   /* Строка ведёт на разбор кейса: стрелка справа и сдвиг на 3 px при наведении, фокусе и касании — как в списках-ссылках сайта */
-  .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
+  .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   /* Нечётное число карточек после крупной: приглашение остаётся без пары — растягиваем на ряд, без пустой половины */
-  .gallery-contact:nth-child(even){grid-column:1/-1;min-height:0}
   .gallery-contact>p{font-size:var(--fs-ui);color:var(--ink-2);margin-bottom:16px}
   .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 12px}
   .gallery-contact a{gap:28px}
@@ -206,8 +243,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-toolbar h2{font-size:var(--fs-h3);line-height:1.2;overflow-wrap:anywhere}
   .viewer-role{margin:2px 0 0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.4}
   .viewer-role:empty{display:none}
-  .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:var(--fs-ui);cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm);flex-shrink:0}
-  .viewer-toolbar button span[aria-hidden]{font-size:24px}
+  .viewer-toolbar button{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;font:inherit;font-size:var(--fs-ui);font-weight:600;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--hair);border-radius:var(--radius-btn);flex-shrink:0}
+  /* Кнопки шапки окна (19.11.2026, владелец: «закрыть — неявно»): белые с тонкой рамкой, как выбранный сегмент ниже;
+     «Закрыть» — с подписью и крестиком, при наведении рамка темнеет до текста */
+  .viewer-toolbar button span[aria-hidden]{font-size:22px;font-weight:400;line-height:1}
   /* Листание проектов — у «Закрыть»: две квадратные кнопки 44 px со стрелкой, на краю списка гаснут */
   .viewer-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
   .viewer-projects{display:flex;gap:4px}
@@ -229,13 +268,18 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-devices,.viewer-modes,.viewer-screens,.viewer-zoom{display:flex;flex-wrap:wrap;gap:4px}
   .viewer-devices[hidden],.viewer-modes[hidden],.viewer-screens[hidden],.viewer-zoom[hidden]{display:none}
   .viewer-controls :global(button),.viewer-paging button,.viewer-error button{font:inherit;font-size:var(--fs-ui);min-height:44px;padding:8px 14px;border:0;border-radius:var(--radius-sm);background:var(--well);color:var(--ink);cursor:pointer}
-  .viewer-controls :global(button[aria-pressed='true']){background:var(--teal-btn);color:var(--on-teal)}
+  /* Предложение (аудит 19.11.2026): переключатели — тихие сегменты. Группа — серая дорожка, выбранный сегмент — белая плитка
+     с текстом цвета --ink. Залитая бирюзовая кнопка в окне одна — «Хочу похожий…» */
+  .viewer-devices,.viewer-modes,.viewer-screens,.viewer-zoom{padding:3px;border-radius:var(--radius-btn);background:var(--well)}
+  .viewer-controls :global(button){background:transparent;color:var(--ink-2)}
+  .viewer-controls :global(button[aria-pressed='true']){background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 0 0 1px var(--hair),var(--shadow-card)}
   /* На сером поле ошибки кнопка — белая плитка, иначе сливается с фоном */
   .viewer-error button{background:var(--card)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
   /* Фокус при открытии окна — на заголовке (его читает диктор); заголовок не элемент управления, рамка не нужна */
   #viewer-title:focus{outline:none}
-  .viewer-inquiry{display:inline-flex;align-items:center;gap:.35em;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
+  .viewer-inquiry{display:inline-flex;align-items:center;gap:.35em;min-height:44px;margin-left:auto;padding:0 18px;border-radius:var(--radius-btn);background:var(--teal-btn);color:var(--on-teal);font-size:var(--fs-ui);font-weight:600;text-decoration:none;transition:background-color var(--hover),transform var(--press)}
+  .viewer-inquiry:active{transform:scale(var(--press-scale))}
   /* Переключателей нет (один вид, снимок помещается) — ссылка не висит одна у правого края пустой полосы, а встаёт в начало, под название */
   .viewer-controls:not(:has(>[role='group']:not([hidden]))) .viewer-inquiry{margin-left:0}
   /* Под панелью: слева вид и экран, справа — когда снято и что живой сайт мог уйти вперёд (18.11.2026, владелец) */
@@ -254,11 +298,13 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */
-  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
+  .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),border-color var(--hover),transform var(--press)}
   /* Наведение мышью: серая кнопка темнеет до линии разделителя, выбранная — до тёмного бирюзового, как на лендинге inSales */
   @media (hover: hover) and (pointer: fine) {
-    .viewer-toolbar button:hover:not(:disabled),.viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
-    .viewer-controls :global(button[aria-pressed='true']:hover){background:var(--teal-btn-hover)}
+    .viewer-toolbar button:hover:not(:disabled){background:var(--card);border-color:var(--ink-3)}
+    .viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
+    .viewer-controls :global(button[aria-pressed='true']:hover){background:var(--card)}
+    .viewer-inquiry:hover{background:var(--teal-btn-hover)}
   }
   .viewer-toolbar button:active:not(:disabled),.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */

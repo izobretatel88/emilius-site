@@ -107,7 +107,7 @@ const organization = {
     </section>
 
     <section class="ui-section" id="projects" tabindex="-1" aria-labelledby="t-projects">
-      <div class="ui-section-head"><h2 id="t-projects">Продукты, которые работают.</h2><a class="ui-link" href={href('projects/')}>Все проекты <span class="ui-arrow" aria-hidden="true">→</span></a></div>
+      <div class="ui-section-head"><h2 id="t-projects">Продукты, которые работают.</h2><a class="ui-link" href={href('projects/')}>Все проекты</a></div>
       <div class="project-grid">
         {selected.map(project => (
           <article class="selected-project project-card" aria-labelledby={`case-${project.id}`}>
@@ -117,7 +117,6 @@ const organization = {
               image={{src:href(`cases/gallery/${project.id}-800.webp`),srcset:previewSrcset(project.id),sizes:PREVIEW_SIZES.section,width:800,height:500,alt:`Главная страница сайта ${project.name}`}}
               video={{src:href(`video/gallery/${project.id}.mp4`),small:href(`video/gallery/${project.id}-640.mp4`),width:1280,height:800}}
               action="Смотреть проект"
-              arrow
             />
             <div class="project-description">
               <h3 id={`case-${project.id}`}>{project.name}</h3>
@@ -128,7 +127,7 @@ const organization = {
               )}
               <!-- Метка заявки сохраняет отдельную запись истории WebKit после снятия кейса. -->
               <a class="project-inquiry" href={`?project=${project.id}&inquiry=1#feedback`} aria-label={`${similarLabel(project.id)} — ${project.name}`}>
-                {similarLabel(project.id)} <span aria-hidden="true">→</span>
+                {similarLabel(project.id)}
               </a>
             </div>
           </article>
