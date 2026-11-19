@@ -25,6 +25,11 @@ const SITES = {
   navalishenskoe: 'https://navalishenskoe.ru/',
 };
 
+// Кнопка воспроизведения главного видео сайта — где оно не идёт само. Навалишенское (наша работа):
+// пролёт над ущельем стартует только по «Смотреть», а это главный элемент первого экрана.
+// Только кнопки «играть» — всплывающие окна и согласия по-прежнему не нажимаем.
+const PLAY = { navalishenskoe: '.hero-video-control' };
+
 const VIEW = { width: 1440, height: 900 }; // 8:5 — как снимки галереи
 const OUT = { width: 1280, height: 800 };
 // Снимок галереи — первый кадр этой же записи (public/cases/gallery/{id}-1600.webp и -800.webp): превью и окно
@@ -116,6 +121,12 @@ async function record(browser, id) {
   await page
     .waitForFunction(() => [...document.images].every((i) => i.complete || i.loading === 'lazy'), null, { timeout: 20000 })
     .catch(() => {});
+  if (PLAY[id]) {
+    const button = page.locator(PLAY[id]).first();
+    if (await button.count()) await button.click().catch((e) => console.log(id, 'кнопка видео:', e.message.split('\n')[0]));
+    // ждём, пока ролик пошёл (на телефоне он ниже первого экрана — играет, пока его видно)
+    await page.waitForFunction(() => [...document.querySelectorAll('video')].some((v) => v.currentSrc && v.readyState >= 3), null, { timeout: 20000 }).catch(() => {});
+  }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(4000);
   // Видео на первом экране сайта (Zalina) после возврата наверх грузится заново — ждём, пока оно пойдёт
@@ -145,6 +156,16 @@ async function record(browser, id) {
   await hide();
 
   await freezeSliders(page);
+  // Ролик, запущенный кнопкой, — с начала: иначе запись попадает на его затемнение и склейку
+  // (у Навалишенского 19,6 с — почти как запись, так что без склейки до конца)
+  if (PLAY[id])
+    await page
+      .waitForFunction(() => {
+        // на телефоне ролик ниже первого экрана — ждать нечего, он пойдёт, когда до него дойдёт прокрутка
+        const shown = [...document.querySelectorAll('video')].filter((v) => { const r = v.getBoundingClientRect(); return v.currentSrc && r.bottom > 0 && r.top < innerHeight; });
+        return !shown.length || shown.some((v) => !v.paused && v.currentTime > 0.2 && v.currentTime < 0.8);
+      }, null, { timeout: 40000, polling: 50 })
+      .catch(() => console.log(id, 'не дождались начала ролика'));
 
   const dir = mkdtempSync(join(tmpdir(), `rec-${id}-`));
   const scrollFrames = Math.round((dist / SHOT.speed) * FPS);
