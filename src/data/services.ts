@@ -31,7 +31,7 @@ export const SERVICES: Record<string, Service> = {
       'Проверка прототипа на пользователях до разработки',
     ],
     result: ['Макеты, готовые к разработке', 'Дизайн-система, которая переживёт следующие итерации'],
-    cases: [],
+    cases: ['navalishenskoe'],
   },
   dev: {
     title: 'Разработка',
@@ -42,7 +42,7 @@ export const SERVICES: Record<string, Service> = {
       'Собственные модули под задачи магазина',
     ],
     result: ['Работающий продукт, а не набор макетов', 'Код, который можно развивать дальше'],
-    cases: ['wizzu', 'alohagaia', 'duman', 'geekboards'],
+    cases: ['wizzu', 'alohagaia', 'duman', 'geekboards', 'navalishenskoe'],
     offer: {
       eyebrow: 'Готовое решение',
       title: 'Интернет-магазин на inSales за 3–5 недель',
