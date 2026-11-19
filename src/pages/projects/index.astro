@@ -59,16 +59,18 @@ const projects=[
 const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
 // Когда снят снимок — по истории репозитория (когда файл попал в проект). Сайты клиентов живут своей жизнью,
 // поэтому в окне просмотра рядом с датой — оговорка и ссылка на живой сайт.
+// С 19.11.2026 снимок галереи — первый кадр видео прокрутки (scripts/record-gallery.mjs), дата у них общая.
+// Duman и Aloha Gaia ждут пересъёмки без VPN — у них пока прежние снимки и видео.
 const shotDates:Record<string,string>={
-  happyanimal:'02.11.2026',alohagaia:'02.11.2026',wizzu:'02.11.2026',duman:'24.09.2026',
-  zalina:'13.11.2026',mnogoles:'13.11.2026',navalishenskoe:'13.11.2026',
-  geekboards:'14.11.2026',almatennis:'14.11.2026','ss-sk':'14.11.2026',nsorganic:'14.11.2026',
+  alohagaia:'02.11.2026',duman:'24.09.2026',
+  happyanimal:'19.11.2026',wizzu:'19.11.2026',zalina:'19.11.2026',mnogoles:'19.11.2026',navalishenskoe:'19.11.2026',
+  geekboards:'19.11.2026',almatennis:'19.11.2026','ss-sk':'19.11.2026',nsorganic:'19.11.2026',
   'marine-garden':'18.11.2026',
 };
 const PHONE_SHOT_DATE='27.10.2026'; // мобильные снимки — скриншоты владельца, public/cases/mobile/
 // Видео прокрутки: сняты scripts/record-gallery.mjs 18.11.2026, переснятые — своей датой; Marine Garden — запись владельца
-const videoDates:Record<string,string>={geekboards:'19.11.2026',zalina:'19.11.2026'};
-const VIDEO_DATE='18.11.2026';
+const videoDates:Record<string,string>={alohagaia:'18.11.2026',duman:'18.11.2026','marine-garden':'18.11.2026'};
+const VIDEO_DATE='19.11.2026';
 // Мобильная прокрутка (iPhone 13) — `record-gallery.mjs --phone`, public/video/gallery/phone/; у Marine Garden нет — адреса не знаем
 const PHONE_VIDEO_DATE='19.11.2026';
 const media=Object.fromEntries(projects.map(p=>[p.id,{
@@ -78,8 +80,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   screens:[
     {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height,date:shotDates[p.id]},
     ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id],date:PHONE_SHOT_DATE}]:[]),
-    // poster — пока видео грузится: у компьютера снимок галереи, у телефона первый кадр записи
-    {device:'desktop',kind:'video',label:'Видео',src:href(p.video),width:1280,height:p.whole?688:800,date:videoDates[p.id]??VIDEO_DATE,poster:href(p.small ?? p.image)},
+    // poster — пока видео грузится: у компьютера снимок галереи (он же первый кадр видео, уже в кеше), у телефона первый кадр записи.
+    // Видео занимает в окне тот же размер, что снимок, — «Снимок → Видео» без скачка
+    {device:'desktop',kind:'video',label:'Видео',src:href(p.video),width:p.width>=1280?p.width:1280,height:p.width>=1280?p.height:(p.whole?688:800),date:videoDates[p.id]??VIDEO_DATE,poster:href(p.image)},
     ...(p.url?[{device:'phone',kind:'video',label:'Видео',src:href(`video/gallery/phone/${p.id}.mp4`),width:390,height:664,date:PHONE_VIDEO_DATE,poster:href(`video/gallery/phone/${p.id}.webp`)}]:[]),
   ],
 }]));
@@ -146,15 +149,16 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-preview,a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
+  /* Видео приглушено так же, как снимок: в тёмной теме на телефоне (видео идёт само, наведения нет) иначе вспыхивало бы ярче */
   /* Видео лежит поверх снимка и проявляется за 0.2 с, когда пошло воспроизведение */
-  .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;transition:opacity var(--hover)}
+  .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;filter:var(--img-dim);transition:opacity var(--hover),filter var(--hover)}
   /* Появление — сильный ease-out (--fade-in), уход — спокойный --hover */
-  .project-preview.is-playing .preview-video{opacity:1;transition:opacity var(--fade-in)}
+  .project-preview.is-playing .preview-video{opacity:1;transition:opacity var(--fade-in),filter var(--hover)}
   /* Запись шире 8:5 (Marine Garden, 1440×774): показываем целиком, без обрезки краёв — по центру серого поля */
   .project-preview.is-whole img,.project-preview.is-whole .preview-video{object-fit:contain;object-position:center}
   .preview-action{position:absolute;z-index:1;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
-  @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} .project-preview:hover img {filter:none} }
+  @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} .project-preview:hover :is(img,.preview-video) {filter:none} }
   .project-preview:focus-visible img {filter:none}
   .project-preview:active .preview-action {background:var(--teal-btn);color:var(--on-teal)}
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
@@ -194,7 +198,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-viewer[open]>.viewer-image{flex-grow:1}
   /* Снимок не загрузился — всё поле отдаём сообщению, оно встаёт по центру; пустая область снимка не растёт под ним */
   .project-viewer[open]>.viewer-error:not([hidden]){flex-grow:1}
-  .project-viewer[open]>.viewer-image:has(img[hidden]){flex-grow:0}
+  .project-viewer[open]>.viewer-image:has(img[hidden]):has(.viewer-video[hidden]){flex-grow:0}
   .project-viewer::backdrop{background:var(--viewer-backdrop)}
   /* Окно и затемнение проявляются за 0.2 с, без сдвига и масштаба: модальное окно стоит по центру */
   .project-viewer[open],.project-viewer[open]::backdrop{animation:ui-fade-in var(--fade-in)}
@@ -234,7 +238,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
   .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
   /* Снимка нет — пустая область под ним не держит отступы и серый фон телефона */
-  .viewer-image:has(img[hidden]){padding:0}
+  /* Видео на месте снимка держит те же отступы — кадр встаёт ровно туда, где был снимок */
+  .viewer-image:has(img[hidden]):has(.viewer-video[hidden]){padding:0}
   .viewer-paging{display:flex;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--hair)}
   .viewer-paging button:disabled{color:var(--ink-3);cursor:default}
   /* Кнопки просмотра: смена цвета 0.2 с и короткий отклик на нажатие */

@@ -27,6 +27,10 @@ const SITES = {
 
 const VIEW = { width: 1440, height: 900 }; // 8:5 — как снимки галереи
 const OUT = { width: 1280, height: 800 };
+// Снимок галереи — первый кадр этой же записи (public/cases/gallery/{id}-1600.webp и -800.webp): превью и окно
+// просмотра показывают его, а видео начинается с него же — переход «снимок → видео» без шва.
+// Поэтому кадры снимаем сразу в 1600×1000 (масштаб 1600/1440), видео уменьшаем до 1280×800.
+const STILL = 1600;
 const FPS = 30;
 const HOLD = 1.0; // секунд на первом экране
 const SPEED = 330; // px в секунду
@@ -47,7 +51,7 @@ const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 async function record(browser, id) {
   const context = await browser.newContext({
-    ...(PHONE ? { ...devices['iPhone 13'], deviceScaleFactor: 2 } : { viewport: VIEW }),
+    ...(PHONE ? { ...devices['iPhone 13'], deviceScaleFactor: 2 } : { viewport: VIEW, deviceScaleFactor: STILL / VIEW.width }),
     locale: 'ru-RU',
     timezoneId: 'Europe/Moscow',
   });
@@ -94,6 +98,18 @@ async function record(browser, id) {
       { timeout: 15000 },
     )
     .catch(() => {});
+  // У Zalina ролик на первом экране начинается с заставки-титра (~1,5 с) — ждём, пока пойдёт само видео,
+  // иначе первый кадр, а с ним и снимок галереи, — пустой белый экран
+  await page
+    .waitForFunction(
+      () =>
+        [...document.querySelectorAll('video')]
+          .filter((v) => { const r = v.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 100; })
+          .every((v) => v.currentTime >= 2),
+      null,
+      { timeout: 10000 },
+    )
+    .catch(() => {});
   await page.waitForTimeout(1500);
   await hide();
 
@@ -106,7 +122,13 @@ async function record(browser, id) {
     const y = scrollFrames ? Math.round(ease(k / scrollFrames) * dist) : 0;
     if (i % 30 === 0) await hide(); // окна, что всплывают с задержкой
     await page.evaluate((v) => window.scrollTo(0, v), y);
-    await page.screenshot({ path: join(dir, `${String(n++).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 90 });
+    const frame = join(dir, `${String(n++).padStart(5, '0')}.jpg`);
+    // Первый кадр — одним снимком без потерь: из него и снимок галереи, и кадр 0 видео
+    // (два снимка подряд расходятся — карусель на сайте успевает сдвинуться)
+    if (i === 0 && !PHONE) {
+      await page.screenshot({ path: join(dir, 'still.png') });
+      execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(dir, 'still.png'), '-q:v', '2', frame]);
+    } else await page.screenshot({ path: frame, type: 'jpeg', quality: 90 });
   }
   await context.close();
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-framerate', String(FPS), '-i', join(dir, '%05d.jpg'),
@@ -121,6 +143,8 @@ async function record(browser, id) {
   // Мобильный снимок постером не годится: он часто с каталога, а видео начинается с главной — был бы скачок
   if (PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `${SHOT.outDir}/${id}.mp4`, '-frames:v', '1',
     '-c:v', 'libwebp', '-quality', '75', `${SHOT.outDir}/${id}.webp`]);
+  if (!PHONE) for (const w of [STILL, STILL / 2]) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(dir, 'still.png'),
+    '-vf', `scale=${w}:-2:flags=lanczos`, '-c:v', 'libwebp', '-quality', '82', `public/cases/gallery/${id}-${w}.webp`]);
   rmSync(dir, { recursive: true, force: true });
   console.log(id, `${(n / FPS).toFixed(1)} с, прокрутка ${dist}px`);
 }

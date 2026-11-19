@@ -26,7 +26,7 @@ const next = SECTORS[(index + 1) % SECTORS.length];
 const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter((p) => !!p);
 // Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
 // Чёткие снимки 1600/800 — public/cases/gallery/; у Duman пока только старый 640×400
-const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal', 'geekboards', 'navalishenskoe']);
+const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal', 'geekboards', 'navalishenskoe', 'zalina', 'mnogoles', 'almatennis', 'ss-sk', 'nsorganic']);
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.
@@ -185,11 +185,11 @@ const arc = (i: number) => {
   .case-image { -webkit-tap-highlight-color: transparent; }
   .case-image img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
   /* Снимок — ссылка: как на главной и в /projects/, в тёмной теме приглушён и проясняется при наведении и фокусе */
-  .case-image:focus-visible img { filter: none; }
+  .case-image:focus-visible :is(img, .preview-video) { filter: none; }
   /* Видео прокрутки сайта поверх снимка — при наведении мыши и фокусе (src/lib/preview-video.ts), как в галерее */
-  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; transition: opacity var(--hover); }
-  .case-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in); }
-  @media (hover: hover) and (pointer: fine) { .case-image:hover img { filter: none; } }
+  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; filter: var(--img-dim); transition: opacity var(--hover), filter var(--hover); }
+  .case-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in), filter var(--hover); }
+  @media (hover: hover) and (pointer: fine) { .case-image:hover :is(img, .preview-video) { filter: none; } }
   .case-body { flex: 1; padding: 16px 14px 0; display: grid; grid-template-rows: auto auto 1fr; gap: 6px; justify-items: start; }
   .case-site { align-self: end; }
   .case-body h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 2px; }

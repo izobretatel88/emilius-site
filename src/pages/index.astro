@@ -253,15 +253,15 @@ const organization = {
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
   .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
-  .project-image:focus-visible img { filter: none; }
+  .project-image:focus-visible :is(img, .preview-video) { filter: none; }
   /* Видео прокрутки сайта поверх снимка — при наведении мыши и фокусе (src/lib/preview-video.ts), как в галерее */
-  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; transition: opacity var(--hover); }
-  .project-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in); }
+  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; filter: var(--img-dim); transition: opacity var(--hover), filter var(--hover); }
+  .project-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in), filter var(--hover); }
   .view-project { z-index: 1; position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-btn); box-shadow: var(--shadow-card); }
   /* «Смотреть проект» — как «Смотреть крупнее» в галерее: заливается бирюзой при наведении, фокусе и касании, плавно */
   .view-project { transition: background-color var(--hover), color var(--hover); }
   .project-image:focus-visible .view-project, .project-image:active .view-project { background: var(--teal-btn); color: var(--on-teal); }
-  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover img { filter: none; } }
+  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover :is(img, .preview-video) { filter: none; } }
   .project-description { padding: 18px 2px 0; }
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
