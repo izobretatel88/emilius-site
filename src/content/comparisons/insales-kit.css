@@ -163,3 +163,5 @@
 .platform-comparison .si-link{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 11l6-6M6.5 5H11v4.5'/></svg>")}
 .platform-comparison .si-dot{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='8' cy='8' r='2.5' fill='black' stroke='none'/></svg>")}
 @media (forced-colors:active){.platform-comparison .si{background:CanvasText}}
+.platform-comparison .kit-answers-show{margin:0;font-size:15px}
+.platform-comparison .kit-answers-show a{display:inline-flex;align-items:center;min-height:44px;font-weight:700}
