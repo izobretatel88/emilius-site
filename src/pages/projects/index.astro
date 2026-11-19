@@ -111,7 +111,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       </div>
       {p.id==='wizzu' && <p class="project-result"><span><strong>2000+</strong> заказов в месяц — стартап вырос с нуля</span></p>}
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
-      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
+      <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
     </article>)}
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
@@ -155,7 +155,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Превью — общий компонент ProjectPreview (src/styles/portfolio.css); в галерее оно открывает окно просмотра */
   .project :global(.project-preview){cursor:zoom-in}
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
-  a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
+  a.project-result,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
   .project-caption>div{min-width:0;flex:1 1 220px}
   .project-kind{font-size:var(--fs-small);color:var(--ink-2);margin-bottom:5px}
@@ -166,7 +166,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Метка этапа — общий класс .ui-stage-tag (layout.css): точка цвета этапа и направление, без дней колеса */
   .project-stage{margin-top:2px}
   .project-site{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere;max-width:100%;flex-shrink:1}
-  .project-inquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
+  /* «Хочу похожий…» — общий класс .project-inquiry (src/styles/portfolio.css) */
   p.project-result{margin-bottom:0}
   .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:var(--fs-body);min-height:64px}
   /* Бирюзовый — цвет ссылок: цифра красится только там, где строка ведёт на кейс */
@@ -279,11 +279,6 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project h2,.project-featured h2{font-size:26px}
     .project-role{margin-top:6px}
     .project-site{align-self:flex-start}
-    .project-inquiry{display:flex;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:10px 16px;border:1px solid var(--teal-text);border-radius:var(--radius-btn);background:var(--card);color:var(--teal-text);text-align:center;text-decoration:none;line-height:1.4;transition:background-color var(--hover),color var(--hover),transform var(--press)}
-    .project-inquiry:focus-visible {background:var(--teal-btn);color:var(--on-teal)}
-    /* На телефоне наведения нет: кнопка отвечает на касание заливкой и коротким сжатием */
-    .project-inquiry:active {background:var(--teal-btn);color:var(--on-teal);transform: scale(var(--press-scale))}
-    @media (hover: hover) and (pointer: fine) { .project-inquiry:hover {background:var(--teal-btn);color:var(--on-teal)} }
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
     .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
@@ -299,5 +294,5 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-inquiry{margin-left:0}
     .viewer-meta{padding:6px 12px}
   }
-  @media(prefers-reduced-motion:reduce){.project-inquiry,.result-arrow{transition:none}a.project-result .result-arrow{transform:none!important}}
+  @media(prefers-reduced-motion:reduce){.result-arrow{transition:none}a.project-result .result-arrow{transform:none!important}}
 </style>

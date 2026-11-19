@@ -79,7 +79,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-preview, .project-preview img, .preview-action { transition: none; }
+  .project-preview, .project-preview img, .preview-action, .project-inquiry { transition: none; }
   .project-preview:active { transform: none; }
 }
 
@@ -98,6 +98,46 @@
 }
 .project-card > :not(.project-preview) { margin-inline: 16px; }
 .project-card > .project-preview + * { margin-top: 20px; }
+
+/* Действие карточки «Хочу похожий магазин / сайт» — одно на галерее, главной и направлениях.
+   Компьютер: текстовое действие по общему правилу (бирюзовый текст, стрелка, подчёркивание при наведении и в фокусе).
+   Телефон: кнопка с рамкой во всю ширину карточки — заметная цель касания, заливается при нажатии */
+.project-inquiry {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+  color: var(--teal-text);
+  text-decoration: underline transparent;
+  text-underline-offset: 4px;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--hover), background-color var(--hover), text-decoration-color var(--hover), transform var(--press);
+}
+.project-inquiry:focus-visible { text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) {
+  .project-inquiry:hover { text-decoration-color: currentColor; }
+}
+
+@media (max-width: 700px) {
+  .project-inquiry {
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+    justify-self: stretch; /* подпись на главной — grid */
+    min-height: 48px;
+    padding: 10px 16px;
+    border: 1px solid var(--teal-text);
+    border-radius: var(--radius-btn);
+    background: var(--card);
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+  }
+  .project-inquiry:focus-visible, .project-inquiry:active { background: var(--teal-btn); color: var(--on-teal); }
+  .project-inquiry:active { transform: scale(var(--press-scale)); }
+}
 
 @media (max-width: 700px) {
   .project-card { padding: 8px 8px 18px; }
