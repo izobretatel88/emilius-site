@@ -22,6 +22,7 @@ export function setupProjectViewer() {
   const role = viewer.querySelector<HTMLElement>('.viewer-role');
   const error = viewer.querySelector<HTMLElement>('.viewer-error')!;
   const inquiry = viewer.querySelector<HTMLAnchorElement>('.viewer-inquiry')!;
+  const inquiryText = inquiry.querySelector<HTMLElement>('.viewer-inquiry-text') ?? inquiry;
   const screensControl = viewer.querySelector<HTMLElement>('.viewer-screens')!;
   const devicesControl = viewer.querySelector<HTMLElement>('.viewer-devices')!;
   const deviceButtons = [...devicesControl.querySelectorAll<HTMLButtonElement>('[data-device]')];
@@ -221,7 +222,10 @@ export function setupProjectViewer() {
     project = selected;
     title.textContent = selected.name;
     inquiry.href = selected.inquiry;
-    inquiry.textContent = selected.label ?? 'Хочу похожий магазин';
+    // Как на карточке (§3.2 дизайн-системы портфолио): подпись, стрелка ухода →, имя проекта для диктора
+    const inquiryLabel = selected.label ?? 'Хочу похожий магазин';
+    inquiryText.textContent = inquiryLabel;
+    inquiry.setAttribute('aria-label', `${inquiryLabel} — ${selected.name}`);
     if (role) role.textContent = selected.role ?? '';
     const name = (n: number) => links[n] ? projects[links[n].dataset.projectPreview!].name : '';
     if (prevProject && nextProject) {
