@@ -31,6 +31,9 @@ export function setupPreviewVideos(root: ParentNode = document) {
     let intent = 0;
     let rewind = 0;
     let wanted = false;
+    // Превью нажали (открылось окно просмотра) — фокус вернётся на него программой при закрытии окна;
+    // этот возврат видео не запускает: проект только что смотрели крупно
+    let returning = false;
 
     const load = () => {
       if (video.getAttribute('src')) return;
@@ -70,11 +73,11 @@ export function setupPreviewVideos(root: ParentNode = document) {
     };
     const player: Player = { preview, start, stop, done: false };
     // Конец ролика: не прыгаем от подвала к шапке, а гасим видео до снимка.
-    // Мышь (видео по наведению) — перематываем и проявляем снова. Телефон (видео пошло само) — один раз
+    // Мышь над превью — перематываем и проявляем снова. Телефон (видео пошло само) и фокус с клавиатуры — один раз
     // и остаёмся на снимке: движение, которое не остановить, не крутится бесконечно (WCAG 2.2.2)
     video.addEventListener('ended', () => {
       preview.classList.remove('is-playing');
-      if (!canHover.matches) {
+      if (!canHover.matches || !preview.matches(':hover')) {
         player.done = true;
         wanted = false;
         rewind = window.setTimeout(() => { video.currentTime = 0; }, FADE);
@@ -94,13 +97,20 @@ export function setupPreviewVideos(root: ParentNode = document) {
       if (e.pointerType === 'mouse' && !preview.matches(':focus-visible')) stop();
     });
     preview.addEventListener('focus', () => {
-      if (preview.matches(':focus-visible')) start(0);
+      if (returning) { returning = false; return; }
+      if (preview.matches(':focus-visible') && !player.done) start(0);
     });
     preview.addEventListener('blur', () => {
-      if (canHover.matches && !preview.matches(':hover')) stop();
+      if (!canHover.matches) return;
+      // Ушли с превью — следующий фокус снова покажет ролик
+      if (!returning) player.done = false;
+      if (!preview.matches(':hover')) stop();
     });
     // Превью открыло окно просмотра или ушло по ссылке — видео под ним больше не нужно
-    preview.addEventListener('click', stop);
+    preview.addEventListener('click', () => {
+      stop();
+      if (preview.hasAttribute('aria-haspopup')) returning = true;
+    });
   });
   if (!players.length) return;
 
