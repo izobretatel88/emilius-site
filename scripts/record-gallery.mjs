@@ -37,9 +37,9 @@ const args = process.argv.slice(2);
 const PHONE = args.includes('--phone');
 const picked = args.filter((a) => a !== '--phone');
 const ids = picked.length ? picked : Object.keys(SITES);
-// Телефон: экран iPhone 13 (390×844), снимаем в 2× — в окне просмотра телефон шириной до 390 px
+// Телефон: iPhone 13: видимая часть 390×664 (без панелей Safari), снимаем и храним в 2× (780 px): в окне просмотра телефон шириной 390 px, на Retina — 780 точек
 const SHOT = PHONE
-  ? { view: { width: 390, height: 844 }, speed: 260, max: 4200, outDir: 'public/video/gallery/phone', scale: '600:-2', crf: '32' }
+  ? { view: { width: 390, height: 844 }, speed: 260, max: 4200, outDir: 'public/video/gallery/phone', scale: '780:-2', crf: '32' }
   : { view: VIEW, speed: SPEED, max: MAX_SCROLL, outDir: 'public/video/gallery', scale: `${OUT.width}:${OUT.height}`, crf: '30' };
 mkdirSync(SHOT.outDir, { recursive: true });
 
@@ -117,8 +117,8 @@ async function record(browser, id) {
   if (!PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `public/video/gallery/${id}.mp4`, '-an',
     '-vf', 'scale=640:-2:flags=lanczos', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-crf', '31', '-preset', 'slow', '-movflags', '+faststart', `public/video/gallery/${id}-640.mp4`]);
-  // Постер мобильного видео — первый кадр: в окне просмотра вместо пустого поля, пока видео грузится
-  // (у проектов с мобильным снимком постером служит он сам)
+  // Постер мобильного видео — его первый кадр: в окне просмотра вместо пустого поля, пока видео грузится.
+  // Мобильный снимок постером не годится: он часто с каталога, а видео начинается с главной — был бы скачок
   if (PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `${SHOT.outDir}/${id}.mp4`, '-frames:v', '1',
     '-c:v', 'libwebp', '-quality', '75', `${SHOT.outDir}/${id}.webp`]);
   rmSync(dir, { recursive: true, force: true });
