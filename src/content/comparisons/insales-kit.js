@@ -10,18 +10,22 @@
   const empty = document.querySelector('#empty');
   const scroll = document.querySelector('.scroll');
   const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е').replaceAll('1c', '1с');
+  // Поиск по смыслу, а не по точной форме слова: «алиса» находит «Алисе», «рассрочка» — оплату частями
+  const synonyms = {рассрочк: ['частями', 'сплит', 'долями'], кредит: ['частями', 'сплит'], бонус: ['лояльн'], кешбэк: ['бонус'], кэшбэк: ['бонус'], сертификат: ['подарочн'], склад: ['остатк'], выгрузк: ['экспорт'], сдэк: ['cdek'], cdek: ['сдэк']};
+  const stem = term => term.length > 4 ? term.replace(/(ами|ями|ого|ему|ой|ей|ий|ый|ая|яя|ое|ее|ые|ие|ов|ев|ам|ям|ах|ях|ом|ем|ы|и|а|я|е|у|ю|о|ь)$/, '') : term;
+  const variants = term => { const base = stem(term); return [base, ...(synonyms[base] || [])]; };
   let mode = 'all';
   rows.forEach(row => { row.searchText = normalize(row.dataset.search); });
 
   function update(writeURL = true, preserveHash = false) {
-    const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+    const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean).map(variants);
     let shown = 0;
     for (const section of sections) {
       let sectionCount = 0;
       for (const row of section.querySelectorAll('[data-feature]')) {
         const visible = (!group.value || section.dataset.group === group.value)
           && (mode === 'all' || row.dataset[mode] === 'true')
-          && terms.every(term => row.searchText.includes(term));
+          && terms.every(alts => alts.some(term => row.searchText.includes(term)));
         row.hidden = !visible;
         const noteRow = row.nextElementSibling;
         if (noteRow?.matches('[data-note-for]')) noteRow.hidden = !visible;

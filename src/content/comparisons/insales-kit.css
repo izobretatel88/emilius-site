@@ -180,3 +180,6 @@
 .platform-comparison .choose-more{white-space:nowrap;font-size:14px;display:inline-block;padding:4px 2px;margin:-4px -2px}
 .platform-comparison .choose-note{margin:0;font-size:13px;color:var(--ink-2)}
 @media(max-width:760px){.platform-comparison .choose-cols>div{padding:18px 16px}.platform-comparison .choose h2{font-size:21px}}
+
+.platform-comparison .empty-ask{margin-top:16px;font-size:var(--fs-small);line-height:1.6;color:var(--ink-2)}
+.platform-comparison .empty-ask a{color:var(--teal-text)}
