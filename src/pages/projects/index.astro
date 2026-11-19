@@ -124,7 +124,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь <br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
-    <div class="viewer-toolbar"><div class="viewer-heading"><h2 id="viewer-title">{projects[0].name}</h2><p class="viewer-role"></p></div><div class="viewer-actions"><div class="viewer-projects" role="group" aria-label="Другие проекты"><button type="button" data-prev-project aria-label="Предыдущий проект"><span aria-hidden="true">←</span></button><button type="button" data-next-project aria-label="Следующий проект"><span aria-hidden="true">→</span></button></div><button type="button" data-close-viewer aria-label="Закрыть просмотр"><span class="viewer-close-text">Закрыть</span><span aria-hidden="true">×</span></button></div></div>
+    <div class="viewer-toolbar"><div class="viewer-heading"><h2 id="viewer-title" tabindex="-1">{projects[0].name}</h2><p class="viewer-role"></p></div><div class="viewer-actions"><div class="viewer-projects" role="group" aria-label="Другие проекты"><button type="button" data-prev-project aria-label="Предыдущий проект"><span aria-hidden="true">←</span></button><button type="button" data-next-project aria-label="Следующий проект"><span aria-hidden="true">→</span></button></div><button type="button" data-close-viewer aria-label="Закрыть просмотр"><span class="viewer-close-text">Закрыть</span><span aria-hidden="true">×</span></button></div></div>
     <div class="viewer-controls">
       <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
       <div class="viewer-modes" role="group" aria-label="Снимок или видео"><button type="button" data-mode="shot" aria-pressed="true">Снимок</button><button type="button" data-mode="video" aria-pressed="false">Видео</button></div>
@@ -233,6 +233,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* На сером поле ошибки кнопка — белая плитка, иначе сливается с фоном */
   .viewer-error button{background:var(--card)}
   .viewer-controls button[hidden],.viewer-paging[hidden],.viewer-error[hidden]{display:none}
+  /* Фокус при открытии окна — на заголовке (его читает диктор); заголовок не элемент управления, рамка не нужна */
+  #viewer-title:focus{outline:none}
   .viewer-inquiry{display:inline-flex;align-items:center;gap:.35em;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
   /* Переключателей нет (один вид, снимок помещается) — ссылка не висит одна у правого края пустой полосы, а встаёт в начало, под название */
   .viewer-controls:not(:has(>[role='group']:not([hidden]))) .viewer-inquiry{margin-left:0}

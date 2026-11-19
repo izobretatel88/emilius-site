@@ -274,6 +274,9 @@ export function setupProjectViewer() {
       // Браузер вернёт фокус на эту карточку сам при закрытии — видео превью от этого не запускается (preview-video.ts)
       link.setAttribute('data-returning', '');
       viewer.scrollTop = 0;
+      // Первым диктор слышит название проекта, а не «Следующий проект: …» — первую кнопку панели,
+      // на которую браузер ставит фокус сам. Tab от заголовка ведёт к ← → и «Закрыть»
+      title.focus({preventScroll: true});
     });
   });
   deviceButtons.forEach(button => button.addEventListener('click', () => {
