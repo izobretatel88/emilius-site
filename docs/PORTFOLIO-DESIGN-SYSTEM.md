@@ -3,6 +3,7 @@
 > **Версия 1 от 19.11.2026.** Часть общей дизайн-системы (`docs/EMILIUS-DESIGN-SYSTEM.md`): цвета, шрифт, радиусы, движение и голос — оттуда. Здесь — то, что относится только к показу работ: превью, карточка проекта, видео, окно просмотра, подписи и съёмка материалов.
 > Источник истины — код: `src/components/ProjectPreview.astro`, `src/styles/portfolio.css`, `src/lib/preview-video.ts`, `src/lib/project-viewer.ts`, `scripts/record-gallery.mjs`, токены в `src/styles/tokens.css`.
 > Аудит, на котором она основана, — `docs/PORTFOLIO-AUDIT-2026-11-19.md`.
+> Живые образцы — раздел «Портфолио» на служебной странице `/styleguide/`.
 
 ---
 
