@@ -63,7 +63,6 @@
 .platform-comparison .section-row th>span{position:sticky;left:22px}
 .platform-comparison .section-row small{color:var(--ink-2);font-size:13px;margin-left:8px;font-weight:400}
 .platform-comparison .status{display:flex;gap:7px;align-items:baseline;font-weight:700;line-height:1.35}
-.platform-comparison .status>span{min-width:14px}
 .platform-comparison .yes{color:var(--teal-text)}
 .platform-comparison .no{color:var(--negative)}
 .platform-comparison .unknown{color:var(--ink-2);font-weight:400}
@@ -148,9 +147,19 @@
 .platform-comparison .kit-answers{background:var(--card);border-radius:var(--radius-card);padding:24px;display:grid;gap:14px;scroll-margin-top:16px}
 .platform-comparison .kit-answers h2{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
 .platform-comparison .kit-answers-lead,.platform-comparison .kit-answers-note{margin:0;color:var(--ink-2);font-size:14px;line-height:1.45;max-width:72ch}
-.platform-comparison .kit-answers-list{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px 28px}
-.platform-comparison .kit-answers-list li{font-size:15px;line-height:1.45;padding-top:12px;border-top:1px solid var(--hair)}
+.platform-comparison .kit-answers-list{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:20px 32px}
+.platform-comparison .kit-answers-list li{font-size:15px;line-height:1.45}
 .platform-comparison .kit-answers-list strong{font-weight:700}
 @media(max-width:760px){.platform-comparison .kit-answers{padding:18px 16px}.platform-comparison .kit-answers h2{font-size:21px}}
 .platform-comparison .kit-answers-more>summary{margin-block:0}
 .platform-comparison .kit-answers-more[open]>summary{margin-bottom:12px}
+/* Значки статусов: один набор SVG вместо текстовых символов ✓ × ? ◐ — одинаковые толщина и высота в любом шрифте; цвет берут от статуса */
+.platform-comparison .si{flex:none;align-self:flex-start;width:14px;height:14px;margin-top:.22em;background:currentColor;-webkit-mask:var(--si) center/contain no-repeat;mask:var(--si) center/contain no-repeat}
+.platform-comparison .si-yes{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 8.5l3.2 3.2L13 4.8'/></svg>")}
+.platform-comparison .si-no{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 4.5l7 7M11.5 4.5l-7 7'/></svg>")}
+.platform-comparison .si-unknown{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='8' cy='8' r='5.5' stroke-width='1.6'/></svg>")}
+.platform-comparison .si-partial{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='8' cy='8' r='5.5' stroke-width='1.6'/><path d='M8 2.5a5.5 5.5 0 0 1 0 11z' fill='black' stroke='none'/></svg>")}
+.platform-comparison .si-soon{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='8' cy='8' r='5.5' stroke-width='1.6'/><path d='M8 5v3.2l2 1.6' stroke-width='1.6'/></svg>")}
+.platform-comparison .si-link{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 11l6-6M6.5 5H11v4.5'/></svg>")}
+.platform-comparison .si-dot{--si:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='8' cy='8' r='2.5' fill='black' stroke='none'/></svg>")}
+@media (forced-colors:active){.platform-comparison .si{background:CanvasText}}

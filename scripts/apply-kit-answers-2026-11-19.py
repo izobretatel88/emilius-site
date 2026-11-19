@@ -148,10 +148,11 @@ OK = {'yes', 'connection'}
 SOFT = {'unknown', 'caution'}
 
 def status_html(st):
-    return f'<span class="status {st[0]}"><span aria-hidden="true">{st[1]}</span>{st[2]}</span>'
+    icon = {'✓': 'yes', '×': 'no', '◐': 'partial', '◷': 'soon', '↗': 'link', '·': 'dot'}[st[1]]
+    return f'<span class="status {st[0]}"><span class="si si-{icon}" aria-hidden="true"></span>{st[2]}</span>'
 
 row_re = re.compile(r'<tr id="(F\d{3})" data-feature data-search="[^"]*" data-different="\w+" data-uncertain="\w+" data-confirmed="\w+">\n(<th scope="row">.*?</th>)\n<td>(.*?)</td><td>(.*?)</td><td class="note">(.*?)</td></tr>(<tr class="mobile-note-row" data-note-for="F\d{3}">.*?</tr>)?', re.S)
-cls_re = re.compile(r'<span class="status (\w+)"><span aria-hidden="true">[^<]*</span>([^<]*)</span>')
+cls_re = re.compile(r'<span class="status (\w+)"><span[^>]*aria-hidden="true">[^<]*</span>([^<]*)</span>')
 
 changed = 0
 def repl(m):

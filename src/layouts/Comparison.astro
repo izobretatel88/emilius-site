@@ -78,10 +78,12 @@ const related=[
     .platform-comparison :global(.platform-col){width:31%}
     .platform-comparison :global(.note-col){width:0}
     .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
-    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:anywhere}
-    .platform-comparison :global(.status){display:block;font-size:13px}
+    .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:break-word}
+    /* «Не поддерживается» и «Не подтверждено» в узкой колонке переносятся по слогам, а не рвутся посреди слова */
+    .platform-comparison :global(.status){display:block;font-size:13px;hyphens:auto;-webkit-hyphens:auto}
     .platform-comparison :global(.scroll td>.status){display:block}
     .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
+    .platform-comparison :global(.status>.si){width:12px;height:12px;margin-top:0;vertical-align:-1px}
     .platform-comparison :global(.source){display:flex;font-size:13px;margin:2px 0 0}
     .platform-comparison :global(.source span){display:none}
     .platform-comparison :global(.mobile-note-row){display:table-row}
