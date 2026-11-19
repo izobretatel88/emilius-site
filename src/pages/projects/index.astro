@@ -11,7 +11,7 @@ import {href} from '../../lib/urls';
 import {SECTORS} from '../../data/site';
 import {SERVICES} from '../../data/services';
 import {similarLabel} from '../../lib/project-inquiry';
-import {PREVIEW_SIZES} from '../../lib/preview-sizes';
+import {PREVIEW_SIZES,previewSrcset} from '../../lib/preview-sizes';
 
 // Метка этапа: проект показан как кейс направления (SERVICES[...].cases) — значит, работа шла на этом этапе итерации.
 // Берём только эту связь из данных; у проектов без неё метки нет. Дни этапа на колесе (27–39 и т. п.) здесь
@@ -102,7 +102,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
         data-project-preview={p.id}
         label={`Смотреть крупнее: ${p.name}`}
         whole={p.whole}
-        image={{src:href(p.image),srcset:p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined,sizes:index===0?PREVIEW_SIZES.featured:PREVIEW_SIZES.gallery,width:p.width,height:p.height,alt:`Главная страница сайта ${p.name}`,eager:index===0}}
+        image={{src:href(p.image),srcset:p.small?previewSrcset(p.id):undefined,sizes:index===0?PREVIEW_SIZES.featured:PREVIEW_SIZES.gallery,width:p.width,height:p.height,alt:`Главная страница сайта ${p.name}`,eager:index===0}}
         video={p.video?{src:href(p.video),small:href(p.video.replace('.mp4','-640.mp4'))}:undefined}
         action="Смотреть крупнее"
       />

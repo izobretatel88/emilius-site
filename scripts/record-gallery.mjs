@@ -32,7 +32,7 @@ const PLAY = { navalishenskoe: '.hero-video-control' };
 
 const VIEW = { width: 1440, height: 900 }; // 8:5 — как снимки галереи
 const OUT = { width: 1280, height: 800 };
-// Снимок галереи — первый кадр этой же записи (public/cases/gallery/{id}-1600.webp и -800.webp): превью и окно
+// Снимок галереи — первый кадр этой же записи (public/cases/gallery/{id}-1600.webp, -1200.webp и -800.webp): превью и окно
 // просмотра показывают его, а видео начинается с него же — переход «снимок → видео» без шва.
 // Поэтому кадры снимаем сразу в 1600×1000 (масштаб 1600/1440), видео уменьшаем до 1280×800.
 const STILL = 1600;
@@ -197,7 +197,8 @@ async function record(browser, id) {
   // Мобильный снимок постером не годится: он часто с каталога, а видео начинается с главной — был бы скачок
   if (PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `${SHOT.outDir}/${id}.mp4`, '-frames:v', '1',
     '-c:v', 'libwebp', '-quality', '75', `${SHOT.outDir}/${id}.webp`]);
-  if (!PHONE) for (const w of [STILL, STILL / 2]) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(dir, 'still.png'),
+  // 1200 — для карточек сетки на Retina (557 px × 2): 1600 там с запасом в треть веса
+  if (!PHONE) for (const w of [STILL, 1200, STILL / 2]) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', join(dir, 'still.png'),
     '-vf', `scale=${w}:-2:flags=lanczos`, '-c:v', 'libwebp', '-quality', '82', `public/cases/gallery/${id}-${w}.webp`]);
   rmSync(dir, { recursive: true, force: true });
   console.log(id, `${(n / FPS).toFixed(1)} с, прокрутка ${dist}px`);

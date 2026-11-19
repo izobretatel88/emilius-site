@@ -59,7 +59,7 @@
 | Часть | Правило |
 |---|---|
 | Ссылка | Вся плитка — одна ссылка. `aria-label` называет действие и проект: «Смотреть проект Aloha Gaia» |
-| Снимок | 8:5, `object-fit: cover`, `object-position: top`. `srcset` 800w/1600w, `sizes` — только из `PREVIEW_SIZES` (`src/lib/preview-sizes.ts`, по замеру). Первый на странице (крупная карточка галереи) — `eager` и `fetchpriority=high`, остальные — `lazy` |
+| Снимок | 8:5, `object-fit: cover`, `object-position: top`. `srcset` 800w/1200w/1600w — `previewSrcset(id)`, `sizes` — только из `PREVIEW_SIZES` (`src/lib/preview-sizes.ts`, по замеру). Первый на странице (крупная карточка галереи) — `eager` и `fetchpriority=high`, остальные — `lazy` |
 | Видео | Поверх снимка, прозрачное до первого кадра. `preload="none"`, `muted`, `playsinline`, `aria-hidden`, вне табуляции. Источник ставится только перед первым показом |
 | Плашка | Белая, r13, справа внизу 14 px (телефон 10), 13 px / 600. Наведение, фокус, касание — заливается `--teal-btn` |
 | `whole` | Кадр шире 8:5 (Marine Garden: снимок 1600×860, запись владельца) — целиком, по центру серого поля, без обрезки |
@@ -122,7 +122,7 @@
 |---|---|---|
 | `public/video/gallery/{id}.mp4` | 1280×800, 10–21 с, 30 к/с, CRF 30 | `node scripts/record-gallery.mjs {id}` |
 | `public/video/gallery/{id}-640.mp4` | 640×400, CRF 31 | Тот же запуск |
-| `public/cases/gallery/{id}-1600.webp`, `-800.webp` | 1600×1000 / 800×500 | Первый кадр той же записи, без потерь |
+| `public/cases/gallery/{id}-1600.webp`, `-1200.webp`, `-800.webp` | 1600×1000 / 1200×750 / 800×500 | Первый кадр той же записи, без потерь |
 | `public/video/gallery/phone/{id}.mp4`, `.webp` | 780×1328 (iPhone 13, 2×), CRF 32; `.webp` — первый кадр | `node scripts/record-gallery.mjs --phone {id}` |
 | `public/cases/mobile/{id}.webp` | 520 px | Мобильные снимки владельца (каталог) |
 
