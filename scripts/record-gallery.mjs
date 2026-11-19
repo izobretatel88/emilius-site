@@ -23,6 +23,7 @@ const SITES = {
   'ss-sk': 'https://ss-sk.ru/',
   nsorganic: 'https://nsorganic.ru/',
   navalishenskoe: 'https://navalishenskoe.ru/',
+  'marine-garden': 'https://marinegarden-sochi.ru/',
 };
 
 // Кнопка воспроизведения главного видео сайта — где оно не идёт само. Навалишенское (наша работа):

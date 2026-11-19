@@ -20,7 +20,7 @@ const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id))
 
 const captions:Record<string,{kind:string;role:string;updated?:boolean;landing?:boolean;height?:number;whole?:boolean}> = {
   // Лендинг: видео — запись прокрутки владельца (18.11.2026), адреса сайта пока нет
-  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,landing:true,height:860,whole:true},
+  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,landing:true},
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на inSales · местное SEO',updated:true},
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
   duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales',updated:true},
@@ -40,7 +40,7 @@ const template=(id:string)=>{const x=TEMPLATE_SHOPS.find(t=>t.id===id)!;return {
 const projects=[
   PROJECTS.find(p=>p.id==='alohagaia')!,
   // Адрес лендинга пока не знаем — карточка без ссылки на сайт
-  {id:'marine-garden',name:'Marine Garden Sochi',shot:'cases/gallery/marine-garden-800.webp',url:'',domain:''},
+  {id:'marine-garden',name:'Marine Garden Sochi',shot:'cases/gallery/marine-garden-800.webp',url:'https://marinegarden-sochi.ru/',domain:'marinegarden-sochi.ru'},
   {id:FRESH_SHOP.id,name:FRESH_SHOP.name,shot:'cases/happyanimal.webp',url:FRESH_SHOP.url,domain:FRESH_SHOP.domain},
   ...['duman','wizzu','geekboards'].map(id=>PROJECTS.find(p=>p.id===id)!),
   {id:'zalina',name:shop('Zalina Verkhovskaya').name,shot:'cases/gallery/zalina-800.webp',url:shop('Zalina Verkhovskaya').url,domain:shop('Zalina Verkhovskaya').domain},
@@ -74,13 +74,13 @@ const shotDates:Record<string,string>={
   alohagaia:'19.11.2026',duman:'19.11.2026',
   happyanimal:'19.11.2026',wizzu:'19.11.2026',zalina:'19.11.2026',mnogoles:'19.11.2026',navalishenskoe:'19.11.2026',
   geekboards:'19.11.2026',almatennis:'19.11.2026','ss-sk':'19.11.2026',nsorganic:'19.11.2026',
-  'marine-garden':'18.11.2026',
+  'marine-garden':'19.11.2026',
 };
 const PHONE_SHOT_DATE='27.10.2026'; // мобильные снимки — скриншоты владельца, public/cases/mobile/
-// Видео прокрутки: сняты scripts/record-gallery.mjs 18.11.2026, переснятые — своей датой; Marine Garden — запись владельца
-const videoDates:Record<string,string>={'marine-garden':'18.11.2026'};
+// Видео прокрутки: сняты scripts/record-gallery.mjs 18.11.2026, переснятые — своей датой
+const videoDates:Record<string,string>={};
 const VIDEO_DATE='19.11.2026';
-// Мобильная прокрутка (iPhone 13) — `record-gallery.mjs --phone`, public/video/gallery/phone/; у Marine Garden нет — адреса не знаем
+// Мобильная прокрутка (iPhone 13) — `record-gallery.mjs --phone`, public/video/gallery/phone/
 const PHONE_VIDEO_DATE='19.11.2026';
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
