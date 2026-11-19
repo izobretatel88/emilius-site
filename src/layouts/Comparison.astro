@@ -15,7 +15,7 @@ import detailScript from '../content/comparisons/insales-kit.js?raw';
 interface Props {kind:'general'|'detail';}
 const {kind}=Astro.props;
 const detailed=kind==='detail';
-const title=detailed?'inSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
+const title=detailed?'inSales или Яндекс KIT: что выбрать и чем отличаются':'Сравнение платформ для интернет-магазина';
 const description=detailed?'Чем отличаются inSales и Яндекс KIT: кому что подходит, 348 функций с источниками и ответы команды KIT на 28 вопросов (ноябрь 2026).':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
 const html=detailed?detailHtml:generalHtml;
 const css=detailed?detailCss:generalCss;
