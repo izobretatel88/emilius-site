@@ -165,7 +165,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Что мы сделали — главное в подписи: основной кегль и полный цвет текста, а не серая сноска */
   .project-role{font-size:var(--fs-body);line-height:1.5;color:var(--ink);margin-top:8px}
   /* Метка этапа — общий класс .ui-stage-tag (layout.css): точка цвета этапа и направление, без дней колеса */
-  .project-stage{margin-top:2px}
+  /* Между метками 16 px — вдвое больше, чем точка ↔ своё слово: иначе точка следующей метки липнет к предыдущему слову («Дизайн• Разработка») */
+  .project-stage{margin-top:2px;margin-right:16px}
   /* Адрес сайта — общий класс .project-site (src/styles/portfolio.css) */
   .project-site{flex-shrink:1}
   /* «Хочу похожий…» — общий класс .project-inquiry (src/styles/portfolio.css) */
