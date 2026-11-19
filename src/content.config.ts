@@ -1,9 +1,22 @@
-// Блог: статьи лежат в src/content/blog/<адрес-статьи>.md. Как добавить статью — docs/BLOG.md.
+// Блог: статьи лежат в src/content/blog/<адрес-статьи>.md (или .mdx — со вставками компонентов).
+// Как добавить статью, в том числе через редактор Pages CMS, — docs/BLOG.md.
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// Имя файла — адрес статьи. Редактор Pages CMS даёт задать его вручную, поэтому проверяем:
+// только латиница в нижнем регистре, цифры и дефисы, иначе сборка остановится с понятной ошибкой.
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 const blog = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/blog',
+    generateId: ({ entry }) => {
+      const id = entry.replace(/\.mdx?$/, '');
+      if (!SLUG.test(id)) throw new Error(`Блог: адрес статьи «${entry}» — только латиница a–z, цифры и дефисы, например edinye-ostatki-wb-ozon.md`);
+      return id;
+    },
+  }),
   schema: z.object({
     title: z.string().max(70), // <title> и заголовок в выдаче: до ~60 знаков
     h1: z.string(), // заголовок на странице, может быть длиннее и живее

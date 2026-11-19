@@ -1,0 +1,107 @@
+# Pages CMS (https://app.pagescms.org): веб-редактор блога поверх этого репозитория.
+# Каждое сохранение — коммит в выбранную ветку. Поля повторяют схему из src/content.config.ts:
+# если здесь что-то поменять, поменяйте и там (сборка проверяет статьи именно по схеме).
+# Инструкция — docs/BLOG.md, раздел «Редактор Pages CMS».
+
+media:
+  - name: blog
+    label: Картинки блога
+    input: public/blog
+    output: /blog
+    rename: safe
+    extensions: [webp, jpg, jpeg, png, svg]
+
+content:
+  - name: blog
+    label: Блог
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    # Имя файла = адрес статьи (/blog/<адрес>/). Задаётся один раз при создании, только латиница и дефисы:
+    # stoimost-insales-pervyy-god.md. Кириллицу сборка не пропустит.
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      primary: h1
+      fields: [h1, date, draft]
+      sort: date
+      order: desc
+    fields:
+      - name: h1
+        label: Заголовок на странице
+        type: string
+        required: true
+      - name: title
+        label: Заголовок для поиска (<title>, до 60 знаков)
+        type: string
+        required: true
+        options:
+          maxlength: 70
+      - name: description
+        label: Описание для поиска (140–160 знаков)
+        type: text
+        required: true
+        options:
+          minlength: 80
+          maxlength: 200
+      - name: draft
+        label: Черновик — на сайт не выходит
+        type: boolean
+        default: true
+      - name: date
+        label: Дата публикации
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updated
+        label: Дата обновления
+        type: date
+        options:
+          format: yyyy-MM-dd
+      - name: reviewBy
+        label: Перепроверить цены и тарифы до
+        type: date
+        options:
+          format: yyyy-MM-dd
+      - name: cover
+        label: Обложка 1200×630
+        type: image
+        required: true
+        options:
+          media: blog
+      - name: coverAlt
+        label: Что на обложке (для незрячих и поисковиков)
+        type: string
+        required: true
+      - name: readingMinutes
+        label: Минут на чтение
+        type: number
+        required: true
+        default: 5
+      - name: mainQuery
+        label: Главный поисковый запрос
+        type: string
+      - name: tags
+        label: Теги
+        type: string
+        list: true
+      - name: faq
+        label: Вопросы и ответы (разметка FAQ; повторите вопросы из текста)
+        type: object
+        list: true
+        fields:
+          - name: q
+            label: Вопрос
+            type: string
+          - name: a
+            label: Ответ
+            type: text
+      - name: body
+        label: Текст статьи
+        type: rich-text
+        options:
+          format: markdown
+          media: blog
+          switcher: true
