@@ -73,7 +73,8 @@ const related=[
   /* Строка подсвечивается целиком, как карточки на главной: глазу проще держать строку от названия до оговорки */
   .platform-comparison :global(.scroll tbody th[scope=row]),.platform-comparison :global(.scroll tbody td){transition:background-color var(--hover)}
   @media (hover: hover) and (pointer: fine){
-    .platform-comparison :global(.scroll tr[data-feature]:hover>*),.platform-comparison :global(.scroll tr[data-feature]:hover+.mobile-note-row>td),.platform-comparison :global(.scroll tr[data-feature]:has(+.mobile-note-row:hover)>*){background:var(--well)}
+    .platform-comparison :global(.scroll tr[data-feature]:hover>*),.platform-comparison :global(.scroll tr[data-feature]:hover+.mobile-note-row>td),.platform-comparison :global(.scroll tr[data-feature]:has(+.mobile-note-row:hover)>*){background:var(--input-bg)}
+    .platform-comparison :global(.scroll tr[data-feature]:hover .feature-link){color:var(--teal-text)}
   }
   /* «Источник» — тихая серая ссылка, не спорит со статусом */
   .platform-comparison :global(.scroll .source){color:var(--ink-2)}
