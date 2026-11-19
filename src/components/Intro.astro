@@ -79,8 +79,9 @@ const music = `${root}brand/music.mp3`;
     // считают навязчивым (решение владельца 25.10.2026). Отметка «видел» — чтобы заставка не всплыла позже за визит.
     var fromSearch = false;
     try { fromSearch = /(^|\.)(google|yandex|bing|duckduckgo)\.[a-z.]+$|(^|\.)(ya\.ru|go\.mail\.ru)$/.test(new URL(document.referrer).hostname); } catch (e) {}
-    // Из галереи переходят к уже выбранной задаче: заставка не перекрывает форму.
-    var fromProject = location.hash === '#feedback' && new URLSearchParams(location.search).has('project');
+    // Пришли к форме (из галереи, со страницы направления, по ссылке «Обсудить проект») — задача уже выбрана:
+    // заставка не перекрывает форму (аудит портфолио 19.11.2026).
+    var fromProject = location.hash === '#feedback';
     if ((fromSearch || fromProject) && !forced) {
       try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (e) {}
     }
