@@ -122,7 +122,7 @@ const organization = {
             <div class="project-description">
               <h3 id={`case-${project.id}`}>{project.name}</h3>
               {project.id === 'wizzu' ? (
-                <p><strong class="project-result">С 0 до 2000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
+                <p><strong class="project-figure">С 0 до 2000+ заказов в месяц.</strong> Сайт-витрина и интеграции для сервиса доставки.</p>
               ) : (
                 <p>Фронтенд, интеграции с inSales и собственные модули для ювелирного бренда.</p>
               )}
@@ -249,7 +249,7 @@ const organization = {
   .client-strip a { -webkit-tap-highlight-color: transparent; }
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
   .project-description { display: grid; justify-items: start; }
-  .project-result { color: var(--ink); font-weight: 700; }
+  .project-figure { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
   .project-description h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 8px; }
   .project-description p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }

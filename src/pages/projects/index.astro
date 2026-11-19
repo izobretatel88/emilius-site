@@ -178,16 +178,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-site{flex-shrink:1}
   /* «Хочу похожий…» — общий класс .project-inquiry (src/styles/portfolio.css) */
   p.project-result{margin-bottom:0}
-  .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:var(--fs-body);min-height:64px}
+  /* Строка результата — общий класс .project-result (src/styles/portfolio.css) */
   /* Бирюзовый — цвет ссылок: цифра красится только там, где строка ведёт на кейс */
-  .project-result strong{color:var(--ink)}
-  a.project-result strong{color:var(--teal-text)}
-  @media (hover: hover) and (pointer: fine) { a.project-result:hover strong {text-decoration:underline;text-underline-offset:4px} }
   /* Строка ведёт на разбор кейса: стрелка справа и сдвиг на 3 px при наведении, фокусе и касании — как в списках-ссылках сайта */
-  .result-arrow{flex-shrink:0;color:var(--teal-text);font-size:24px;transition:transform var(--hover)}
-  a.project-result:focus-visible .result-arrow,a.project-result:active .result-arrow{transform:translateX(3px)}
-  @media (hover: hover) and (pointer: fine) { a.project-result:hover .result-arrow {transform:translateX(3px)} }
-  .result-date{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-small)}
   .gallery-contact{display:flex;flex-direction:column;align-items:start;justify-content:center;min-height:320px;padding:36px;background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
   /* Нечётное число карточек после крупной: приглашение остаётся без пары — растягиваем на ряд, без пустой половины */
   .gallery-contact:nth-child(even){grid-column:1/-1;min-height:0}
@@ -304,5 +297,4 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-inquiry{margin-left:0}
     .viewer-meta{padding:6px 12px}
   }
-  @media(prefers-reduced-motion:reduce){.result-arrow{transition:none}a.project-result .result-arrow{transform:none!important}}
 </style>

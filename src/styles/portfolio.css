@@ -79,7 +79,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-preview, .project-preview img, .preview-action, .project-inquiry { transition: none; }
+  .project-preview, .project-preview img, .preview-action, .project-inquiry, .result-arrow { transition: none; }
+  a.project-result .result-arrow { transform: none !important; } /* иначе перебивает :hover и :focus-visible */
   .project-preview:active { transform: none; }
 }
 
@@ -151,6 +152,23 @@
   .project-inquiry:focus-visible, .project-inquiry:active { background: var(--teal-btn); color: var(--on-teal); }
   .project-inquiry:active { transform: scale(var(--press-scale)); }
 }
+
+/* Строка результата: подтверждённая цифра с источником и датой (дизайн-система портфолио, §3.2 п. 7).
+   Отдельная строка с линией сверху; ссылка на разбор кейса — цифра бирюзовая, стрелка справа */
+.project-result {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--hair);
+  color: var(--ink); text-decoration: none; font-size: var(--fs-body); min-height: 64px;
+}
+.project-result strong { color: var(--ink); }
+a.project-result strong { color: var(--teal-text); }
+.result-arrow { flex-shrink: 0; color: var(--teal-text); font-size: 24px; transition: transform var(--hover); }
+a.project-result:focus-visible .result-arrow, a.project-result:active .result-arrow { transform: translateX(3px); }
+@media (hover: hover) and (pointer: fine) {
+  a.project-result:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+  a.project-result:hover .result-arrow { transform: translateX(3px); }
+}
+.result-date { display: block; margin-top: 4px; color: var(--ink-3); font-size: var(--fs-small); }
 
 @media (max-width: 700px) {
   .project-card { padding: 8px 8px 18px; }
