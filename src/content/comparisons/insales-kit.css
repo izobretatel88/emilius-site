@@ -168,3 +168,15 @@
 .platform-comparison .kit-answers-back{margin:-6px 0 0;font-size:14px}
 .platform-comparison .kit-answers-back:not([hidden]){animation:ui-fade-in var(--fade-in)}
 .platform-comparison .kit-answers-back a{display:inline-block;padding-block:12px;line-height:1.4}
+/* «Когда что выбрать»: короткий вывод из таблицы, каждый пункт со ссылками на строки */
+.platform-comparison .choose{display:grid;gap:16px}
+.platform-comparison .choose h2{margin:0;font-size:24px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
+.platform-comparison .choose-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.platform-comparison .choose-cols>div{background:var(--card);border-radius:var(--radius-card);padding:20px 24px}
+.platform-comparison .choose h3{margin:0 0 12px;font-size:19px;font-weight:700;line-height:1.25}
+.platform-comparison .choose ul{margin:0;padding-left:1.1em;display:grid;gap:10px}
+.platform-comparison .choose li{line-height:1.45;padding-left:2px}
+.platform-comparison .choose-refs{white-space:nowrap;font-size:13px;color:var(--ink-2)}
+.platform-comparison .choose-refs a{display:inline-block;padding-block:4px}
+.platform-comparison .choose-note{margin:0;font-size:13px;color:var(--ink-2)}
+@media(max-width:760px){.platform-comparison .choose-cols>div{padding:18px 16px}.platform-comparison .choose h2{font-size:21px}}
