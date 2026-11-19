@@ -469,6 +469,11 @@
       "title": "KIT: начало работы в редакторе сайта",
       "url": "https://yandex.ru/support/kit/ru/site-editor/start",
       "accessed": "2026-11-20"
+    },
+    "I34": {
+      "title": "ProSales: платные темы для inSales",
+      "url": "https://prosales.studio/collection/themes",
+      "accessed": "2026-11-20"
     }
   },
   "features": [
@@ -660,7 +665,7 @@
       "kit": "Да",
       "insales_source": "I33",
       "kit_source": "K59",
-      "note": "inSales: 19 тем в каталоге, все бесплатные. KIT: 5 шаблонов (Arcana, Flux, Spark, Lumen, Olivesa) и «Мой дизайн»; о плате за шаблоны справка не пишет."
+      "note": "inSales: 19 бесплатных тем в каталоге платформы, платные продают сторонние студии — например, у ProSales 2 темы за 15 000 и 24 900 ₽. KIT: 5 шаблонов (Arcana, Flux, Spark, Lumen, Olivesa) и «Мой дизайн»; о плате за шаблоны справка не пишет."
     },
     {
       "id": "F019",
