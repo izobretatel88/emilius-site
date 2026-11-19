@@ -79,11 +79,13 @@ const related=[
   @media(max-width:760px){
     .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
     .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
-    .platform-comparison :global(.feature-col){width:38%}
-    .platform-comparison :global(.platform-col){width:31%}
+    .platform-comparison :global(.feature-col){width:36%}
+    .platform-comparison :global(.platform-col){width:32%}
     .platform-comparison :global(.note-col){width:0}
     .platform-comparison :global(table:has(.feature-col) thead th:last-child),.platform-comparison :global(td.note){display:none}
     .platform-comparison :global(table:has(.feature-col) th),.platform-comparison :global(table:has(.feature-col) td){padding-inline:10px;overflow-wrap:break-word}
+    /* «подтверждено» (86 px при 13 px) должно помещаться в колонку целиком и на 360 px: отступы ячеек 8 px, той же точности, что общее правило */
+    .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-inline:8px}
     /* «Не поддерживается» и «Не подтверждено» в узкой колонке переносятся по слогам, а не рвутся посреди слова */
     .platform-comparison :global(.status){display:block;font-size:13px;hyphens:auto;-webkit-hyphens:auto}
     .platform-comparison :global(.scroll td>.status){display:block}
