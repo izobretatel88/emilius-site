@@ -32,7 +32,14 @@ export function setupProjectViewer() {
   const paging = viewer.querySelector<HTMLElement>('.viewer-paging')!;
   const previous = viewer.querySelector<HTMLButtonElement>('[data-prev-screen]')!;
   const next = viewer.querySelector<HTMLButtonElement>('[data-next-screen]')!;
+  // Соседние проекты — в порядке карточек галереи: из окна можно листать, не закрывая его
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]')]
+    .filter(link => projects[link.dataset.projectPreview!]?.screens.length);
+  const prevProject = viewer.querySelector<HTMLButtonElement>('[data-prev-project]');
+  const nextProject = viewer.querySelector<HTMLButtonElement>('[data-next-project]');
+  let current = -1;
   let opener: HTMLAnchorElement | null = null;
+  let origin: HTMLAnchorElement | null = null;
   let project: ProjectMedia | null = null;
   let device: Device = 'desktop';
   let mode: Kind = 'shot';
@@ -200,26 +207,59 @@ export function setupProjectViewer() {
     render();
   };
 
-  document.querySelectorAll<HTMLAnchorElement>('[data-project-preview]').forEach(link => {
+  // Показать проект: при листании вид («Компьютер / Телефон») и формат остаются выбранными, если у проекта они есть
+  const show = (position: number, keep: boolean) => {
+    const link = links[position];
+    const selected = projects[link.dataset.projectPreview!];
+    current = position;
+    opener = link;
+    project = selected;
+    title.textContent = selected.name;
+    inquiry.href = selected.inquiry;
+    inquiry.textContent = selected.label ?? 'Хочу похожий магазин';
+    if (role) role.textContent = selected.role ?? '';
+    const name = (n: number) => links[n] ? projects[links[n].dataset.projectPreview!].name : '';
+    if (prevProject && nextProject) {
+      prevProject.disabled = position === 0;
+      nextProject.disabled = position === links.length - 1;
+      prevProject.setAttribute('aria-label', position > 0 ? `Предыдущий проект: ${name(position - 1)}` : 'Предыдущего проекта нет');
+      nextProject.setAttribute('aria-label', position < links.length - 1 ? `Следующий проект: ${name(position + 1)}` : 'Следующего проекта нет');
+    }
+    // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
+    // Ширина — та же граница 700 px, что у одностолбцовой галереи.
+    const narrow = window.matchMedia('(max-width: 700px)').matches;
+    const phone = selected.screens.some(screen => screen.device === 'phone');
+    const nextDevice: Device = keep ? (device === 'phone' && phone ? 'phone' : 'desktop') : narrow && phone ? 'phone' : 'desktop';
+    // Открываем снимок; видео — по выбору. Мобильного снимка нет, но есть мобильное видео — на телефоне сразу оно
+    choose(nextDevice, keep ? mode : 'shot');
+  };
+  const step = (delta: number) => {
+    const position = current + delta;
+    if (!viewer.open || position < 0 || position >= links.length) return;
+    film?.pause();
+    show(position, true);
+  };
+  prevProject?.addEventListener('click', () => step(-1));
+  nextProject?.addEventListener('click', () => step(1));
+  // Стрелки клавиатуры листают проекты. Не перехватываем их у плеера и у прокручиваемого снимка «100%»
+  viewer.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('video, .viewer-image, input, textarea, select')) return;
+    event.preventDefault();
+    step(event.key === 'ArrowLeft' ? -1 : 1);
+  });
+
+  links.forEach((link, position) => {
     // Со скриптом ссылка открывает окно, а не уходит на картинку — сообщаем это программам чтения экрана.
     // Без скрипта атрибута нет: ссылка честно ведёт на файл снимка.
     link.setAttribute('aria-haspopup', 'dialog');
     link.addEventListener('click', event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-      const selected = projects[link.dataset.projectPreview!];
-      if (!selected?.screens.length) return;
       event.preventDefault();
-      opener = link;
-      project = selected;
-      title.textContent = selected.name;
-      inquiry.href = selected.inquiry;
-      inquiry.textContent = selected.label ?? 'Хочу похожий магазин';
-      if (role) role.textContent = selected.role ?? '';
-      // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
-      // Ширина — та же граница 700 px, что у одностолбцовой галереи.
-      const narrow = window.matchMedia('(max-width: 700px)').matches;
-      // Открываем снимок; видео — по выбору. Мобильного снимка нет, но есть мобильное видео — на телефоне сразу оно
-      choose(narrow && selected.screens.some(screen => screen.device === 'phone') ? 'phone' : 'desktop', 'shot');
+      origin = link;
+      show(position, false);
       viewer.showModal();
       viewer.scrollTop = 0;
     });
@@ -240,7 +280,17 @@ export function setupProjectViewer() {
     render();
   });
   // Видео останавливаем сразу на каждом пути закрытия: событие close приходит отдельной задачей и может опоздать
-  const closeViewer = () => { film?.pause(); viewer.close(); };
+  // Фокус — на карточку проекта, который был открыт последним. Пролистали до другого — прокручиваем к нему:
+  // браузер при закрытии сам возвращает фокус на исходную карточку. Вызывается сразу после close()
+  // и ещё раз из события close (Esc); второй вызов ничего не делает
+  const restore = () => {
+    const target = opener;
+    opener = null;
+    if (!target) return;
+    if (target !== origin) target.scrollIntoView({block: 'center'});
+    target.focus({preventScroll: true});
+  };
+  const closeViewer = () => { film?.pause(); viewer.close(); restore(); };
   viewer.addEventListener('cancel', () => film?.pause()); // Esc
   viewer.querySelector('[data-close-viewer]')!.addEventListener('click', closeViewer);
   // Закрываем только жест, который начался и закончился на внешнем фоне.
@@ -267,6 +317,6 @@ export function setupProjectViewer() {
     request += 1;
     clearTimeout(loadingTimer);
     image.onload = image.onerror = null;
-    opener?.focus({preventScroll: true});
+    restore();
   });
 }

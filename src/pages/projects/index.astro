@@ -78,7 +78,7 @@ const PHONE_VIDEO_DATE='19.11.2026';
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
   // Подпись под названием в окне: что сделали — чтобы роль не терялась в момент самого пристального взгляда
-  role:p.role,
+  role:p.role.replaceAll(' · ','\u00a0· '),
   label:similarLabel(p.id),
   inquiry:href(`?project=${p.id}#feedback`),
   site:p.url?{url:p.url,domain:p.site ?? p.domain}:null,
@@ -116,7 +116,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь<br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
-    <div class="viewer-toolbar"><div class="viewer-heading"><h2 id="viewer-title">{projects[0].name}</h2><p class="viewer-role"></p></div><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
+    <div class="viewer-toolbar"><div class="viewer-heading"><h2 id="viewer-title">{projects[0].name}</h2><p class="viewer-role"></p></div><div class="viewer-actions"><div class="viewer-projects" role="group" aria-label="Другие проекты"><button type="button" data-prev-project aria-label="Предыдущий проект"><span aria-hidden="true">←</span></button><button type="button" data-next-project aria-label="Следующий проект"><span aria-hidden="true">→</span></button></div><button type="button" data-close-viewer aria-label="Закрыть просмотр"><span class="viewer-close-text">Закрыть</span><span aria-hidden="true">×</span></button></div></div>
     <div class="viewer-controls">
       <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
       <div class="viewer-modes" role="group" aria-label="Снимок или видео"><button type="button" data-mode="shot" aria-pressed="true">Снимок</button><button type="button" data-mode="video" aria-pressed="false">Видео</button></div>
@@ -205,6 +205,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-role:empty{display:none}
   .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:var(--fs-ui);cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm);flex-shrink:0}
   .viewer-toolbar button span{font-size:24px}
+  /* Листание проектов — у «Закрыть»: две квадратные кнопки 44 px со стрелкой, на краю списка гаснут */
+  .viewer-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .viewer-projects{display:flex;gap:4px}
+  .viewer-toolbar .viewer-projects button{justify-content:center;width:44px;padding:0}
+  .viewer-toolbar .viewer-projects button span{font-size:20px}
+  .viewer-toolbar button:disabled{color:var(--ink-3);cursor:default}
   .viewer-image{overflow:auto}
   .viewer-image img{display:block;width:100%;max-width:var(--screen-width,100%);height:auto;margin-inline:auto}
   .viewer-image[data-scale='actual'] img{width:var(--screen-width);max-width:none}
@@ -246,10 +252,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{transition:background-color var(--hover),color var(--hover),transform var(--press)}
   /* Наведение мышью: серая кнопка темнеет до линии разделителя, выбранная — до тёмного бирюзового, как на лендинге inSales */
   @media (hover: hover) and (pointer: fine) {
-    .viewer-toolbar button:hover,.viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
+    .viewer-toolbar button:hover:not(:disabled),.viewer-controls :global(button:hover:not([aria-pressed='true'])),.viewer-paging button:hover:not(:disabled),.viewer-error button:hover{background:var(--hair)}
     .viewer-controls :global(button[aria-pressed='true']:hover){background:var(--teal-btn-hover)}
   }
-  .viewer-toolbar button:active,.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
+  .viewer-toolbar button:active:not(:disabled),.viewer-controls :global(button:active),.viewer-paging button:active:not(:disabled),.viewer-error button:active{transform: scale(var(--press-scale))}
   /* Снимок лежит на сером поле с отступом 20 px — одинаково для компьютера и телефона: узкий компьютерный снимок не висит в белой пустоте */
   .viewer-image{padding:20px;background:var(--well)}
   /* Короткий снимок — по центру поля по высоте; длинный начинается сверху (auto-поля во flex не уводят его за край) */
@@ -278,6 +284,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project-viewer[open][data-phone-shot='false']:has(.viewer-image[data-device='desktop'][data-kind='shot']){height:fit-content}
     .viewer-toolbar{padding:8px 12px}
     .viewer-toolbar h2{font-size:var(--fs-lead-sm)}
+    /* Узкий экран: название, две стрелки и крестик в одну строку — у «Закрыть» остаётся только ×, подпись читает диктор */
+    .viewer-close-text{display:none}
+    .viewer-toolbar [data-close-viewer]{justify-content:center;width:44px;padding:0}
+    .viewer-actions{gap:4px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
     .viewer-meta{padding:6px 12px}
