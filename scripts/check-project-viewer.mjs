@@ -11,9 +11,11 @@ class Element {
   emit(name, event={}) {for(const fn of this.listeners.get(name)||[])fn({target:this,...event});}
   setAttribute(name,value) {this.attrs.set(name,value);}
   getAttribute(name) {return this.attrs.get(name);}
+  removeAttribute(name) {this.attrs.delete(name);}
   append(child) {this.children.push(child);}
   replaceChildren() {this.children=[];}
   querySelectorAll() {return this.children;}
+  querySelector() {return null;}
   focus() {focused=this;}
 }
 let focused;
@@ -32,6 +34,8 @@ const html=readFileSync('dist/projects/index.html','utf8');
 const projects=JSON.parse(html.match(/<script\b[^>]*id="project-media"[^>]*>([\s\S]*?)<\/script>/)[1]);
 // Дополнительный экран — только тестовая фикстура, не публикация выдуманного снимка.
 projects.duman.screens.push({...projects.duman.screens[0],label:'Тестовый экран',src:'/test-only.webp'});
+// У всех проектов теперь есть и компьютер, и телефон; случай «один экран» проверяем на тестовом проекте в конце списка.
+projects['test-single']={name:'Тестовый проект',label:'Хочу похожий сайт',inquiry:'/?project=test-single#feedback',site:null,screens:[projects.navalishenskoe.screens.find(screen=>screen.device==='desktop')]};
 const links=Object.keys(projects).map(id=>{const l=new Element();l.dataset.projectPreview=id;return l;});
 const originalDocument=globalThis.document;
 const originalWindow=globalThis.window;
@@ -49,13 +53,15 @@ globalThis.document={
  querySelectorAll:()=>links,
  createElement:()=>new Element(),
 };
+// Duman ищем по id: порядок карточек в галерее меняется
+const dumanLink=links.find(link=>link.dataset.projectPreview==='duman');
 try {
  setupProjectViewer();
  let prevented=false;
  const click={button:0,preventDefault:()=>{prevented=true;}};
- links[2].emit('click',{...click,ctrlKey:true});
+ dumanLink.emit('click',{...click,ctrlKey:true});
  assert(!prevented && !viewer.open,'Ctrl-click must keep native navigation');
- links[2].emit('click',click);
+ dumanLink.emit('click',click);
  assert(viewer.open && prevented);
  assert.equal(elements['#viewer-title'].textContent,'Duman');
  assert.match(elements['.viewer-inquiry'].href,/project=duman#feedback$/);
@@ -104,7 +110,7 @@ try {
  assert(!elements['.viewer-error'].hidden,'Late load must not override timeout');
  elements['[data-retry-viewer]'].emit('click');
  elements['[data-close-viewer]'].emit('click');
- assert(!viewer.open && focused===links[2]);
+ assert(!viewer.open && focused===dumanLink);
  assert.equal(elements.img.onload,null);
  assert.equal(timers.size,0,'Close must cancel loading timers');
  links.at(-1).emit('click',click);

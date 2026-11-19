@@ -17,8 +17,8 @@ const html = readFileSync('dist/projects/index.html', 'utf8');
 const serialized = html.match(/<script\b[^>]*id="project-media"[^>]*>([\s\S]*?)<\/script>/)?.[1];
 assert(serialized, 'project-media manifest missing');
 const projects = JSON.parse(serialized);
-// 6 исходных + 5 из карточки партнёра inSales (13.11.2026). Mansen не показываем: сайт ушёл с inSales.
-assert.equal(Object.keys(projects).length, 11);
+// 6 исходных + 5 из карточки партнёра inSales (13.11.2026) + Marine Garden. Mansen не показываем: сайт ушёл с inSales.
+assert.equal(Object.keys(projects).length, 12);
 assert(!projects.mansen);
 let screens = 0;
 for (const [id, project] of Object.entries(projects)) {
@@ -32,7 +32,8 @@ for (const [id, project] of Object.entries(projects)) {
   for (const screen of project.screens) {
     assert(['desktop', 'phone'].includes(screen.device));
     assert(screen.label && screen.width > 0 && screen.height > 0);
-    assert(existsSync(`dist${screen.src}`), `missing: ${screen.src}`);
+    // ?v= — метка версии файла (src/lib/urls.ts), на диске файл лежит без неё
+    assert(existsSync(`dist${screen.src.split('?')[0]}`), `missing: ${screen.src}`);
     const key = `${screen.device}/${screen.label}`;
     assert(!keys.has(key), `duplicate screen: ${id}/${key}`);
     keys.add(key);
