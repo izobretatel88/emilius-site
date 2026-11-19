@@ -69,6 +69,18 @@ async function record(browser, id) {
     .catch(() => {});
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(4000);
+  // Видео на первом экране сайта (Zalina) после возврата наверх грузится заново — ждём, пока оно пойдёт
+  await page
+    .waitForFunction(
+      () =>
+        [...document.querySelectorAll('video')]
+          .filter((v) => { const r = v.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 100; })
+          .every((v) => v.readyState >= 3 && !v.paused),
+      null,
+      { timeout: 15000 },
+    )
+    .catch(() => {});
+  await page.waitForTimeout(1500);
   await hide();
 
   const dir = mkdtempSync(join(tmpdir(), `rec-${id}-`));

@@ -25,7 +25,8 @@ const prev = SECTORS[(index + SECTORS.length - 1) % SECTORS.length];
 const next = SECTORS[(index + 1) % SECTORS.length];
 const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter((p) => !!p);
 // Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
-const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal']);
+// Чёткие снимки 1600/800 — public/cases/gallery/; у Duman пока только старый 640×400
+const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal', 'geekboards', 'navalishenskoe']);
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.
@@ -102,7 +103,7 @@ const arc = (i: number) => {
           {cases.map((p) => (
             <li>
               <article class="case" aria-labelledby={`case-${p.id}`}>
-                <a class="case-image" href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}>
+                <a class="case-image" data-preview-video href={href(`projects/#${p.id}`)} aria-label={`Смотреть проект ${p.name}`}>
                   {gallery.has(p.id) ? (
                     <img
                       src={href(`cases/gallery/${p.id}-800.webp`)}
@@ -113,6 +114,7 @@ const arc = (i: number) => {
                   ) : (
                     <img src={href(p.shot)} width="640" height="400" loading="lazy" decoding="async" alt={`Первый экран сайта ${p.name}`} />
                   )}
+                  <video class="preview-video" data-src={href(`video/gallery/${p.id}.mp4`)} data-src-small={href(`video/gallery/${p.id}-640.mp4`)} muted playsinline preload="none" aria-hidden="true" tabindex="-1" width="1280" height="800"></video>
                 </a>
                 <div class="case-body">
                   <h3 id={`case-${p.id}`}>{p.name}</h3>
@@ -141,6 +143,10 @@ const arc = (i: number) => {
 
   <Footer />
 </Base>
+<script>
+  import {setupPreviewVideos} from '../../lib/preview-video';
+  setupPreviewVideos();
+</script>
 
 <style>
   .stage { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
@@ -172,7 +178,7 @@ const arc = (i: number) => {
   /* Карточки в ряду одной высоты, адрес сайта прижат к низу — ссылки соседних кейсов на одной линии */
   .cases > li { display: flex; }
   .case { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 10px 10px 16px; background: var(--card); border: 2px solid var(--card-border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
-  .case-image { display: block; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
+  .case-image { position: relative; display: block; border-radius: var(--radius-sm); overflow: hidden; background: var(--well); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
   /* Нажатие на снимок: плитка едва проседает, как превью в галерее и на главной */
   .case-image:active { transform: scale(var(--press-scale-card)); }
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
@@ -180,6 +186,9 @@ const arc = (i: number) => {
   .case-image img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; filter: var(--img-dim); transition: filter var(--hover); }
   /* Снимок — ссылка: как на главной и в /projects/, в тёмной теме приглушён и проясняется при наведении и фокусе */
   .case-image:focus-visible img { filter: none; }
+  /* Видео прокрутки сайта поверх снимка — при наведении мыши и фокусе (src/lib/preview-video.ts), как в галерее */
+  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; transition: opacity var(--hover); }
+  .case-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in); }
   @media (hover: hover) and (pointer: fine) { .case-image:hover img { filter: none; } }
   .case-body { flex: 1; padding: 16px 14px 0; display: grid; grid-template-rows: auto auto 1fr; gap: 6px; justify-items: start; }
   .case-site { align-self: end; }
@@ -189,9 +198,11 @@ const arc = (i: number) => {
   .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
   /* Один проект — снимок слева, текст справа */
   .cases.single { grid-template-columns: 1fr; }
-  .cases.single .case { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
-  .cases.single .case { padding: 10px; }
-  .cases.single .case-body { padding: 8px 24px 8px 0; }
+  /* Нечётный последний кейс (5 у «Разработки») — на весь ряд, как единственный: без пустой половины */
+  .cases > li:last-child:nth-child(odd):not(:first-child) { grid-column: 1 / -1; }
+  .cases.single .case, .cases > li:last-child:nth-child(odd):not(:first-child) .case { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+  .cases.single .case, .cases > li:last-child:nth-child(odd):not(:first-child) .case { padding: 10px; }
+  .cases.single .case-body, .cases > li:last-child:nth-child(odd):not(:first-child) .case-body { padding: 8px 24px 8px 0; }
 
   .related { padding: 0 26px; }
   .related :global(.link-list) { --list-inset: 26px; }
@@ -204,10 +215,10 @@ const arc = (i: number) => {
     .block { padding: 22px 20px 24px; }
     .offer { flex-direction: column; align-items: flex-start; gap: 20px; padding: 24px; }
     .offer h2 { font-size: 24px; }
-    .cases, .cases.single .case { grid-template-columns: 1fr; gap: 20px; }
-    .case, .cases.single .case { padding: 8px 8px 12px; }
-    .case-body, .cases.single .case-body { padding: 12px 10px 0; }
-    .cases.single .case { gap: 4px; }
+    .cases, .cases.single .case, .cases > li:last-child:nth-child(odd):not(:first-child) .case { grid-template-columns: 1fr; gap: 20px; }
+    .case, .cases.single .case, .cases > li:last-child:nth-child(odd):not(:first-child) .case { padding: 8px 8px 12px; }
+    .case-body, .cases.single .case-body, .cases > li:last-child:nth-child(odd):not(:first-child) .case-body { padding: 12px 10px 0; }
+    .cases.single .case, .cases > li:last-child:nth-child(odd):not(:first-child) .case { gap: 4px; }
     .related { padding-inline: 18px; }
     .related :global(.link-list) { --list-inset: 18px; }
     .cycle { grid-template-columns: 1fr 1fr; }

@@ -1,5 +1,5 @@
 // Видео в превью проекта: прокрутка сайта клиента поверх снимка. Видео лежат в public/video/gallery/,
-// снимаются scripts/record-gallery.mjs; рядом лёгкие копии 640 px (-640.mp4) для узких превью.
+// снимаются scripts/record-gallery.mjs; рядом лёгкие копии 640 px (-640.mp4) для телефона и узких превью.
 // Разметка: ссылка-превью с [data-preview-video], внутри <video class="preview-video" data-src data-src-small>.
 // Источник ставим только перед первым показом — до этого видео не грузится вовсе.
 //
@@ -13,7 +13,7 @@ const INTENT = 150; // мс: курсор задержался — значит,
 const SETTLE = 400; // мс: прокрутка на телефоне остановилась
 const VISIBLE = 0.7; // доля превью на экране, чтобы видео пошло на телефоне
 const FADE = 200; // мс: как --hover, затухание видео до снимка
-const SMALL = 700; // px: превью уже — берём лёгкую копию 640 px
+const SMALL = 720; // физических px: превью уже — берём лёгкую копию 640 px
 
 type Connection = { saveData?: boolean };
 type Player = { preview: HTMLElement; start: (delay: number) => void; stop: () => void };
@@ -33,7 +33,8 @@ export function setupPreviewVideos(root: ParentNode = document) {
 
     const load = () => {
       if (video.getAttribute('src')) return;
-      const small = video.dataset.srcSmall && preview.clientWidth <= SMALL;
+      // Телефон — всегда лёгкая копия (трафик); компьютер — по реальным пикселям, чтобы на Retina не было мыла
+      const small = video.dataset.srcSmall && (!canHover.matches || preview.clientWidth * devicePixelRatio <= SMALL);
       video.src = (small ? video.dataset.srcSmall : video.dataset.src) ?? '';
     };
     const start = (delay: number) => {
