@@ -118,7 +118,8 @@ const arc = (i: number) => {
                 <div class="case-body">
                   <h3 id={`case-${p.id}`}>{p.name}</h3>
                   <p>{p.about}</p>
-                  {cases.length === 1 && <p>{p.did}</p>}
+                  {/* Что сделали — у каждого кейса, полным цветом текста: главное в подписи (дизайн-система портфолио, §3.2) */}
+                  <p class="case-did">{p.did}</p>
                   <a class="case-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
                   {/* Действие на кейсе — как в галерее и на главной: заявка с выбранным проектом (аудит 19.11.2026) */}
                   <a class="case-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
@@ -187,6 +188,7 @@ const arc = (i: number) => {
   .case-body h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; margin: 0 0 2px; }
   /* Описание кейса — основной кегль, как у проектов на главной */
   .case-body p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
+  .case-body .case-did { color: var(--ink); }
   /* «Хочу похожий…» прижата к низу карточки: в ряду стоит на одной линии */
   .case-inquiry { margin-top: auto; display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; }
   .case-site { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
