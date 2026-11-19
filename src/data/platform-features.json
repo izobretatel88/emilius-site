@@ -474,6 +474,16 @@
       "title": "ProSales: платные темы для inSales",
       "url": "https://prosales.studio/collection/themes",
       "accessed": "2026-11-20"
+    },
+    "I35": {
+      "title": "Go.Studio: шаблоны для inSales",
+      "url": "https://go-insales.ru/templates-insales/",
+      "accessed": "2026-11-20"
+    },
+    "I36": {
+      "title": "67design: темы оформления для inSales",
+      "url": "https://67templates.myinsales.ru/",
+      "accessed": "2026-11-20"
     }
   },
   "features": [
@@ -665,7 +675,7 @@
       "kit": "Да",
       "insales_source": "I33",
       "kit_source": "K59",
-      "note": "inSales: 19 бесплатных тем в каталоге платформы, платные продают сторонние студии — например, у ProSales 2 темы за 15 000 и 24 900 ₽. KIT: 5 шаблонов (Arcana, Flux, Spark, Lumen, Olivesa) и «Мой дизайн»; о плате за шаблоны справка не пишет."
+      "note": "inSales: 19 бесплатных тем в каталоге платформы. Платные продают студии: у трёх (67design, Go.Studio, ProSales) нашли 28 тем от 1 900 до 29 900 ₽. KIT: 5 шаблонов (Arcana, Flux, Spark, Lumen, Olivesa) и «Мой дизайн»; о плате за шаблоны справка не пишет."
     },
     {
       "id": "F019",
