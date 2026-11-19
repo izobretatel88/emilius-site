@@ -1,4 +1,4 @@
-type Device = 'desktop' | 'phone';
+type Device = 'desktop' | 'phone' | 'video';
 type Screen = {device: Device; label: string; src: string; width: number; height: number; date?: string};
 type ProjectMedia = {name: string; inquiry: string; site: {url: string; domain: string} | null; screens: Screen[]};
 
@@ -8,6 +8,8 @@ export function setupProjectViewer() {
   if (!viewer || !source || typeof viewer.showModal !== 'function') return;
   const projects: Record<string, ProjectMedia> = JSON.parse(source.textContent!);
   const image = viewer.querySelector<HTMLImageElement>('img')!;
+  // Вид «Видео» — прокрутка главной; играет только в нём и только пока окно открыто
+  const film = viewer.querySelector<HTMLVideoElement>('.viewer-video');
   const imageBox = viewer.querySelector<HTMLElement>('.viewer-image')!;
   const title = viewer.querySelector<HTMLElement>('#viewer-title')!;
   const status = viewer.querySelector<HTMLElement>('.viewer-status')!;
@@ -49,7 +51,7 @@ export function setupProjectViewer() {
     const style = typeof getComputedStyle === 'function' ? getComputedStyle(imageBox) : null;
     const box = imageBox.clientWidth - (style ? (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0) : 0);
     const fits = !!screen && box > 0 && box >= screen.width;
-    zoomControl.hidden = device === 'phone' || fits;
+    zoomControl.hidden = device !== 'desktop' || fits;
     if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');
     // Область снимка — остановка Tab, только когда в ней есть что прокручивать вбок (снимок в 100% шире окна).
     // Иначе это пустая остановка; фокус из «Повторить» по-прежнему можно поставить на неё программно.
@@ -70,7 +72,7 @@ export function setupProjectViewer() {
     imageBox.style.setProperty('--screen-width', `${screen.width}px`);
     imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
-    const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
+    const description = `${device === 'phone' ? 'Телефон' : device === 'video' ? 'Видео' : 'Компьютер'} · ${screen.label}`;
     // Дата съёмки и оговорка: снимок — момент в прошлом, живой сайт мог измениться
     if (note && noteDate) {
       note.hidden = !screen.date;
@@ -84,6 +86,34 @@ export function setupProjectViewer() {
           noteSite.setAttribute('aria-label', `${project.site.domain} — живой сайт ${project.name}, откроется в новой вкладке`);
         }
       }
+    }
+    if (film) {
+      if (device === 'video') {
+        image.hidden = true;
+        film.hidden = false;
+        film.width = screen.width;
+        film.height = screen.height;
+        film.setAttribute('aria-label', `${project.name}: прокрутка главной страницы, видео без звука`);
+        if (film.getAttribute('src') !== screen.src) film.src = screen.src;
+        imageBox.setAttribute('aria-busy', 'false');
+        status.textContent = description;
+        // Сам выбрал «Видео» — играем сразу; при «уменьшении движения» ждём кнопки «Пуск» в плеере
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          // окно закрыли или сменили вид, пока видео запускалось, — не даём ему играть невидимым
+          film.play().then(() => { if (!viewer.open || device !== 'video') film.pause(); }).catch(() => {});
+        }
+        deviceButtons.forEach(button => {
+          button.hidden = !project!.screens.some(item => item.device === button.dataset.device);
+          button.setAttribute('aria-pressed', String(button.dataset.device === device));
+        });
+        devicesControl.hidden = false;
+        updateZoom();
+        screensControl.hidden = true;
+        paging.hidden = true;
+        return;
+      }
+      film.pause();
+      film.hidden = true;
     }
     status.textContent = `${description} · загружаем снимок…`;
     const ready = () => {
@@ -182,7 +212,10 @@ export function setupProjectViewer() {
     if (document.activeElement === retry) imageBox.focus({preventScroll: true});
     render();
   });
-  viewer.querySelector('[data-close-viewer]')!.addEventListener('click', () => viewer.close());
+  // Видео останавливаем сразу на каждом пути закрытия: событие close приходит отдельной задачей и может опоздать
+  const closeViewer = () => { film?.pause(); viewer.close(); };
+  viewer.addEventListener('cancel', () => film?.pause()); // Esc
+  viewer.querySelector('[data-close-viewer]')!.addEventListener('click', closeViewer);
   // Закрываем только жест, который начался и закончился на внешнем фоне.
   // Сам dialog также бывает target у клика по его свободному месту.
   const outsideViewer = (event: MouseEvent) => {
@@ -199,9 +232,10 @@ export function setupProjectViewer() {
   viewer.addEventListener('click', event => {
     const dismiss = backdropPress && outsideViewer(event);
     backdropPress = false;
-    if (dismiss) viewer.close();
+    if (dismiss) closeViewer();
   });
   viewer.addEventListener('close', () => {
+    film?.pause();
     backdropPress = false;
     request += 1;
     clearTimeout(loadingTimer);

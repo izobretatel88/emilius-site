@@ -66,6 +66,9 @@ const shotDates:Record<string,string>={
   'marine-garden':'18.11.2026',
 };
 const PHONE_SHOT_DATE='27.10.2026'; // мобильные снимки — скриншоты владельца, public/cases/mobile/
+// Видео прокрутки: сняты scripts/record-gallery.mjs 18.11.2026, переснятые — своей датой; Marine Garden — запись владельца
+const videoDates:Record<string,string>={geekboards:'19.11.2026',zalina:'19.11.2026'};
+const VIDEO_DATE='18.11.2026';
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
   inquiry:href(`?project=${p.id}#feedback`),
@@ -73,6 +76,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   screens:[
     {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height,date:shotDates[p.id]},
     ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id],date:PHONE_SHOT_DATE}]:[]),
+    {device:'video',label:'Прокрутка главной',src:href(p.video),width:1280,height:p.whole?688:800,date:videoDates[p.id]??VIDEO_DATE},
   ],
 }]));
 ---
@@ -98,7 +102,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   <dialog class="project-viewer" aria-labelledby="viewer-title">
     <div class="viewer-toolbar"><h2 id="viewer-title"></h2><button type="button" data-close-viewer aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button></div>
     <div class="viewer-controls">
-      <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button></div>
+      <div class="viewer-devices" role="group" aria-label="Вид сайта"><button type="button" data-device="desktop" aria-pressed="true">Компьютер</button><button type="button" data-device="phone" aria-pressed="false">Телефон</button><button type="button" data-device="video" aria-pressed="false">Видео</button></div>
       <div class="viewer-screens" role="group" aria-label="Экраны сайта"></div>
       <div class="viewer-zoom" role="group" aria-label="Масштаб снимка"><button type="button" data-scale="fit" aria-pressed="true" aria-controls="viewer-canvas">По ширине</button><button type="button" data-scale="actual" aria-pressed="false" aria-controls="viewer-canvas">100%</button></div>
       <a class="viewer-inquiry" href={href('#feedback')}>Хочу похожий магазин</a>
@@ -108,7 +112,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       <p class="viewer-note"><span class="viewer-date"></span> Живой сайт мог измениться<span class="viewer-site-wrap">: <a class="viewer-site" href="#" target="_blank" rel="noopener"></a></span><span class="viewer-dot">.</span></p>
     </div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
-    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
+    <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /><video class="viewer-video" hidden controls muted loop playsinline preload="none"></video></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
   </dialog>
   <script type="application/json" id="project-media" set:html={JSON.stringify(media)} />
@@ -198,6 +202,9 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-image img{display:block;width:100%;max-width:var(--screen-width,100%);height:auto;margin-inline:auto}
   .viewer-image[data-scale='actual'] img{width:var(--screen-width);max-width:none}
   .viewer-image img[hidden]{display:none}
+  /* Видео прокрутки в окне просмотра: по ширине окна, не шире записи, на сером поле, как снимок */
+  .viewer-video{display:block;width:100%;max-width:var(--screen-width,100%);height:auto;margin:auto;border-radius:var(--radius-sm);background:var(--card)}
+  .viewer-video[hidden]{display:none}
   .viewer-image[aria-busy='true'] img{visibility:hidden}
   /* Снимок проявляется после загрузки и при смене «Компьютер / Телефон» — тем же движением, что само окно, без рывка */
   .viewer-image[aria-busy='false'] img{animation:ui-fade-in var(--fade-in)}
@@ -261,8 +268,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .gallery-contact{padding:28px;min-height:290px}
     .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
     .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
-    /* Только снимок компьютера (переключателя вида нет): окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
-    .project-viewer[open]:has(.viewer-devices[hidden]):has(.viewer-image[data-device='desktop']){height:fit-content}
+    /* Нет снимка с телефона, открыт снимок компьютера: окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
+    .project-viewer[open]:has(.viewer-devices [data-device='phone'][hidden]):has(.viewer-image[data-device='desktop']){height:fit-content}
     .viewer-toolbar{padding:8px 12px}
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
