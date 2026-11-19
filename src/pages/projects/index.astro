@@ -261,6 +261,13 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Короткий снимок — по центру поля по высоте; длинный начинается сверху (auto-поля во flex не уводят его за край) */
   .viewer-image{display:flex;flex-direction:column}
   .viewer-image img{margin-block:auto}
+  /* Компьютер: снимок — один экран сайта, а не длинная страница, поэтому он и видео вписываются в окно целиком,
+     по ширине и по высоте. На ноутбуке видео больше не уходит под край, кнопки плеера видны; «Снимок → Видео» — тот же размер.
+     «100%» по-прежнему показывает снимок в натуральную величину */
+  @media(min-width:701px){
+    .viewer-image[data-device='desktop']{container-type:size}
+    .viewer-image[data-device='desktop']:not([data-scale='actual']) img,.viewer-image[data-device='desktop'] .viewer-video{max-width:min(100%,var(--screen-width,100%),calc(100cqh * var(--screen-ratio,1.6)))}
+  }
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   /* До 1000 px адрес сайта стоит столбиком со своей зоной нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
   @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}

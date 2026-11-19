@@ -102,6 +102,8 @@ export function setupProjectViewer() {
     imageBox.dataset.device = device;
     imageBox.dataset.kind = mode;
     imageBox.style.setProperty('--screen-width', `${screen.width}px`);
+    // Пропорция кадра: снимок и видео компьютера вписываются в окно и по высоте (кнопки плеера видны)
+    imageBox.style.setProperty('--screen-ratio', String(screen.width / screen.height));
     imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
     const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
