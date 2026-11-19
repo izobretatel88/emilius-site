@@ -18,7 +18,9 @@
   const stem = term => term.length > 4 ? term.replace(/(ами|ями|ого|ему|ой|ей|ий|ый|ая|яя|ое|ее|ые|ие|ов|ев|ам|ям|ах|ях|ом|ем|ы|и|а|я|е|у|ю|о|ь)$/, '') : term;
   const variants = term => { const base = stem(term); return [base, ...(synonyms[base] || [])]; };
   let mode = 'all';
-  rows.forEach(row => { row.searchText = normalize(row.dataset.search); });
+  // Текст для поиска собираем из самой строки: номер, раздел, название, статусы и пояснение — без «Источник» и скрытых подписей
+  const cellText = cell => { const copy = cell.cloneNode(true); copy.querySelectorAll('.source, .sr-only, .feature-id, [aria-hidden="true"]').forEach(node => node.remove()); return copy.textContent; };
+  rows.forEach(row => { row.searchText = normalize(`${row.id} ${row.closest('tbody').dataset.group} ${[...row.children].map(cellText).join(' ')} ${row.dataset.keywords || ''}`.replace(/\s+/g, ' ')); });
 
   function update(writeURL = true, preserveHash = false) {
     const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean).map(variants);
