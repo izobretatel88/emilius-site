@@ -57,6 +57,12 @@ const projects=[
     width:meta.updated?1600:640,height:meta.height??(meta.updated?1000:400),
   };
 });
+// Разметка для поисковиков: страница-подборка и список работ в том же порядке, что карточки.
+// Только видимые факты: название, ниша, что сделали, снимок, адрес сайта (если открыт).
+const abs=(path:string)=>new URL(href(path),Astro.site).href;
+const projectsLd={'@context':'https://schema.org','@type':'CollectionPage',name:'Проекты',url:abs('projects/'),
+  mainEntity:{'@type':'ItemList',numberOfItems:projects.length,itemListElement:projects.map((p,i)=>({'@type':'ListItem',position:i+1,
+    item:{'@type':'CreativeWork',name:p.name,description:`${p.kind}. ${p.role}`,image:abs(p.image),...(p.url?{url:p.url}:{}),creator:{'@type':'Organization',name:'Эмилиус Эдженси',url:abs('')}}}))}};
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
 // магазин сети («Вкусдом»), поэтому не выдаём его за мобильный LimeMart.
 const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
@@ -114,6 +120,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       {p.id==='happyanimal' && <a class="project-result" href={href('services/insales-shop/#case-happyanimal')}><span><strong>5 из 5</strong> локальных запросов — в топ-5 Яндекса<span class="result-date">Москва · 01.10.2026 · Топвизор</span><span class="visually-hidden">. Разбор кейса на странице «Магазин на шаблоне inSales»</span></span><span class="result-arrow" aria-hidden="true">→</span></a>}
       <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
     </article>)}
+    <script type="application/ld+json" set:html={JSON.stringify(projectsLd)} />
     <section class="gallery-contact" aria-labelledby="t-project-contact"><p>Следующий проект</p><h2 id="t-project-contact">Покажем здесь <br />и ваш сайт?</h2><p class="contact-note">Расскажите, что хотите запустить или улучшить.</p><a class="directory-button" href={href('#feedback')}>Обсудить проект</a></section>
   </div>
   <dialog class="project-viewer" aria-labelledby="viewer-title">
