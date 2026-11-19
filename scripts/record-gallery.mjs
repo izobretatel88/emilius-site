@@ -49,6 +49,37 @@ mkdirSync(SHOT.outDir, { recursive: true });
 
 const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
+// Карусели на сайтах клиентов листаются сами — в записи слайд менялся посреди прокрутки, а снимок галереи
+// расходился с видео. Перед записью останавливаем автопрокрутку: Swiper — через его API, а любую карусель
+// (Splide, самописные) — фиксируем ленту и слайды в текущем положении стилем с !important. Текст и
+// содержимое сайта не трогаем — слайдер просто стоит на том слайде, что был при открытии.
+const freezeSliders = (page) =>
+  page.evaluate(() => {
+    for (const el of document.querySelectorAll('.swiper, .swiper-container')) {
+      try { el.swiper?.autoplay?.stop(); } catch {}
+    }
+    const tracks = '.swiper-wrapper, .splide__list, .slick-track, .owl-stage, .flickity-slider, .glide__slides, [class*="slider"] > ul, [class*="slider-list"], [class*="slider__list"], [class*="slider__track"], [class*="carousel__track"]';
+    const rules = [];
+    let n = 0;
+    const lock = (el, props) => {
+      const cs = getComputedStyle(el);
+      const id = `f${n++}`;
+      el.setAttribute('data-rec-freeze', id);
+      rules.push(`[data-rec-freeze="${id}"]{${props.map((p) => `${p}:${cs.getPropertyValue(p)} !important`).join(';')};transition:none !important;animation:none !important}`);
+    };
+    // Только сами ленты каруселей и их прямые слайды: по классу со словом «slide» морозить нельзя — так
+    // называются и появления при прокрутке, они застыли бы невидимыми
+    for (const track of document.querySelectorAll(tracks)) {
+      if (track.closest('header, nav')) continue;
+      lock(track, ['transform', 'left', 'margin-left']);
+      // Слайды меняются и сменой прозрачности (fade) — держим их прозрачность и видимость
+      for (const slide of track.children) lock(slide, ['transform', 'opacity', 'visibility', 'z-index']);
+    }
+    const style = document.createElement('style');
+    style.textContent = rules.join('\n');
+    document.head.append(style);
+  });
+
 async function record(browser, id) {
   const context = await browser.newContext({
     ...(PHONE ? { ...devices['iPhone 13'], deviceScaleFactor: 2 } : { viewport: VIEW, deviceScaleFactor: STILL / VIEW.width }),
@@ -112,6 +143,8 @@ async function record(browser, id) {
     .catch(() => {});
   await page.waitForTimeout(1500);
   await hide();
+
+  await freezeSliders(page);
 
   const dir = mkdtempSync(join(tmpdir(), `rec-${id}-`));
   const scrollFrames = Math.round((dist / SHOT.speed) * FPS);

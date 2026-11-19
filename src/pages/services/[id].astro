@@ -25,8 +25,8 @@ const prev = SECTORS[(index + SECTORS.length - 1) % SECTORS.length];
 const next = SECTORS[(index + 1) % SECTORS.length];
 const cases = service.cases.map((c) => PROJECTS.find((p) => p.id === c)).filter((p) => !!p);
 // Крупные снимки галереи есть не у всех проектов — у остальных первый экран 640×400
-// Чёткие снимки 1600/800 — public/cases/gallery/; у Duman пока только старый 640×400
-const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal', 'geekboards', 'navalishenskoe', 'zalina', 'mnogoles', 'almatennis', 'ss-sk', 'nsorganic']);
+// Чёткие снимки 1600/800 — public/cases/gallery/ (первый кадр видео прокрутки)
+const gallery = new Set(['alohagaia', 'wizzu', 'happyanimal', 'geekboards', 'navalishenskoe', 'zalina', 'mnogoles', 'almatennis', 'ss-sk', 'nsorganic', 'duman']);
 const pad = (n: number) => String(n).padStart(2, '0');
 
 // Мини-колесо: четыре дуги на тех же местах, что сектора большого колеса в исходном положении.

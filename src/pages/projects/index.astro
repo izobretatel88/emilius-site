@@ -20,7 +20,7 @@ const captions:Record<string,{kind:string;role:string;updated?:boolean;landing?:
   'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,landing:true,height:860,whole:true},
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на inSales · местное SEO',updated:true},
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
-  duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales'},
+  duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales',updated:true},
   wizzu:{kind:'Доставка продуктов',role:'Сайт-витрина · интеграции',updated:true},
   geekboards:{kind:'Механические клавиатуры и аксессуары',role:'Развитие магазина · фронтенд',updated:true},
   navalishenskoe:{kind:'Отдых в Сочи',role:'Дизайн · разработка · маркетинг · вайбкодинг',updated:true},
@@ -60,16 +60,16 @@ const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:
 // Когда снят снимок — по истории репозитория (когда файл попал в проект). Сайты клиентов живут своей жизнью,
 // поэтому в окне просмотра рядом с датой — оговорка и ссылка на живой сайт.
 // С 19.11.2026 снимок галереи — первый кадр видео прокрутки (scripts/record-gallery.mjs), дата у них общая.
-// Duman и Aloha Gaia ждут пересъёмки без VPN — у них пока прежние снимки и видео.
+// У Duman и Aloha Gaia в шапке город по IP записи («Ньюарк» — VPN), владелец согласен (19.11.2026).
 const shotDates:Record<string,string>={
-  alohagaia:'02.11.2026',duman:'24.09.2026',
+  alohagaia:'19.11.2026',duman:'19.11.2026',
   happyanimal:'19.11.2026',wizzu:'19.11.2026',zalina:'19.11.2026',mnogoles:'19.11.2026',navalishenskoe:'19.11.2026',
   geekboards:'19.11.2026',almatennis:'19.11.2026','ss-sk':'19.11.2026',nsorganic:'19.11.2026',
   'marine-garden':'18.11.2026',
 };
 const PHONE_SHOT_DATE='27.10.2026'; // мобильные снимки — скриншоты владельца, public/cases/mobile/
 // Видео прокрутки: сняты scripts/record-gallery.mjs 18.11.2026, переснятые — своей датой; Marine Garden — запись владельца
-const videoDates:Record<string,string>={alohagaia:'18.11.2026',duman:'18.11.2026','marine-garden':'18.11.2026'};
+const videoDates:Record<string,string>={'marine-garden':'18.11.2026'};
 const VIDEO_DATE='19.11.2026';
 // Мобильная прокрутка (iPhone 13) — `record-gallery.mjs --phone`, public/video/gallery/phone/; у Marine Garden нет — адреса не знаем
 const PHONE_VIDEO_DATE='19.11.2026';
