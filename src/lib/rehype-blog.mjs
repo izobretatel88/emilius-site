@@ -51,6 +51,27 @@ export function rehypeBlog(options = {}) {
     return `Таблица: ${heading}${n > 1 ? ` (${n})` : ''}`;
   };
 
+  // Колонки с суммами выравниваем вправо сами, по содержимому. Выравнивание из Markdown (|---:|)
+  // редактор Pages CMS при сохранении стирает, а без него рубли в таблице «гуляют» по левому краю.
+  // Колонка числовая, если больше половины её непустых ячеек — число («79 000 ₽», «15%», «50–250 тыс. ₽»);
+  // прочерки не считаются. Если выравнивание в Markdown задано явно, оставляем его.
+  const NUMBER = /^[+−–-]?\s*\d[\d\s.,]*(\s*[–-]\s*\d[\d\s.,]*)?\s*(тыс\.|млн)?\s*(₽|%|руб\.?)?(\s*\/\s*\S+)?$/;
+  const rowsOf = (table) => (table.children || []).flatMap((part) => (part.tagName === 'tr' ? [part] : (part.children || []).filter((r) => r.tagName === 'tr')));
+  const cellsOf = (row) => (row.children || []).filter((c) => c.tagName === 'td' || c.tagName === 'th');
+  const alignNumbers = (table) => {
+    const rows = rowsOf(table);
+    if (rows.some((r) => cellsOf(r).some((c) => c.properties?.align))) return;
+    const body = rows.filter((r) => cellsOf(r).every((c) => c.tagName === 'td'));
+    const width = Math.max(0, ...rows.map((r) => cellsOf(r).length));
+    for (let i = 0; i < width; i++) {
+      const values = body.map((r) => textOf(cellsOf(r)[i] || { type: 'text', value: '' }).replace(/\s+/g, ' ').trim())
+        .filter((v) => v && !/^[—–-]$/.test(v));
+      const numbers = values.filter((v) => NUMBER.test(v) || /^\d[\d\s]*\s?₽\s*\+/.test(v)).length;
+      if (numbers === 0 || numbers * 2 <= values.length) continue;
+      for (const r of rows) { const c = cellsOf(r)[i]; if (c) (c.properties ||= {}).align = 'right'; }
+    }
+  };
+
   const walk = (node) => {
     if (!node.children) return;
     node.children = node.children.map((child) => {
@@ -86,6 +107,7 @@ export function rehypeBlog(options = {}) {
           }
         }
         if (child.tagName === 'table') {
+          alignNumbers(child);
           // tabindex: широкую таблицу можно листать стрелками, не только мышью и пальцем
           return { type: 'element', tagName: 'div', properties: { className: ['table-wrap'], tabIndex: 0, role: 'region', ariaLabel: tableLabel() }, children: [child] };
         }
