@@ -16,6 +16,7 @@ import IterationRuler from '../components/IterationRuler.astro';
 import { MATERIALS } from '../data/navigation';
 import { href } from '../lib/urls';
 import { similarLabel } from '../lib/project-inquiry';
+import { PREVIEW_SIZES } from '../lib/preview-sizes';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
 // Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
@@ -113,7 +114,7 @@ const organization = {
             <ProjectPreview
               href={href(`projects/#${project.id}`)}
               label={`Смотреть проект ${project.name}`}
-              image={{src:href(`cases/gallery/${project.id}-800.webp`),srcset:`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`,sizes:'(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px',width:800,height:500,alt:`Главная страница сайта ${project.name}`}}
+              image={{src:href(`cases/gallery/${project.id}-800.webp`),srcset:`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`,sizes:PREVIEW_SIZES.section,width:800,height:500,alt:`Главная страница сайта ${project.name}`}}
               video={{src:href(`video/gallery/${project.id}.mp4`),small:href(`video/gallery/${project.id}-640.mp4`),width:1280,height:800}}
               action="Смотреть проект"
               arrow
