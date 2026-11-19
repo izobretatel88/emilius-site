@@ -69,7 +69,20 @@ const related=[
   .platform-comparison :global(.scroll td>.status){display:flex}
   /* Код источника (I4, K58) — служебный, расшифровка есть в подписи ссылки для экранного диктора */
   .platform-comparison :global(.source span){display:none}
-  .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:8px;padding-inline:14px}
+  .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:14px;padding-inline:14px}
+  /* Строка подсвечивается целиком, как карточки на главной: глазу проще держать строку от названия до оговорки */
+  .platform-comparison :global(.scroll tbody th[scope=row]),.platform-comparison :global(.scroll tbody td){transition:background-color var(--hover)}
+  @media (hover: hover) and (pointer: fine){
+    .platform-comparison :global(.scroll tr[data-feature]:hover>*),.platform-comparison :global(.scroll tr[data-feature]:hover+.mobile-note-row>td),.platform-comparison :global(.scroll tr[data-feature]:has(+.mobile-note-row:hover)>*){background:var(--well)}
+  }
+  /* «Источник» — тихая серая ссылка, не спорит со статусом */
+  .platform-comparison :global(.scroll .source){color:var(--ink-2)}
+  @media (hover: hover) and (pointer: fine){.platform-comparison :global(.scroll .source:hover){color:var(--teal-text)}}
+  @media (min-width:761px){
+    .platform-comparison :global(.scroll tbody td){position:relative}
+    .platform-comparison :global(.scroll td>.source){position:absolute;top:10px;right:14px;margin:0}
+    .platform-comparison :global(.scroll td>.status){padding-right:76px}
+  }
   .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
   .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
   .platform-comparison :global(.feature-link:focus-visible),.platform-comparison :global(.source:focus-visible){outline-offset:1px}

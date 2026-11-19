@@ -100,7 +100,7 @@
     history.pushState(null, '', url);
     revealAnchor();
   }));
-  // «Ответ KIT» в строке ведёт к блоку ответов; оттуда — ссылка обратно к той же строке
+  // «Источник» с ответом KIT в строке ведёт к блоку ответов; оттуда — ссылка обратно к той же строке
   const back = document.querySelector('.kit-answers-back');
   if (back) {
     const backLink = back.querySelector('a');
