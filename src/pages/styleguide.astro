@@ -165,8 +165,8 @@ const colors = [
               <h3 id={`g-case-${p.id}`}>{p.name}</h3>
               <p class="note">{p.about}</p>
               <p class="did">{p.did}</p>
-              <a class="portfolio-link" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
-              <a class="portfolio-link inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)}</a>
+              <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
+              <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
             </div>
           </article>
         ))}
@@ -268,8 +268,7 @@ const colors = [
   .portfolio-caption { display: flex; flex-direction: column; align-items: start; gap: 6px; flex: 1; }
   .portfolio-caption .note { margin-top: 0; }
   .portfolio-caption .did { color: var(--ink); max-width: 52ch; }
-  .portfolio-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-ui); font-weight: 600; text-underline-offset: 4px; }
-  .portfolio-link.inquiry { margin-top: auto; }
+  .portfolio-caption .project-inquiry { margin-top: auto; }
   .portfolio-tokens { margin-top: 24px; }
   .iterations-sample { width: 154px; }
   .guide h3.list-title { margin-top: 48px; }

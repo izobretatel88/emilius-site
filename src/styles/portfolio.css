@@ -99,6 +99,19 @@
 .project-card > :not(.project-preview) { margin-inline: 16px; }
 .project-card > .project-preview + * { margin-top: 20px; }
 
+/* Адрес сайта клиента: домен без https:// и www, стрелка ↗ — откроется в новой вкладке (это говорит и aria-label) */
+.project-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 44px;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
 /* Действие карточки «Хочу похожий магазин / сайт» — одно на галерее, главной и направлениях.
    Компьютер: текстовое действие по общему правилу (бирюзовый текст, стрелка, подчёркивание при наведении и в фокусе).
    Телефон: кнопка с рамкой во всю ширину карточки — заметная цель касания, заливается при нажатии */

@@ -165,7 +165,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-role{font-size:var(--fs-body);line-height:1.5;color:var(--ink);margin-top:8px}
   /* Метка этапа — общий класс .ui-stage-tag (layout.css): точка цвета этапа и направление, без дней колеса */
   .project-stage{margin-top:2px}
-  .project-site{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px;overflow-wrap:anywhere;max-width:100%;flex-shrink:1}
+  /* Адрес сайта — общий класс .project-site (src/styles/portfolio.css) */
+  .project-site{flex-shrink:1}
   /* «Хочу похожий…» — общий класс .project-inquiry (src/styles/portfolio.css) */
   p.project-result{margin-bottom:0}
   .project-result{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:18px;margin-top:18px;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none;font-size:var(--fs-body);min-height:64px}
@@ -270,7 +271,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   }
   .viewer-image[data-device='phone'] img{width:min(100%,390px);height:auto;margin-inline:auto;max-width:100%}
   /* До 1000 px адрес сайта стоит столбиком со своей зоной нажатия 44 px — над линией результата хватает 12 px, иначе результат отрывается от карточки */
-  @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
+  @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-featured .project-caption{flex-direction:row}}
   @media(max-width:700px){
     .project-gallery{grid-template-columns:1fr;gap:20px}
     .project>.project-inquiry{align-self:stretch;width:auto;margin-top:12px}
