@@ -1,5 +1,7 @@
-type Device = 'desktop' | 'phone' | 'video';
-type Screen = {device: Device; label: string; src: string; width: number; height: number; date?: string};
+type Device = 'desktop' | 'phone';
+// Снимок или видео прокрутки — второй переключатель, независимый от вида «Компьютер / Телефон»
+type Kind = 'shot' | 'video';
+type Screen = {device: Device; kind?: Kind; label: string; src: string; width: number; height: number; date?: string; poster?: string};
 type ProjectMedia = {name: string; inquiry: string; site: {url: string; domain: string} | null; screens: Screen[]};
 
 export function setupProjectViewer() {
@@ -23,6 +25,8 @@ export function setupProjectViewer() {
   const screensControl = viewer.querySelector<HTMLElement>('.viewer-screens')!;
   const devicesControl = viewer.querySelector<HTMLElement>('.viewer-devices')!;
   const deviceButtons = [...devicesControl.querySelectorAll<HTMLButtonElement>('[data-device]')];
+  const modesControl = viewer.querySelector<HTMLElement>('.viewer-modes');
+  const modeButtons = modesControl ? [...modesControl.querySelectorAll<HTMLButtonElement>('[data-mode]')] : [];
   const zoomControl = viewer.querySelector<HTMLElement>('.viewer-zoom')!;
   const zoomButtons = [...zoomControl.querySelectorAll<HTMLButtonElement>('[data-scale]')];
   const paging = viewer.querySelector<HTMLElement>('.viewer-paging')!;
@@ -31,10 +35,13 @@ export function setupProjectViewer() {
   let opener: HTMLAnchorElement | null = null;
   let project: ProjectMedia | null = null;
   let device: Device = 'desktop';
+  let mode: Kind = 'shot';
   let index = 0;
   let request = 0;
   let loadingTimer: ReturnType<typeof setTimeout> | undefined;
-  const screens = () => project?.screens.filter(screen => screen.device === device) ?? [];
+  const kindOf = (screen: Screen): Kind => screen.kind ?? 'shot';
+  const has = (d: Device, k: Kind) => !!project?.screens.some(screen => screen.device === d && kindOf(screen) === k);
+  const screens = () => project?.screens.filter(screen => screen.device === device && kindOf(screen) === mode) ?? [];
   const setScale = (scale: 'fit' | 'actual') => {
     imageBox.dataset.scale = scale;
     imageBox.tabIndex = scale === 'actual' ? 0 : -1;
@@ -51,7 +58,7 @@ export function setupProjectViewer() {
     const style = typeof getComputedStyle === 'function' ? getComputedStyle(imageBox) : null;
     const box = imageBox.clientWidth - (style ? (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0) : 0);
     const fits = !!screen && box > 0 && box >= screen.width;
-    zoomControl.hidden = device !== 'desktop' || fits;
+    zoomControl.hidden = device !== 'desktop' || mode === 'video' || fits;
     if (zoomControl.hidden && imageBox.dataset.scale !== 'fit') setScale('fit');
     // Область снимка — остановка Tab, только когда в ней есть что прокручивать вбок (снимок в 100% шире окна).
     // Иначе это пустая остановка; фокус из «Повторить» по-прежнему можно поставить на неё программно.
@@ -59,6 +66,23 @@ export function setupProjectViewer() {
   };
   // Ширина окна известна после открытия и меняется при повороте экрана.
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (project) updateZoom(); }).observe(imageBox);
+
+  // Переключатели: «Компьютер / Телефон» — есть ли у вида хоть что-то; «Снимок / Видео» — есть ли оба у выбранного вида
+  const syncControls = () => {
+    if (!project) return;
+    deviceButtons.forEach(button => {
+      button.hidden = !project!.screens.some(item => item.device === button.dataset.device);
+      button.setAttribute('aria-pressed', String(button.dataset.device === device));
+    });
+    devicesControl.hidden = new Set(project.screens.map(item => item.device)).size < 2;
+    modeButtons.forEach(button => {
+      button.hidden = !has(device, button.dataset.mode as Kind);
+      button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
+    });
+    if (modesControl) modesControl.hidden = modeButtons.filter(button => !button.hidden).length < 2;
+    // Окно на телефоне подстраивается по высоте, когда у проекта нет мобильного снимка (Многолес, СС-СК)
+    viewer.dataset.phoneShot = String(has('phone', 'shot'));
+  };
 
   const render = () => {
     const list = screens();
@@ -69,10 +93,11 @@ export function setupProjectViewer() {
     error.hidden = true;
     image.hidden = false;
     imageBox.dataset.device = device;
+    imageBox.dataset.kind = mode;
     imageBox.style.setProperty('--screen-width', `${screen.width}px`);
     imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
-    const description = `${device === 'phone' ? 'Телефон' : device === 'video' ? 'Видео' : 'Компьютер'} · ${screen.label}`;
+    const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
     // Дата съёмки и оговорка: снимок — момент в прошлом, живой сайт мог измениться
     if (note && noteDate) {
       note.hidden = !screen.date;
@@ -88,25 +113,24 @@ export function setupProjectViewer() {
       }
     }
     if (film) {
-      if (device === 'video') {
+      if (mode === 'video') {
         image.hidden = true;
         film.hidden = false;
         film.width = screen.width;
         film.height = screen.height;
-        film.setAttribute('aria-label', `${project.name}: прокрутка главной страницы, видео без звука`);
-        if (film.getAttribute('src') !== screen.src) film.src = screen.src;
+        film.setAttribute('aria-label', `${project.name}: прокрутка главной страницы, ${device === 'phone' ? 'мобильная версия' : 'компьютер'}, видео без звука`);
+        if (film.getAttribute('src') !== screen.src) {
+          film.poster = screen.poster ?? '';
+          film.src = screen.src;
+        }
         imageBox.setAttribute('aria-busy', 'false');
         status.textContent = description;
         // Сам выбрал «Видео» — играем сразу; при «уменьшении движения» ждём кнопки «Пуск» в плеере
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           // окно закрыли или сменили вид, пока видео запускалось, — не даём ему играть невидимым
-          film.play().then(() => { if (!viewer.open || device !== 'video') film.pause(); }).catch(() => {});
+          film.play().then(() => { if (!viewer.open || mode !== 'video') film.pause(); }).catch(() => {});
         }
-        deviceButtons.forEach(button => {
-          button.hidden = !project!.screens.some(item => item.device === button.dataset.device);
-          button.setAttribute('aria-pressed', String(button.dataset.device === device));
-        });
-        devicesControl.hidden = false;
+        syncControls();
         updateZoom();
         screensControl.hidden = true;
         paging.hidden = true;
@@ -146,11 +170,7 @@ export function setupProjectViewer() {
     viewer.scrollTop = 0;
     // Уже декодированный снимок может не прислать повторный load.
     if (image.complete && image.naturalWidth) ready();
-    deviceButtons.forEach(button => {
-      button.hidden = !project!.screens.some(item => item.device === button.dataset.device);
-      button.setAttribute('aria-pressed', String(button.dataset.device === device));
-    });
-    devicesControl.hidden = new Set(project.screens.map(item => item.device)).size < 2;
+    syncControls();
     updateZoom();
     screensControl.hidden = list.length < 2;
     screensControl.querySelectorAll<HTMLButtonElement>('button').forEach((button, i) => {
@@ -161,9 +181,11 @@ export function setupProjectViewer() {
     next.disabled = index === list.length - 1;
   };
 
-  const chooseDevice = (value: Device) => {
+  const choose = (value: Device, kind: Kind) => {
     if (!project?.screens.some(screen => screen.device === value)) return;
     device = value;
+    // У вида нет выбранного формата (у Многолеса на телефоне только видео) — берём тот, что есть
+    mode = has(value, kind) ? kind : kind === 'shot' ? 'video' : 'shot';
     index = 0;
     setScale('fit');
     screensControl.replaceChildren();
@@ -195,13 +217,17 @@ export function setupProjectViewer() {
       // На телефоне сразу мобильная версия, если её снимок есть: компьютерный снимок шириной в экран телефона не разобрать.
       // Ширина — та же граница 700 px, что у одностолбцовой галереи.
       const narrow = window.matchMedia('(max-width: 700px)').matches;
-      chooseDevice(narrow && selected.screens.some(screen => screen.device === 'phone') ? 'phone' : 'desktop');
+      // Открываем снимок; видео — по выбору. Мобильного снимка нет, но есть мобильное видео — на телефоне сразу оно
+      choose(narrow && selected.screens.some(screen => screen.device === 'phone') ? 'phone' : 'desktop', 'shot');
       viewer.showModal();
       viewer.scrollTop = 0;
     });
   });
   deviceButtons.forEach(button => button.addEventListener('click', () => {
-    if (device !== button.dataset.device) chooseDevice(button.dataset.device as Device);
+    if (device !== button.dataset.device) choose(button.dataset.device as Device, mode);
+  }));
+  modeButtons.forEach(button => button.addEventListener('click', () => {
+    if (mode !== button.dataset.mode) choose(device, button.dataset.mode as Kind);
   }));
   zoomButtons.forEach(button => button.addEventListener('click', () => setScale(button.dataset.scale as 'fit' | 'actual')));
   previous.addEventListener('click', () => { if (index > 0) { index -= 1; render(); } });

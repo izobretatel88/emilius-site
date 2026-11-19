@@ -108,14 +108,19 @@ export function setupPreviewVideos(root: ParentNode = document) {
   let settle = 0;
   const pickVisible = () => {
     if (canHover.matches) return;
+    // Из превью, видных на 70%+, — то, что ближе к середине экрана: на него и смотрят
     let best: Player | null = null;
-    let bestShare = VISIBLE;
+    let bestGap = Infinity;
     for (const player of players) {
       const r = player.preview.getBoundingClientRect();
       const shown = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
       const share = r.height ? shown / r.height : 0;
-      if (share < VISIBLE) player.done = false; // ушло с экрана — при возвращении сыграет снова
-      if (share >= bestShare) [best, bestShare] = [player, share];
+      if (share < VISIBLE) {
+        player.done = false; // ушло с экрана — при возвращении сыграет снова
+        continue;
+      }
+      const gap = Math.abs(r.top + r.height / 2 - innerHeight / 2);
+      if (gap < bestGap) [best, bestGap] = [player, gap];
     }
     players.forEach((player) => (player === best ? !player.done && player.start(0) : player.stop()));
   };

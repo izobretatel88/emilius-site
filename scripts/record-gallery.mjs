@@ -1,9 +1,11 @@
 // Видео для превью галереи /projects/: плавная прокрутка сайта клиента сверху вниз.
 // Запуск: node scripts/record-gallery.mjs [id ...]  (без id — все проекты)
+//         node scripts/record-gallery.mjs --phone [id ...]  — мобильная версия (iPhone 13) для окна просмотра,
+//         в public/video/gallery/phone/
 // Нужны Google Chrome (через Playwright, отдельный пустой профиль) и ffmpeg.
 // Всплывающие окна (cookie, выбор города, промокод) не нажимаем — скрываем на время записи.
 // Текст на сайте клиента не подменяем.
-import { chromium } from 'playwright';
+import { chromium, devices } from 'playwright';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -29,15 +31,27 @@ const FPS = 30;
 const HOLD = 1.0; // секунд на первом экране
 const SPEED = 330; // px в секунду
 const MAX_SCROLL = 5600; // дальше не листаем: превью не длиннее ~18 с
-const POPUP = /cookie|куки|адрес доставки|промокод|первую покупку|подписаться на рассылку/i;
+const POPUP = /cookie|куки|адрес доставки|промокод|первую покупку|подписаться на рассылку|обработк\S* (персональных )?данных/i;
 
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SITES);
-mkdirSync('public/video/gallery', { recursive: true });
+const args = process.argv.slice(2);
+const PHONE = args.includes('--phone');
+const picked = args.filter((a) => a !== '--phone');
+const ids = picked.length ? picked : Object.keys(SITES);
+// Телефон: экран iPhone 13 (390×844), снимаем в 2× — в окне просмотра телефон шириной до 390 px
+const SHOT = PHONE
+  ? { view: { width: 390, height: 844 }, speed: 260, max: 4200, outDir: 'public/video/gallery/phone', scale: '600:-2', crf: '32' }
+  : { view: VIEW, speed: SPEED, max: MAX_SCROLL, outDir: 'public/video/gallery', scale: `${OUT.width}:${OUT.height}`, crf: '30' };
+mkdirSync(SHOT.outDir, { recursive: true });
 
 const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 async function record(browser, id) {
-  const page = await browser.newPage({ viewport: VIEW, locale: 'ru-RU', timezoneId: 'Europe/Moscow' });
+  const context = await browser.newContext({
+    ...(PHONE ? { ...devices['iPhone 13'], deviceScaleFactor: 2 } : { viewport: VIEW }),
+    locale: 'ru-RU',
+    timezoneId: 'Europe/Moscow',
+  });
+  const page = await context.newPage();
   await page.goto(SITES[id], { waitUntil: 'domcontentloaded', timeout: 90000 });
   await page.waitForTimeout(5000);
   const hide = () =>
@@ -58,8 +72,8 @@ async function record(browser, id) {
   await hide();
   // Прогреваем ленивую загрузку картинок: проходим страницу и возвращаемся наверх
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
-  const dist = Math.max(0, Math.min(height - VIEW.height, MAX_SCROLL));
-  for (let y = 0; y <= dist + VIEW.height; y += 600) {
+  const dist = Math.max(0, Math.min(height - SHOT.view.height, SHOT.max));
+  for (let y = 0; y <= dist + SHOT.view.height; y += 600) {
     await page.evaluate((v) => window.scrollTo(0, v), y);
     await page.waitForTimeout(1500);
   }
@@ -84,7 +98,7 @@ async function record(browser, id) {
   await hide();
 
   const dir = mkdtempSync(join(tmpdir(), `rec-${id}-`));
-  const scrollFrames = Math.round((dist / SPEED) * FPS);
+  const scrollFrames = Math.round((dist / SHOT.speed) * FPS);
   const holdFrames = Math.round(HOLD * FPS);
   let n = 0;
   for (let i = 0; i < holdFrames + scrollFrames + holdFrames; i++) {
@@ -94,13 +108,13 @@ async function record(browser, id) {
     await page.evaluate((v) => window.scrollTo(0, v), y);
     await page.screenshot({ path: join(dir, `${String(n++).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 90 });
   }
-  await page.close();
+  await context.close();
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-framerate', String(FPS), '-i', join(dir, '%05d.jpg'),
-    '-vf', `scale=${OUT.width}:${OUT.height}:flags=lanczos`, '-an', '-c:v', 'libx264', '-profile:v', 'high',
-    '-pix_fmt', 'yuv420p', '-crf', '30', '-preset', 'slow', '-movflags', '+faststart',
-    `public/video/gallery/${id}.mp4`]);
-  // Лёгкая копия 640 px для телефона и узких превью (src/lib/preview-video.ts)
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `public/video/gallery/${id}.mp4`, '-an',
+    '-vf', `scale=${SHOT.scale}:flags=lanczos`, '-an', '-c:v', 'libx264', '-profile:v', 'high',
+    '-pix_fmt', 'yuv420p', '-crf', SHOT.crf, '-preset', 'slow', '-movflags', '+faststart',
+    `${SHOT.outDir}/${id}.mp4`]);
+  // Лёгкая копия 640 px для телефона и узких превью (src/lib/preview-video.ts); мобильной записи не нужна
+  if (!PHONE) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', `public/video/gallery/${id}.mp4`, '-an',
     '-vf', 'scale=640:-2:flags=lanczos', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-crf', '31', '-preset', 'slow', '-movflags', '+faststart', `public/video/gallery/${id}-640.mp4`]);
   rmSync(dir, { recursive: true, force: true });
