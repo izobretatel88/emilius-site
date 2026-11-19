@@ -66,6 +66,14 @@ export function setupPreviewVideos(root: ParentNode = document) {
         if (video.readyState > 0) video.currentTime = 0;
       }, FADE);
     };
+    // Конец ролика: не прыгаем от подвала к шапке, а гасим видео до снимка, перематываем и проявляем снова
+    video.addEventListener('ended', () => {
+      preview.classList.remove('is-playing');
+      rewind = window.setTimeout(() => {
+        video.currentTime = 0;
+        if (wanted) video.play().then(() => wanted && preview.classList.add('is-playing')).catch(() => {});
+      }, FADE + 300);
+    });
     players.push({ preview, start, stop });
 
     preview.addEventListener('pointerenter', (e) => {

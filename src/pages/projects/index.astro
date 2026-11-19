@@ -82,7 +82,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
       <a class:list={['project-preview',{'is-whole':p.whole}]} data-preview-video href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
         <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} fetchpriority={index===0?'high':undefined} decoding={index===0?undefined:'async'} />
-        {p.video && <video class="preview-video" data-src={href(p.video)} data-src-small={href(p.video.replace('.mp4','-640.mp4'))} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" width={p.width} height={p.height}></video>}
+        {p.video && <video class="preview-video" data-src={href(p.video)} data-src-small={href(p.video.replace('.mp4','-640.mp4'))} muted playsinline preload="none" aria-hidden="true" tabindex="-1" width={p.width} height={p.height}></video>}
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
       </a>
       <div class="project-caption">
@@ -139,7 +139,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
   /* Видео лежит поверх снимка и проявляется за 0.2 с, когда пошло воспроизведение */
   .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;transition:opacity var(--hover)}
-  .project-preview.is-playing .preview-video{opacity:1}
+  /* Появление — сильный ease-out (--fade-in), уход — спокойный --hover */
+  .project-preview.is-playing .preview-video{opacity:1;transition:opacity var(--fade-in)}
   /* Запись шире 8:5 (Marine Garden, 1440×774): показываем целиком, без обрезки краёв — по центру серого поля */
   .project-preview.is-whole img,.project-preview.is-whole .preview-video{object-fit:contain;object-position:center}
   .preview-action{position:absolute;z-index:1;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
