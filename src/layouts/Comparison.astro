@@ -78,7 +78,8 @@ const related=[
   /* «Источник» — тихая серая ссылка, не спорит со статусом */
   .platform-comparison :global(.scroll .source){color:var(--ink-2)}
   @media (hover: hover) and (pointer: fine){.platform-comparison :global(.scroll .source:hover){color:var(--teal-text)}}
-  @media (min-width:761px){
+  /* Справа от статуса — только когда колонки широкие; уже — источник под статусом, чтобы не наезжал на «Не поддерживается» */
+  @media screen and (min-width:1200px){
     .platform-comparison :global(.scroll tbody td){position:relative}
     .platform-comparison :global(.scroll td>.source){position:absolute;top:10px;right:14px;margin:0}
     .platform-comparison :global(.scroll td>.status){padding-right:76px}
