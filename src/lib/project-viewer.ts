@@ -271,6 +271,8 @@ export function setupProjectViewer() {
       origin = link;
       show(position, false);
       viewer.showModal();
+      // Браузер вернёт фокус на эту карточку сам при закрытии — видео превью от этого не запускается (preview-video.ts)
+      link.setAttribute('data-returning', '');
       viewer.scrollTop = 0;
     });
   });
@@ -297,8 +299,14 @@ export function setupProjectViewer() {
     const target = opener;
     opener = null;
     if (!target) return;
-    if (target !== origin) target.scrollIntoView({block: 'center'});
+    if (target !== origin) {
+      target.setAttribute('data-returning', '');
+      target.scrollIntoView({block: 'center'});
+    }
     target.focus({preventScroll: true});
+    // Фокус уже стоял на карточке (событие focus не пришло) — метки не оставляем: следующий фокус покажет видео
+    target.removeAttribute('data-returning');
+    origin?.removeAttribute('data-returning');
   };
   const closeViewer = () => { film?.pause(); viewer.close(); restore(); };
   viewer.addEventListener('cancel', () => film?.pause()); // Esc

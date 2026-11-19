@@ -31,9 +31,6 @@ export function setupPreviewVideos(root: ParentNode = document) {
     let intent = 0;
     let rewind = 0;
     let wanted = false;
-    // Превью нажали (открылось окно просмотра) — фокус вернётся на него программой при закрытии окна;
-    // этот возврат видео не запускает: проект только что смотрели крупно
-    let returning = false;
 
     const load = () => {
       if (video.getAttribute('src')) return;
@@ -97,20 +94,19 @@ export function setupPreviewVideos(root: ParentNode = document) {
       if (e.pointerType === 'mouse' && !preview.matches(':focus-visible')) stop();
     });
     preview.addEventListener('focus', () => {
-      if (returning) { returning = false; return; }
+      // Фокус вернуло окно просмотра (data-returning ставит project-viewer.ts) — видео не запускаем:
+      // проект только что смотрели крупно. Метка одноразовая
+      if (preview.hasAttribute('data-returning')) { preview.removeAttribute('data-returning'); return; }
       if (preview.matches(':focus-visible') && !player.done) start(0);
     });
     preview.addEventListener('blur', () => {
       if (!canHover.matches) return;
       // Ушли с превью — следующий фокус снова покажет ролик
-      if (!returning) player.done = false;
+      player.done = false;
       if (!preview.matches(':hover')) stop();
     });
     // Превью открыло окно просмотра или ушло по ссылке — видео под ним больше не нужно
-    preview.addEventListener('click', () => {
-      stop();
-      if (preview.hasAttribute('aria-haspopup')) returning = true;
-    });
+    preview.addEventListener('click', stop);
   });
   if (!players.length) return;
 
