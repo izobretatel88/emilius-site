@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LinkList from '../components/LinkList.astro';
 import ComparisonPicker from '../components/ComparisonPicker.astro';
 import {href} from '../lib/urls';
+import {getPosts} from '../lib/blog';
 import '../styles/architecture.css';
 import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
 import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
@@ -16,17 +17,69 @@ interface Props {kind:'general'|'detail';}
 const {kind}=Astro.props;
 const detailed=kind==='detail';
 const title=detailed?'inSales и Яндекс KIT — сравнение функций':'Сравнение платформ для интернет-магазина';
-const description=detailed?'348 функций inSales и Яндекс KIT: способы подключения, ограничения и официальные источники.':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
-const html=detailed?detailHtml:generalHtml;
+const description=detailed?'348 функций inSales и Яндекс KIT в 19 разделах: что есть штатно, что через приложения и API, какие ограничения. Со ссылками на 89 официальных источников.':'Tilda, Яндекс KIT, inSales, Shop-Script, AdvantShop, 1С-Битрикс, WooCommerce и OpenCart: кому подходит каждая платформа, сколько стоит за 3 года и когда переходить дальше.';
 const css=detailed?detailCss:generalCss;
 const script=detailed?detailScript:generalScript;
+
+// «Коротко» — связный текст над таблицей (аудит индексации 19.11.2026: без него страница для поисковика — голая таблица).
+// Цифры считаются из той же разметки при сборке, поэтому не разойдутся с таблицей после её обновления.
+const strip=(s:string)=>s.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+const esc=(s:string)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ruNum=(n:number,[one,few,many]:[string,string,string])=>{const m10=n%10,m100=n%100;return m10===1&&m100!==11?one:m10>=2&&m10<=4&&(m100<12||m100>14)?few:many;};
+function detailSummary(src:string){
+  const groups=[...src.matchAll(/<tbody data-group="([^"]+)">([\s\S]*?)<\/tbody>/g)].map(([,name,body])=>{
+    const c={i:{} as Record<string,number>,k:{} as Record<string,number>,n:0};
+    for(const [,row] of body.matchAll(/<tr id="F\d+"([\s\S]*?)<\/tr>/g)){
+      c.n++;
+      [...row.matchAll(/class="status ([a-z]+)"/g)].slice(0,2).forEach(([,s],idx)=>{const side=idx?c.k:c.i;side[s]=(side[s]??0)+1;});
+    }
+    return {name,...c};
+  });
+  const sum=(side:'i'|'k',s:string)=>groups.reduce((a,g)=>a+(g[side][s]??0),0);
+  const total=groups.reduce((a,g)=>a+g.n,0);
+  const yes=(g:typeof groups[number],side:'i'|'k')=>g[side].yes??0;
+  const gaps=[...groups].sort((a,b)=>(yes(b,'i')-yes(b,'k'))-(yes(a,'i')-yes(a,'k'))).filter(g=>yes(g,'i')>yes(g,'k')).slice(0,5);
+  const kitAhead=groups.filter(g=>yes(g,'k')>yes(g,'i'));
+  const li=(g:typeof groups[number])=>`<li><strong>${esc(g.name)}</strong>: inSales — ${yes(g,'i')} из ${g.n}, Яндекс KIT — ${yes(g,'k')} из ${g.n}</li>`;
+  return `<section class="card comparison-summary" aria-labelledby="summary-title"><h2 id="summary-title">Коротко: чем отличаются inSales и Яндекс KIT</h2>`
+    +`<p>Из ${total} функций в ${groups.length} разделах штатно подтверждены: у inSales — ${sum('i','yes')}, у Яндекс KIT — ${sum('k','yes')}. Ещё ${sum('i','connection')} и ${sum('k','connection')} подключаются через приложения, интеграции, API или платные опции. По ${sum('k','unknown')} ${ruNum(sum('k','unknown'),['пункту','пунктам','пунктам'])} у KIT и ${sum('i','unknown')} у inSales в открытой документации подтверждения нет — их стоит уточнить у поддержки платформы до запуска.</p>`
+    +`<p>Больше всего расходится число штатных функций, подтверждённых документацией, в этих разделах:</p><ul>${gaps.map(li).join('')}</ul>`
+    +`<p>Ноль или малое число не всегда значит «нет»: часто функция подключается через приложение или в документации о ней не сказано. Это видно в строке каждой функции.</p>`
+    +(kitAhead.length?`<p>У Яндекс KIT подтверждённых функций больше в ${kitAhead.length===1?'разделе':'разделах'} ${kitAhead.map(g=>`«${esc(g.name)}» (${yes(g,'k')} против ${yes(g,'i')})`).join(' и ')}.</p>`:'')
+    +`<p>В таблице ниже — каждая функция отдельной строкой: есть ли она на платформе, как подключается, какие у неё ограничения, и ссылка на официальный источник. Поиск над таблицей помогает найти нужное, например «1С», «остатки» или «промокоды».</p></section>`;
+}
+function generalSummary(src:string){
+  const head=src.match(/<thead>([\s\S]*?)<\/thead>/)?.[1]??'';
+  // Колонка платформы: <span class="stage">Ступень</span>Название<…плашки…> — берём ступень и первый текст после неё.
+  const cols=[...head.matchAll(/<th[^>]*>([\s\S]*?)<\/th>/g)].flatMap(([,cell])=>{
+    const m=cell.match(/<span class="stage">([\s\S]*?)<\/span>\s*([^<]+)/);
+    return m?[{stage:strip(m[1]),name:strip(m[2])}]:[];
+  });
+  const stages=new Map<string,string[]>();
+  cols.filter(c=>c.stage!=='Ступень').forEach(c=>stages.set(c.stage,[...(stages.get(c.stage)??[]),c.name]));
+  const params=(src.match(/<th scope="row"/g)??[]).length;
+  return `<section class="card comparison-summary" aria-labelledby="summary-title"><h2 id="summary-title">Коротко: какая платформа на какой ступени</h2><ul>`
+    +[...stages].map(([stage,names])=>`<li><strong>${esc(stage)}</strong> — ${names.map(esc).join(', ')}</li>`).join('')
+    +`</ul><p>Ниже — ${params} ${ruNum(params,['параметр','параметра','параметров'])} для каждой платформы: размер каталога, кто ведёт сайт, затраты на запуск и за три года, 1С и МойСклад, маркетплейсы, оплата и доставка, SEO, лояльность и переезд. Отдельная строка — когда пора переходить на следующую ступень.</p></section>`;
+}
+const raw=detailed?detailHtml:generalHtml;
+const html=raw.replace('</header>',`</header>${detailed?detailSummary(raw):generalSummary(raw)}`);
+
+// Статьи блога по теме — только опубликованные, чтобы черновик не стал битой ссылкой.
+const published=new Set((await getPosts()).map(p=>p.id));
+const ARTICLES=[
+  {id:'vybor-platformy-magazina',title:'Tilda, Яндекс KIT, inSales или Битрикс',description:'Как выбрать платформу по каталогу, учёту и расходам.'},
+  {id:'stoimost-insales-pervyy-god',title:'Сколько стоит магазин на inSales в первый год',description:'Тариф, запуск, касса, эквайринг и доставка.'},
+  {id:'tarify-insales-seller-combo',title:'Тарифы inSales: «Селлер», «Комбо» или «Интернет-магазин»',description:'Какой тариф нужен для сайта и маркетплейсов.'},
+].filter(a=>published.has(a.id)).map(({id,...a})=>({...a,href:`blog/${id}/`}));
 const related=[
   detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'inSales и Яндекс KIT подробно',description:'348 функций, ограничения и источники.',href:'compare/insales-vs-yandex-kit/'},
+  ...ARTICLES,
   {title:'Оценить запуск на inSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
   {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
 ];
 ---
-<Base title={`${title} — Emilius Agency`} description={description}>
+<Base title={`${title} — Эмилиус Эдженси`} description={description}>
   <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
     <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
     <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
@@ -55,6 +108,16 @@ const related=[
   .platform-comparison :global(h1){font-size:var(--fs-h1);font-weight:600;line-height:1.1;letter-spacing:-.035em;max-width:none;margin:0}
   @media(max-width:760px){.platform-comparison :global(h1){font-size:var(--fs-h1-sm);letter-spacing:var(--tracking-tight)}}
   .platform-comparison :global(.mobile-note-row){display:none}
+  /* «Коротко» над таблицей: связный текст для читателя и поисковиков, цифры собираются из таблицы */
+  .platform-comparison :global(.comparison-summary){padding:24px 26px;line-height:1.5;max-width:none}
+  .platform-comparison :global(.comparison-summary h2){font-size:24px;font-weight:600;line-height:1.2;margin:0 0 12px}
+  .platform-comparison :global(.comparison-summary p){margin:0 0 10px;max-width:80ch}
+  .platform-comparison :global(.comparison-summary ul){margin:0 0 12px;padding-left:20px;max-width:80ch}
+  .platform-comparison :global(.comparison-summary li+li){margin-top:4px}
+  .platform-comparison :global(.comparison-summary > :last-child){margin-bottom:0}
+  @media(max-width:760px){.platform-comparison :global(.comparison-summary){padding:20px 18px}.platform-comparison :global(.comparison-summary h2){font-size:20px}}
+  /* Пустой результат поиска — абзац, а не h2: скрытый подзаголовок «не найдено» сбивал структуру страницы */
+  .platform-comparison :global(.empty .empty-title){font-size:24px;font-weight:600;margin:0}
   .platform-comparison :global(#comparison){scroll-margin-top:16px}
   .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
   .platform-comparison :global(.search-hint){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0}

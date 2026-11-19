@@ -6,7 +6,7 @@ import '../styles/architecture.css';
 interface Props {title:string;description:string;parents?:{title:string;href:string}[];ogImage?:string;ogImageAlt?:string;}
 const {title,description,parents=[],ogImage,ogImageAlt}=Astro.props;
 ---
-<Base title={`${title} — Emilius Agency`} description={description} ogImage={ogImage} ogImageAlt={ogImageAlt}>
+<Base title={`${title} — Эмилиус Эдженси`} description={description} ogImage={ogImage} ogImageAlt={ogImageAlt}>
   <main class="directory ui-shell"><header class="directory-intro ui-opening"><Breadcrumbs items={[...parents,{title}]} /><h1 class="ui-h1">{title}</h1><p class="ui-lead">{description}</p></header><slot /></main>
   <Footer />
 </Base>

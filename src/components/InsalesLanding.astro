@@ -20,7 +20,17 @@ interface Props {
   variant: 'shop' | 'seller';
 }
 const { variant } = Astro.props;
-const hasStockArticle = (await getPosts()).some(p=>p.id==='edinye-ostatki-wb-ozon-insales');
+const publishedIds = new Set((await getPosts()).map(p=>p.id));
+const hasStockArticle = publishedIds.has('edinye-ostatki-wb-ozon-insales');
+// Прямые ссылки на статьи с лендинга: поисковики находят их быстрее, а читатель — ответы до заявки.
+// Только опубликованные — черновик не превратится в битую ссылку. Тарифы — первыми для продавцов маркетплейсов.
+const ARTICLES = [
+  {id:'stoimost-insales-pervyy-god',title:'Сколько стоит магазин на inSales в первый год',description:'Тариф, запуск, касса, эквайринг и доставка — три сценария.'},
+  {id:'tarify-insales-seller-combo',title:'Тарифы inSales: «Селлер», «Комбо» или «Интернет-магазин»',description:'Какой тариф нужен для сайта и маркетплейсов.'},
+  {id:'vybor-platformy-magazina',title:'Tilda, Яндекс KIT, inSales или Битрикс',description:'Как выбрать платформу по каталогу, учёту и расходам.'},
+];
+const articleLinks = (variant==='seller' ? [ARTICLES[1], ARTICLES[0], ARTICLES[2]] : ARTICLES)
+  .filter(a=>publishedIds.has(a.id)).map(({id,...a})=>({...a,href:`blog/${id}/`}));
 const hero = HERO[variant];
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
@@ -294,6 +304,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами, оговорками и источниками.',href:'compare/insales-vs-yandex-kit/'},
         {title:'Рассчитать состав проекта',description:'Предварительный бюджет и срок по семи ответам.',href:'tools/insales-calculator/'},
         ...(variant==='seller' && hasStockArticle ? [{title:'Как устроены единые остатки',description:'Сайт, маркетплейсы и учётная система.',href:'blog/edinye-ostatki-wb-ozon-insales/'}] : []),
+        ...articleLinks,
       ]} />
       <dl class="choice">
         {CHOICE.map(([c, a]) => <div class:list={[{ fit: a === 'inSales' }]}><dt>{c}</dt><dd>{a}</dd></div>)}

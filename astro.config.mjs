@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { rehypeBlog } from './src/lib/rehype-blog.mjs';
 import { readBlogReleases } from './src/lib/blog-releases.mjs';
+import { lastmodFor } from './src/lib/sitemap-lastmod.mjs';
 import { readdirSync, readFileSync } from 'node:fs';
 
 // Опубликованные статьи для продакшен-сборки: очередь панели (BLOG_RELEASES), а без неё — все без draft: true.
@@ -29,5 +30,17 @@ export default defineConfig({
   // Markdown используется только в блоге (src/content/blog): подсветку кода не подключаем, блок кода оформляем сами,
   // а плагин rehypeBlog докручивает картинки, ссылки и таблицы статьи (см. src/lib/rehype-blog.mjs).
   markdown: { syntaxHighlight: false, rehypePlugins: [[rehypeBlog, { base: process.env.BASE_PATH || '/', releases: process.env.PREVIEW === '1' ? null : publishedPosts() }]] },
-  integrations: [sitemap({ filter: (page) => !page.includes('/404') && !page.includes('/os/') && !page.includes('/experiments/') && !page.includes('/styleguide/') && !page.includes('/insales-shop/v2') })],
+  // <lastmod> в карте сайта (src/lib/sitemap-lastmod.mjs) — чтобы поисковики видели новые и обновлённые страницы.
+  integrations: [sitemap({
+    filter: (page) => !page.includes('/404') && !page.includes('/os/') && !page.includes('/experiments/') && !page.includes('/styleguide/') && !page.includes('/insales-shop/v2'),
+    serialize: (item) => {
+      const lastmod = lastmod_(item.url);
+      return lastmod ? { ...item, lastmod } : item;
+    },
+  })],
 });
+
+function lastmod_(url) {
+  lastmod_.fn ??= lastmodFor(process.env.BASE_PATH || '/', process.env.PREVIEW === '1' ? null : publishedPosts());
+  return lastmod_.fn(url);
+}
