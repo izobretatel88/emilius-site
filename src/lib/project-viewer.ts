@@ -1,6 +1,6 @@
 type Device = 'desktop' | 'phone';
-type Screen = {device: Device; label: string; src: string; width: number; height: number};
-type ProjectMedia = {name: string; inquiry: string; screens: Screen[]};
+type Screen = {device: Device; label: string; src: string; width: number; height: number; date?: string};
+type ProjectMedia = {name: string; inquiry: string; site: {url: string; domain: string} | null; screens: Screen[]};
 
 export function setupProjectViewer() {
   const viewer = document.querySelector<HTMLDialogElement>('.project-viewer');
@@ -11,6 +11,11 @@ export function setupProjectViewer() {
   const imageBox = viewer.querySelector<HTMLElement>('.viewer-image')!;
   const title = viewer.querySelector<HTMLElement>('#viewer-title')!;
   const status = viewer.querySelector<HTMLElement>('.viewer-status')!;
+  const note = viewer.querySelector<HTMLElement>('.viewer-note');
+  const noteDate = viewer.querySelector<HTMLElement>('.viewer-date');
+  const noteSiteWrap = viewer.querySelector<HTMLElement>('.viewer-site-wrap');
+  const noteSite = viewer.querySelector<HTMLAnchorElement>('.viewer-site');
+  const noteDot = viewer.querySelector<HTMLElement>('.viewer-dot');
   const error = viewer.querySelector<HTMLElement>('.viewer-error')!;
   const inquiry = viewer.querySelector<HTMLAnchorElement>('.viewer-inquiry')!;
   const screensControl = viewer.querySelector<HTMLElement>('.viewer-screens')!;
@@ -66,6 +71,20 @@ export function setupProjectViewer() {
     imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
     const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
+    // Дата съёмки и оговорка: снимок — момент в прошлом, живой сайт мог измениться
+    if (note && noteDate) {
+      note.hidden = !screen.date;
+      noteDate.textContent = screen.date ? `Снято ${screen.date}.` : '';
+      if (noteSiteWrap && noteSite && noteDot) {
+        noteSiteWrap.hidden = !project.site;
+        noteDot.hidden = !!project.site;
+        if (project.site) {
+          noteSite.href = project.site.url;
+          noteSite.textContent = project.site.domain;
+          noteSite.setAttribute('aria-label', `${project.site.domain} — живой сайт ${project.name}, откроется в новой вкладке`);
+        }
+      }
+    }
     status.textContent = `${description} · загружаем снимок…`;
     const ready = () => {
       if (version !== request) return;

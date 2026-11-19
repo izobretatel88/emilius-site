@@ -15,9 +15,9 @@ import {SERVICES} from '../../data/services';
 // не показываем (12.11.2026, владелец): в карточке они читаются как сроки конкретного проекта.
 const stagesOf=(id:string)=>SECTORS.filter(s=>SERVICES[s.id].cases.includes(id)).map(s=>({id:s.id,title:SERVICES[s.id].title}));
 
-const captions:Record<string,{kind:string;role:string;updated?:boolean;site?:boolean;height?:number}> = {
+const captions:Record<string,{kind:string;role:string;updated?:boolean;site?:boolean;height?:number;whole?:boolean}> = {
   // Лендинг: видео — запись прокрутки владельца (18.11.2026), адреса сайта пока нет
-  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,site:true,height:860},
+  'marine-garden':{kind:'Апарт-отель в Сочи',role:'Лендинг',updated:true,site:true,height:860,whole:true},
   happyanimal:{kind:'Зоомагазин и груминг',role:'Магазин на inSales · местное SEO',updated:true},
   alohagaia:{kind:'Ювелирные украшения',role:'Фронтенд · интеграции · собственные модули',updated:true},
   duman:{kind:'Одежда, созданная в Сибири',role:'Фронтенд на inSales'},
@@ -57,12 +57,22 @@ const projects=[
 // Только проверенные снимки этого проекта. В mobile/wizzu.webp показан другой
 // магазин сети («Вкусдом»), поэтому не выдаём его за мобильный LimeMart.
 const phoneHeights:Record<string,number>={happyanimal:1069,alohagaia:1068,duman:1071,geekboards:1069,zalina:1071,almatennis:1069,nsorganic:1069};
+// Когда снят снимок — по истории репозитория (когда файл попал в проект). Сайты клиентов живут своей жизнью,
+// поэтому в окне просмотра рядом с датой — оговорка и ссылка на живой сайт.
+const shotDates:Record<string,string>={
+  happyanimal:'02.11.2026',alohagaia:'02.11.2026',wizzu:'02.11.2026',duman:'24.09.2026',
+  zalina:'13.11.2026',mnogoles:'13.11.2026',navalishenskoe:'13.11.2026',
+  geekboards:'14.11.2026',almatennis:'14.11.2026','ss-sk':'14.11.2026',nsorganic:'14.11.2026',
+  'marine-garden':'18.11.2026',
+};
+const PHONE_SHOT_DATE='27.10.2026'; // мобильные снимки — скриншоты владельца, public/cases/mobile/
 const media=Object.fromEntries(projects.map(p=>[p.id,{
   name:p.name,
   inquiry:href(`?project=${p.id}#feedback`),
+  site:p.url?{url:p.url,domain:p.domain}:null,
   screens:[
-    {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height},
-    ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id]}]:[]),
+    {device:'desktop',label:'Главная',src:href(p.image),width:p.width,height:p.height,date:shotDates[p.id]},
+    ...(phoneHeights[p.id]?[{device:'phone',label:['geekboards','zalina','almatennis'].includes(p.id)?'Главная':'Каталог',src:href(`cases/mobile/${p.id}.webp`),width:520,height:phoneHeights[p.id],date:PHONE_SHOT_DATE}]:[]),
   ],
 }]));
 ---
@@ -70,7 +80,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <div class="project-gallery">
     {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
-      <a class="project-preview" href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
+      <a class:list={['project-preview',{'is-whole':p.whole}]} data-preview-video href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
         <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} fetchpriority={index===0?'high':undefined} decoding={index===0?undefined:'async'} />
         {p.video && <video class="preview-video" src={href(p.video)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" width={p.width} height={p.height}></video>}
         <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
@@ -93,7 +103,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
       <div class="viewer-zoom" role="group" aria-label="Масштаб снимка"><button type="button" data-scale="fit" aria-pressed="true" aria-controls="viewer-canvas">По ширине</button><button type="button" data-scale="actual" aria-pressed="false" aria-controls="viewer-canvas">100%</button></div>
       <a class="viewer-inquiry" href={href('#feedback')}>Хочу похожий магазин</a>
     </div>
-    <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="viewer-meta">
+      <div class="viewer-status" role="status" aria-live="polite" aria-atomic="true"></div>
+      <p class="viewer-note"><span class="viewer-date"></span> Живой сайт мог измениться<span class="viewer-site-wrap">: <a class="viewer-site" href="#" target="_blank" rel="noopener"></a></span><span class="viewer-dot">.</span></p>
+    </div>
     <div class="viewer-error" role="alert" hidden>Снимок не загрузился. <button type="button" data-retry-viewer>Повторить</button></div>
     <div class="viewer-image" id="viewer-canvas" role="region" aria-label="Скриншот проекта. Область прокрутки" tabindex="-1" aria-busy="false"><img src={href(projects[0].image)} alt={`Скриншот сайта ${projects[0].name}`} width={projects[0].width} height={projects[0].height} loading="lazy" /></div>
     <div class="viewer-paging" hidden><button type="button" data-prev-screen aria-label="Предыдущий экран">← Назад</button><button type="button" data-next-screen aria-label="Следующий экран">Дальше →</button></div>
@@ -102,26 +115,10 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 </Directory>
 <script>
   import {setupProjectViewer} from '../../lib/project-viewer';
+  import {setupPreviewVideos} from '../../lib/preview-video';
   setupProjectViewer();
-  // Видео в превью: играет, пока курсор над карточкой, и гаснет до снимка, когда курсор ушёл.
-  // Только мышь (на телефоне наведения нет) и без «уменьшения движения» в системе.
-  const canHover=matchMedia('(hover: hover) and (pointer: fine)');
-  const calm=matchMedia('(prefers-reduced-motion: reduce)');
-  document.querySelectorAll<HTMLVideoElement>('.preview-video').forEach((video)=>{
-    const preview=video.closest<HTMLElement>('.project-preview');
-    if(!preview) return;
-    let timer=0;
-    preview.addEventListener('pointerenter',()=>{
-      if(!canHover.matches||calm.matches) return;
-      clearTimeout(timer);
-      video.play().then(()=>preview.classList.add('is-playing')).catch(()=>{});
-    });
-    preview.addEventListener('pointerleave',()=>{
-      preview.classList.remove('is-playing');
-      // после затухания — на начало, чтобы следующее наведение начиналось с первого экрана
-      timer=window.setTimeout(()=>{video.pause();video.currentTime=0;},200);
-    });
-  });
+  // Видео прокрутки в превью — при наведении мыши и фокусе с клавиатуры
+  setupPreviewVideos();
 </script>
 <style>
   .gallery-intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;margin-bottom:24px;padding-top:12px;border-top:1px solid var(--hair);font-size:var(--fs-ui);color:var(--ink-2)}
@@ -143,6 +140,8 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   /* Видео лежит поверх снимка и проявляется за 0.2 с, когда пошло воспроизведение */
   .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;transition:opacity var(--hover)}
   .project-preview.is-playing .preview-video{opacity:1}
+  /* Запись шире 8:5 (Marine Garden, 1440×774): показываем целиком, без обрезки краёв — по центру серого поля */
+  .project-preview.is-whole img,.project-preview.is-whole .preview-video{object-fit:contain;object-position:center}
   .preview-action{position:absolute;z-index:1;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
   .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
   @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} .project-preview:hover img {filter:none} }
@@ -213,7 +212,12 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-inquiry{display:inline-flex;align-items:center;min-height:44px;margin-left:auto;font-size:var(--fs-ui);font-weight:600;text-underline-offset:4px}
   /* Переключателей нет (один вид, снимок помещается) — ссылка не висит одна у правого края пустой полосы, а встаёт в начало, под название */
   .viewer-controls:not(:has(>[role='group']:not([hidden]))) .viewer-inquiry{margin-left:0}
-  .viewer-status{font-size:var(--fs-small);min-height:36px;padding:8px 20px;color:var(--ink-2)}
+  /* Под панелью: слева вид и экран, справа — когда снято и что живой сайт мог уйти вперёд (18.11.2026, владелец) */
+  .viewer-meta{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:0 24px;padding:8px 20px}
+  .viewer-status{font-size:var(--fs-small);min-height:20px;color:var(--ink-2)}
+  .viewer-note{margin:0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.5}
+  .viewer-note a{font-weight:600;text-underline-offset:3px}
+  .viewer-site-wrap[hidden],.viewer-dot[hidden]{display:none}
   /* Ошибка загрузки — на месте снимка: площадка с сообщением по центру, окно не схлопывается в полосу */
   .viewer-error{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:min(50svh,360px);padding:24px 20px;background:var(--well);color:var(--ink);font-size:var(--fs-body);text-align:center}
   /* Снимка нет — пустая область под ним не держит отступы и серый фон телефона */
@@ -262,6 +266,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-toolbar h2{font-size:18px}
     .viewer-controls{padding:8px 12px;gap:8px 12px}
     .viewer-inquiry{margin-left:0}
+    .viewer-meta{padding:6px 12px}
   }
   @media(prefers-reduced-motion:reduce){.project-preview,.project-preview img,.preview-action,.project-inquiry,.result-arrow{transition:none}.project-preview:active{transform:none}a.project-result .result-arrow{transform:none!important}}
 </style>
