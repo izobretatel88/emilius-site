@@ -204,7 +204,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .viewer-role{margin:2px 0 0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.4}
   .viewer-role:empty{display:none}
   .viewer-toolbar button{display:inline-flex;align-items:center;gap:16px;min-height:44px;padding:0 12px;font:inherit;font-size:var(--fs-ui);cursor:pointer;background:var(--well);color:var(--ink);border:0;border-radius:var(--radius-sm);flex-shrink:0}
-  .viewer-toolbar button span{font-size:24px}
+  .viewer-toolbar button span[aria-hidden]{font-size:24px}
   /* Листание проектов — у «Закрыть»: две квадратные кнопки 44 px со стрелкой, на краю списка гаснут */
   .viewer-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}
   .viewer-projects{display:flex;gap:4px}
