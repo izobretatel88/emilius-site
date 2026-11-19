@@ -459,6 +459,16 @@
       "title": "inSales: мобильный бэк-офис iOS и Android",
       "url": "https://www.insales.ru/page/mobile",
       "accessed": "2026-11-01"
+    },
+    "I33": {
+      "title": "inSales: каталог тем",
+      "url": "https://www.insales.ru/collection/themes",
+      "accessed": "2026-11-20"
+    },
+    "K59": {
+      "title": "KIT: начало работы в редакторе сайта",
+      "url": "https://yandex.ru/support/kit/ru/site-editor/start",
+      "accessed": "2026-11-20"
     }
   },
   "features": [
@@ -643,6 +653,16 @@
       "note": "У inSales HTML/CSS/JS/Liquid. У KIT полный код темы недоступен."
     },
     {
+      "id": "F349",
+      "group": "Витрина",
+      "feature": "Готовые темы оформления",
+      "insales": "Да",
+      "kit": "Да",
+      "insales_source": "I33",
+      "kit_source": "K59",
+      "note": "inSales: 19 тем в каталоге, все бесплатные. KIT: 5 шаблонов (Arcana, Flux, Spark, Lumen, Olivesa) и «Мой дизайн»; о плате за шаблоны справка не пишет."
+    },
+    {
       "id": "F019",
       "group": "Витрина",
       "feature": "Сторонние темы",
@@ -650,7 +670,7 @@
       "kit": "Нет",
       "insales_source": "I1",
       "kit_source": "K58",
-      "note": "KIT: тема одна, кодом меняются только собственные секции."
+      "note": "KIT: сторонние темы не ставятся — только 5 своих шаблонов; кодом меняются только собственные секции."
     },
     {
       "id": "F020",
