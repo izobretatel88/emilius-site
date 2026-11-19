@@ -63,8 +63,11 @@ const related=[
   .platform-comparison :global(table[hidden]),.platform-comparison :global(.mobile-hint[hidden]){display:none}
   .platform-comparison :global(button),.platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){min-height:44px}
   .platform-comparison :global(.table-jump),.platform-comparison :global(.table-meta a){display:inline-flex;align-items:center}
-  .platform-comparison :global(.source){display:inline-flex;vertical-align:middle;align-items:center;min-height:44px;width:fit-content;text-underline-offset:3px;margin:0 0 0 10px;font-size:13px}
-  .platform-comparison :global(.scroll td>.status){display:inline-flex;vertical-align:middle}
+  /* Статус всегда первой строкой, источник под ним: значки в соседних колонках стоят на одной высоте с названием функции */
+  .platform-comparison :global(.source){display:flex;align-items:center;min-height:32px;width:fit-content;text-underline-offset:3px;margin:2px 0 -6px;font-size:13px}
+  .platform-comparison :global(.scroll td>.status){display:flex}
+  /* Код источника (I4, K58) — служебный, расшифровка есть в подписи ссылки для экранного диктора */
+  .platform-comparison :global(.source span){display:none}
   .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:8px;padding-inline:14px}
   .platform-comparison :global(table:has(.feature-col) .section-row th){padding:16px 14px 10px;font-size:20px}
   .platform-comparison :global(table:has(.feature-col) thead th){padding:12px 14px;font-size:19px}
@@ -85,7 +88,6 @@ const related=[
     .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
     .platform-comparison :global(.status>.si){width:12px;height:12px;margin-top:0;vertical-align:-1px}
     .platform-comparison :global(.source){display:flex;font-size:13px;margin:2px 0 0}
-    .platform-comparison :global(.source span){display:none}
     .platform-comparison :global(.mobile-note-row){display:table-row}
     .platform-comparison :global(.mobile-note-row td){padding:0 10px 12px;color:var(--ink-2);font-size:var(--fs-small)}
     .platform-comparison :global(.mobile-note-row summary){font-size:13px;font-weight:400;min-height:44px;padding-block:12px;cursor:pointer}
