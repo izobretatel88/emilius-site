@@ -184,3 +184,11 @@
 
 .platform-comparison .empty-ask{margin-top:16px;font-size:var(--fs-small);line-height:1.6;color:var(--ink-2)}
 .platform-comparison .empty-ask a{color:var(--teal-text)}
+
+/* Печать и сохранение в PDF: только содержание сравнения, без экранных кнопок и подсказок */
+@media print{
+  .site-header .nav-links,.site-header .nav-action,.site-header .nav-menu,.cookie-notice,.write-fab{display:none!important}
+  .platform-comparison .table-jump,.platform-comparison .table-meta a,.platform-comparison .kit-answers-show,.platform-comparison .kit-answers-back,.platform-comparison .choose-more,.platform-comparison .choose-note,.platform-comparison .empty{display:none!important}
+  .platform-comparison .scroll{max-height:none}
+  .platform-comparison tr{break-inside:avoid}
+}

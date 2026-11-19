@@ -108,5 +108,9 @@
     }));
     backLink.addEventListener('click', () => { requestAnimationFrame(() => document.getElementById(backLink.hash.slice(1))?.querySelector('.feature-link')?.focus({preventScroll: true})); });
   }
+  // При печати раскрываем свёрнутые темы, иначе они не попадут в PDF; после печати возвращаем как было
+  let openedForPrint = [];
+  window.addEventListener('beforeprint', () => { openedForPrint = [...document.querySelectorAll('.platform-comparison details:not([open])')]; openedForPrint.forEach(d => { d.open = true; }); });
+  window.addEventListener('afterprint', () => { openedForPrint.forEach(d => { d.open = false; }); openedForPrint = []; });
   readURL();
 })();
