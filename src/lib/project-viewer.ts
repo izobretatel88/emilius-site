@@ -38,6 +38,7 @@ export function setupProjectViewer() {
   const prevProject = viewer.querySelector<HTMLButtonElement>('[data-prev-project]');
   const nextProject = viewer.querySelector<HTMLButtonElement>('[data-next-project]');
   let current = -1;
+  let announce = false;
   let opener: HTMLAnchorElement | null = null;
   let origin: HTMLAnchorElement | null = null;
   let project: ProjectMedia | null = null;
@@ -106,7 +107,9 @@ export function setupProjectViewer() {
     imageBox.style.setProperty('--screen-ratio', String(screen.width / screen.height));
     imageBox.setAttribute('aria-label', `${project.name}: ${screen.label}. Область прокрутки снимка`);
     imageBox.setAttribute('aria-busy', 'true');
-    const description = `${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
+    // Пролистали к другому проекту — строка состояния называет его: диктор иначе слышит только вид и формат
+    const description = `${announce ? `${project.name} · ` : ''}${device === 'phone' ? 'Телефон' : 'Компьютер'} · ${screen.label}`;
+    announce = false;
     // Дата съёмки и оговорка: снимок — момент в прошлом, живой сайт мог измениться
     if (note && noteDate) {
       note.hidden = !screen.date;
@@ -239,6 +242,7 @@ export function setupProjectViewer() {
     const position = current + delta;
     if (!viewer.open || position < 0 || position >= links.length) return;
     film?.pause();
+    announce = true;
     show(position, true);
   };
   prevProject?.addEventListener('click', () => step(-1));
