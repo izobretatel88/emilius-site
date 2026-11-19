@@ -11,6 +11,10 @@ import { SECTORS, ITERATION, LINKS } from '../data/site';
 import { DIRECTIONS } from '../data/navigation';
 import { SERVICES } from '../data/services';
 import { href } from '../lib/urls';
+import ProjectPreview from '../components/ProjectPreview.astro';
+import { PROJECTS } from '../data/projects';
+import { similarLabel } from '../lib/project-inquiry';
+import { PREVIEW_SIZES, previewSrcset } from '../lib/preview-sizes';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 // Соседние этапы показаны так, как их видит страница «Разработки»: до неё дизайн, после — маркетинг
@@ -144,6 +148,39 @@ const colors = [
       <details class="motion-sample"><summary>Раскрыть образец</summary><p>Содержимое проявляется за <code>--fade-in</code>: только прозрачность, без сдвига.</p></details>
     </section>
 
+    <section class="ui-section" aria-labelledby="g-portfolio">
+      <div class="ui-section-head"><h2 id="g-portfolio">Портфолио</h2></div>
+      <p class="ui-section-intro">Одна карточка проекта на галерее, главной и страницах направлений. Превью — <code>ProjectPreview</code>: снимок 8:5, при наведении и фокусе с клавиатуры — видео прокрутки сайта (снимок — его первый кадр, переход без шва). Правила — <code>docs/PORTFOLIO-DESIGN-SYSTEM.md</code>.</p>
+      <div class="portfolio-sample">
+        {PROJECTS.filter((p) => ['alohagaia', 'wizzu'].includes(p.id)).map((p) => (
+          <article class="project-card" aria-labelledby={`g-case-${p.id}`}>
+            <ProjectPreview
+              href={href(`projects/#${p.id}`)}
+              label={`Смотреть проект ${p.name}`}
+              image={{src:href(`cases/gallery/${p.id}-800.webp`),srcset:previewSrcset(p.id),sizes:PREVIEW_SIZES.section,width:800,height:500,alt:`Главная страница сайта ${p.name}`}}
+              video={{src:href(`video/gallery/${p.id}.mp4`),small:href(`video/gallery/${p.id}-640.mp4`),width:1280,height:800}}
+              action="Смотреть проект"
+              arrow
+            />
+            <div class="portfolio-caption">
+              <h3 id={`g-case-${p.id}`}>{p.name}</h3>
+              <p class="note">{p.about}</p>
+              <p class="did">{p.did}</p>
+              <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain} <span aria-hidden="true">↗</span></a>
+              <a class="project-inquiry" href={href(`?project=${p.id}#feedback`)} aria-label={`${similarLabel(p.id)} — ${p.name}`}>{similarLabel(p.id)} <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <ul class="motion-tokens portfolio-tokens">
+        <li><code>--preview-ratio</code> 8 / 5 — превью и запись (1280×800, снимок 1600×1000)</li>
+        <li><code>--project-inset</code> 10 px — поле карточки вокруг превью (на телефоне 8)</li>
+        <li><code>--preview-edge</code> — линия <code>--hair</code> по краю превью: светлый сайт не растворяется в карточке</li>
+        <li><code>--img-dim</code> — в тёмной теме снимок и видео приглушены одинаково</li>
+        <li>Плашка: «Смотреть проект →» — переход на другую страницу, «Смотреть крупнее» — окно на этой же</li>
+      </ul>
+    </section>
+
     <section class="ui-section" aria-labelledby="g-iteration">
       <div class="ui-section-head"><h2 id="g-iteration">Итерация</h2></div>
       <p class="ui-section-intro">Линейка итерации — обод колеса, развёрнутый в строку: 52 деления по числу дней, четыре этапа по 13. Ставится только там, где показывает дни этапа.</p>
@@ -170,6 +207,11 @@ const colors = [
   </main>
   <Footer />
 </Base>
+
+<script>
+  import { setupPreviewVideos } from '../lib/preview-video';
+  setupPreviewVideos();
+</script>
 
 <script is:inline>
   // Значения токенов читаются из страницы, поэтому совпадают с текущей темой и не расходятся с tokens.css
@@ -223,6 +265,12 @@ const colors = [
   .r-btn { border-radius: var(--radius-btn); }
   .r-sm { border-radius: var(--radius-sm); }
   .rulers { display: grid; gap: 28px; }
+  .portfolio-sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 18px; }
+  .portfolio-caption { display: flex; flex-direction: column; align-items: start; gap: 6px; flex: 1; }
+  .portfolio-caption .note { margin-top: 0; }
+  .portfolio-caption .did { color: var(--ink); max-width: 52ch; }
+  .portfolio-caption .project-inquiry { margin-top: auto; }
+  .portfolio-tokens { margin-top: 24px; }
   .iterations-sample { width: 154px; }
   .guide h3.list-title { margin-top: 48px; }
   .list-sample { margin-top: 18px; padding: 4px 26px; }
@@ -230,7 +278,7 @@ const colors = [
   .tags { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 12px; }
   .steps-sample { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 640px; margin-top: 12px; }
   @media (max-width: 760px) {
-    .surfaces { grid-template-columns: 1fr; }
+    .surfaces, .portfolio-sample { grid-template-columns: 1fr; }
     .fields-sample { grid-template-columns: 1fr; padding: 20px 18px; }
     .swatches { grid-template-columns: 1fr; }
     .list-sample { padding-inline: 18px; }

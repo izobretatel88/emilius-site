@@ -1,0 +1,47 @@
+---
+// Превью проекта: снимок 8:5, видео прокрутки поверх и плашка действия в углу.
+// Одно на галерее /projects/, на главной и на страницах направлений — docs/PORTFOLIO-DESIGN-SYSTEM.md.
+// Снимок — первый кадр видео (scripts/record-gallery.mjs): переход «снимок → видео» без шва.
+import '../styles/portfolio.css';
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & {
+  href: string;
+  label: string; // доступное имя ссылки: что откроется и чей проект
+  image: { src: string; srcset?: string; sizes?: string; width: number; height: number; alt: string; eager?: boolean }; // eager — первый экран (крупная карточка галереи)
+  video?: { src: string; small?: string; width?: number; height?: number };
+  action?: string; // плашка в углу; не задана — плашки нет
+  arrow?: boolean; // стрелка у плашки — когда нажатие ведёт на другую страницу
+  whole?: boolean; // запись шире 8:5 — показывать целиком
+};
+
+const { href, label, image, video, action, arrow, whole, class: className, ...rest } = Astro.props;
+---
+<a class:list={['project-preview', { 'is-whole': whole }, className]} data-preview-video href={href} aria-label={label} {...rest}>
+  <img
+    src={image.src}
+    srcset={image.srcset}
+    sizes={image.sizes}
+    width={image.width}
+    height={image.height}
+    alt={image.alt}
+    loading={image.eager ? 'eager' : 'lazy'}
+    fetchpriority={image.eager ? 'high' : undefined}
+    decoding={image.eager ? undefined : 'async'}
+  />
+  {video && (
+    <video
+      class="preview-video"
+      data-src={video.src}
+      data-src-small={video.small}
+      muted
+      playsinline
+      preload="none"
+      aria-hidden="true"
+      tabindex="-1"
+      width={video.width ?? image.width}
+      height={video.height ?? image.height}
+    ></video>
+  )}
+  {action && <span class="preview-action" aria-hidden="true">{action}{arrow && <span aria-hidden="true">→</span>}</span>}
+</a>

@@ -1,0 +1,178 @@
+/* Портфолио: превью проекта — общий вид для галереи /projects/, главной и страниц направлений.
+   Компонент — src/components/ProjectPreview.astro, поведение видео — src/lib/preview-video.ts,
+   правила — docs/PORTFOLIO-DESIGN-SYSTEM.md. Значения — только токены из tokens.css. */
+
+.project-preview {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--preview-edge);
+  transition: transform var(--press);
+  -webkit-tap-highlight-color: transparent; /* своё нажатие — проседание, серый прямоугольник браузера лишний */
+}
+.project-preview:active { transform: scale(var(--press-scale-card)); }
+
+.project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--preview-ratio);
+  object-fit: cover;
+  object-position: top;
+  filter: var(--img-dim);
+  transition: filter var(--hover);
+}
+
+/* Видео прокрутки лежит поверх снимка; снимок — его первый кадр, поэтому проявление без шва.
+   Приглушено так же, как снимок: в тёмной теме на телефоне (видео идёт само) не вспыхивает ярче */
+.preview-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  pointer-events: none;
+  filter: var(--img-dim);
+  transition: opacity var(--hover), filter var(--hover);
+}
+/* Появление — сильный ease-out (--fade-in), уход — спокойный --hover */
+.project-preview.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in), filter var(--hover); }
+
+/* Запись шире 8:5 (Marine Garden): целиком, без обрезки краёв — по центру серого поля */
+.project-preview.is-whole :is(img, .preview-video) { object-fit: contain; object-position: center; }
+
+/* Плашка действия в углу превью называет, что будет по нажатию: «Смотреть крупнее» (окно) или «Смотреть проект» (переход) */
+.preview-action {
+  position: absolute;
+  z-index: 1;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-btn);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  transition: background-color var(--hover), color var(--hover);
+}
+
+/* Наведение, фокус, касание: снимок проясняется (тёмная тема), плашка заливается бирюзой */
+.project-preview:focus-visible :is(img, .preview-video) { filter: none; }
+.project-preview:is(:focus-visible, :active) .preview-action { background: var(--teal-btn); color: var(--on-teal); }
+@media (hover: hover) and (pointer: fine) {
+  .project-preview:hover :is(img, .preview-video) { filter: none; }
+  .project-preview:hover .preview-action { background: var(--teal-btn); color: var(--on-teal); }
+}
+
+@media (max-width: 700px) {
+  .preview-action { right: 10px; bottom: 10px; padding: 8px 12px; gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-preview, .project-preview img, .preview-action, .project-inquiry { transition: none; }
+  .project-preview:active { transform: none; }
+}
+
+/* Карточка проекта: белая плитка на сером фоне, превью — с полем по краю, подписи — под ним
+   (решение владельца 05.11.2026 для галереи; с 19.11.2026 одна на всех поверхностях портфолио).
+   Внутри — превью, затем подпись; действие «Хочу похожий…» или адрес сайта прижаты к низу */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--project-inset) var(--project-inset) 22px;
+  background: var(--card);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.project-card > :not(.project-preview) { margin-inline: 16px; }
+.project-card > .project-preview + * { margin-top: 20px; }
+
+/* Адрес сайта клиента: домен без https:// и www, стрелка ↗ — откроется в новой вкладке (это говорит и aria-label).
+   Стрелки на сайте — только у внешних ссылок (19.11.2026, владелец), и ↗ не спорит с адресом: мельче, тоньше, серая */
+.project-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 44px;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.site-arrow { margin-left: -2px; font-size: .85em; font-weight: 400; color: var(--ink-3); transition: color var(--hover); }
+.project-site:focus-visible .site-arrow { color: currentColor; }
+@media (hover: hover) and (pointer: fine) { .project-site:hover .site-arrow { color: currentColor; } }
+
+/* Действие карточки «Хочу похожий магазин / сайт» — одно на галерее, главной и направлениях.
+   Компьютер: текстовое действие по общему правилу (бирюзовый текст, стрелка, подчёркивание при наведении и в фокусе).
+   Телефон: кнопка с рамкой во всю ширину карточки — заметная цель касания, заливается при нажатии */
+.project-inquiry {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+  color: var(--teal-text);
+  text-decoration: underline transparent;
+  text-underline-offset: 4px;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--hover), background-color var(--hover), text-decoration-color var(--hover), transform var(--press);
+}
+.project-inquiry:focus-visible { text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) {
+  .project-inquiry:hover { text-decoration-color: currentColor; }
+}
+
+@media (max-width: 700px) {
+  .project-inquiry {
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+    justify-self: stretch; /* подпись на главной — grid */
+    min-height: 48px;
+    padding: 10px 16px;
+    border: 1px solid var(--teal-text);
+    border-radius: var(--radius-btn);
+    background: var(--card);
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+  }
+  .project-inquiry:focus-visible, .project-inquiry:active { background: var(--teal-btn); color: var(--on-teal); }
+  .project-inquiry:active { transform: scale(var(--press-scale)); }
+}
+
+/* Строка результата: подтверждённая цифра с источником и датой (дизайн-система портфолио, §3.2 п. 7).
+   Отдельная строка с линией сверху; ссылка на разбор кейса — цифра бирюзовая, без стрелки: переход внутри сайта */
+.project-result {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--hair);
+  color: var(--ink); text-decoration: none; font-size: var(--fs-body); min-height: 64px;
+}
+.project-result strong { color: var(--ink); }
+a.project-result strong { color: var(--teal-text); }
+a.project-result:focus-visible strong { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) {
+  a.project-result:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+}
+.result-date { display: block; margin-top: 4px; color: var(--ink-3); font-size: var(--fs-small); }
+
+@media (max-width: 700px) {
+  .project-card { padding: 8px 8px 18px; }
+  .project-card > :not(.project-preview) { margin-inline: 10px; }
+  .project-card > .project-preview + * { margin-top: 16px; }
+}

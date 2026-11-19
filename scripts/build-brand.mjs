@@ -1,7 +1,7 @@
 // Собирает фирменные картинки из PNG логотипа владельца (public/brand/logo.png,
 // готовится scripts/logo-from-png.py — знак не перерисовываем):
 //   public/favicon.svg, public/favicon-32.png, public/apple-touch-icon.png,
-//   public/brand/logo-mark.png, public/og.jpg, public/og/insales.jpg, public/og/insales-seller.jpg
+//   public/brand/logo-mark.png, public/og.jpg, public/og/insales.jpg, public/og/insales-seller.jpg, public/og/projects.jpg
 //
 // Запуск: npm run build && npm run brand
 // Картинки рисует установленный Google Chrome в headless-режиме,
@@ -172,4 +172,36 @@ for (const c of CARDS) {
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og', c.file)]);
 }
 
-console.log('Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg, og/insales.jpg, og/insales-seller.jpg');
+// 7. Миниатюра галереи /projects/: public/og/projects.jpg. Ссылку на портфолио пересылают клиентам —
+//    в превью видны настоящие работы: шесть снимков галереи (первый кадр записи, public/cases/gallery/{id}-800.webp).
+// Happy Animal не берём, пока на их сайте плашка «приём заказов недоступен» (docs/HANDOFF.md)
+const SHOTS = ['alohagaia', 'navalishenskoe', 'zalina', 'wizzu', 'duman', 'geekboards'];
+const projectsCss = `
+  ${[400, 600, 700, 800].map(fontFace).join('')}
+  body{width:1200px;height:630px;font-family:Glober,sans-serif;color:var(--ink);background:
+    linear-gradient(var(--veil-a),var(--veil-b)),conic-gradient(from 200deg at 70% 45%,var(--ray-1),var(--ray-2),var(--ray-3),var(--ray-4),var(--ray-1));
+    background-color:var(--page);display:grid;grid-template-columns:1fr 540px;gap:48px;align-items:center;padding:0 56px 0 72px;box-sizing:border-box}
+  .left{display:flex;flex-direction:column;gap:22px}
+  .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 24px;font-weight:600;font-size:24px}
+  .pill img{width:27px;height:40px;display:block}
+  .eyebrow{color:var(--teal-text);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:14px}
+  h1{margin:6px 0 0;font-weight:600;font-size:54px;line-height:1.08;text-wrap:balance}
+  .sub{font-size:25px;color:var(--ink-2);line-height:1.3}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .tile{background:var(--card);border-radius:16px;padding:7px;box-shadow:var(--shadow-card)}
+  .tile img{display:block;width:100%;aspect-ratio:8/5;object-fit:cover;object-position:top;border-radius:10px}`;
+const projectsBody = `
+  <div class="left">
+    <div class="pill"><span>Эмилиус</span><img src="${logoUrl}" alt=""><span>Эдженси</span></div>
+    <div><div class="eyebrow">Проекты</div><h1>Магазины и сайты, которые работают</h1></div>
+    <div class="sub">12 работ: от фронтенда на inSales до полного цикла — дизайн, разработка, маркетинг</div>
+  </div>
+  <div class="grid">${SHOTS.map((id) => `<div class="tile"><img src="file://${join(PUB, 'cases', 'gallery', `${id}-800.webp`)}" alt=""></div>`).join('')}</div>`;
+{
+  const html = page(projectsBody, projectsCss).replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
+  const png = join(TMP, 'projects.png');
+  shoot(html, png, 1200, 630);
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og', 'projects.jpg')]);
+}
+
+console.log('Готово: favicon.svg, favicon-32.png, apple-touch-icon.png, brand/logo-mark.png, og.jpg, og/insales.jpg, og/insales-seller.jpg, og/projects.jpg');

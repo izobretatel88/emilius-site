@@ -15,5 +15,8 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.1"
   }
 }
