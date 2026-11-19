@@ -4,6 +4,7 @@
    по два на широком экране. На телефоне один столбец. Превью открывается крупно;
    внешний сайт — отдельная ссылка. Только подтверждённые роли и результаты. */
 import Directory from '../../layouts/Directory.astro';
+import ProjectPreview from '../../components/ProjectPreview.astro';
 import {PROJECTS} from '../../data/projects';
 import {FRESH_SHOP,TEMPLATE_SHOPS,MORE_SHOPS} from '../../data/insales';
 import {href} from '../../lib/urls';
@@ -90,12 +91,16 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
 <Directory title="Проекты" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие.">
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <div class="project-gallery">
-    {projects.map((p,index)=><article class:list={['project',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
-      <a class:list={['project-preview',{'is-whole':p.whole}]} data-preview-video href={href(p.image)} data-project-preview={p.id} aria-label={`Смотреть крупнее: ${p.name}`}>
-        <img src={href(p.image)} srcset={p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined} sizes={index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px'} alt={`Скриншот сайта ${p.name}`} width={p.width} height={p.height} loading={index===0?'eager':'lazy'} fetchpriority={index===0?'high':undefined} decoding={index===0?undefined:'async'} />
-        {p.video && <video class="preview-video" data-src={href(p.video)} data-src-small={href(p.video.replace('.mp4','-640.mp4'))} muted playsinline preload="none" aria-hidden="true" tabindex="-1" width={p.width} height={p.height}></video>}
-        <span class="preview-action" aria-hidden="true">Смотреть крупнее</span>
-      </a>
+    {projects.map((p,index)=><article class:list={['project','project-card',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
+      <ProjectPreview
+        href={href(p.image)}
+        data-project-preview={p.id}
+        label={`Смотреть крупнее: ${p.name}`}
+        whole={p.whole}
+        image={{src:href(p.image),srcset:p.small?`${href(p.small)} 800w, ${href(p.image)} 1600w`:undefined,sizes:index===0?'(max-width: 1238px) calc(100vw - 48px), 1190px':'(max-width: 700px) calc(100vw - 24px), (max-width: 1238px) calc((100vw - 80px) / 2), 579px',width:p.width,height:p.height,alt:`Скриншот сайта ${p.name}`,eager:index===0}}
+        video={p.video?{src:href(p.video),small:href(p.video.replace('.mp4','-640.mp4'))}:undefined}
+        action="Смотреть крупнее"
+      />
       <div class="project-caption">
         <div><p class="project-kind">{p.kind}</p><h2 id={`title-${p.id}`}>{p.name}</h2><p class="project-role">{p.role.replaceAll(' · ','\u00a0· ')}</p>{stagesOf(p.id).map(s=><a class="ui-stage-tag project-stage" href={href(`services/${s.id}/`)} data-stage={s.id}><i class="ui-stage-dot" aria-hidden="true"></i><span>{s.title}</span></a>)}</div>
         {p.url && <a class="project-site" href={p.url} target="_blank" rel="noopener" aria-label={`${p.site ?? p.domain} — сайт ${p.name}, откроется в новой вкладке`}>{p.site ?? p.domain}</a>}
@@ -137,30 +142,16 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .gallery-intro a{display:inline-flex;align-items:center;gap:16px;min-height:44px;text-underline-offset:4px;font-weight:600}
   .project-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
   /* Каждый проект — белая карточка на сером фоне (05.11.2026, по замечанию владельца): проекты не сливаются */
-  .project{min-width:0;scroll-margin-top:24px;display:flex;flex-direction:column;padding:10px 10px 22px;background:var(--card);border:2px solid var(--card-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card)}
-  .project>:not(.project-preview){margin-inline:16px}
+  /* Карточка — общий класс .project-card (src/styles/portfolio.css) */
+  .project{scroll-margin-top:24px}
   /* Доказательство (результат) — до действия; «Хочу похожий…» прижата к низу карточки, в ряду стоит на одной линии */
   .project>.project-inquiry{align-self:start;margin-top:auto}
   .project-caption,.project-result{margin-bottom:8px}
   .project-featured{grid-column:1/-1}
-  .project-preview{position:relative;display:block;overflow:hidden;border-radius:var(--radius-sm);background:var(--well);text-decoration:none;cursor:zoom-in;box-shadow:0 0 0 1px var(--hair);transition:transform var(--press)}
-  /* Нажатие на превью: большая плитка едва проседает, как карточки «Полезного» и услуг */
-  .project-preview:active{transform:scale(var(--press-scale-card))}
+  /* Превью — общий компонент ProjectPreview (src/styles/portfolio.css); в галерее оно открывает окно просмотра */
+  .project :global(.project-preview){cursor:zoom-in}
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
-  .project-preview,a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
-  .project-preview img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;object-position:top;filter:var(--img-dim);transition:filter var(--hover)}
-  /* Видео приглушено так же, как снимок: в тёмной теме на телефоне (видео идёт само, наведения нет) иначе вспыхивало бы ярче */
-  /* Видео лежит поверх снимка и проявляется за 0.2 с, когда пошло воспроизведение */
-  .preview-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;pointer-events:none;filter:var(--img-dim);transition:opacity var(--hover),filter var(--hover)}
-  /* Появление — сильный ease-out (--fade-in), уход — спокойный --hover */
-  .project-preview.is-playing .preview-video{opacity:1;transition:opacity var(--fade-in),filter var(--hover)}
-  /* Запись шире 8:5 (Marine Garden, 1440×774): показываем целиком, без обрезки краёв — по центру серого поля */
-  .project-preview.is-whole img,.project-preview.is-whole .preview-video{object-fit:contain;object-position:center}
-  .preview-action{position:absolute;z-index:1;right:14px;bottom:14px;display:flex;align-items:center;gap:20px;background:var(--card);color:var(--ink);padding:10px 14px;border-radius:var(--radius-btn);box-shadow:var(--shadow-card);font-size:var(--fs-small);font-weight:600;transition:background-color var(--hover),color var(--hover)}
-  .project-preview:focus-visible .preview-action {background:var(--teal-btn);color:var(--on-teal)}
-  @media (hover: hover) and (pointer: fine) { .project-preview:hover .preview-action {background:var(--teal-btn);color:var(--on-teal)} .project-preview:hover :is(img,.preview-video) {filter:none} }
-  .project-preview:focus-visible img {filter:none}
-  .project-preview:active .preview-action {background:var(--teal-btn);color:var(--on-teal)}
+  a.project-result,.project-inquiry,.viewer-toolbar button,.viewer-controls :global(button),.viewer-paging button,.viewer-error button{-webkit-tap-highlight-color:transparent}
   .project-caption{display:flex;flex-wrap:wrap;align-items:start;justify-content:space-between;gap:12px 24px;margin-top:20px}
   .project-caption>div{min-width:0;flex:1 1 220px}
   .project-kind{font-size:var(--fs-small);color:var(--ink-2);margin-bottom:5px}
@@ -260,8 +251,6 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   @media(max-width:1000px){.project-caption{margin-bottom:0}.project-result{margin-top:12px}.project-caption{flex-direction:column;gap:2px}.project-caption>div{flex-basis:auto}.project-site{min-height:44px}.project-featured .project-caption{flex-direction:row}}
   @media(max-width:700px){
     .project-gallery{grid-template-columns:1fr;gap:20px}
-    .project{padding:8px 8px 18px}
-    .project>:not(.project-preview){margin-inline:10px}
     .project>.project-inquiry{align-self:stretch;width:auto;margin-top:12px}
     .project-featured{grid-column:auto}
     .project-caption,.project-featured .project-caption{flex-direction:column;margin-top:16px}
@@ -276,7 +265,6 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .project-result{font-size:15px}
     .gallery-intro{margin-bottom:14px}
     .gallery-contact{padding:28px;min-height:290px}
-    .preview-action{right:10px;bottom:10px;padding:8px 12px;font-size:var(--fs-small);gap:12px}
     .project-viewer{width:calc(100% - 16px);height:calc(100svh - 16px);max-height:calc(100svh - 16px);border-radius:var(--radius-sm)}
     /* Нет снимка с телефона, открыт снимок компьютера: окну незачем держать высоту экрана — иначе узкий снимок висит в пустом сером поле */
     .project-viewer[open][data-phone-shot='false']:has(.viewer-image[data-device='desktop'][data-kind='shot']){height:fit-content}
@@ -286,5 +274,5 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
     .viewer-inquiry{margin-left:0}
     .viewer-meta{padding:6px 12px}
   }
-  @media(prefers-reduced-motion:reduce){.project-preview,.project-preview img,.preview-action,.project-inquiry,.result-arrow{transition:none}.project-preview:active{transform:none}a.project-result .result-arrow{transform:none!important}}
+  @media(prefers-reduced-motion:reduce){.project-inquiry,.result-arrow{transition:none}a.project-result .result-arrow{transform:none!important}}
 </style>

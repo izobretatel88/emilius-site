@@ -1,0 +1,106 @@
+/* Портфолио: превью проекта — общий вид для галереи /projects/, главной и страниц направлений.
+   Компонент — src/components/ProjectPreview.astro, поведение видео — src/lib/preview-video.ts,
+   правила — docs/PORTFOLIO-DESIGN-SYSTEM.md. Значения — только токены из tokens.css. */
+
+.project-preview {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--well);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--preview-edge);
+  transition: transform var(--press);
+  -webkit-tap-highlight-color: transparent; /* своё нажатие — проседание, серый прямоугольник браузера лишний */
+}
+.project-preview:active { transform: scale(var(--press-scale-card)); }
+
+.project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--preview-ratio);
+  object-fit: cover;
+  object-position: top;
+  filter: var(--img-dim);
+  transition: filter var(--hover);
+}
+
+/* Видео прокрутки лежит поверх снимка; снимок — его первый кадр, поэтому проявление без шва.
+   Приглушено так же, как снимок: в тёмной теме на телефоне (видео идёт само) не вспыхивает ярче */
+.preview-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0;
+  pointer-events: none;
+  filter: var(--img-dim);
+  transition: opacity var(--hover), filter var(--hover);
+}
+/* Появление — сильный ease-out (--fade-in), уход — спокойный --hover */
+.project-preview.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in), filter var(--hover); }
+
+/* Запись шире 8:5 (Marine Garden): целиком, без обрезки краёв — по центру серого поля */
+.project-preview.is-whole :is(img, .preview-video) { object-fit: contain; object-position: center; }
+
+/* Плашка действия в углу превью называет, что будет по нажатию: «Смотреть крупнее» (окно) или «Смотреть проект» (переход) */
+.preview-action {
+  position: absolute;
+  z-index: 1;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-btn);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  transition: background-color var(--hover), color var(--hover);
+}
+
+/* Наведение, фокус, касание: снимок проясняется (тёмная тема), плашка заливается бирюзой */
+.project-preview:focus-visible :is(img, .preview-video) { filter: none; }
+.project-preview:is(:focus-visible, :active) .preview-action { background: var(--teal-btn); color: var(--on-teal); }
+@media (hover: hover) and (pointer: fine) {
+  .project-preview:hover :is(img, .preview-video) { filter: none; }
+  .project-preview:hover .preview-action { background: var(--teal-btn); color: var(--on-teal); }
+}
+
+@media (max-width: 700px) {
+  .preview-action { right: 10px; bottom: 10px; padding: 8px 12px; gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-preview, .project-preview img, .preview-action { transition: none; }
+  .project-preview:active { transform: none; }
+}
+
+/* Карточка проекта: белая плитка на сером фоне, превью — с полем по краю, подписи — под ним
+   (решение владельца 05.11.2026 для галереи; с 19.11.2026 одна на всех поверхностях портфолио).
+   Внутри — превью, затем подпись; действие «Хочу похожий…» или адрес сайта прижаты к низу */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--project-inset) var(--project-inset) 22px;
+  background: var(--card);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.project-card > :not(.project-preview) { margin-inline: 16px; }
+.project-card > .project-preview + * { margin-top: 20px; }
+
+@media (max-width: 700px) {
+  .project-card { padding: 8px 8px 18px; }
+  .project-card > :not(.project-preview) { margin-inline: 10px; }
+  .project-card > .project-preview + * { margin-top: 16px; }
+}

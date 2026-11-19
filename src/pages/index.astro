@@ -2,6 +2,7 @@
 // Главная — композиция экспериментальной главной (/experiments/cursor/, итерации 1–37 журнала),
 // перенесённая на общий каркас 04.11.2026: миссия → метод (колесо) → клиенты → услуги → проекты →
 // полезное → обсуждение задачи. Шапка и подвал общие (SiteNav, Footer), примитивы — styles/layout.css.
+import ProjectPreview from '../components/ProjectPreview.astro';
 import Base from '../layouts/Base.astro';
 import Wheel from '../components/Wheel.astro';
 import Contact from '../components/Contact.astro';
@@ -107,20 +108,15 @@ const organization = {
       <div class="ui-section-head"><h2 id="t-projects">Продукты, которые работают.</h2><a class="ui-link" href={href('projects/')}>Все проекты <span class="ui-arrow" aria-hidden="true">→</span></a></div>
       <div class="project-grid">
         {selected.map(project => (
-          <article class="selected-project" aria-labelledby={`case-${project.id}`}>
-            <a class="project-image" data-preview-video href={href(`projects/#${project.id}`)} aria-label={`Смотреть проект ${project.name}`}>
-              <img
-                src={href(`cases/gallery/${project.id}-800.webp`)}
-                srcset={`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`}
-                sizes="(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px"
-                width="800"
-                height="500"
-                loading="lazy"
-                alt={`Главная страница магазина ${project.name}`}
-              />
-              <video class="preview-video" data-src={href(`video/gallery/${project.id}.mp4`)} data-src-small={href(`video/gallery/${project.id}-640.mp4`)} muted playsinline preload="none" aria-hidden="true" tabindex="-1" width="1280" height="800"></video>
-              <span class="view-project">Смотреть проект <span aria-hidden="true">→</span></span>
-            </a>
+          <article class="selected-project project-card" aria-labelledby={`case-${project.id}`}>
+            <ProjectPreview
+              href={href(`projects/#${project.id}`)}
+              label={`Смотреть проект ${project.name}`}
+              image={{src:href(`cases/gallery/${project.id}-800.webp`),srcset:`${href(`cases/gallery/${project.id}-800.webp`)} 800w, ${href(`cases/gallery/${project.id}-1600.webp`)} 1600w`,sizes:'(max-width: 400px) calc(100vw - 24px), (max-width: 760px) calc(100vw - 40px), (max-width: 1238px) calc((100vw - 76px) / 2), 581px',width:800,height:500,alt:`Главная страница магазина ${project.name}`}}
+              video={{src:href(`video/gallery/${project.id}.mp4`),small:href(`video/gallery/${project.id}-640.mp4`),width:1280,height:800}}
+              action="Смотреть проект"
+              arrow
+            />
             <div class="project-description">
               <h3 id={`case-${project.id}`}>{project.name}</h3>
               {project.id === 'wizzu' ? (
@@ -173,7 +169,7 @@ const organization = {
 
 <style>
   :global(body.home) { gap: 0; padding-bottom: 88px; }
-  .stages a, .direction-links a, .client-strip a, .project-image, .material, .service-feature { color: var(--ink); text-decoration: none; }
+  .stages a, .direction-links a, .client-strip a, .material, .service-feature { color: var(--ink); text-decoration: none; }
   /* Первый экран (выбор владельца 04.11.2026): миссия с переносом после «людям»; надпись «Наша миссия» убрана 05.11.2026 по просьбе владельца,
      вторая часть тише. Срок и цена магазина — в блоке услуг. */
 
@@ -247,22 +243,10 @@ const organization = {
   @media (hover: hover) and (pointer: fine) { .direction-links a:hover strong { color: var(--stage-ink, var(--teal-text)); } }
 
   .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-  /* Тонкая линия по краю, как у превью на /projects/: светлый снимок (LimeMart) не растворяется в фоне страницы */
-  .project-image { position: relative; display: block; border-radius: var(--radius-card); overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--press); }
-  .project-image:active { transform: scale(var(--press-scale-card)); }
+  /* Карточка и превью — общие .project-card и ProjectPreview (src/styles/portfolio.css), как в галерее и на страницах направлений */
+  .client-strip a { -webkit-tap-highlight-color: transparent; }
   /* У этих элементов своё нажатие (проседание или заливка) — серый прямоугольник касания браузера поверх него лишний */
-  .project-image, .client-strip a { -webkit-tap-highlight-color: transparent; }
-  .project-image img { display: block; width: 100%; height: auto; aspect-ratio: 8/5; object-fit: cover; filter: var(--img-dim); transition: filter var(--hover); }
-  .project-image:focus-visible :is(img, .preview-video) { filter: none; }
-  /* Видео прокрутки сайта поверх снимка — при наведении мыши и фокусе (src/lib/preview-video.ts), как в галерее */
-  .preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; pointer-events: none; filter: var(--img-dim); transition: opacity var(--hover), filter var(--hover); }
-  .project-image.is-playing .preview-video { opacity: 1; transition: opacity var(--fade-in), filter var(--hover); }
-  .view-project { z-index: 1; position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 16px; background: var(--card); color: var(--ink); padding: 10px 14px; font-size: var(--fs-small); border-radius: var(--radius-btn); box-shadow: var(--shadow-card); }
-  /* «Смотреть проект» — как «Смотреть крупнее» в галерее: заливается бирюзой при наведении, фокусе и касании, плавно */
-  .view-project { transition: background-color var(--hover), color var(--hover); }
-  .project-image:focus-visible .view-project, .project-image:active .view-project { background: var(--teal-btn); color: var(--on-teal); }
-  @media (hover: hover) and (pointer: fine) { .project-image:hover .view-project { background: var(--teal-btn); color: var(--on-teal); } .project-image:hover :is(img, .preview-video) { filter: none; } }
-  .project-description { padding: 18px 2px 0; }
+  .project-description { display: grid; justify-items: start; }
   .project-result { color: var(--ink); font-weight: 700; }
   .project-inquiry { margin-top: 8px; }
   .project-description .project-inquiry { color: var(--teal-text); }
