@@ -57,7 +57,7 @@ const related=[
   .platform-comparison :global(.mobile-note-row){display:none}
   .platform-comparison :global(#comparison){scroll-margin-top:16px}
   /* Шапка таблицы липкая (около 74 px): строка по ссылке «Подробнее» должна встать под ней, а не за ней */
-  .platform-comparison :global(tr[data-feature]){scroll-margin-top:96px}
+  .platform-comparison :global(tr[data-feature]){scroll-margin-top:calc(var(--thead-h,73px) + 60px)}
   .platform-comparison :global(.search-hint){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0}
   .platform-comparison :global(input),.platform-comparison :global(select){border-color:var(--input-border)}
   .platform-comparison :global(.count){display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;line-height:1.45}

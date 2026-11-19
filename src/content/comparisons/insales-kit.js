@@ -9,6 +9,9 @@
   const count = document.querySelector('#count');
   const empty = document.querySelector('#empty');
   const scroll = document.querySelector('.scroll');
+  // Заголовок раздела прилипает сразу под шапкой таблицы: высота шапки меняется с шириной экрана
+  const head = scroll && scroll.querySelector('thead');
+  if (head && 'ResizeObserver' in window) new ResizeObserver(() => scroll.style.setProperty('--thead-h', `${Math.round(head.getBoundingClientRect().height)}px`)).observe(head);
   const normalize = value => value.toLocaleLowerCase('ru').replaceAll('ё', 'е').replaceAll('1c', '1с');
   // Поиск по смыслу, а не по точной форме слова: «алиса» находит «Алисе», «рассрочка» — оплату частями
   const synonyms = {рассрочк: ['частями', 'сплит', 'долями'], кредит: ['частями', 'сплит'], бонус: ['лояльн'], кешбэк: ['бонус'], кэшбэк: ['бонус'], сертификат: ['подарочн'], склад: ['остатк'], выгрузк: ['экспорт'], сдэк: ['cdek'], cdek: ['сдэк'], чекаут: ['оформлени'], checkout: ['оформлени'], шаблон: ['тем'], дизайн: ['тем'], смартфон: ['мобильн'], телефон: ['мобильн']};
@@ -69,10 +72,11 @@
     if (target.hidden || target.closest('tbody').hidden) reset(true);
     requestAnimationFrame(() => {
       scroll.scrollLeft = 0;
-      // На телефоне у таблицы своя прокрутка: показываем таблицу с шапкой, а строку ставим сразу под шапкой
+      // На телефоне у таблицы своя прокрутка: показываем таблицу с шапкой, а строку ставим под шапкой и заголовком раздела
       if (scroll.scrollHeight > scroll.clientHeight + 1) {
         scroll.scrollIntoView({block: 'start', behavior: 'instant'});
-        scroll.scrollBy({top: target.getBoundingClientRect().top - scroll.querySelector('thead th').getBoundingClientRect().bottom, behavior: 'instant'});
+        const section = target.closest('tbody').querySelector('.section-row');
+        scroll.scrollBy({top: target.getBoundingClientRect().top - scroll.querySelector('thead th').getBoundingClientRect().bottom - (section ? section.getBoundingClientRect().height : 0), behavior: 'instant'});
       } else {
         target.scrollIntoView({block: 'start'});
       }
