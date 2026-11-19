@@ -198,3 +198,6 @@
 .platform-comparison .explanation summary{margin-block:0;padding:10px 0;font-weight:600}
 .platform-comparison .explanation:has(details[open]){padding-bottom:18px}
 .platform-comparison .explanation-lead{margin:4px 0 12px;max-width:62ch}
+/* Дата и объём — компактные плашки под вводным абзацем вместо отдельной строки и абзаца мелким шрифтом */
+.platform-comparison .facts{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.platform-comparison .facts li{margin:0;background:var(--well);color:var(--ink-2);border-radius:var(--radius-pill);padding:5px 12px;font-size:13px;line-height:1.4}
