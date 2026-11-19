@@ -6,7 +6,7 @@
 // Компьютер (мышь): играет, пока курсор над превью (после 150 мс — проскочивший курсор ничего не грузит)
 // или на превью фокус с клавиатуры.
 // Телефон и планшет (наведения нет): играет превью, которое после остановки прокрутки видно хотя бы на 70%;
-// одновременно — только одно, ушло с экрана — остановилось.
+// одновременно — только одно, один раз за показ, ушло с экрана — остановилось.
 // Нигде не играем при «уменьшении движения» и в режиме экономии трафика: остаётся снимок.
 
 const INTENT = 150; // мс: курсор задержался — значит, смотрят
@@ -16,7 +16,8 @@ const FADE = 200; // мс: как --hover, затухание видео до с
 const SMALL = 720; // физических px: превью уже — берём лёгкую копию 640 px
 
 type Connection = { saveData?: boolean };
-type Player = { preview: HTMLElement; start: (delay: number) => void; stop: () => void };
+// done — на телефоне ролик уже проигран в этот показ превью; снова — только когда превью уйдёт с экрана и вернётся
+type Player = { preview: HTMLElement; start: (delay: number) => void; stop: () => void; done: boolean };
 
 export function setupPreviewVideos(root: ParentNode = document) {
   const canHover = matchMedia('(hover: hover) and (pointer: fine)');
@@ -67,15 +68,24 @@ export function setupPreviewVideos(root: ParentNode = document) {
         if (video.readyState > 0) video.currentTime = 0;
       }, FADE);
     };
-    // Конец ролика: не прыгаем от подвала к шапке, а гасим видео до снимка, перематываем и проявляем снова
+    const player: Player = { preview, start, stop, done: false };
+    // Конец ролика: не прыгаем от подвала к шапке, а гасим видео до снимка.
+    // Мышь (видео по наведению) — перематываем и проявляем снова. Телефон (видео пошло само) — один раз
+    // и остаёмся на снимке: движение, которое не остановить, не крутится бесконечно (WCAG 2.2.2)
     video.addEventListener('ended', () => {
       preview.classList.remove('is-playing');
+      if (!canHover.matches) {
+        player.done = true;
+        wanted = false;
+        rewind = window.setTimeout(() => { video.currentTime = 0; }, FADE);
+        return;
+      }
       rewind = window.setTimeout(() => {
         video.currentTime = 0;
         if (wanted) video.play().then(() => wanted && preview.classList.add('is-playing')).catch(() => {});
       }, FADE + 300);
     });
-    players.push({ preview, start, stop });
+    players.push(player);
 
     preview.addEventListener('pointerenter', (e) => {
       if (e.pointerType === 'mouse' && canHover.matches) start(INTENT);
@@ -104,9 +114,10 @@ export function setupPreviewVideos(root: ParentNode = document) {
       const r = player.preview.getBoundingClientRect();
       const shown = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
       const share = r.height ? shown / r.height : 0;
+      if (share < VISIBLE) player.done = false; // ушло с экрана — при возвращении сыграет снова
       if (share >= bestShare) [best, bestShare] = [player, share];
     }
-    players.forEach((player) => (player === best ? player.start(0) : player.stop()));
+    players.forEach((player) => (player === best ? !player.done && player.start(0) : player.stop()));
   };
   const onScroll = () => {
     if (canHover.matches) return;
