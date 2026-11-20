@@ -76,7 +76,7 @@
       "accessed": "2026-10-31"
     },
     "I13": {
-      "title": "inSales: виджеты",
+      "title": "inSales: категории виджетов в редакторе",
       "url": "https://www.insales.ru/collection/vidzhety/product/infojson",
       "accessed": "2026-10-31"
     },
@@ -491,8 +491,18 @@
       "accessed": "2026-11-20"
     },
     "I38": {
-      "title": "inSales: стикеры в виджете каталога",
+      "title": "inSales: виджеты каталога",
       "url": "https://www.insales.ru/collection/nastrojki-vidzhetov/product/katalog",
+      "accessed": "2026-11-20"
+    },
+    "I39": {
+      "title": "inSales: виджеты главной страницы",
+      "url": "https://www.insales.ru/collection/nastrojki-vidzhetov/product/glavnaya-stranitsa",
+      "accessed": "2026-11-20"
+    },
+    "I40": {
+      "title": "inSales: шаблон Fourth",
+      "url": "https://www.insales.ru/collection/themes-cosmetics/product/shablon-internet-magazina-fourth",
       "accessed": "2026-11-20"
     }
   },
@@ -583,7 +593,7 @@
       "feature": "Баннеры и слайдшоу",
       "insales": "Да",
       "kit": "Да",
-      "insales_source": "I13",
+      "insales_source": "I39",
       "kit_source": "K10",
       "note": ""
     },
@@ -623,7 +633,7 @@
       "feature": "Блоки отзывов",
       "insales": "Да",
       "kit": "Да",
-      "insales_source": "I13",
+      "insales_source": "I39",
       "kit_source": "K10",
       "note": ""
     },
@@ -643,7 +653,7 @@
       "feature": "Товарные подборки на главной",
       "insales": "Да",
       "kit": "Да",
-      "insales_source": "I13",
+      "insales_source": "I40",
       "kit_source": "K10",
       "note": ""
     },
@@ -735,7 +745,7 @@
       "kit": "Да",
       "insales_source": "I13",
       "kit_source": "K58",
-      "note": ""
+      "note": "inSales: в редакторе шаблонов 4-го поколения есть готовый виджет «Ранее просмотренные товары»; отдельной инструкции в справке нет."
     },
     {
       "id": "F024",
@@ -763,7 +773,7 @@
       "feature": "Фильтры в каталоге",
       "insales": "Да",
       "kit": "Да",
-      "insales_source": "I13",
+      "insales_source": "I38",
       "kit_source": "K55",
       "note": ""
     },
