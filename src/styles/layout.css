@@ -78,11 +78,14 @@
   transform: scale(var(--press-scale));
 }
 /* Текстовое действие: подчёркивание только при наведении и в фокусе */
+/* Строчный блок, а не flex (замечание владельца 20.11.2026): во flex стрелка — отдельный элемент,
+   и подчёркивание рвалось на два куска. Так линия идёт одним штрихом под текстом и стрелкой,
+   как у «Посмотреть услугу →». Высота цели касания — 44 px за счёт отступов */
 .ui-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
+  display: inline-block;
   min-height: 44px;
+  padding-block: 11px;
+  line-height: 22px;
   font-size: 15px;
   font-weight: 600;
   color: var(--ink);
