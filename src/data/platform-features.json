@@ -489,6 +489,11 @@
       "title": "inSales: создание товара",
       "url": "https://www.insales.ru/collection/doc-products/product/sozdanie-novogo-tovara",
       "accessed": "2026-11-20"
+    },
+    "I38": {
+      "title": "inSales: стикеры в виджете каталога",
+      "url": "https://www.insales.ru/collection/nastrojki-vidzhetov/product/katalog",
+      "accessed": "2026-11-20"
     }
   },
   "features": [
@@ -988,9 +993,9 @@
       "feature": "Товарные бейджи",
       "insales": "Да",
       "kit": "Да",
-      "insales_source": "I13",
+      "insales_source": "I38",
       "kit_source": "K53",
-      "note": ""
+      "note": "Обе показывают метки на товаре. inSales (шаблоны 4-го поколения): готовые «Размер скидки» и «Предзаказ» плюс свои с любым текстом через параметр «Метка». KIT: 7 готовых — «Акция», «Осталось N штук», «Подарок», «Только на сайте», «Новинка», «Хит», бонусы; на товаре не больше двух, своих нет."
     },
     {
       "id": "F050",
