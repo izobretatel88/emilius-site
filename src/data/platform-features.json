@@ -484,6 +484,11 @@
       "title": "67design: темы оформления для inSales",
       "url": "https://67templates.myinsales.ru/",
       "accessed": "2026-11-20"
+    },
+    "I37": {
+      "title": "inSales: создание товара",
+      "url": "https://www.insales.ru/collection/doc-products/product/sozdanie-novogo-tovara",
+      "accessed": "2026-11-20"
     }
   },
   "features": [
@@ -910,12 +915,12 @@
     {
       "id": "F042",
       "group": "Каталог",
-      "feature": "Видео товара",
-      "insales": "Да",
+      "feature": "Видео в карточке товара",
+      "insales": "Частично",
       "kit": "Да",
-      "insales_source": "I1",
+      "insales_source": "I37",
       "kit_source": "K45",
-      "note": "KIT: одно видео до 100 МБ, файл или ссылка."
+      "note": "Обе платформы показывают видео в галерее товара. inSales: ссылки на YouTube, Rutube, Vimeo или свой файл; в галерее — только в виджете карточки DP1-1 шаблонов 4-го поколения, в других темах нужна доработка. KIT: одно видео до 100 МБ — файл или ссылка с Яндекс Диска."
     },
     {
       "id": "F043",
