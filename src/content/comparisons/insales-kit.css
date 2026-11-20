@@ -230,7 +230,8 @@
 @media (hover: hover) and (pointer: fine){.platform-comparison .owner li:has(.choose-more):hover{background:var(--input-bg)}.platform-comparison .owner li:hover .choose-more{color:var(--teal-text)}}
 .platform-comparison .owner li:has(.choose-more:focus-visible){outline:2px solid var(--teal-text);outline-offset:0}
 @media(max-width:760px){.platform-comparison .owner .choose-cols>div{padding:18px 16px}.platform-comparison .owner h2{font-size:21px}}
-.platform-comparison .freshness{background:var(--sec-custdev-now);border-radius:var(--radius-card);padding:16px 20px;max-width:72ch;display:grid;gap:4px}
-.platform-comparison .freshness p{margin:0;line-height:1.45}
-.platform-comparison .freshness-title{font-weight:700;font-size:17px}
-@media print{.platform-comparison .freshness{border:1px solid currentColor}}
+.platform-comparison .facts .fresh{background:var(--sec-custdev-now);color:var(--ink);font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.platform-comparison .fresh-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 var(--selection);animation:fresh-pulse 2.4s ease-in-out infinite}
+@keyframes fresh-pulse{0%,100%{box-shadow:0 0 0 0 var(--selection)}50%{box-shadow:0 0 0 5px var(--selection)}}
+@media (prefers-reduced-motion: reduce){.platform-comparison .fresh-dot{animation:none}}
+@media print{.platform-comparison .fresh-dot{animation:none}}
