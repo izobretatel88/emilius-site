@@ -47,7 +47,7 @@ faq: [{"q": "Что лучше для небольшого интернет-ма
 | Яндекс KIT | до 300 000 товаров — по ответу команды KIT, ноябрь 2026 | — |
 | inSales, начальный уровень | 1 000 товаров | +1 000 товаров за 100 ₽ в месяц |
 
-Источники: [справка Tilda](https://tilda.cc/ru/answers/a/many_blocks/), [справка Яндекс KIT](https://yandex.ru/support/kit/ru/), [обновление тарифов inSales](https://www.insales.ru/page/obnovlenie-tarifov-insales-v-2026).
+Источники: [справка Tilda](https://tilda.cc/ru/answers/a/many_blocks/), [справка Яндекс KIT](https://yandex.ru/support/kit/ru/), [обновление тарифов inSales](https://www.insales.ru/page/obnovlenie-tarifov-insales-v-2026?aff=9ac1be4ef).
 
 Для каталога до 300 моделей лимит почти никогда не мешает. Важнее другое: как платформа считает варианты. Спросите поддержку до оплаты, входит ли в лимит модель или каждый размер. Ответ меняет расчёт, если вариантов больше тысячи.
 
