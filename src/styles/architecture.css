@@ -6,6 +6,8 @@
 .directory-section h2, .directory > section > h2 { font-size:var(--fs-h2); line-height:1.15; letter-spacing:var(--tracking-tight); margin-bottom:12px; }
 .directory-section > p { color:var(--ink-2); max-width:75ch; }
 .directory-callout { background:var(--card); border-radius:var(--radius-card); box-shadow:var(--shadow-card); padding:30px 32px; margin-top:var(--section-pad); }
+/* Строки «Что делать дальше» подсвечиваются полосой во всю ширину карточки (20.11.2026) */
+.directory-callout .link-list { --list-inset:32px; --list-radius:0px; }
 .directory-callout h2 { font-size:27px; line-height:1.2; letter-spacing:-.02em; }
 .directory-callout p { max-width:75ch; color:var(--ink-2); margin:8px 0 16px; }
 .directory-button { display:inline-flex; align-items:center; justify-content:center; min-height:48px; text-align:center; text-decoration:none; background:var(--teal-btn); color:var(--on-teal); padding:12px 18px; border-radius:var(--radius-btn); font-weight:600; }
@@ -14,8 +16,8 @@
 .directory-button:active { transform: scale(var(--press-scale)); }
 .directory-tags { display:flex; flex-wrap:wrap; gap:4px 22px; margin-top:18px; font-size:14px; }
 /* Связанные материалы — текстовые действия, как .ui-link: цвет текста, подчёркивание при наведении и в фокусе, бирюзовая стрелка (для чтения экрана скрыта) */
-.directory-tags a { display:inline-flex; align-items:center; gap:10px; min-height:44px; font-weight:600; color:var(--ink); text-decoration:underline transparent; text-underline-offset:4px; transition:color var(--hover), text-decoration-color var(--hover); }
-.directory-tags a::after { content:'→' / ''; color:var(--teal-text); }
+.directory-tags a { display:inline-block; min-height:44px; padding-block:12px; line-height:20px; font-weight:600; color:var(--ink); text-decoration:underline transparent; text-underline-offset:4px; transition:color var(--hover), text-decoration-color var(--hover); }
+.directory-tags a::after { content:'\a0→' / ''; color:var(--teal-text); }
 .directory-tags a:focus-visible { color:var(--teal-text); text-decoration-color:currentColor; }
 @media (hover: hover) and (pointer: fine) { .directory-tags a:hover { color:var(--teal-text); text-decoration-color:currentColor; } }
 .directory-callout p { line-height:1.55; }
@@ -23,12 +25,13 @@
 .directory-callout > a:not(.directory-button) { display:inline-flex; align-items:center; min-height:44px; }
 /* Первый раздел без линии сверху (Полезное) не прилипает к вводному тексту; ссылка «Все статьи» отстоит от списка */
 .directory > section:not([class]) { margin-top:var(--section-pad-sm); }
-.directory-section > ul.link-list + a { display:inline-flex; align-items:center; min-height:44px; margin-top:10px; font-weight:600; text-underline-offset:4px; }
+.directory-section > ul.link-list + a { margin-top:10px; font-weight:600; text-underline-offset:4px; }
 @media(max-width:600px) {
   .directory-section { margin-top:var(--section-pad-sm); padding-top:var(--section-pad-sm); }
   .directory-section h2, .directory > section > h2 { font-size:var(--fs-h2-sm); }
   .directory > ul.link-list, .directory > section:not(.directory-callout) > ul.link-list { padding-inline:18px; }
   .directory-callout { padding:24px 20px; }
+  .directory-callout .link-list { --list-inset:20px; }
   .directory-tags { flex-direction:column; align-items:flex-start; }
   .directory-button { max-width:100%; }
 }

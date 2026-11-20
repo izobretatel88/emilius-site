@@ -6,7 +6,7 @@ const {target,landing=false}=Astro.props;
   <a href={target}><span><span class="caption">Текущая оценка</span><strong data-estimate-strip></strong></span><span class="more">К расчёту ↓</span></a>
 </div>
 <style>
-  .estimate-strip{display:none;position:sticky;top:12px;z-index:6;background:var(--card);border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
+  .estimate-strip{display:none;position:sticky;top:calc(var(--header-h) + 12px);z-index:6;background:var(--card);border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
   .estimate-strip[hidden]{display:none}
   /* Когда сам расчёт уже на экране, строка-дубль уходит и не закрывает поля */
   .estimate-strip{transition:opacity var(--hover),visibility var(--hover)}

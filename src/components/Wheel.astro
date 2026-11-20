@@ -714,20 +714,24 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       const moved = ringDrag.moved;
       ringDrag = null;
       if (e.pointerType !== 'mouse') pointerAt = null;
-      // после перетаскивания не запускать
-      if (moved) launch.addEventListener('click', (ev) => ev.stopImmediatePropagation(), { capture: true, once: true });
+      // после перетаскивания не запускать. Только на pointerup и только на ближайшие 400 мс:
+      // на телефоне свайп страницы через колесо кончается pointercancel без клика, и «вечный»
+      // перехватчик съедал потом клик автозапуска — колесо так и не стартовало (замечание владельца 20.11.2026)
+      if (moved && e.type === 'pointerup') suppressClickUntil = performance.now() + 400;
     };
+    let suppressClickUntil = 0;
+    launch.addEventListener('click', (ev) => {
+      if (performance.now() < suppressClickUntil) ev.stopImmediatePropagation();
+    }, { capture: true });
     launch.addEventListener('pointerup', ringRelease);
     launch.addEventListener('pointercancel', ringRelease);
 
-    let autoStarting = false; // запуск по истечении отсчёта, а не нажатием
-    launch.addEventListener('click', (e) => {
+    // auto — запуск по истечении отсчёта, а не нажатием
+    const start = (auto: boolean, byPointer: boolean) => {
       if (!idle) return;
       idle = false;
-      const auto = autoStarting;
-      autoStarting = false;
       // запуск мышью — курсор над колесом; с клавиатуры (detail 0) наведение не мешает
-      if (e.detail > 0) hoverArmed = false;
+      if (byPointer) hoverArmed = false;
       stage.classList.remove('is-idle');
       rotorSvg.removeAttribute('aria-hidden');
       links.forEach((link) => link.setAttribute('tabindex', '0'));
@@ -749,7 +753,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
         rolling = true;
         if (!ambient && selected === null && hovered === null) startAmbient(currentAngle());
       });
-    });
+    };
+    launch.addEventListener('click', (e) => start(false, e.detail > 0));
 
     // Автозапуск (просьба владельца 12.11.2026): под «Запустить» — «Автозапуск через 10 с».
     // Отсчёт идёт, только пока плашка видна хотя бы на 60 %, вкладка открыта, заставка закрыта
@@ -770,8 +775,8 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
       if (autoSec) autoSec.textContent = String(Math.max(1, Math.ceil(autoLeft / 1000)));
       if (autoLeft <= 0) {
         window.clearInterval(autoTimer);
-        autoStarting = true;
-        launch.click();
+        // напрямую, а не launch.click(): клик могли перехватить после свайпа
+        start(true, false);
       }
     }, 200);
 
@@ -843,13 +848,15 @@ const sectorData = SECTORS.map((s) => ({ ...s, href: servicesHref(s.id), questio
     width: calc(100% + 28px);
     margin-inline: -14px;
   }
-  /* Полоса от края карточки до круга с наконечником у края */
+  /* Полоса от края карточки до круга с наконечником у края.
+     --rail-reach — сколько ещё до края карточки, если сцена стоит с отступом (главная на компьютере):
+     наконечник не висит в воздухе, а выходит из края (замечание владельца 20.11.2026) */
   .pointer-rail {
     position: absolute;
-    left: 0;
+    left: calc(-1 * var(--rail-reach, 0px));
     top: 50%;
     z-index: 1;
-    width: calc((100% - var(--wb)) / 2 + 2px);
+    width: calc((100% - var(--wb)) / 2 + 2px + var(--rail-reach, 0px));
     height: 2.5px;
     transform: translateY(-50%);
     background: var(--teal);

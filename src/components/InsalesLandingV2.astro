@@ -298,7 +298,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <h2 id="t-choice">inSales, Tilda, Яндекс KIT или самому?</h2>
       <LinkList items={[
         {title:'Сравнить восемь платформ',description:'Сценарии, затраты и ограничения.',href:'compare/ecommerce-platforms/'},
-        {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами, оговорками и источниками.',href:'compare/insales-vs-yandex-kit/'},
+        {title:'inSales и Яндекс KIT подробно',description:'Когда что выбрать, ответы команды KIT и 349 функций с источниками.',href:'compare/insales-vs-yandex-kit/'},
         {title:'Рассчитать состав проекта',description:'Предварительный бюджет и срок по семи ответам.',href:'tools/insales-calculator/'},
         ...(variant==='seller' && hasStockArticle ? [{title:'Как устроены единые остатки',description:'Сайт, маркетплейсы и учётная система.',href:'blog/edinye-ostatki-wb-ozon-insales/'}] : []),
       ]} />
@@ -664,6 +664,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .block.plain { padding: 8px 0 0; }
   /* Справочные блоки в конце (вопросы, соседние услуги) — без карточки, под линией: карточка остаётся у главного */
   .block.flat { padding: 28px 0 0; border-top: 1px solid var(--hair); }
+  /* Строки-ссылки подсвечиваются полосой до края карточки, как в «Полезном» (замечание владельца 20.11.2026).
+     В справочном блоке без карточки сам список — белая карточка */
+  .block:not(.flat, .plain) :global(.link-list) { --list-inset: calc(clamp(24px, 3.6vw, 38px) + 2px); --list-radius: 0px; } /* +2 px — рамка .card */
+  .block.flat :global(.link-list) { background: var(--card); border-radius: var(--radius-card); padding: 0 26px; --list-inset: 26px; --list-radius: 0px; --list-edge-radius: var(--radius-card); }
   .block > .small { max-width: 68ch; line-height: 1.5; }
   /* Условия цены под пакетами — часть цены, а не сноска: читаются вторым цветом текста, а не самым бледным */
   .block > .price-terms { font-size: 15px; color: var(--ink-2); }
@@ -970,7 +974,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .case[id] { scroll-margin-top: 96px; }
   .jump {
     position: fixed;
-    top: 12px;
+    top: calc(var(--header-h) + 12px); /* под закреплённой шапкой */
     left: 50%;
     z-index: 30;
     display: flex;
@@ -989,7 +993,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .jump.is-on { opacity: 1; visibility: visible; }
   /* Закреплённая навигация не закрывает элемент, к которому перешли с клавиатуры (WCAG 2.2, «фокус не перекрыт») */
-  :global(html:has(.jump.is-on)) { scroll-padding-top: 76px; }
+  :global(html:has(.jump.is-on)) { scroll-padding-top: calc(var(--header-h) + 76px); }
   .jump a {
     display:inline-flex;
     align-items:center;
@@ -1020,7 +1024,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .quiz, .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   @media (min-width: 900px) {
     form { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-    .side { position: sticky; top: 76px; }
+    .side { position: sticky; top: calc(var(--header-h) + 76px); }
   }
   .side > label, legend { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-2); font-weight: 600; }
   fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -1125,6 +1129,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     .block { padding: 24px 20px; }
     .block.plain { padding: 4px 0 0; }
     .block.flat { padding: 24px 0 0; }
+    .block:not(.flat, .plain) :global(.link-list) { --list-inset: 22px; }
+    .block.flat :global(.link-list) { padding-inline: 18px; --list-inset: 18px; }
     h1 { font-size: var(--fs-h1-sm); letter-spacing: var(--tracking-tight); }
     h2 { font-size: var(--fs-h2-sm); }
     .grid2, .cols { grid-template-columns: 1fr; }
