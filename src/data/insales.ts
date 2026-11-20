@@ -184,7 +184,7 @@ export const MORE_SHOPS = [
 ];
 export const INTEGRATIONS = [{ name: 'Mansen', what: 'интеграция inSales с Mindbox', url: 'https://mansen-store.com/', domain: 'mansen-store.com' }];
 export const PROOF_LINKS = [
-  { text: 'Мы в каталоге партнёров inSales', url: 'https://www.insales.ru/collection/partners-prodvizhenie/product/emiliusagency' },
+  { text: 'Мы в каталоге партнёров inSales', url: 'https://www.insales.ru/collection/partners-prodvizhenie/product/emiliusagency?aff=9ac1be4ef' },
   { text: 'О нас пишут в Weeek', url: 'https://weeek.net/ru/blog/case-emilius-agency' },
 ];
 
