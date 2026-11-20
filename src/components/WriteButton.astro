@@ -6,6 +6,10 @@ import { LINKS } from '../data/site';
      Вид — как вторичная кнопка «Написать» в карточке «Связь», плюс тень плавающих элементов. -->
 <!-- Отдельная область страницы: кнопка вне main и footer, программы чтения экрана находят её в списке областей -->
 <aside aria-label="Быстрая связь">
+  <!-- «Наверх» (замечание владельца 20.11.2026): на длинных страницах — над «Написать», появляется после двух экранов -->
+  <button type="button" class="top-fab is-hidden" aria-label="Наверх страницы" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"></path></svg>
+  </button>
   <a class="write-fab" href={LINKS.direct} target="_blank" rel="noopener" aria-label="Написать в Telegram, откроется в новой вкладке">
     Написать
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.4 3.2 2.9 10.4c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.9 3.6c.7.5 1.7.1 1.9-.7L23 4.5c.2-1-.7-1.7-1.6-1.3ZM9.6 14.3l8.7-7.7-6.9 9.3-.3 3-1.5-4.6Z"></path></svg>
@@ -13,6 +17,30 @@ import { LINKS } from '../data/site';
 </aside>
 
 <script>
+  const toTop = document.querySelector<HTMLButtonElement>('.top-fab');
+  if (toTop) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    let shown = false;
+    const sync = () => {
+      // на телефоне плашка cookie занимает низ экрана — кнопка ждёт «Понятно», как и «Написать»
+      const cookie = matchMedia('(max-width: 600px)').matches && document.documentElement.classList.contains('cookie-open');
+      const show = scrollY > innerHeight * 2 && !cookie && !document.querySelector('.nav-menu[open]');
+      if (show === shown) return;
+      shown = show;
+      toTop.classList.toggle('is-hidden', !show);
+      toTop.tabIndex = show ? 0 : -1;
+    };
+    addEventListener('scroll', sync, { passive: true });
+    document.addEventListener('emi:menu', sync);
+    document.addEventListener('emi:cookie', sync);
+    sync();
+    toTop.addEventListener('click', () => {
+      scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' });
+      // фокус — на начало страницы, чтобы Tab продолжался сверху, а не от исчезнувшей кнопки
+      const start = document.querySelector<HTMLElement>('.site-nav .wordmark, main');
+      start?.focus({ preventScroll: true });
+    });
+  }
   const fab = document.querySelector<HTMLAnchorElement>('.write-fab');
   if (fab) {
     // Пока на экране ссылка страницы в тот же чат («Написать» в «Связи», на 404, «Обсудить в Telegram» на этапах,
@@ -75,6 +103,30 @@ import { LINKS } from '../data/site';
     transition: background-color var(--hover), color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover), transform var(--press);
   }
   .write-fab:active { transform: scale(var(--press-scale)); }
+  /* Круглая кнопка «Наверх» над «Написать»: та же поверхность и тень, рамка тише — главное действие остаётся «Написать» */
+  .top-fab {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 60px);
+    z-index: 40;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--hair);
+    border-radius: 50%;
+    background: var(--card);
+    box-shadow: var(--shadow-pop);
+    color: var(--ink);
+    cursor: pointer;
+    transition: color var(--hover), border-color var(--hover), opacity var(--hover), visibility var(--hover), transform var(--press);
+  }
+  .top-fab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .top-fab:active { transform: scale(var(--press-scale)); }
+  @media (hover: hover) and (pointer: fine) { .top-fab:hover { color: var(--teal-text); border-color: var(--teal); } }
+  .top-fab:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
+  .top-fab.is-hidden { opacity: 0; visibility: hidden; }
   .write-fab svg {
     width: 22px;
     height: 22px;

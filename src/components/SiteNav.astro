@@ -10,7 +10,9 @@ const preview = /\/dev\/?$/.test(import.meta.env.BASE_URL);
 const primary = [
   { title: 'Услуги', href: 'services/', sections: ['services/'] },
   { title: 'Проекты', href: 'projects/', sections: ['projects/'] },
-  { title: 'Полезное', href: 'resources/', sections: ['resources/', 'compare/', 'tools/', 'blog/'] },
+  // Блог — отдельным пунктом (замечание владельца 20.11.2026), пока в нём есть статьи
+  { title: 'Полезное', href: 'resources/', sections: ['resources/', 'compare/', 'tools/', ...(hasBlog ? [] : ['blog/'])] },
+  ...(hasBlog ? [{ title: 'Блог', href: 'blog/', sections: ['blog/'] }] : []),
 ];
 const normalize = (path: string) => path.replace(/\/$/, '');
 const current = normalize(Astro.url.pathname);
@@ -49,7 +51,6 @@ const discuss = isHome ? '#feedback' : href('#feedback');
         <span class="menu-group">Материалы и инструменты</span>
         <a href={href('compare/')}>Сравнения платформ</a>
         <a href={href('tools/insales-calculator/')}>Калькулятор магазина</a>
-        {hasBlog && <a href={href('blog/')}>Блог</a>}
       </div>
     </details>
   </nav>
@@ -73,8 +74,13 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   }
 </script>
 <style>
-  .site-header { border-bottom: 1px solid var(--hair); }
-  .site-nav { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 12; }
+  /* Шапка закреплена (замечание владельца 20.11.2026): на длинных страницах разделы всегда под рукой.
+     Полупрозрачный фон страницы с размытием — содержимое уходит под шапку спокойно, без резкой кромки */
+  .site-header { position: sticky; top: 0; z-index: 35; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--page) 92%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); }
+  @supports not (backdrop-filter: blur(1px)) { .site-header { background: var(--page); } }
+  /* Якоря и элементы в фокусе не прячутся под шапку */
+  :global(html) { scroll-padding-top: calc(var(--header-h) + 16px); }
+  .site-nav { height: calc(var(--header-h) - 1px); display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 12; }
   a { text-decoration: none; color: var(--ink); }
   a { transition: color var(--hover); }
   @media (hover: hover) and (pointer: fine) { a:hover { color: var(--teal-text); } }
@@ -95,7 +101,6 @@ const discuss = isHome ? '#feedback' : href('#feedback');
     .nav-links { gap: 20px; }
   }
   @media (max-width: 760px) {
-    .site-nav { height: 68px; }
     .wordmark { font-size: 18px; gap: 6px; }
     .wordmark img { width: 16px; height: 24px; }
     .nav-links, .site-nav .nav-action { display: none; }

@@ -287,16 +287,16 @@ const jsonLd = [
     .article > .toc {
       grid-column: 2;
       grid-row: 1 / span 6;
-      position: sticky;
-      top: 24px;
-      max-height: calc(100dvh - 48px);
-      overflow-y: auto;
-      overscroll-behavior: contain;
+      /* Без своей прокрутки (замечание владельца 20.11.2026): оглавление целиком в колонке,
+         закрепляется под шапкой, только когда помещается на экран — иначе листается вместе со статьёй */
       margin-top: 52px;
       padding: 18px 20px;
     }
     .article > .toc ol {
       font-size: 14px;
+    }
+    @media (min-height: 640px) {
+      .article > .toc { position: sticky; top: calc(var(--header-h) + 24px); }
     }
     /* В боковой колонке содержание всегда раскрыто: заголовок — подпись, а не переключатель */
     .toc-title { pointer-events: none; cursor: default; min-height: 0; margin-block: 0 8px; }

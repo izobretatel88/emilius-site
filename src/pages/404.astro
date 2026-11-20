@@ -39,7 +39,9 @@ const paths = [
 <style>
   .lost .ui-opening { padding-top: 16px; }
   .paths { padding: 0 26px; }
+  .paths :global(.link-list) { --list-inset: 26px; --list-radius: 0px; --list-edge-radius: var(--radius-card); }
   @media (max-width: 600px) {
     .paths { padding-inline: 18px; }
+    .paths :global(.link-list) { --list-inset: 18px; }
   }
 </style>
