@@ -75,8 +75,9 @@ const discuss = isHome ? '#feedback' : href('#feedback');
 </script>
 <style>
   /* Шапка закреплена (замечание владельца 20.11.2026): на длинных страницах разделы всегда под рукой.
-     Полупрозрачный фон страницы с размытием — содержимое уходит под шапку спокойно, без резкой кромки */
-  .site-header { position: sticky; top: 0; z-index: 35; border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--page) 92%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); }
+     Полупрозрачный фон страницы с размытием — содержимое уходит под шапку спокойно, без резкой кромки.
+     Шапка выходит на поля страницы (body с отступами), иначе по бокам видно содержимое под ней */
+  .site-header { position: sticky; top: 0; z-index: 35; margin-inline: calc(-1 * var(--layout-gutter)); padding-inline: var(--layout-gutter); border-bottom: 1px solid var(--hair); background: color-mix(in srgb, var(--page) 92%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); }
   @supports not (backdrop-filter: blur(1px)) { .site-header { background: var(--page); } }
   /* Якоря и элементы в фокусе не прячутся под шапку */
   :global(html) { scroll-padding-top: calc(var(--header-h) + 16px); }
