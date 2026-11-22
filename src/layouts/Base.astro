@@ -125,13 +125,17 @@ const ymId = preview ? 0 : Number(process.env.YM_ID) || 0;
         document.addEventListener('emi:theme', sync);
       })();
     </script>
-    <script is:inline>
+    <script is:inline define:vars={{ introHome: base.replace(/\/?$/, '/') }}>
       // Переход к форме главной с любой страницы («Обсудить проект», «Хочу похожий»):
       // человек уже выбрал действие — заставка (Intro.astro) не должна перекрыть форму. Ставим её же отметку
       // «видел в этом визите», как она сама делает для ?project= (think-different, итерация 5).
+      // Итерация 83: то же для любой ссылки на блок главной (#…) — «Контакты» и «Как работаем» в подвале
+      // открывали заставку поверх блока, к которому человек шёл.
       document.addEventListener('click', function (e) {
-        var a = e.target instanceof Element ? e.target.closest('a[href*="#feedback"]') : null;
+        var a = e.target instanceof Element ? e.target.closest('a[href*="#"]') : null;
         if (!a) return;
+        var toHomeBlock = a.hash.length > 1 && a.origin === location.origin && (a.pathname === introHome || a.pathname === introHome + 'index.html');
+        if (!toHomeBlock && !/^#feedback$/.test(a.hash)) return;
         try { sessionStorage.setItem('emilius-intro-seen', '1'); } catch (err) {}
       }, true);
     </script>
