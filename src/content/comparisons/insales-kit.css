@@ -53,7 +53,6 @@
 .platform-comparison thead th{position:sticky;top:0;z-index:3;background:var(--card);padding:18px 22px 14px;border-bottom:1px solid var(--hair);font-size:22px;line-height:1.3}
 .platform-comparison thead th:first-child{left:0;z-index:4;box-shadow:inset -1px 0 var(--hair);font-size:17px}
 .platform-comparison thead th:last-child{font-size:17px}
-.platform-comparison .stage{display:block;color:var(--ink-2);font-size:var(--fs-small);font-weight:400;margin-bottom:6px}
 .platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
 .platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
 .platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block;min-height:44px;hyphens:auto;-webkit-hyphens:auto}
@@ -114,7 +113,6 @@
 .platform-comparison .note-col{width:225px}
 .platform-comparison thead th{font-size:18px;padding:15px 14px}
 .platform-comparison thead th:first-child,.platform-comparison thead th:last-child{font-size:14px}
-.platform-comparison .stage{font-size:var(--fs-small)} /* не мельче 13 px: подписи читают */
 .platform-comparison tbody th[scope=row]{padding:15px 14px;font-size:13px}
 .platform-comparison tbody td{padding:15px 14px;font-size:13px}
 .platform-comparison .section-row th{font-size:20px;padding:24px 14px 10px}
