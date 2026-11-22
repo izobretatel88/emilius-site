@@ -35,7 +35,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     <h2 id="calc-result-title">Бюджет и срок</h2>
     <div role="status" aria-live="polite" aria-atomic="true"><p>Пакет <strong id="calc-package">«{initial.packageName}»</strong></p><p class="calc-price" id="calc-price">{rub(initial.from)} – {rub(initial.to)}</p><p id="calc-weeks">Ориентир: {initial.weeks.join('–')} нед.</p></div>
     <details class="calc-summary"><summary>Проверить параметры расчёта</summary><dl>{entries.map(([key,[label,options]])=><div><dt>{label}</dt><dd data-answer={key}>{options.find(([value])=>value===defaults[key])?.[1]}</dd></div>)}</dl></details>
-    <p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p><a class="calc-back" href="#public-calculator">Изменить параметры ↑</a>
+    <p>Это предварительная стоимость работ. Тариф платформы, платная тема и платежи внешним сервисам оплачиваются отдельно. SEO, реклама и нестандартные доработки уточняются на диагностике.</p><a id="calc-discuss" class="directory-button" href={href('services/insales-shop/#lead')}>Обсудить расчёт</a><p class="calc-hint">Ответы перенесутся в форму заявки. Контакты вы укажете на следующем шаге.</p><a class="calc-back" href="#public-calculator">Изменить параметры ↑</a><div class="calc-share-row"><button type="button" class="calc-share" hidden>Поделиться расчётом</button><span class="calc-share-status" role="status" aria-live="polite"></span></div>
   </section></div>
   <noscript><p>Для пересчёта включите JavaScript. Начальный ориентир рассчитан для магазина до 50 товаров; обсудить состав можно в форме услуги.</p></noscript>
   <div class="directory-tags"><a href={href('services/insales-shop/')}>Что входит в запуск магазина</a><a href={href('compare/')}>Выбрать другую платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
@@ -84,6 +84,25 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     form.addEventListener('change',update);
     form.addEventListener('change',()=>writeURL());
     form.addEventListener('reset',()=>setTimeout(()=>{update();writeURL(true);}));
+    // «Поделиться расчётом» (think-different, итерация 53): ссылка с ответами для партнёра или себя на компьютере.
+    // На телефоне — системное «Поделиться», иначе копируем ссылку. Без скрипта кнопки нет.
+    const share=document.querySelector<HTMLButtonElement>('.calc-share');
+    const shareStatus=document.querySelector<HTMLElement>('.calc-share-status');
+    if(share&&shareStatus&&(navigator.share||navigator.clipboard)){
+      share.hidden=false;
+      share.addEventListener('click',async()=>{
+        const url=new URL(location.href);
+        url.hash='';
+        form.querySelectorAll('select').forEach(select=>url.searchParams.set(`calc_${select.name}`,select.value));
+        const text=`Магазин на inSales: пакет ${document.querySelector('#calc-package')?.textContent}, ${document.querySelector('#calc-price')?.textContent}, ${document.querySelector('#calc-weeks')?.textContent?.replace('Ориентир: ','')}`;
+        shareStatus.textContent='';
+        try{
+          if(navigator.share&&matchMedia('(pointer: coarse)').matches)await navigator.share({title:'Расчёт магазина на inSales',text,url:url.href});
+          else{await navigator.clipboard.writeText(url.href);shareStatus.textContent='Ссылка скопирована';}
+          goal('calc-share');
+        }catch{}
+      });
+    }
     update();
     // Цели Метрики: calc-used — первое изменение ответа за визит на страницу, calc-to-lead — переход к заявке с расчётом.
     const goal=(name:string,params:Record<string,unknown>={})=>(window as any).emiGoal?.(name,params);
@@ -94,6 +113,10 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
 <style>
   .calc-jump{display:none;min-height:44px;align-items:center;margin-bottom:18px;text-underline-offset:4px}
   .calc-back{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:14px;text-underline-offset:4px}
+  .calc-share-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+  .calc-share{min-height:44px;padding:0;border:0;background:none;color:var(--teal-text);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+  .calc-share[hidden]{display:none}
+  .calc-share-status{font-size:14px;color:var(--ink-2)}
   .calc-result h2{font-size:24px;margin-bottom:14px}
   .calc-result:focus{outline:2px solid var(--teal-text);outline-offset:4px}
   .calc-summary{margin-block:16px;border-block:1px solid var(--hair);font-size:14px}
