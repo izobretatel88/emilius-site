@@ -5,9 +5,8 @@
 //
 // Запуск: npm run build && npm run brand
 // Картинки рисует установленный Google Chrome в headless-режиме,
-// OG-картинка берёт колесо из собранного dist/index.html.
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -54,62 +53,35 @@ shoot(squareLogo(180, 28, '#fefefe'), join(PUB, 'apple-touch-icon.png'), 180, 18
 // 4. brand/logo-mark.png — знак 512 px на прозрачном фоне, для соцсетей и документов
 shoot(squareLogo(512, 40), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { transparent: true });
 
-// 5. og.jpg — 1200×630: логотип, миссия, колесо из собранного сайта
-const dist = join(ROOT, 'dist', 'index.html');
-if (!existsSync(dist)) {
-  console.warn('dist/index.html не найден — og.jpg пропущен. Сначала npm run build.');
-} else {
-  const html = readFileSync(dist, 'utf8');
-  const start = html.indexOf('<div class="wheel-box"');
-  // Колесо — до блока вопроса в центре (он заполняется скриптом); коробку закрываем сами
-  const end = html.indexOf('<div class="center-q"', start);
-  const wheel = html
-    .slice(start, end)
-    // в центре круга — знак агентства, вместо пустого белого круга
-    .concat(`<img class="mid" src="${logoUrl}" alt=""></div>`)
-    // «внимание», стрелка и подпись «итерация N» живут в наложении поверх колеса: на неподвижной картинке
-    // они только мешают (подпись налезала на цифру 52), поэтому наложение убираем целиком
-    .replace(/<svg class="wheel-overlay"[\s\S]*?<\/svg>/, '')
-    .replace(/<text class="attn"[\s\S]*?<\/text>/, '')
-    .replace(/<a [^>]*class="sector-link"[\s\S]*?<\/a>/g, '')
-    // названия этапов в центре видны только при наведении — на картинке их не нужно
-    .replace(/<text class="center-word center-sector"[\s\S]*?<\/text>/g, '');
+// 5. og.jpg — 1200×630, миниатюра главной в мессенджерах. Решение владельца 22.11.2026: тёмная тема сайта,
+//    знак по центру с мягким свечением, под ним «Наша миссия» и миссия в два тона, внизу название.
+//    Черновики и стенд «как выглядит в Телеграме, WhatsApp, ВКонтакте» — design/og-home/.
+//    Прежний вариант с колесом был бледным и мелким в окне Телеграма.
+//    Размеры текста подобраны под Телеграм: превью там шириной ~430 px, метка 32 px читается как ~11 px.
+{
+  const OG = { top: 58, gap: 52, name: 60 }; // отступы в px, см. замер ниже
   const font = (w) =>
     `@font-face{font-family:Glober;font-weight:${w};src:url('file://${ROOT}/src/styles/fonts/glober-${w}.woff2') format('woff2')}`;
+  // Вертикальный ритм (замер по готовой картинке): поле над знаком = промежуток от знака до «Наша миссия» (A),
+  // от миссии до названия и под названием — одинаково (C). Числа ниже подобраны так, что A ≈ 60, C ≈ 64.
   const css = `
-    ${font(400)}${font(600)}${font(700)}${font(800)}
-    body{width:1200px;height:630px;font-family:Glober,sans-serif;color:var(--ink);background:
-      linear-gradient(var(--veil-a),var(--veil-b)),conic-gradient(from 200deg at 62% 45%,var(--ray-1),var(--ray-2),var(--ray-3),var(--ray-4),var(--ray-1));
-      background-color:var(--page);display:grid;grid-template-columns:1fr 520px;align-items:center;padding:0 40px 0 72px;box-sizing:border-box}
-    .left{display:flex;flex-direction:column;gap:26px}
-    .pill{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:10px 24px;font-weight:600;font-size:22px}
-    .pill img{width:27px;height:40px;display:block}
-    .eyebrow{color:var(--teal-text);font-weight:800;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
-    h1{margin:0;font-weight:600;font-size:46px;line-height:1.12}
-    .sub{font-size:22px;color:var(--ink-2)}
-    .wheel-box{position:relative;width:500px;height:500px}
-    .wheel-box svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-    .wheel-box .mid{position:absolute;left:50%;top:50%;width:62px;height:auto;transform:translate(-50%,-50%)}
-    /* стили колеса из Wheel.astro, которые нужны неподвижной картинке */
-    .sector-fill{fill:var(--f);opacity:var(--disc-op)}
-    .sector-fill.is-now{fill:var(--f);opacity:var(--disc-op)}
-    .sector-label{opacity:var(--label-op)}
-    .ticks{opacity:var(--tick-op)}
-    .num{fill:var(--teal-num)}
-    .attn-arc{fill:var(--ink-2)}
-    .iter-tag{fill:var(--teal-text)}
-    .day-cell{display:none}
-    .dividers line{stroke:var(--wheel-line);stroke-width:1}
-    .tick{stroke:var(--wheel-line)}
-    .tick.quarter{stroke:var(--teal);opacity:.6}`;
+    ${font(600)}${font(700)}${font(800)}
+    body{width:1200px;height:630px;box-sizing:border-box;font-family:Glober,sans-serif;color:var(--ink);text-align:center;
+      display:flex;flex-direction:column;align-items:center;padding:var(--og-top) 60px 0;
+      background:radial-gradient(500px 300px at 50% 23%,color-mix(in srgb,var(--ray-2) 40%,transparent),transparent 70%),var(--page)}
+    .mark img{display:block;height:172px;filter:drop-shadow(0 0 40px color-mix(in srgb,var(--spark-glow) 25%,transparent))}
+    .eyebrow{margin-top:var(--og-gap);color:var(--teal-text);font-weight:800;font-size:32px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase}
+    h1{margin:12px 0 0;font-weight:600;font-size:62px;line-height:1.06;letter-spacing:-.015em}
+    h1 span{color:var(--ink-2)}
+    .name{margin-top:var(--og-name);font-weight:700;font-size:36px;line-height:1.2;color:var(--ink-2)}`;
   const body = `
-    <div class="left">
-      <div class="pill"><span>Эмилиус</span><img src="${logoUrl}" alt=""><span>Эдженси</span></div>
-      <div><div class="eyebrow">Наша миссия</div><h1>Помогать великолепным людям создавать великолепные продукты!</h1></div>
-      <div class="sub">Касдев → дизайн → разработка → маркетинг.<br>Делаем по кругу.</div>
-    </div>
-    ${wheel}`;
-  const ogHtml = page(body, css).replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
+    <div class="mark"><img src="${logoUrl}" alt=""></div>
+    <div class="eyebrow">Наша миссия</div>
+    <h1>Помогаем великолепным людям<br><span>создавать великолепные продукты</span></h1>
+    <div class="name">Эмилиус Эдженси</div>`;
+  const ogHtml = page(body, css + `:root{--og-top:${OG.top}px;--og-gap:${OG.gap}px;--og-name:${OG.name}px}`)
+    .replace('data-theme="light"', 'data-theme="dark"')
+    .replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
   const png = join(TMP, 'og.png');
   shoot(ogHtml, png, 1200, 630);
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', png, '-q:v', '3', join(PUB, 'og.jpg')]);

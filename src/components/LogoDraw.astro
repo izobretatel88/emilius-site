@@ -1,0 +1,218 @@
+---
+// Знак-молния, который рисуется одной линией со светящейся точкой.
+// Прототип и история итераций — design/logo-bolt/draw-v4.html и DRAW-NOTES.md.
+// Рисунок — PNG владельца (не перерисовываем): маска вдоль линии постепенно его открывает.
+// Вектор из Figma отказались 22.11.2026: зубчатые края на наклонных линиях и чуть другие пропорции.
+// Скорость: fast — 1,3 с без искр (везде на сайте, решение владельца 22.11.2026); long — 5,2 с сварки с искрами.
+// Запуск (trigger): hover — знак стоит целиком и рисуется заново при наведении мыши (шапка);
+// manual — спрятан до события logo-draw:start, по замыканию шва шлёт logo-draw:end (заставка).
+// Картинка (image): small — brand/logo-81.png для шапки, large — brand/logo.png (401 px) для заставки.
+import { href } from '../lib/urls';
+
+interface Props { class?: string; mode?: 'fast' | 'long'; trigger?: 'hover' | 'manual'; image?: 'small' | 'large' }
+const { class: className, mode = 'fast', trigger = 'hover', image = 'small' } = Astro.props;
+const src = href(image === 'large' ? 'brand/logo.png' : 'brand/logo-81.png');
+
+const uid = 'ld' + Math.random().toString(36).slice(2, 8);
+// Центр линии знака в координатах brand/logo.png (267×401), снят по пикселям. Порядок — как в наброске владельца:
+// середина верхней диагонали → ступенька → короткая перекладина → остриё → левый угол → длинная перекладина → вершина → старт.
+const PTS: [number, number][] = [
+  [160.7, 69.7], [97, 209], [187, 209], [95.5, 389], [10, 161.5], [255, 161.5], [188, 10], [160.7, 69.7],
+];
+const d = 'M' + PTS.map(p => p.join(' ')).join(' L');
+const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[1] - PTS[i][1]), 0);
+const barAt = PTS.slice(1, 5).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[1] - PTS[i][1]), 0); // начало длинной перекладины
+const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
+---
+
+<svg class:list={['logo-draw', className]} viewBox="0 0 267 401" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)} data-bar-at={barAt.toFixed(2)} data-diag={diagLen.toFixed(2)} data-mode={mode} data-trigger={trigger}>
+  <defs>
+    <mask id={`${uid}-r`} maskUnits="userSpaceOnUse" x="-20" y="-20" width="307" height="441">
+      <path data-ld="mask" d={d} fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+      <!-- длинная перекладина закрыта, пока до неё не дошёл шов; диагональ на перекрестии открывается узкой линией -->
+      <path data-ld="bar" d="M22 161.5 L243 161.5" fill="none" stroke="#000" stroke-width="19" style="display:none" />
+      <path data-ld="diag" d="M160.7 69.7 L97 209" fill="none" stroke="#fff" stroke-width="15.5" />
+    </mask>
+    <filter id={`${uid}-g`} x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur data-ld="blur" stdDeviation="22" /></filter>
+    <filter id={`${uid}-h`} x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" /></filter>
+    <radialGradient id={`${uid}-f`}>
+      <stop offset="0" class="ld-core" />
+      <stop offset=".35" class="ld-glow" />
+      <stop offset="1" class="ld-warm" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <!-- шапка: пока знак рисуется заново, под линией бледный контур — знак не пропадает из навигации -->
+  {trigger === 'hover' && <image data-ld="ghost" class="ld-ghost" href={src} width="267" height="401" />}
+  <!-- маска действует только во время прорисовки; в покое — чистый PNG -->
+  <image data-ld="img" href={src} width="267" height="401" data-mask={`url(#${uid}-r)`} mask={trigger === 'manual' ? `url(#${uid}-r)` : undefined} />
+  <path data-ld="hot" class="ld-hot" d={d} fill="none" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${uid}-h)`} opacity="0" />
+  <g data-ld="sparks" />
+  <g data-ld="torch" opacity="0">
+    <circle data-ld="halo" r="60" fill={`url(#${uid}-f)`} filter={`url(#${uid}-g)`} />
+    <circle data-ld="core" r="20" class="ld-core-dot" />
+  </g>
+</svg>
+<script is:inline>
+  // Спрятать знак до первой отрисовки, чтобы он не мелькнул целиком перед анимацией.
+  // Если основной скрипт не запустится за 1,5 с — показать знак как есть.
+  (function () {
+    var s = document.currentScript && document.currentScript.previousElementSibling;
+    if (!s || s.dataset.trigger !== 'manual' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var m = s.querySelector('[data-ld="mask"]'), L = s.getAttribute('data-len');
+    m.style.strokeDasharray = L + ' ' + L; m.style.strokeDashoffset = L;
+    s.querySelector('[data-ld="diag"]').style.strokeDasharray = '0 ' + L;
+    setTimeout(function () { if (!s.dataset.started) { m.style.strokeDashoffset = 0; s.querySelector('[data-ld="diag"]').style.strokeDasharray = ''; } }, 1500);
+  })();
+</script>
+
+<script>
+  const BAR_LEN = 243 - 22;
+  // fast — плавный разгон и торможение; long — ритм v2: ровный ход, мягко только по краям
+  const easeFast = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const easeLong = (t: number) => {
+    const a = 0.08;
+    if (t < a) return (t * t) / (2 * a * (1 - a));
+    if (t > 1 - a) { const u = 1 - t; return 1 - (u * u) / (2 * a * (1 - a)); }
+    return (t - a / 2) / (1 - a);
+  };
+  const css = getComputedStyle(document.documentElement);
+  const sec = (name: string, fallback: number) => (parseFloat(css.getPropertyValue(name)) || fallback) * 1000;
+  const MODES = {
+    fast: { dur: sec('--mark-draw', 1.3), ease: easeFast, sparks: false, tail: 40 },
+    long: { dur: sec('--mark-draw-long', 5.2), ease: easeLong, sparks: true, tail: 69 },
+  };
+  const sparkColors = [css.getPropertyValue('--spark-core').trim(), css.getPropertyValue('--spark-warm').trim()];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  type Parts = ReturnType<typeof parts>;
+  function parts(svg: SVGSVGElement) {
+    const q = (k: string) => svg.querySelector<SVGGraphicsElement>(`[data-ld="${k}"]`)!;
+    const mask = q('mask') as SVGPathElement;
+    const L = mask.getTotalLength();
+    const barAt = Number(svg.dataset.barAt), diagLen = Number(svg.dataset.diag);
+    const bar = q('bar'), diag = q('diag');
+    const set = (len: number) => {
+      mask.style.strokeDasharray = `${L} ${L}`;
+      mask.style.strokeDashoffset = String(L - len);
+      const done = Math.max(0, Math.min(BAR_LEN, len - barAt - 12));
+      bar.style.display = done >= BAR_LEN ? 'none' : '';
+      bar.style.strokeDasharray = `0 ${done} ${BAR_LEN + 1} 0`;
+      diag.style.strokeDasharray = `${Math.min(len, diagLen)} ${L}`;
+    };
+    const img = q('img');
+    const ghost = svg.querySelector<SVGImageElement>('[data-ld="ghost"]');
+    const masked = (on: boolean) => {
+      if (on) img.setAttribute('mask', img.dataset.mask!); else img.removeAttribute('mask');
+      ghost?.classList.toggle('is-on', on);
+    };
+    return { mask, L, set, masked, hot: q('hot'), torch: q('torch'), halo: q('halo'), core: q('core'), blur: q('blur'), sparksG: q('sparks') };
+  }
+
+  function run(svg: SVGSVGElement, p: Parts = parts(svg)) {
+    svg.dataset.started = '1';
+    const cfg = MODES[svg.dataset.mode === 'long' ? 'long' : 'fast'];
+    const done = () => svg.dispatchEvent(new CustomEvent('logo-draw:end'));
+    if (reduce) { p.set(p.L); p.masked(false); done(); return; }
+    p.masked(true);
+
+    // Точка и искры — в пикселях экрана: в шапке знак 27 px, в заставке — 170 px
+    const k = 401 / (svg.getBoundingClientRect().height || 27); // единиц знака на пиксель
+    p.core.setAttribute('r', Math.max(5.5, 1.6 * k).toFixed(1));
+    const haloR = Math.max(18, 4.6 * k);
+    p.blur.setAttribute('stdDeviation', Math.max(6, 1.8 * k).toFixed(1));
+    const px = k * Math.max(1, 401 / k / 60);               // крупный знак — искры летят дальше
+    type Spark = { el: SVGLineElement; x: number; y: number; vx: number; vy: number; born: number; life: number };
+    let sparks: Spark[] = [], last = 0, ended = false;
+    // Время прорисовки — сумма кадров, каждый не длиннее 50 мс, отсчёт с первого кадра.
+    // Заминка (знак только что показан, страница грузится, вкладку скрыли) притормаживает ход, а не перепрыгивает кусок линии.
+    let prev = -1, played = 0;
+    const fade = 450;
+
+    const frame = (now: number) => {
+      const step = prev < 0 ? 0 : Math.min(50, now - prev); prev = now;
+      const dt = step / 1000; played += step;
+      const t0 = now - played;                                   // «начало» в часах кадра, для таймингов ниже
+      const t = Math.min(1, played / cfg.dur);
+      const len = p.L * cfg.ease(t);
+      p.set(len);
+      const pt = p.mask.getPointAtLength(Math.min(len, p.L - 0.001));
+      p.torch.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+      const tail = Math.min(cfg.tail, len);
+      // Хвост — сдвигом штриха: отрезок нулевой длины в начале с круглыми концами рисовал точку на старте линии
+      p.hot.style.strokeDasharray = `${tail} ${2 * p.L}`;
+      p.hot.style.strokeDashoffset = String(tail - len);
+
+      if (t < 1) {
+        const tt = now - t0;
+        const f = cfg.sparks ? 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2) : 1;
+        p.torch.setAttribute('opacity', f.toFixed(3));
+        p.hot.setAttribute('opacity', '0.85');
+        p.halo.setAttribute('r', (haloR * (0.92 + 0.32 * (f - 0.76) / 0.24)).toFixed(1));
+        if (cfg.sparks && now - last > 30) {
+          last = now;
+          const n = 1 + Math.floor(Math.random() * 2);
+          for (let i = 0; i < n; i++) {
+            const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
+            const sp = (12 + Math.random() * 26) * px;
+            const el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            el.setAttribute('stroke', sparkColors[Math.random() < 0.5 ? 0 : 1]);
+            el.setAttribute('stroke-width', '1.2');
+            el.setAttribute('vector-effect', 'non-scaling-stroke');
+            el.setAttribute('stroke-linecap', 'round');
+            p.sparksG.appendChild(el);
+            sparks.push({ el, x: pt.x, y: pt.y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, born: now, life: 240 + Math.random() * 320 });
+          }
+        }
+      } else {
+        if (!ended) { ended = true; p.masked(false); done(); }
+        const f = Math.max(0, 1 - (now - t0 - cfg.dur) / fade);
+        p.torch.setAttribute('opacity', f.toFixed(3));
+        p.hot.setAttribute('opacity', (0.85 * f).toFixed(3));
+      }
+
+      sparks = sparks.filter(s => {
+        const age = now - s.born;
+        if (age > s.life) { s.el.remove(); return false; }
+        s.vy += 90 * px * dt; s.x += s.vx * dt; s.y += s.vy * dt;
+        s.el.setAttribute('x1', s.x.toFixed(1)); s.el.setAttribute('y1', s.y.toFixed(1));
+        s.el.setAttribute('x2', (s.x - s.vx * 0.045).toFixed(1)); s.el.setAttribute('y2', (s.y - s.vy * 0.045).toFixed(1));
+        s.el.setAttribute('opacity', (1 - age / s.life).toFixed(2));
+        return true;
+      });
+
+      if (t < 1 || now - t0 - cfg.dur < fade || sparks.length) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  const marks = [...document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]')];
+  // Заставка: спрятан и ждёт команды
+  marks.filter(s => s.dataset.trigger === 'manual').forEach(svg => {
+    svg.dataset.started = '1';             // не дать запасному таймеру показать знак раньше времени
+    svg.addEventListener('logo-draw:start', () => run(svg), { once: true });
+  });
+  // Шапка: знак стоит целиком, рисуется заново только при наведении мыши (на телефоне — никогда)
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  marks.filter(s => s.dataset.trigger === 'hover').forEach(svg => {
+    if (!canHover || reduce) return;
+    const target = svg.closest('a') ?? svg.parentElement ?? svg;
+    let busy = false;
+    svg.addEventListener('logo-draw:end', () => { busy = false; });
+    target.addEventListener('pointerenter', () => {
+      if (busy) return;
+      busy = true;
+      run(svg);
+    });
+  });
+</script>
+
+<style>
+  .logo-draw { display: block; overflow: visible; }
+  .ld-core { stop-color: var(--spark-core); }
+  .ld-glow { stop-color: var(--spark-glow); }
+  .ld-warm { stop-color: var(--spark-warm); }
+  .ld-core-dot { fill: var(--spark-core); }
+  .ld-hot { stroke: var(--spark-hot); }
+  .ld-ghost { opacity: 0; }
+  .ld-ghost.is-on { opacity: var(--mark-ghost); }
+</style>

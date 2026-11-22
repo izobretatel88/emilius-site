@@ -9,6 +9,7 @@ import Contact from '../components/Contact.astro';
 import Feedback from '../components/Feedback.astro';
 import Footer from '../components/Footer.astro';
 import Intro from '../components/Intro.astro';
+import LogoDraw from '../components/LogoDraw.astro';
 import { SECTORS, LINKS } from '../data/site';
 import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
@@ -39,7 +40,7 @@ const organization = {
   bodyClass="home"
   jsonLd={organization}
 >
-  <Intro />
+  <Intro><LogoDraw class="intro-mark" mode="fast" trigger="manual" image="large" /></Intro>
   <main class="home-page ui-shell">
     <section class="ui-opening" aria-labelledby="mission-title">
       <h1 class="ui-h1" id="mission-title">Помогаем великолепным людям<span class="ui-quiet"> создавать великолепные продукты.</span></h1>
