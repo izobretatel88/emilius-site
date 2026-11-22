@@ -14,9 +14,12 @@ const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
 const sound = `${root}brand/intro.mp3`;
 const music = `${root}brand/music.mp3`;
+// ВРЕМЕННО: тест владельца 22.11.2026 — на dev заставка показывается при каждом заходе до этого момента.
+// Только на превью dev (база /dev/): на продакшене и main не действует. После срока можно удалить.
+const testUntil = /\/dev\/?$/.test(base) ? '2026-11-22T18:45:00+03:00' : undefined;
 ---
 
-<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} data-music={music} hidden>
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Эмилиус Эдженси" data-sound={sound} data-music={music} data-test-until={testUntil} hidden>
   <!-- Знак появляется только после выбора звука -->
   <div class="logo" id="introLogo" hidden>
   <div class="stage">
@@ -66,7 +69,8 @@ const music = `${root}brand/music.mp3`;
     try {
       seen = sessionStorage.getItem('emilius-intro-seen') === '1' || Date.now() - Number(localStorage.getItem('emilius-intro-at') || 0) < WEEK;
     } catch (e) {}
-    var forced = /[?&]intro\b/.test(location.search);
+    var testUntil = Date.parse(document.getElementById('intro').getAttribute('data-test-until') || '');
+    var forced = /[?&]intro\b/.test(location.search) || Date.now() < testUntil; // testUntil — временный тест на dev
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Пришли из поиска — сразу сайт: окно поверх страницы после перехода из выдачи поисковики
     // считают навязчивым (решение владельца 25.10.2026). Отметка «видел» — чтобы заставка не всплыла позже за визит.
