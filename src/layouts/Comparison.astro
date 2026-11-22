@@ -67,8 +67,6 @@ const related=[
   /* Статус всегда первой строкой, источник под ним: значки в соседних колонках стоят на одной высоте с названием функции */
   .platform-comparison :global(.source){display:flex;align-items:center;min-height:32px;width:fit-content;text-underline-offset:3px;margin:2px 0 -6px;font-size:13px}
   .platform-comparison :global(.scroll td>.status){display:flex}
-  /* Код источника (I4, K58) — служебный, расшифровка есть в подписи ссылки для экранного диктора */
-  .platform-comparison :global(.source span){display:none}
   .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-block:14px;padding-inline:14px}
   /* Строка подсвечивается целиком, как карточки на главной: глазу проще держать строку от названия до оговорки */
   .platform-comparison :global(.scroll tbody th[scope=row]),.platform-comparison :global(.scroll tbody td){transition:background-color var(--hover)}

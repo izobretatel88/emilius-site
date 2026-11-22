@@ -73,7 +73,6 @@
 .platform-comparison .connection{color:var(--ink)}
 .platform-comparison .source{display:block;width:fit-content;white-space:nowrap;color:var(--teal-text);font-size:var(--fs-small);text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
-.platform-comparison .source span{font-size:var(--fs-small);color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
 .platform-comparison .muted{font-size:var(--fs-small)}
 .platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td,.platform-comparison .scroll tr:target+.mobile-note-row>td{background:var(--teal-soft)}
