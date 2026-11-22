@@ -107,6 +107,8 @@ const related=[
     .platform-comparison :global(table:has(.feature-col) tbody th[scope=row]),.platform-comparison :global(table:has(.feature-col) tbody td){padding-inline:8px}
     /* «Не поддерживается» и «Не подтверждено» в узкой колонке переносятся по слогам, а не рвутся посреди слова */
     .platform-comparison :global(.status){display:block;font-size:13px;hyphens:auto;-webkit-hyphens:auto}
+    /* Перенос по слогам во всех таблицах сравнения на телефоне (think-different, итерация 76): на 320 px «редакционн / ый» */
+    .platform-comparison :global(table :is(th,td)){-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:10 4 4}
     .platform-comparison :global(.scroll td>.status){display:block}
     .platform-comparison :global(.status>span){display:inline-block;min-width:0;margin-right:4px}
     .platform-comparison :global(.status>.si){width:12px;height:12px;margin-top:0;vertical-align:-1px}
