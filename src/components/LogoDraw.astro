@@ -2,13 +2,14 @@
 // Знак-молния, который при загрузке рисуется одной линией со сварочной точкой.
 // Прототип и история итераций — design/logo-bolt/draw-v4.html и DRAW-NOTES.md.
 // Знак — вектор из Figma (bolt-master.svg), геометрия и цвета не меняются.
-// Порядок хода — как в v2. Два режима:
-//   fast — шапка: 1,3 с, без искр, стартует сам (на главной — после заставки);
-//   long — заставка: 5,2 с сварки с искрами, стартует по событию logo-draw:start, по замыканию шва шлёт logo-draw:end.
+// Порядок хода — как в v2. Скорость: fast — 1,3 с без искр (везде на сайте, решение владельца 22.11.2026);
+// long — 5,2 с сварки с искрами (осталась в прототипе и как режим компонента).
+// Запуск (trigger): hover — знак стоит целиком и рисуется заново при наведении мыши (шапка);
+// manual — спрятан до события logo-draw:start, по замыканию шва шлёт logo-draw:end (заставка).
 import master from '../../design/logo-bolt/bolt-master.svg?raw';
 
-interface Props { class?: string; mode?: 'fast' | 'long'; manual?: boolean }
-const { class: className, mode = 'fast', manual = false } = Astro.props;
+interface Props { class?: string; mode?: 'fast' | 'long'; trigger?: 'hover' | 'manual' }
+const { class: className, mode = 'fast', trigger = 'hover' } = Astro.props;
 
 // id внутри знака уникальны на странице: знак может стоять не один раз
 const uid = 'ld' + Math.random().toString(36).slice(2, 8);
@@ -27,7 +28,7 @@ const d = 'M' + PTS.map(p => p.join(' ')).join(' L');
 const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[1] - PTS[i][1]), 0);
 ---
 
-<svg class:list={['logo-draw', className]} viewBox="0 0 215 326" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)} data-mode={mode} data-manual={manual ? '' : undefined}>
+<svg class:list={['logo-draw', className]} viewBox="0 0 215 326" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)} data-mode={mode} data-trigger={trigger}>
   <defs>
     <mask id={`${uid}-r`} maskUnits="userSpaceOnUse" x="-20" y="-20" width="255" height="366">
       <path data-ld="mask" d={d} fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" />
@@ -56,7 +57,7 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
   // Если основной скрипт не запустится за 1,5 с — показать знак как есть.
   (function () {
     var s = document.currentScript && document.currentScript.previousElementSibling;
-    if (!s || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!s || s.dataset.trigger !== 'manual' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var m = s.querySelector('[data-ld="mask"]'), L = s.getAttribute('data-len');
     m.style.strokeDasharray = L + ' ' + L; m.style.strokeDashoffset = L;
     s.querySelector('[data-ld="diag"]').style.strokeDasharray = '0 ' + L;
@@ -174,18 +175,24 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
   }
 
   const marks = [...document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]')];
-  marks.forEach(svg => { svg.dataset.started = '1'; });   // не дать запасному таймеру показать знак раньше времени
-  // Ручной знак (заставка) ждёт команды
-  marks.filter(s => s.hasAttribute('data-manual')).forEach(svg =>
-    svg.addEventListener('logo-draw:start', () => run(svg), { once: true }));
-
-  // Знак в шапке. Если на главной открыта заставка (класс intro-open), прорисовку только что показала она:
-  // после её закрытия знак в шапке уже стоит целиком, без повтора.
-  const auto = marks.filter(s => !s.hasAttribute('data-manual'));
-  const root = document.documentElement;
-  if (root.classList.contains('intro-open')) {
-    auto.forEach(svg => { const p = parts(svg); p.set(p.L); });
-  } else auto.forEach(svg => run(svg));
+  // Заставка: спрятан и ждёт команды
+  marks.filter(s => s.dataset.trigger === 'manual').forEach(svg => {
+    svg.dataset.started = '1';             // не дать запасному таймеру показать знак раньше времени
+    svg.addEventListener('logo-draw:start', () => run(svg), { once: true });
+  });
+  // Шапка: знак стоит целиком, рисуется заново только при наведении мыши (на телефоне — никогда)
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  marks.filter(s => s.dataset.trigger === 'hover').forEach(svg => {
+    if (!canHover || reduce) return;
+    const target = svg.closest('a') ?? svg.parentElement ?? svg;
+    let busy = false;
+    svg.addEventListener('logo-draw:end', () => { busy = false; });
+    target.addEventListener('pointerenter', () => {
+      if (busy) return;
+      busy = true;
+      run(svg);
+    });
+  });
 </script>
 
 <style>
