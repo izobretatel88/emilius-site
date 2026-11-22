@@ -232,3 +232,10 @@
 @media(max-width:760px){.platform-comparison .owner .choose-cols>div{padding:18px 16px}.platform-comparison .owner h2{font-size:21px}}
 .platform-comparison .facts .fresh{background:var(--sec-custdev-now);color:var(--ink);font-weight:600;display:inline-flex;align-items:center;gap:8px}
 .platform-comparison .fresh-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+/* Телефон: таблица во всю ширину помещается без горизонтальной прокрутки, поэтому своё окно с прокруткой ей не нужно — листается вместе со страницей (не прокрутка в прокрутке). Шапка таблицы и заголовок раздела держатся под шапкой сайта, как на компьютере */
+@media screen and (max-width:760px){
+  .platform-comparison .card:has(>.scroll){overflow:clip}
+  .platform-comparison .scroll{overflow:visible;max-height:none}
+  .platform-comparison thead th{top:var(--header-h)}
+  .platform-comparison .section-row{top:calc(var(--header-h) + var(--thead-h,72px))}
+}

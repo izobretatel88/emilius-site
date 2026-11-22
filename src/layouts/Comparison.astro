@@ -98,7 +98,7 @@ const related=[
   .platform-comparison :global(#comparison-sources summary){min-height:44px;padding-block:11px;cursor:pointer}
   .platform-comparison :global(#comparison-sources li a){display:inline-block;padding-block:5px}
   @media(max-width:760px){
-    .platform-comparison :global(tr[data-feature]){scroll-margin-top:16px}
+    .platform-comparison :global(tr[data-feature]){scroll-margin-top:calc(var(--header-h) + var(--thead-h,73px) + 56px)}
     .platform-comparison :global(table:has(.feature-col)){min-width:0;width:100%}
     .platform-comparison :global(.feature-col){width:36%}
     .platform-comparison :global(.platform-col){width:32%}
