@@ -301,11 +301,17 @@ const jsonLd = [
     line-height: 1.5;
   }
   .toc li {
-    margin: 0 0 4px;
+    margin: 0;
   }
+  /* Пункт оглавления — цель нажатия не только по буквам (think-different, итерация 63): было 18 px по высоте на телефоне */
   .toc a {
+    display: inline-block;
+    padding-block: 3px;
     color: var(--teal-text);
     text-decoration: none;
+  }
+  @media (pointer: coarse) {
+    .toc a { padding-block: 9px; }
   }
   @media (hover: hover) and (pointer: fine) {
     .toc a:hover {
