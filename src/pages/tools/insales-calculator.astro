@@ -80,6 +80,11 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
       });
       history.replaceState(history.state,'',url.href);
     };
+    // На печати и в PDF параметры расчёта видны раскрытыми — иначе на листе только цена без ответов
+    const summary=document.querySelector<HTMLDetailsElement>('.calc-summary');
+    let summaryWasOpen=false;
+    addEventListener('beforeprint',()=>{if(summary){summaryWasOpen=summary.open;summary.open=true;}});
+    addEventListener('afterprint',()=>{if(summary)summary.open=summaryWasOpen;});
     form.addEventListener('submit',event=>event.preventDefault());
     form.addEventListener('change',update);
     form.addEventListener('change',()=>writeURL());

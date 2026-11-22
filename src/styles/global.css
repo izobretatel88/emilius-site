@@ -148,3 +148,16 @@ select {
     scroll-behavior: auto !important; /* лента телефонов на лендинге inSales листается без плавной прокрутки */
   }
 }
+
+/* Печать и «Сохранить как PDF» (think-different, итерация 65): расчёт калькулятора, смету на лендинге и статьи
+   сохраняют для бухгалтера или партнёра. На бумаге — только содержание: без плавающей кнопки, меню, плашки cookie,
+   переключателя темы и кнопок «Поделиться». Белый лист и чёрный текст — токены --print-page и --print-ink. */
+@media print {
+  html, body { background: var(--print-page) !important; color: var(--print-ink); }
+  .write-fab, .cookie-notice, .skip, .dev-badge, .nav-links, .nav-action, .nav-menu,
+  .estimate-strip, .footer-links, .theme-control, .site-iterations, .arda,
+  .calc-jump, .calc-back, .calc-share-row, .est-share-row, .article-share, .toc,
+  iframe { display: none !important; }
+  .ui-surface, .card, .directory-callout { box-shadow: none !important; border: 1px solid var(--hair); }
+  .calc-result, .estimate, figure, table { break-inside: avoid; }
+}
