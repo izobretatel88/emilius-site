@@ -91,8 +91,8 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
     if(share&&shareStatus&&(navigator.share||navigator.clipboard)){
       share.hidden=false;
       share.addEventListener('click',async()=>{
-        const url=new URL(location.href);
-        url.hash='';
+        // Только ответы: метки utm и прочее из исходного адреса не передаём дальше — источник у получателя свой
+        const url=new URL(location.origin+location.pathname);
         form.querySelectorAll('select').forEach(select=>url.searchParams.set(`calc_${select.name}`,select.value));
         const text=`Магазин на inSales: пакет ${document.querySelector('#calc-package')?.textContent}, ${document.querySelector('#calc-price')?.textContent}, ${document.querySelector('#calc-weeks')?.textContent?.replace('Ориентир: ','')}`;
         shareStatus.textContent='';
