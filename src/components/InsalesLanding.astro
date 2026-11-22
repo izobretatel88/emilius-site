@@ -6,6 +6,8 @@ import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import LinkList from './LinkList.astro';
 import { glue } from '../lib/typograph.mjs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { getPosts } from '../lib/blog';
 import { LINKS } from '../data/site';
 import {
@@ -20,6 +22,23 @@ interface Props {
   variant: 'shop' | 'seller';
 }
 const { variant } = Astro.props;
+// Расшифровка видеоотзыва (think-different, итерация 85): берём из его же субтитров при сборке, слово в слово.
+// Видео грузится только по нажатию, и плеер до этого показывает «0:00» — длительность пишем в строке расшифровки.
+// Первая реплика с «?» — вопрос интервьюера, остальное — ответ клиента.
+const reviewCues = (() => {
+  try {
+    const vtt = readFileSync(join(process.cwd(), 'public', VIDEO_REVIEW.captions), 'utf8').replace(/\r/g, '');
+    return [...vtt.matchAll(/\d\d:\d\d:\d\d\.\d+ --> (\d\d):(\d\d):(\d\d)\.\d+[^\n]*\n([\s\S]*?)(?=\n\n|\n*$)/g)]
+      .map((m) => ({ end: +m[1] * 3600 + +m[2] * 60 + +m[3], text: m[4].replace(/\s+/g, ' ').trim() }));
+  } catch {
+    return [];
+  }
+})();
+const reviewSec = reviewCues.length ? reviewCues[reviewCues.length - 1].end : 0;
+const reviewLength = `${Math.floor(reviewSec / 60)}\u00a0мин ${reviewSec % 60}\u00a0с`;
+const reviewAsk = reviewCues[0]?.text.endsWith('?') ? reviewCues[0].text : '';
+const reviewAnswer = reviewCues.slice(reviewAsk ? 1 : 0).map((c) => c.text).join(' ');
+const reviewName = VIDEO_REVIEW.who.split(',')[0].trim();
 const hasStockArticle = (await getPosts()).some(p=>p.id==='edinye-ostatki-wb-ozon-insales');
 const hero = HERO[variant];
 const base = import.meta.env.BASE_URL;
@@ -238,6 +257,13 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           </figcaption>
         </figure>
       </div>
+      {reviewAnswer && (
+        <details class="transcript">
+          <summary>Расшифровка видео · {reviewLength}</summary>
+          {reviewAsk && <p><b>Вопрос.</b> {glue(reviewAsk)}</p>}
+          <p><b>{reviewName}.</b> {glue(reviewAnswer)}</p>
+        </details>
+      )}
     </section>
 
     <section class="block plain" aria-labelledby="t-plans">
@@ -866,6 +892,10 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   /* Ссылка на сайт под отзывом: зона нажатия 44 px, строка не сдвигается */
   .quote figcaption > span { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
   .quote figcaption a { display: inline-block; padding-block: 13px; margin-block: -13px; }
+  /* Расшифровка под отзывом — та же строка со стрелкой, что у частых вопросов (итерация 85) */
+  .transcript { margin-top: 20px; }
+  .transcript p b { color: var(--ink); font-weight: 600; }
+  .transcript p + p { margin-top: -6px; }
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .plan { padding: 24px; display: flex; flex-direction: column; gap: 8px; }
   /* В три колонки строки карточек общие: подпись, срок с линией и список начинаются на одной высоте */
