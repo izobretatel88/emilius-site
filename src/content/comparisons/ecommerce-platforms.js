@@ -48,6 +48,7 @@ function apply() {
       active.clear();
       document.querySelectorAll(".chips button").forEach(b => b.setAttribute("aria-pressed", "false"));
       apply();
+      writeURL();
       document.getElementById(returnTo)?.focus();
     });
     count.append(" · ", reset);
@@ -55,17 +56,30 @@ function apply() {
   try { localStorage.setItem("emilius-platform-mode-v1", mode); } catch (e) {}
 }
 
+// Отмеченные ограничения и режим — в адресе (think-different, итерация 52): обновление страницы и пересланная ссылка
+// показывают тот же отбор. Принимаются только известные id фильтров и режимы site/mp. Пишем только по действию человека.
+function writeURL() {
+  const url = new URL(location.href);
+  if (active.size) url.searchParams.set("need", [...active].join(",")); else url.searchParams.delete("need");
+  if (mode === "mp") url.searchParams.set("mode", "mp"); else url.searchParams.delete("mode");
+  history.replaceState(history.state, "", url.href);
+}
+const startParams = new URL(location.href).searchParams;
+for (const id of (startParams.get("need") || "").split(",")) if (FILTERS.some(f => f.id === id)) active.add(id);
+
 const chips = document.getElementById("chips");
 for (const f of FILTERS) {
   const b = Object.assign(document.createElement("button"), { type: "button", id: f.id, textContent: f.label });
-  b.setAttribute("aria-pressed", "false");
+  b.setAttribute("aria-pressed", String(active.has(f.id)));
   b.addEventListener("click", () => {
     active.has(f.id) ? active.delete(f.id) : active.add(f.id);
     b.setAttribute("aria-pressed", String(active.has(f.id)));
     apply();
+    writeURL();
   });
   chips.append(b);
 }
-document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; apply(); }));
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; apply(); writeURL(); }));
 try { if (localStorage.getItem("emilius-platform-mode-v1") === "mp") mode = "mp"; } catch (e) {}
+if (startParams.get("mode") === "mp" || startParams.get("mode") === "site") mode = startParams.get("mode");
 apply();
