@@ -69,7 +69,25 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
     list-style: none;
   }
   .post {
+    position: relative;
     overflow: hidden;
+  }
+  /* Вся карточка — одна ссылка (think-different, итерация 70): раньше нажимались только обложка и заголовок,
+     а тап по описанию или дате на телефоне не делал ничего. Ссылка заголовка растягивается на карточку,
+     поэтому в списке экранного диктора и при табуляции по-прежнему одна ссылка на статью. */
+  h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  h2 a:focus-visible {
+    outline: none;
+  }
+  /* Кольцо фокуса — вокруг всей карточки, как и область нажатия */
+  .post:has(h2 a:focus-visible) {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
   }
   @media (max-width: 760px) {
     .posts { grid-template-columns: 1fr; gap: 20px; margin-top: var(--section-pad-sm); }
