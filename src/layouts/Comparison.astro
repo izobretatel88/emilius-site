@@ -79,6 +79,12 @@ const related=[
   /* «Источник» — тихая серая ссылка, не спорит со статусом */
   .platform-comparison :global(.scroll .source){color:var(--ink-2)}
   @media (hover: hover) and (pointer: fine){.platform-comparison :global(.scroll .source:hover){color:var(--teal-text)}}
+  /* 698 одинаковых «Источник» рябили в каждой строке. С мышью ссылка проявляется у строки под курсором или в фокусе с клавиатуры; место под неё зарезервировано, строки не прыгают. На касаниях и в печати — всегда видна */
+  @media screen and (hover: hover) and (pointer: fine){
+    .platform-comparison :global(.scroll tr[data-feature] .source){opacity:0;transition:opacity .2s ease,color var(--hover)}
+    .platform-comparison :global(.scroll tr[data-feature]:hover .source),.platform-comparison :global(.scroll tr[data-feature]:focus-within .source),.platform-comparison :global(.scroll tr[data-feature]:target .source){opacity:1}
+  }
+  @media (prefers-reduced-motion: reduce){.platform-comparison :global(.scroll tr[data-feature] .source){transition:none}}
   /* Справа от статуса — только когда колонки широкие; уже — источник под статусом, чтобы не наезжал на «Не поддерживается» */
   @media screen and (min-width:1200px){
     .platform-comparison :global(.scroll tbody td){position:relative}
