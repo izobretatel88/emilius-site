@@ -12,6 +12,27 @@ interface Props {
 }
 const { post } = Astro.props;
 const d = post.data;
+// «Следующий шаг» в конце каждой статьи (think-different, итерация 4): раньше он был только у одной,
+// остальные заканчивались тупиком. Ссылки только на существующие страницы; метка utm — как у ссылок в тексте статей.
+const utm = (path: string) => `${path}${path.includes('?') ? '&' : '?'}utm_source=blog&utm_medium=next-step&utm_campaign=${post.id}`;
+const marketplaces = d.tags.some((t: string) => /маркетплейс|wildberries|ozon/i.test(t));
+const NEXT_OVERRIDES: Record<string, {title: string; description: string; href: string}[]> = {
+  'edinye-ostatki-wb-ozon-insales': [
+    {title:'Магазин рядом с WB и Ozon',description:'Запуск своего сайта и настройка связки с площадками.',href:'services/insales-shop/seller/'},
+    {title:'Проверить функции inSales и KIT',description:'Способы обмена, учёт и ограничения платформ.',href:'compare/insales-vs-yandex-kit/'},
+    {title:'Обсудить сложную интеграцию',description:'Когда нужна своя логика обмена и работа с 1С.',href:'services/dev/'},
+  ],
+};
+const nextSteps = NEXT_OVERRIDES[post.id] ?? [
+  marketplaces
+    ? {title:'Магазин рядом с WB и Ozon',description:'Свой сайт и единые остатки с площадками.',href:utm('services/insales-shop/seller/')}
+    : {title:'Магазин на шаблоне inSales',description:'За 3–5 недель, от 75 000 ₽. Состав и цену фиксируем до старта.',href:utm('services/insales-shop/')},
+  {title:'Посчитать свой магазин',description:'Семь вопросов о каталоге и интеграциях — ориентир по бюджету и сроку.',href:utm('tools/insales-calculator/')},
+  post.id === 'vybor-platformy-magazina'
+    ? {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами и источниками.',href:'compare/insales-vs-yandex-kit/'}
+    : {title:'Сравнить восемь платформ',description:'Сценарии, ограничения и стоимость.',href:'compare/ecommerce-platforms/'},
+  {title:'Другая задача?',description:'Выберите ситуацию — покажем, с чего начнём.',href:'services/#t-entry'},
+];
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -90,11 +111,7 @@ const jsonLd = [
     <div class="body" data-post={post.id}>
       <Fragment set:html={html} />
     </div>
-    {post.id==='edinye-ostatki-wb-ozon-insales' && <section class="article-next"><h2>Следующий шаг</h2><LinkList items={[
-      {title:'Магазин рядом с WB и Ozon',description:'Запуск своего сайта и настройка связки с площадками.',href:'services/insales-shop/seller/'},
-      {title:'Проверить функции inSales и KIT',description:'Способы обмена, учёт и ограничения платформ.',href:'compare/insales-vs-yandex-kit/'},
-      {title:'Обсудить сложную интеграцию',description:'Когда нужна своя логика обмена и работа с 1С.',href:'services/dev/'},
-    ]} /></section>}
+    <section class="article-next" aria-labelledby="t-article-next"><h2 id="t-article-next">Следующий шаг</h2><LinkList items={nextSteps} /></section>
   </main>
 
   <!-- Просмотр схемы крупно: окно поверх статьи, закрывается кнопкой, Esc и кликом по фону. Без скрипта ссылка открывает файл картинки. -->
@@ -192,6 +209,9 @@ const jsonLd = [
   .article {
     padding-top: 16px;
   }
+  /* «Следующий шаг» — отдельная секция под линией, как на остальных страницах */
+  .article-next { margin-top: var(--section-pad); padding-top: var(--section-pad); border-top: 1px solid var(--hair); }
+  .article-next h2 { font-size: var(--fs-h2-sm); line-height: 1.15; letter-spacing: var(--tracking-tight); margin: 0 0 8px; }
   .article > * {
     max-width: var(--read-width);
   }
