@@ -23,7 +23,7 @@ const testUntil = /\/dev\/?$/.test(base) ? '2026-11-22T18:45:00+03:00' : undefin
   <!-- Знак появляется только после выбора звука -->
   <div class="logo" id="introLogo" hidden>
   <div class="stage">
-    <!-- Знак приходит слотом со страницы: <LogoDraw class="intro-mark" mode="fast" trigger="manual" />.
+    <!-- Знак приходит слотом со страницы: <LogoDraw class="intro-mark" mode="fast" trigger="manual" image="large" />.
          Импорт компонента прямо сюда ломает сборку большого скрипта заставки (сбой компилятора Astro). -->
     <slot />
   </div>
@@ -397,11 +397,12 @@ const testUntil = /\/dev\/?$/.test(base) ? '2026-11-22T18:45:00+03:00' : undefin
     aspect-ratio: 1;
     animation: fade 0.2s ease-out both; /* проявляется уже в наклоне */
   }
-  /* Знак вытянут по вертикали (215×326): по высоте сцены, по центру */
+  /* Знак — во всю сцену с сохранением пропорций, как раньше картинка с object-fit: contain */
   .stage :global(.intro-mark) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     height: 100%;
-    width: auto;
-    margin-inline: auto;
   }
 
   .logo {
