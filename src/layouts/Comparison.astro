@@ -31,7 +31,11 @@ const markNewTab=(src:string)=>{
       return `<a ${attrs}>${inner}<span class="visually-hidden">${NEW_TAB}</span></a>`;
     });
 };
-const html=markNewTab(detailed?detailHtml:generalHtml);
+// Панель поиска по 348 функциям без скрипта не работает, поэтому в разметке она скрыта, а открывал её скрипт
+// в конце страницы — после всей таблицы. На медленном телефоне это ~3,5 с после начала загрузки, и таблица уезжала вниз
+// (think-different, итерация 90: CLS 0,24). Теперь панель открывается сразу после своей разметки, до таблицы.
+const revealSearch=(src:string)=>src.replace(/(<form class="panel" id="filters"[^>]*>[\s\S]*?<\/form>)/,'$1<script>document.getElementById("filters").hidden=false</script>');
+const html=revealSearch(markNewTab(detailed?detailHtml:generalHtml));
 const css=detailed?detailCss:generalCss;
 const script=detailed?detailScript:generalScript;
 const related=[
@@ -40,16 +44,21 @@ const related=[
   {title:'Разработка под вашу задачу',description:'Обсудить платформу, интерфейс и интеграции.',href:'services/dev/'},
 ];
 ---
-<Base title={`${title} — Emilius Agency`} description={description} modifiedTime={detailed?'2026-11-22':undefined} jsonLd={detailed?{'@context':'https://schema.org','@type':'WebPage',name:title,description,inLanguage:'ru',dateModified:'2026-11-22',url:new URL(Astro.url.pathname,Astro.site).href,about:[{'@type':'SoftwareApplication',name:'inSales',applicationCategory:'BusinessApplication',url:'https://www.insales.ru/'},{'@type':'SoftwareApplication',name:'Яндекс KIT',applicationCategory:'BusinessApplication',url:'https://kit.yandex.ru/'}],publisher:{'@type':'Organization',name:'Emilius Agency',url:'https://emilius.agency/'}}:undefined}>
+<Base title={`${title} — Emilius Agency`} description={description} modifiedTime={detailed?'2026-11-22':undefined} jsonLd={detailed?{'@context':'https://schema.org','@type':'WebPage',name:title,description,inLanguage:'ru',dateModified:'2026-11-22',url:new URL(Astro.url.pathname,Astro.site).href,about:[{'@type':'SoftwareApplication',name:'inSales',applicationCategory:'BusinessApplication',url:'https://www.insales.ru/'},{'@type':'SoftwareApplication',name:'Яндекс KIT',applicationCategory:'BusinessApplication',url:'https://kit.yandex.ru/'}],publisher:{'@type':'Organization',name:'Emilius Agency',url:'https://emilius.agency/'}}:undefined} bodyClass="comparison">
+  <!-- Стили сравнения — до содержимого, а не в конце <body> (итерация 90): после таблицы на 486 КБ они применялись
+       через несколько секунд, и до этого телефон показывал таблицу без оформления, а потом вёрстка прыгала.
+       Не в <head>: там они встали бы раньше общих стилей сайта и проиграли бы им в каскаде -->
+  <style is:inline set:html={css} />
   <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
     <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
     <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
   </main><Footer />
-  <style is:global set:html={css} />
   <script is:inline set:html={script} />
 </Base>
 <style>
-  :global(body:has(>.comparison-page)){row-gap:16px}
+  /* Классом, а не body:has(>.comparison-page): на странице в 486 КБ Chrome пересчитывал :has только в конце разбора,
+     и содержимое подпрыгивало на 12 px через ~3 с после начала загрузки (итерация 90) */
+  :global(body.comparison){row-gap:16px}
   .comparison-page :global(.directory-callout){margin-bottom:8px}
   .comparison-page{width:100%;max-width:var(--layout-width);min-width:0;margin-inline:auto;padding-top:16px}
   .comparison-page :global(.breadcrumbs){margin-bottom:4px}
