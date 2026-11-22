@@ -409,7 +409,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         <p class="field-error" id="lead-consent-error" role="alert" hidden></p>
         <button class="cta" type="submit">Отправить расчёт и записаться на диагностику</button>
         <p class="small">Расчёт придёт менеджеру вместе с заявкой. Ответим в течение часа в рабочее время.</p>
-        <p class="status" role="status" aria-live="polite" hidden></p>
+        <!-- Ответ после отправки озвучивается через постоянную невидимую область, как в форме на главной (think-different, итерация 114) -->
+        <p class="visually-hidden" role="status" aria-live="polite" data-announce></p>
+        <p class="status" hidden></p>
         <p class="status" data-fail role="alert" hidden>
           Не получилось отправить. Напишите нам в Telegram: <a href={LINKS.direct} target="_blank" rel="noopener">{LINKS.direct.replace('https://t.me/', '@')}<span class="visually-hidden">, откроется в новой вкладке</span></a>
         </p>
@@ -617,6 +619,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         if (!res.ok || !data.ok) throw new Error(String(res.status));
         ok.textContent = 'Спасибо! Расчёт у менеджера. Напишем в течение часа в рабочее время.';
         ok.hidden = false;
+        const announce=form.querySelector<HTMLElement>('[data-announce]');
+        if(announce){announce.textContent='';window.setTimeout(()=>{announce.textContent=ok.textContent??'';},100);}
         goal('lead-sent', { variant, package: last?.packageName, from: last?.from, touched });
       } catch {
         fail.hidden = false;
