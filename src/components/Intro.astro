@@ -1,13 +1,10 @@
 ---
-// Заставка при первом заходе. Движение знака повторяет эталонное видео кадр в кадр
-// (замеры по 60 к/с — в константах T ниже):
-//   нажатие → знак за 1–2 кадра наклоняется (~45°), надписи пропадают мгновенно;
-//   1,8 с знак медленно выпрямляется до ~31°;
-//   затем знак резко встаёт на место чуть выше обычного, надписи возвращаются, ~2 с он оседает.
+// Заставка при первом заходе. После выбора звука знак рисуется одной линией со сварочной точкой
+// (LogoDraw, долгая версия — прототип design/logo-bolt/draw-v4.html, владелец 22.11.2026; до этого знак наклонялся в 3D).
+// Надпись появляется, когда шов замкнулся, затем открывается сайт. Тайминги — в константах T ниже.
 // Звук — public/brand/intro.mp3 (разрешение владельца от 25.09.2026), громкость 10% (22.10.2026).
 // Сначала вопрос «Удобно сейчас со звуком?» — «Да» / «Нет»; не нажали за T.wait — без звука.
-// Знак плоский, как в PNG владельца (объём и блик убраны 21.10.2026 — «криво» на тонких линиях).
-// После выбора знак сразу появляется в движении (без паузы), надпись встаёт вместе с ним в конце.
+// После выбора знак сразу начинает рисоваться (без паузы), надпись встаёт в конце.
 // Esc или прокрутка — пропустить заставку. Не чаще раза в неделю (владелец 27.10.2026: «не постоянно») —
 // время показа в localStorage; при «уменьшить движение» — нет.
 // ?intro — показать снова.
@@ -15,7 +12,6 @@
 // мелодия public/brand/music.mp3 (файл владельца, 22.10.2026); кнопка в углу выключает и включает её.
 const base = import.meta.env.BASE_URL;
 const root = `${base}${base.endsWith('/') ? '' : '/'}`;
-const mark = `${root}brand/logo.png`; // знак-молния — PNG владельца
 const sound = `${root}brand/intro.mp3`;
 const music = `${root}brand/music.mp3`;
 ---
@@ -24,12 +20,9 @@ const music = `${root}brand/music.mp3`;
   <!-- Знак появляется только после выбора звука -->
   <div class="logo" id="introLogo" hidden>
   <div class="stage">
-    <div class="lift" id="introLift">
-      <div class="mark3d" id="introMark" style={`--mark:url(${mark})`}>
-        <img class="layer front" src={mark} alt="" />
-      </div>
-    </div>
-    <span class="shadow" id="introShadow"></span>
+    <!-- Знак приходит слотом со страницы: <LogoDraw class="intro-mark" mode="long" manual />.
+         Импорт компонента прямо сюда ломает сборку большого скрипта заставки (сбой компилятора Astro). -->
+    <slot />
   </div>
 
   <p class="wordmark" data-intro-text>Эмилиус Эдженси</p>
@@ -94,31 +87,24 @@ const music = `${root}brand/music.mp3`;
 
 <script>
   // Тайминги, мс от нажатия. Всё, что подгоняется под видео, — здесь.
+  // Длительность прорисовки — токен --mark-draw-long (5,2 с).
   const T = {
-    tilt: 50, // наклон: 1–2 кадра
-    hold: 1800, // сколько знак остаётся наклонённым
-    soundAt: 170, // звук: в видео слышен через 0,38 с, в файле 0,21 с тишины в начале
-    settle: 2000, // оседание после возврата
-    close: 2700, // когда показать сайт
+    soundAt: 170, // звук: в файле 0,21 с тишины в начале
+    after: 900, // сколько знак с надписью стоит после замыкания шва, до открытия сайта
     fade: 600,
     wait: 5000, // кольцо на «Нет»: сколько ждём выбора
   };
   const INTRO_VOLUME = 0.1; // громкость звука заставки
-  // Наклон, градусы: сразу 45°, к концу удержания — 31° (высота знака 71% → 86% от обычной)
-  const TILT_FROM = -45;
-  const TILT_TO = -31;
 
   const intro = document.getElementById('intro');
-  const lift = document.getElementById('introLift');
-  const mark = document.getElementById('introMark');
-  const shadow = document.getElementById('introShadow');
+  const mark = document.querySelector<SVGSVGElement>('#introLogo svg[data-logo-draw]');
   const logo = document.getElementById('introLogo');
   const choice = document.getElementById('introChoice');
   const withSound = document.getElementById('introSound');
   const quiet = document.getElementById('introQuiet');
   const ring = document.getElementById('introRing');
 
-  if (intro && lift && mark && shadow && logo && choice && withSound && quiet && ring && !intro.hidden) {
+  if (intro && mark && logo && choice && withSound && quiet && ring && !intro.hidden) {
     const texts = [...intro.querySelectorAll<HTMLElement>('[data-intro-text]')];
     try {
       sessionStorage.setItem('emilius-intro-seen', '1');
@@ -265,39 +251,12 @@ const music = `${root}brand/music.mp3`;
       reset();
       if (sound) playSound();
       showTexts(false);
-      const hold = T.hold;
-
-      // Наклон: мгновенно до 45°, дальше медленно выпрямляется (в видео — почти линейно после 0,4 с)
-      run(
-        mark,
-        [
-          { transform: 'rotateX(0deg)' },
-          { transform: `rotateX(${TILT_FROM}deg)`, offset: T.tilt / hold, easing: 'linear' },
-          { transform: `rotateX(${TILT_FROM + 1}deg)`, offset: 400 / hold, easing: 'linear' },
-          { transform: `rotateX(${TILT_TO}deg)` },
-        ],
-        { duration: hold, easing: 'linear' },
-      );
-      run(
-        shadow,
-        [
-          { transform: 'scale(1, 1)', opacity: 0.7 },
-          { transform: 'translateY(-190%) scale(1.05, 0.8)', opacity: 0.9, offset: T.tilt / hold },
-          { transform: 'translateY(-130%) scale(1.02, 0.9)', opacity: 0.85 },
-        ],
-        { duration: hold, easing: 'linear' },
-      );
-
-      // Возврат: резко на место, чуть выше обычного, надписи сразу видны, затем оседание
-      later(hold, () => {
-        reset();
+      // Шов замкнулся — надпись на месте, чуть позже открывается сайт
+      mark.addEventListener('logo-draw:end', () => {
         showTexts(true);
-        run(lift, [{ transform: 'translateY(-6%) scale(1.02)' }, { transform: 'translateY(0) scale(1)' }], {
-          duration: T.settle,
-          easing: 'cubic-bezier(.15,.6,.3,1)',
-        });
-        later(T.close - hold, () => close(T.fade));
-      });
+        later(T.after, () => close(T.fade));
+      }, { once: true });
+      mark.dispatchEvent(new Event('logo-draw:start'));
     };
 
     let done = false;
@@ -334,7 +293,7 @@ const music = `${root}brand/music.mp3`;
       }
       choice.hidden = true;
       logo.hidden = false;
-      press(sound); // без паузы: знак появляется уже наклонённым
+      press(sound); // без паузы: знак сразу начинает рисоваться
     };
     countdown.onfinish = () => start(false);
     // Пропустить без звука: Esc или попытка прокрутить
@@ -432,42 +391,13 @@ const music = `${root}brand/music.mp3`;
     position: relative;
     width: clamp(120px, 20vw, 170px);
     aspect-ratio: 1;
-    perspective: 700px;
     animation: fade 0.2s ease-out both; /* проявляется уже в наклоне */
   }
-  .lift,
-  .mark3d {
-    position: absolute;
-    inset: 0;
-    transform-style: preserve-3d;
-  }
-  .mark3d {
-    transform-origin: 50% 8%; /* наклон вокруг верхнего края: верх на месте, низ уходит вглубь */
-    will-change: transform;
-  }
-  .layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
+  /* Знак вытянут по вертикали (215×326): по высоте сцены, по центру */
+  .stage :global(.intro-mark) {
     height: 100%;
-    /* знак вытянут по вертикали — без contain его растягивало в квадрат, и блик (маска) не совпадал */
-    object-fit: contain;
-    user-select: none;
-    pointer-events: none;
-  }
-  .front {
-    transform: translateZ(0);
-  }
-  .shadow {
-    position: absolute;
-    left: 16%;
-    right: 16%;
-    bottom: -12%;
-    height: 12%;
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(0, 30, 30, 0.3), transparent);
-    filter: blur(4px);
-    opacity: 0.7;
+    width: auto;
+    margin-inline: auto;
   }
 
   .logo {

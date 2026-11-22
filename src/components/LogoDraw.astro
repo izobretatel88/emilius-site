@@ -2,11 +2,13 @@
 // Знак-молния, который при загрузке рисуется одной линией со сварочной точкой.
 // Прототип и история итераций — design/logo-bolt/draw-v4.html и DRAW-NOTES.md.
 // Знак — вектор из Figma (bolt-master.svg), геометрия и цвета не меняются.
-// Порядок хода — как в v2. В шапке — быстрая версия (1,3 с, без искр): долгая сварка заняла бы 5 с на каждой странице.
+// Порядок хода — как в v2. Два режима:
+//   fast — шапка: 1,3 с, без искр, стартует сам (на главной — после заставки);
+//   long — заставка: 5,2 с сварки с искрами, стартует по событию logo-draw:start, по замыканию шва шлёт logo-draw:end.
 import master from '../../design/logo-bolt/bolt-master.svg?raw';
 
-interface Props { class?: string }
-const { class: className } = Astro.props;
+interface Props { class?: string; mode?: 'fast' | 'long'; manual?: boolean }
+const { class: className, mode = 'fast', manual = false } = Astro.props;
 
 // id внутри знака уникальны на странице: знак может стоять не один раз
 const uid = 'ld' + Math.random().toString(36).slice(2, 8);
@@ -25,7 +27,7 @@ const d = 'M' + PTS.map(p => p.join(' ')).join(' L');
 const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[1] - PTS[i][1]), 0);
 ---
 
-<svg class:list={['logo-draw', className]} viewBox="0 0 215 326" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)}>
+<svg class:list={['logo-draw', className]} viewBox="0 0 215 326" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)} data-mode={mode} data-manual={manual ? '' : undefined}>
   <defs>
     <mask id={`${uid}-r`} maskUnits="userSpaceOnUse" x="-20" y="-20" width="255" height="366">
       <path data-ld="mask" d={d} fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" />
@@ -33,7 +35,7 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
       <path data-ld="bar" d="M14.5 131 L200 131" fill="none" stroke="#000" stroke-width="14" style="display:none" />
       <path data-ld="diag" d="M129.7 57.3 L76.3 171" fill="none" stroke="#fff" stroke-width="11" />
     </mask>
-    <filter id={`${uid}-g`} x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="22" /></filter>
+    <filter id={`${uid}-g`} x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur data-ld="blur" stdDeviation="22" /></filter>
     <filter id={`${uid}-h`} x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" /></filter>
     <radialGradient id={`${uid}-f`}>
       <stop offset="0" class="ld-core" />
@@ -46,7 +48,7 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
   <g data-ld="sparks" />
   <g data-ld="torch" opacity="0">
     <circle data-ld="halo" r="60" fill={`url(#${uid}-f)`} filter={`url(#${uid}-g)`} />
-    <circle r="20" class="ld-core-dot" />
+    <circle data-ld="core" r="20" class="ld-core-dot" />
   </g>
 </svg>
 <script is:inline>
@@ -64,25 +66,32 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
 
 <script>
   const BAR_LEN = 200 - 14.5;
-  // быстрая версия прототипа: плавный разгон и торможение (ease-in-out)
-  const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
-  const SPARKS = false;                  // искры — только в долгой версии
-  const TAIL = 32;                       // раскалённый хвост короче, под быстрый ход
+  // fast — плавный разгон и торможение; long — ритм v2: ровный ход, мягко только по краям
+  const easeFast = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const easeLong = (t: number) => {
+    const a = 0.08;
+    if (t < a) return (t * t) / (2 * a * (1 - a));
+    if (t > 1 - a) { const u = 1 - t; return 1 - (u * u) / (2 * a * (1 - a)); }
+    return (t - a / 2) / (1 - a);
+  };
   const css = getComputedStyle(document.documentElement);
-  const dur = (parseFloat(css.getPropertyValue('--mark-draw')) || 1.3) * 1000;
+  const sec = (name: string, fallback: number) => (parseFloat(css.getPropertyValue(name)) || fallback) * 1000;
+  const MODES = {
+    fast: { dur: sec('--mark-draw', 1.3), ease: easeFast, sparks: false, tail: 32 },
+    long: { dur: sec('--mark-draw-long', 5.2), ease: easeLong, sparks: true, tail: 56 },
+  };
   const sparkColors = [css.getPropertyValue('--spark-core').trim(), css.getPropertyValue('--spark-warm').trim()];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function run(svg: SVGSVGElement) {
+  type Parts = ReturnType<typeof parts>;
+  function parts(svg: SVGSVGElement) {
     const q = (k: string) => svg.querySelector<SVGGraphicsElement>(`[data-ld="${k}"]`)!;
-    const mask = q('mask') as SVGPathElement, bar = q('bar'), diag = q('diag'), hot = q('hot');
-    const torch = q('torch'), halo = q('halo'), sparksG = q('sparks');
+    const mask = q('mask') as SVGPathElement;
     const L = mask.getTotalLength();
     const barAt = [[129.7, 57.3], [76.3, 171], [150, 171], [76.5, 316.5], [6.5, 131]]
       .reduce((s, p, i, a) => (i ? s + Math.hypot(p[0] - a[i - 1][0], p[1] - a[i - 1][1]) : 0), 0);
     const diagLen = Math.hypot(129.7 - 76.3, 171 - 57.3);
-    svg.dataset.started = '1';
-
+    const bar = q('bar'), diag = q('diag');
     const set = (len: number) => {
       mask.style.strokeDasharray = `${L} ${L}`;
       mask.style.strokeDashoffset = String(L - len);
@@ -91,78 +100,92 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
       bar.style.strokeDasharray = `0 ${done} ${BAR_LEN + 1} 0`;
       diag.style.strokeDasharray = `${Math.min(len, diagLen)} ${L}`;
     };
-    if (reduce) { set(L); return; }
+    return { mask, L, set, hot: q('hot'), torch: q('torch'), halo: q('halo'), core: q('core'), blur: q('blur'), sparksG: q('sparks') };
+  }
 
-    // Знак крошечный (около 27 px), поэтому искры считаются в пикселях экрана
-    const k = 326 / (svg.getBoundingClientRect().height || 27);
+  function run(svg: SVGSVGElement, p: Parts = parts(svg)) {
+    svg.dataset.started = '1';
+    const cfg = MODES[svg.dataset.mode === 'long' ? 'long' : 'fast'];
+    const done = () => svg.dispatchEvent(new CustomEvent('logo-draw:end'));
+    if (reduce) { p.set(p.L); done(); return; }
+
+    // Точка и искры — в пикселях экрана: в шапке знак 27 px, в заставке — 170 px
+    const k = 326 / (svg.getBoundingClientRect().height || 27); // единиц знака на пиксель
+    p.core.setAttribute('r', Math.max(4.5, 1.6 * k).toFixed(1));
+    const haloR = Math.max(15, 4.6 * k);
+    p.blur.setAttribute('stdDeviation', Math.max(5, 1.8 * k).toFixed(1));
+    const px = k * Math.max(1, 326 / k / 60);               // крупный знак — искры летят дальше
     type Spark = { el: SVGLineElement; x: number; y: number; vx: number; vy: number; born: number; life: number };
-    let sparks: Spark[] = [], last = 0;
+    let sparks: Spark[] = [], last = 0, ended = false;
     const t0 = performance.now(); let prev = t0;
     const fade = 450;
 
     const frame = (now: number) => {
       const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-      const t = Math.min(1, (now - t0) / dur);
-      const len = L * ease(t);
-      set(len);
-      const p = mask.getPointAtLength(Math.min(len, L - 0.001));
-      torch.setAttribute('transform', `translate(${p.x} ${p.y})`);
-      const tail = Math.min(TAIL, len);
-      hot.style.strokeDasharray = `0 ${len - tail} ${tail} ${L}`;
+      const t = Math.min(1, (now - t0) / cfg.dur);
+      const len = p.L * cfg.ease(t);
+      p.set(len);
+      const pt = p.mask.getPointAtLength(Math.min(len, p.L - 0.001));
+      p.torch.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+      const tail = Math.min(cfg.tail, len);
+      p.hot.style.strokeDasharray = `0 ${len - tail} ${tail} ${p.L}`;
 
       if (t < 1) {
         const tt = now - t0;
-        const f = SPARKS ? 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2) : 1;
-        torch.setAttribute('opacity', f.toFixed(3));
-        hot.setAttribute('opacity', '0.85');
-        halo.setAttribute('r', (55 + 20 * (f - 0.76) / 0.24).toFixed(1));
-        if (SPARKS && now - last > 40) {
+        const f = cfg.sparks ? 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2) : 1;
+        p.torch.setAttribute('opacity', f.toFixed(3));
+        p.hot.setAttribute('opacity', '0.85');
+        p.halo.setAttribute('r', (haloR * (0.92 + 0.32 * (f - 0.76) / 0.24)).toFixed(1));
+        if (cfg.sparks && now - last > 30) {
           last = now;
           const n = 1 + Math.floor(Math.random() * 2);
           for (let i = 0; i < n; i++) {
             const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
-            const sp = (12 + Math.random() * 26) * k;
+            const sp = (12 + Math.random() * 26) * px;
             const el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             el.setAttribute('stroke', sparkColors[Math.random() < 0.5 ? 0 : 1]);
-            el.setAttribute('stroke-width', '1');
+            el.setAttribute('stroke-width', '1.2');
             el.setAttribute('vector-effect', 'non-scaling-stroke');
             el.setAttribute('stroke-linecap', 'round');
-            sparksG.appendChild(el);
-            sparks.push({ el, x: p.x, y: p.y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, born: now, life: 220 + Math.random() * 260 });
+            p.sparksG.appendChild(el);
+            sparks.push({ el, x: pt.x, y: pt.y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, born: now, life: 240 + Math.random() * 320 });
           }
         }
       } else {
-        const f = Math.max(0, 1 - (now - t0 - dur) / fade);
-        torch.setAttribute('opacity', f.toFixed(3));
-        hot.setAttribute('opacity', (0.85 * f).toFixed(3));
+        if (!ended) { ended = true; done(); }
+        const f = Math.max(0, 1 - (now - t0 - cfg.dur) / fade);
+        p.torch.setAttribute('opacity', f.toFixed(3));
+        p.hot.setAttribute('opacity', (0.85 * f).toFixed(3));
       }
 
       sparks = sparks.filter(s => {
         const age = now - s.born;
         if (age > s.life) { s.el.remove(); return false; }
-        s.vy += 90 * k * dt; s.x += s.vx * dt; s.y += s.vy * dt;
+        s.vy += 90 * px * dt; s.x += s.vx * dt; s.y += s.vy * dt;
         s.el.setAttribute('x1', s.x.toFixed(1)); s.el.setAttribute('y1', s.y.toFixed(1));
         s.el.setAttribute('x2', (s.x - s.vx * 0.045).toFixed(1)); s.el.setAttribute('y2', (s.y - s.vy * 0.045).toFixed(1));
         s.el.setAttribute('opacity', (1 - age / s.life).toFixed(2));
         return true;
       });
 
-      if (t < 1 || now - t0 - dur < fade || sparks.length) requestAnimationFrame(frame);
+      if (t < 1 || now - t0 - cfg.dur < fade || sparks.length) requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
   }
 
-  // На главной при первом визите поверх всего открыта заставка (Intro.astro, класс intro-open):
-  // знак ждёт, пока она закроется, иначе прорисовка пройдёт впустую под ней.
-  const startAll = () => document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]').forEach(svg => run(svg));
+  const marks = [...document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]')];
+  marks.forEach(svg => { svg.dataset.started = '1'; });   // не дать запасному таймеру показать знак раньше времени
+  // Ручной знак (заставка) ждёт команды
+  marks.filter(s => s.hasAttribute('data-manual')).forEach(svg =>
+    svg.addEventListener('logo-draw:start', () => run(svg), { once: true }));
+
+  // Знак в шапке. Если на главной открыта заставка (класс intro-open), прорисовку только что показала она:
+  // после её закрытия знак в шапке уже стоит целиком, без повтора.
+  const auto = marks.filter(s => !s.hasAttribute('data-manual'));
   const root = document.documentElement;
-  document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]').forEach(svg => { svg.dataset.started = '1'; });
   if (root.classList.contains('intro-open')) {
-    const mo = new MutationObserver(() => {
-      if (!root.classList.contains('intro-open')) { mo.disconnect(); startAll(); }
-    });
-    mo.observe(root, { attributes: true, attributeFilter: ['class'] });
-  } else startAll();
+    auto.forEach(svg => { const p = parts(svg); p.set(p.L); });
+  } else auto.forEach(svg => run(svg));
 </script>
 
 <style>
