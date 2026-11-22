@@ -31,9 +31,9 @@ const nextSteps = NEXT_OVERRIDES[post.id] ?? [
     : {title:'Магазин на шаблоне inSales',description:`За 3–5 недель, от\u00a0${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')}\u00a0000\u00a0₽. Состав и цену фиксируем до старта.`,href:utm('services/insales-shop/')},
   {title:'Посчитать свой магазин',description:'Семь вопросов о каталоге и интеграциях — ориентир по бюджету и сроку.',href:utm('tools/insales-calculator/')},
   post.id === 'vybor-platformy-magazina'
-    ? {title:'inSales и Яндекс KIT подробно',description:'348 функций со статусами и источниками.',href:'compare/insales-vs-yandex-kit/'}
+    ? {title:'inSales и Яндекс KIT подробно',description:'349 функций со статусами и источниками.',href:'compare/insales-vs-yandex-kit/'}
     : {title:'Сравнить восемь платформ',description:'Сценарии, ограничения и стоимость.',href:'compare/ecommerce-platforms/'},
-  {title:'Другая задача?',description:'Выберите ситуацию — покажем, с чего начнём.',href:'services/#t-entry'},
+  {title:'Другая задача?',description:'Опишите её в паре строк — ответим и предложим следующий шаг.',href:'#feedback'},
 ];
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
