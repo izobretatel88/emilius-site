@@ -33,3 +33,49 @@
   font-display: swap;
   src: url('./fonts/glober-800.woff2') format('woff2');
 }
+
+/* Запасной Glober на время загрузки (think-different, итерация 92). Пока файл шрифта не пришёл, текст набирается
+   Arial, подогнанным под метрики Glober: ширина строки (size-adjust) и высота букв над и под строкой. Без этого
+   строка в Arial шире на 4% (обычный) и на 9–10% (полужирный): заголовок занимал лишнюю строку, а после загрузки
+   Glober всё, что ниже, подпрыгивало. Метрики сняты в Chrome по образцу текста сайта (кириллица, латиница, цифры, ₽).
+   На Android Arial обычно нет — там срабатывает следующий шрифт из --font, как и раньше. */
+@font-face {
+  font-family: 'Glober Fallback';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 96.29%;
+  ascent-override: 97.62%;
+  descent-override: 25.96%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Glober Fallback';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 90.38%;
+  ascent-override: 105.11%;
+  descent-override: 27.66%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Glober Fallback';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 90.61%;
+  ascent-override: 105.95%;
+  descent-override: 27.59%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Glober Fallback';
+  font-style: normal;
+  font-weight: 800;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 90.79%;
+  ascent-override: 106.84%;
+  descent-override: 27.54%;
+  line-gap-override: 0%;
+}
