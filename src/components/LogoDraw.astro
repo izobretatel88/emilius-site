@@ -132,7 +132,9 @@ const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
       const pt = p.mask.getPointAtLength(Math.min(len, p.L - 0.001));
       p.torch.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
       const tail = Math.min(cfg.tail, len);
-      p.hot.style.strokeDasharray = `0 ${len - tail} ${tail} ${p.L}`;
+      // Хвост — сдвигом штриха: отрезок нулевой длины в начале с круглыми концами рисовал точку на старте линии
+      p.hot.style.strokeDasharray = `${tail} ${2 * p.L}`;
+      p.hot.style.strokeDashoffset = String(tail - len);
 
       if (t < 1) {
         const tt = now - t0;
