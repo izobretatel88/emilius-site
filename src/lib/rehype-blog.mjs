@@ -69,11 +69,23 @@ export function rehypeBlog(options = {}) {
           if (article && options.releases && !options.releases.has(article[1])) {
             child.tagName = 'span';
             delete props.href;
+            child.data = { ...(child.data || {}), unreleased: true };
           } else if (isRoot(props.href)) props.href = base + props.href;
           else if (isExternal(props.href)) props.rel = 'noopener';
         }
         if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
+        // Пункт списка, который начинается со ссылки на ещё не вышедшую статью, убираем целиком
+        // (think-different, итерация 71): в «Читайте также» он стоял серым текстом среди ссылок и не открывался.
+        // Статья выйдет — пункт вернётся сам при следующей сборке.
+        if (child.tagName === 'ul' || child.tagName === 'ol') {
+          child.children = (child.children || []).filter((li) => {
+            if (li.tagName !== 'li') return true;
+            const first = (li.children || []).find((k) => !(k.type === 'text' && !k.value.trim()));
+            return !(first && first.data && first.data.unreleased);
+          });
+          if (!child.children.some((k) => k.tagName === 'li')) return null;
+        }
         // Подпись пишется в Markdown сразу под картинкой, без пустой строки: такой абзац становится
         // <figure> с <figcaption>. Абзац после пустой строки — обычный текст статьи, не подпись.
         if (child.tagName === 'p') {
@@ -108,7 +120,7 @@ export function rehypeBlog(options = {}) {
         }
       }
       return child;
-    });
+    }).filter(Boolean);
   };
 
   // Схемы в статьях рисуются в 2400 px: на телефоне подписи на них мельче 6 px.
