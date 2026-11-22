@@ -568,12 +568,21 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         url.hash = 'lead'; // получатель сразу видит расчёт, а не начало лендинга
         const text = `Магазин на inSales: пакет ${out('pkg').textContent}, ${out('price').textContent}, ${out('weeks').textContent}`;
         shareStatus.textContent = '';
+        // Как в калькуляторе (think-different, итерации 119 и 124): статус с паузой — повтор тоже озвучивается;
+        // ошибку не прячем, отмена системного «Поделиться» ошибкой не считается.
+        const say = (t: string) => setTimeout(() => (shareStatus.textContent = t), 100);
         try {
           if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ title: 'Расчёт магазина на inSales', text, url: url.href });
-          else { await navigator.clipboard.writeText(url.href); shareStatus.textContent = 'Ссылка скопирована'; }
+          else { await navigator.clipboard.writeText(url.href); say('Ссылка скопирована'); }
           goal('calc-share', { variant });
-        } catch {}
+        } catch (e) {
+          // Ответы по умолчанию ещё не в адресе — кладём их туда, чтобы подсказка была правдой
+          if ((e as Error)?.name !== 'AbortError') { writeURL(); say('Не получилось скопировать. Ссылка с ответами — в адресной строке'); }
+        }
       });
+      // Ответ изменили — «скопирована» уже про другой расчёт. Контактные поля статус не трогают.
+      form.addEventListener('change', (e) => { if ((e.target as HTMLInputElement).type === 'radio') shareStatus.textContent = ''; });
+      document.querySelectorAll('[data-preset]').forEach((a) => a.addEventListener('click', () => (shareStatus.textContent = '')));
     }
     form.addEventListener('change', (e) => {
       update();
