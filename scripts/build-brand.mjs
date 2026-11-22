@@ -59,25 +59,27 @@ shoot(squareLogo(512, 40), join(PUB, 'brand', 'logo-mark.png'), 512, 512, { tran
 //    Прежний вариант с колесом был бледным и мелким в окне Телеграма.
 //    Размеры текста подобраны под Телеграм: превью там шириной ~430 px, метка 32 px читается как ~11 px.
 {
+  const OG = { top: 58, gap: 52, name: 60 }; // отступы в px, см. замер ниже
   const font = (w) =>
     `@font-face{font-family:Glober;font-weight:${w};src:url('file://${ROOT}/src/styles/fonts/glober-${w}.woff2') format('woff2')}`;
+  // Вертикальный ритм (замер по готовой картинке): поле над знаком = промежуток от знака до «Наша миссия» (A),
+  // от миссии до названия и под названием — одинаково (C). Числа ниже подобраны так, что A ≈ 60, C ≈ 64.
   const css = `
     ${font(600)}${font(700)}${font(800)}
     body{width:1200px;height:630px;box-sizing:border-box;font-family:Glober,sans-serif;color:var(--ink);text-align:center;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 60px 40px;
-      background:radial-gradient(500px 300px at 50% 22%,color-mix(in srgb,var(--ray-2) 40%,transparent),transparent 70%),var(--page)}
-    .mark{transform:translateY(-40px)} /* знак выше, текст на месте (владелец) */
+      display:flex;flex-direction:column;align-items:center;padding:var(--og-top) 60px 0;
+      background:radial-gradient(500px 300px at 50% 23%,color-mix(in srgb,var(--ray-2) 40%,transparent),transparent 70%),var(--page)}
     .mark img{display:block;height:172px;filter:drop-shadow(0 0 40px color-mix(in srgb,var(--spark-glow) 25%,transparent))}
-    .eyebrow{margin-top:34px;color:var(--teal-text);font-weight:800;font-size:32px;letter-spacing:.06em;text-transform:uppercase}
+    .eyebrow{margin-top:var(--og-gap);color:var(--teal-text);font-weight:800;font-size:32px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase}
     h1{margin:12px 0 0;font-weight:600;font-size:62px;line-height:1.06;letter-spacing:-.015em}
     h1 span{color:var(--ink-2)}
-    .name{position:absolute;left:0;right:0;bottom:38px;font-weight:700;font-size:30px;color:var(--ink-2)}`;
+    .name{margin-top:var(--og-name);font-weight:700;font-size:36px;line-height:1.2;color:var(--ink-2)}`;
   const body = `
     <div class="mark"><img src="${logoUrl}" alt=""></div>
     <div class="eyebrow">Наша миссия</div>
     <h1>Помогаем великолепным людям<br><span>создавать великолепные продукты</span></h1>
     <div class="name">Эмилиус Эдженси</div>`;
-  const ogHtml = page(body, css)
+  const ogHtml = page(body, css + `:root{--og-top:${OG.top}px;--og-gap:${OG.gap}px;--og-name:${OG.name}px}`)
     .replace('data-theme="light"', 'data-theme="dark"')
     .replace('<style>', `<link rel="stylesheet" href="file://${ROOT}/src/styles/tokens.css"><style>`);
   const png = join(TMP, 'og.png');
