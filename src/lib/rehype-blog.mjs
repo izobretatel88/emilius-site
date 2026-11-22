@@ -3,7 +3,7 @@
 //  - у картинок из public/ берём размеры из самого файла WebP и включаем ленивую загрузку:
 //    без размеров страница прыгает, когда картинки догружаются;
 //  - таблицы оборачиваем в блок с горизонтальной прокруткой для узких экранов;
-//  - внешние ссылки получают rel="noopener";
+//  - внешние ссылки открываются в новой вкладке (rel="noopener", стрелка ↗ и приписка для программ чтения экрана);
 //  - в числах вида «1 000» и «990 ₽» пробел неразрывный: на телефоне в узкой ячейке таблицы
 //    «1» и «000» иначе расходились по разным строкам.
 import { readFileSync } from 'node:fs';
@@ -71,7 +71,19 @@ export function rehypeBlog(options = {}) {
             delete props.href;
             child.data = { ...(child.data || {}), unreleased: true };
           } else if (isRoot(props.href)) props.href = base + props.href;
-          else if (isExternal(props.href)) props.rel = 'noopener';
+          else if (isExternal(props.href)) {
+            // Внешняя ссылка — в новой вкладке, как на всём сайте (think-different, итерация 126): раньше источник
+            // или тариф inSales открывался вместо статьи, и с телефона читатель терял место. Стрелка ↗ — для глаз,
+            // скрытая приписка — для программ чтения экрана. Неразрывный пробел не даёт стрелке уехать на новую строку.
+            props.target = '_blank';
+            props.rel = 'noopener';
+            child.children = [
+              ...(child.children || []),
+              { type: 'text', value: '\u00a0' },
+              { type: 'element', tagName: 'span', properties: { className: ['ext-arrow'], ariaHidden: 'true' }, children: [{ type: 'text', value: '↗' }] },
+              { type: 'element', tagName: 'span', properties: { className: ['visually-hidden'] }, children: [{ type: 'text', value: ', откроется в новой вкладке' }] },
+            ];
+          }
         }
         if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
