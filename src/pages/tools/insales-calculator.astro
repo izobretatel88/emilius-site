@@ -3,7 +3,7 @@ import Directory from '../../layouts/Directory.astro';
 import LiveEstimate from '../../components/LiveEstimate.astro';
 import {href} from '../../lib/urls';
 import {QUICK_QUESTIONS,quickEstimate} from '../../../docs/insales-service/calc/quick.js';
-import {parseCatalog} from '../../../docs/insales-service/calc/estimate.js';
+import {parseCatalog,PACKAGES} from '../../../docs/insales-service/calc/estimate.js';
 import csv from '../../../docs/insales-service/03-catalog.csv?raw';
 // Формулу и внутренние нормы используем только при сборке. В браузер уходят публичные результаты.
 const catalog=parseCatalog(csv);
@@ -39,7 +39,7 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   </section></div>
   <noscript><p>Для пересчёта включите JavaScript. Начальный ориентир рассчитан для магазина до 50 товаров; обсудить состав можно в форме услуги.</p></noscript>
   <div class="directory-tags"><a href={href('services/insales-shop/')}>Что входит в запуск магазина</a><a href={href('compare/')}>Выбрать другую платформу</a><a href={href('resources/')}>Все полезные материалы</a></div>
-  <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key)})} />
+  <script type="application/json" id="calc-data" set:html={JSON.stringify({lookup,results,keys:entries.map(([key])=>key),seller:PACKAGES.P.name,shop:href('services/insales-shop/'),sellerShop:href('services/insales-shop/seller/')})} />
 </Directory>
 <script>
   import {updateLiveEstimate,showUpdate} from '../../lib/live-estimate';
@@ -63,6 +63,9 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
       showUpdate(document.querySelector('#calc-weeks'),`Ориентир: ${result.weeks.join('–')} нед.`);
       const link=document.querySelector<HTMLAnchorElement>('#calc-discuss')!;
       const url=new URL(link.href);
+      // Пакет «Селлер» — обсуждаем на лендинге для продавцов WB и Ozon (think-different, итерация 125): там их кейсы,
+      // вопросы и та же форма с теми же ответами. Остальные пакеты — на общем лендинге магазина.
+      url.pathname=result.packageName===data.seller?data.sellerShop:data.shop;
       data.keys.forEach((key:string)=>url.searchParams.set(`calc_${key}`,String(answers.get(key))));
       link.href=url.href;
     };
