@@ -143,6 +143,12 @@
   --press: 0.16s cubic-bezier(0.23, 1, 0.32, 1);
   --press-scale: 0.97; /* кнопки, переключатели, значки */
   --press-scale-card: 0.99; /* большие плитки: проседают меньше, чтобы не «прыгать» */
+  /* Прорисовка знака в шапке (LogoDraw.astro): сварочная точка, её ореол и искры. Прототип — design/logo-bolt/draw-v4.html */
+  --spark-core: #ffffff;
+  --spark-glow: #fff6d6;
+  --spark-warm: #ffd27a;
+  --spark-hot: #fff4d0; /* раскалённый хвост за точкой */
+  --mark-draw: 5.2s; /* полный ход знака, ритм v2 */
 
   /* Портфолио (docs/PORTFOLIO-DESIGN-SYSTEM.md): превью проекта — снимок 8:5 и видео прокрутки поверх */
   --preview-ratio: 8 / 5;

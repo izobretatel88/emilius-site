@@ -5,6 +5,7 @@
 import { DIRECTIONS } from '../data/navigation';
 import { getPosts } from '../lib/blog';
 import { href } from '../lib/urls';
+import LogoDraw from './LogoDraw.astro';
 const hasBlog = (await getPosts()).length > 0;
 const preview = /\/dev\/?$/.test(import.meta.env.BASE_URL);
 const primary = [
@@ -28,7 +29,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   <nav class="site-nav ui-shell" aria-label="Основная навигация">
     <div class="brand">
       <a class="wordmark" href={href()} aria-label="Эмилиус Эдженси — на главную" aria-current={isHome ? 'page' : undefined}>
-        <span>Эмилиус</span><img src={href('brand/logo-81.png')} width="54" height="81" alt="" /><span>Эдженси</span>
+        <span>Эмилиус</span><LogoDraw class="wordmark-mark" /><span>Эдженси</span>
       </a>
       {preview && <span class="environment">черновик · dev</span>}
     </div>
@@ -87,7 +88,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   @media (hover: hover) and (pointer: fine) { a:hover { color: var(--teal-text); } }
   .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
   .wordmark { display: inline-flex; align-items: center; gap: 8px; font-size: 21px; font-weight: 700; white-space: nowrap; min-height: 44px; }
-  .wordmark img { width: 18px; height: 27px; object-fit: contain; }
+  .wordmark :global(.wordmark-mark) { width: 18px; height: 27px; flex: none; }
   .environment { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
   .nav-links { display: flex; gap: 28px; font-size: 15px; }
   .nav-links a { display: flex; align-items: center; min-height: 44px; }
@@ -103,7 +104,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   }
   @media (max-width: 760px) {
     .wordmark { font-size: 18px; gap: 6px; }
-    .wordmark img { width: 16px; height: 24px; }
+    .wordmark :global(.wordmark-mark) { width: 16px; height: 24px; }
     .nav-links, .site-nav .nav-action { display: none; }
     .nav-menu { display: block; }
     .nav-menu summary { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; list-style: none; cursor: pointer; border-radius: var(--radius-btn); color: var(--ink); transition: transform var(--press); }

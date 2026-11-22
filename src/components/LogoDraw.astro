@@ -1,0 +1,177 @@
+---
+// Знак-молния, который при загрузке рисуется одной линией со сварочной точкой.
+// Прототип и история итераций — design/logo-bolt/draw-v4.html и DRAW-NOTES.md.
+// Знак — вектор из Figma (bolt-master.svg), геометрия и цвета не меняются.
+// Ритм и порядок хода — как в v2 (решение владельца 22.11.2026): ровный ход, без торможения на углах.
+import master from '../../design/logo-bolt/bolt-master.svg?raw';
+
+interface Props { class?: string }
+const { class: className } = Astro.props;
+
+// id внутри знака уникальны на странице: знак может стоять не один раз
+const uid = 'ld' + Math.random().toString(36).slice(2, 8);
+const inner = master
+  .replace(/^<svg[^>]*>/, '')
+  .replace(/<\/svg>\s*$/, '')
+  .replace(/id="(bolt|ish)"/g, `id="${uid}-$1"`)
+  .replace(/url\(#(bolt|ish)\)/g, `url(#${uid}-$1)`);
+
+// Центр линии знака (как в bolt-line.svg), 215×326. Порядок — как в наброске владельца:
+// середина верхней диагонали → ступенька → короткая перекладина → остриё → левый угол → длинная перекладина → вершина → старт.
+const PTS: [number, number][] = [
+  [129.7, 57.3], [76.3, 171], [150, 171], [76.5, 316.5], [6.5, 131], [208, 131], [152.6, 8.6], [129.7, 57.3],
+];
+const d = 'M' + PTS.map(p => p.join(' ')).join(' L');
+const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[1] - PTS[i][1]), 0);
+---
+
+<svg class:list={['logo-draw', className]} viewBox="0 0 215 326" aria-hidden="true" data-logo-draw data-len={len.toFixed(2)}>
+  <defs>
+    <mask id={`${uid}-r`} maskUnits="userSpaceOnUse" x="-20" y="-20" width="255" height="366">
+      <path data-ld="mask" d={d} fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" />
+      <!-- длинная перекладина закрыта, пока до неё не дошёл шов; диагональ на перекрестии открывается узкой линией -->
+      <path data-ld="bar" d="M14.5 131 L200 131" fill="none" stroke="#000" stroke-width="14" style="display:none" />
+      <path data-ld="diag" d="M129.7 57.3 L76.3 171" fill="none" stroke="#fff" stroke-width="11" />
+    </mask>
+    <filter id={`${uid}-g`} x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="22" /></filter>
+    <filter id={`${uid}-h`} x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" /></filter>
+    <radialGradient id={`${uid}-f`}>
+      <stop offset="0" class="ld-core" />
+      <stop offset=".35" class="ld-glow" />
+      <stop offset="1" class="ld-warm" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <g mask={`url(#${uid}-r)`} set:html={inner} />
+  <path data-ld="hot" class="ld-hot" d={d} fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${uid}-h)`} opacity="0" />
+  <g data-ld="sparks" />
+  <g data-ld="torch" opacity="0">
+    <circle data-ld="halo" r="60" fill={`url(#${uid}-f)`} filter={`url(#${uid}-g)`} />
+    <circle r="20" class="ld-core-dot" />
+  </g>
+</svg>
+<script is:inline>
+  // Спрятать знак до первой отрисовки, чтобы он не мелькнул целиком перед анимацией.
+  // Если основной скрипт не запустится за 1,5 с — показать знак как есть.
+  (function () {
+    var s = document.currentScript && document.currentScript.previousElementSibling;
+    if (!s || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var m = s.querySelector('[data-ld="mask"]'), L = s.getAttribute('data-len');
+    m.style.strokeDasharray = L + ' ' + L; m.style.strokeDashoffset = L;
+    s.querySelector('[data-ld="diag"]').style.strokeDasharray = '0 ' + L;
+    setTimeout(function () { if (!s.dataset.started) { m.style.strokeDashoffset = 0; s.querySelector('[data-ld="diag"]').style.strokeDasharray = ''; } }, 1500);
+  })();
+</script>
+
+<script>
+  const BAR_LEN = 200 - 14.5;
+  const ease = (t: number) => {          // ритм v2: ровный ход, мягкий разгон и остановка только по краям
+    const a = 0.08;
+    if (t < a) return (t * t) / (2 * a * (1 - a));
+    if (t > 1 - a) { const u = 1 - t; return 1 - (u * u) / (2 * a * (1 - a)); }
+    return (t - a / 2) / (1 - a);
+  };
+  const css = getComputedStyle(document.documentElement);
+  const dur = (parseFloat(css.getPropertyValue('--mark-draw')) || 5.2) * 1000;
+  const sparkColors = [css.getPropertyValue('--spark-core').trim(), css.getPropertyValue('--spark-warm').trim()];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function run(svg: SVGSVGElement) {
+    const q = (k: string) => svg.querySelector<SVGGraphicsElement>(`[data-ld="${k}"]`)!;
+    const mask = q('mask') as SVGPathElement, bar = q('bar'), diag = q('diag'), hot = q('hot');
+    const torch = q('torch'), halo = q('halo'), sparksG = q('sparks');
+    const L = mask.getTotalLength();
+    const barAt = [[129.7, 57.3], [76.3, 171], [150, 171], [76.5, 316.5], [6.5, 131]]
+      .reduce((s, p, i, a) => (i ? s + Math.hypot(p[0] - a[i - 1][0], p[1] - a[i - 1][1]) : 0), 0);
+    const diagLen = Math.hypot(129.7 - 76.3, 171 - 57.3);
+    svg.dataset.started = '1';
+
+    const set = (len: number) => {
+      mask.style.strokeDasharray = `${L} ${L}`;
+      mask.style.strokeDashoffset = String(L - len);
+      const done = Math.max(0, Math.min(BAR_LEN, len - barAt - 8));
+      bar.style.display = done >= BAR_LEN ? 'none' : '';
+      bar.style.strokeDasharray = `0 ${done} ${BAR_LEN + 1} 0`;
+      diag.style.strokeDasharray = `${Math.min(len, diagLen)} ${L}`;
+    };
+    if (reduce) { set(L); return; }
+
+    // Знак крошечный (около 27 px), поэтому искры считаются в пикселях экрана
+    const k = 326 / (svg.getBoundingClientRect().height || 27);
+    type Spark = { el: SVGLineElement; x: number; y: number; vx: number; vy: number; born: number; life: number };
+    let sparks: Spark[] = [], last = 0;
+    const t0 = performance.now(); let prev = t0;
+    const fade = 450;
+
+    const frame = (now: number) => {
+      const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
+      const t = Math.min(1, (now - t0) / dur);
+      const len = L * ease(t);
+      set(len);
+      const p = mask.getPointAtLength(Math.min(len, L - 0.001));
+      torch.setAttribute('transform', `translate(${p.x} ${p.y})`);
+      const tail = Math.min(56, len);
+      hot.style.strokeDasharray = `0 ${len - tail} ${tail} ${L}`;
+
+      if (t < 1) {
+        const tt = now - t0;
+        const f = 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2);
+        torch.setAttribute('opacity', f.toFixed(3));
+        hot.setAttribute('opacity', '0.85');
+        halo.setAttribute('r', (55 + 20 * (f - 0.76) / 0.24).toFixed(1));
+        if (now - last > 40) {
+          last = now;
+          const n = 1 + Math.floor(Math.random() * 2);
+          for (let i = 0; i < n; i++) {
+            const ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
+            const sp = (12 + Math.random() * 26) * k;
+            const el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            el.setAttribute('stroke', sparkColors[Math.random() < 0.5 ? 0 : 1]);
+            el.setAttribute('stroke-width', '1');
+            el.setAttribute('vector-effect', 'non-scaling-stroke');
+            el.setAttribute('stroke-linecap', 'round');
+            sparksG.appendChild(el);
+            sparks.push({ el, x: p.x, y: p.y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, born: now, life: 220 + Math.random() * 260 });
+          }
+        }
+      } else {
+        const f = Math.max(0, 1 - (now - t0 - dur) / fade);
+        torch.setAttribute('opacity', f.toFixed(3));
+        hot.setAttribute('opacity', (0.85 * f).toFixed(3));
+      }
+
+      sparks = sparks.filter(s => {
+        const age = now - s.born;
+        if (age > s.life) { s.el.remove(); return false; }
+        s.vy += 90 * k * dt; s.x += s.vx * dt; s.y += s.vy * dt;
+        s.el.setAttribute('x1', s.x.toFixed(1)); s.el.setAttribute('y1', s.y.toFixed(1));
+        s.el.setAttribute('x2', (s.x - s.vx * 0.045).toFixed(1)); s.el.setAttribute('y2', (s.y - s.vy * 0.045).toFixed(1));
+        s.el.setAttribute('opacity', (1 - age / s.life).toFixed(2));
+        return true;
+      });
+
+      if (t < 1 || now - t0 - dur < fade || sparks.length) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  // На главной при первом визите поверх всего открыта заставка (Intro.astro, класс intro-open):
+  // знак ждёт, пока она закроется, иначе прорисовка пройдёт впустую под ней.
+  const startAll = () => document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]').forEach(svg => run(svg));
+  const root = document.documentElement;
+  document.querySelectorAll<SVGSVGElement>('svg[data-logo-draw]').forEach(svg => { svg.dataset.started = '1'; });
+  if (root.classList.contains('intro-open')) {
+    const mo = new MutationObserver(() => {
+      if (!root.classList.contains('intro-open')) { mo.disconnect(); startAll(); }
+    });
+    mo.observe(root, { attributes: true, attributeFilter: ['class'] });
+  } else startAll();
+</script>
+
+<style>
+  .logo-draw { display: block; overflow: visible; }
+  .ld-core { stop-color: var(--spark-core); }
+  .ld-glow { stop-color: var(--spark-glow); }
+  .ld-warm { stop-color: var(--spark-warm); }
+  .ld-core-dot { fill: var(--spark-core); }
+  .ld-hot { stroke: var(--spark-hot); }
+</style>
