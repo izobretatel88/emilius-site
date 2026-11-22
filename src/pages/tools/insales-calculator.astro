@@ -101,12 +101,21 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
         form.querySelectorAll('select').forEach(select=>url.searchParams.set(`calc_${select.name}`,select.value));
         const text=`Магазин на inSales: пакет ${document.querySelector('#calc-package')?.textContent}, ${document.querySelector('#calc-price')?.textContent}, ${document.querySelector('#calc-weeks')?.textContent?.replace('Ориентир: ','')}`;
         shareStatus.textContent='';
+        // Статус ставим с паузой: повторное «Ссылка скопирована» тоже прозвучит в программе чтения экрана.
+        // Ошибку копирования не прячем (think-different, итерация 119): раньше кнопка молчала, и человек думал, что ссылка у него.
+        const say=(t:string)=>setTimeout(()=>shareStatus.textContent=t,100);
         try{
           if(navigator.share&&matchMedia('(pointer: coarse)').matches)await navigator.share({title:'Расчёт магазина на inSales',text,url:url.href});
-          else{await navigator.clipboard.writeText(url.href);shareStatus.textContent='Ссылка скопирована';}
+          else{await navigator.clipboard.writeText(url.href);say('Ссылка скопирована');}
           goal('calc-share');
-        }catch{}
+        }catch(e){
+          // Отмена системного «Поделиться» — не ошибка
+          if((e as Error)?.name!=='AbortError')say('Не получилось скопировать. Ссылка с ответами — в адресной строке');
+        }
       });
+      // Ответ изменили — прежняя ссылка уже о другом расчёте, «скопирована» больше не про неё
+      form.addEventListener('change',()=>shareStatus.textContent='');
+      form.addEventListener('reset',()=>shareStatus.textContent='');
     }
     update();
     // Цели Метрики: calc-used — первое изменение ответа за визит на страницу, calc-to-lead — переход к заявке с расчётом.
