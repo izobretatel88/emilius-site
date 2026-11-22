@@ -56,6 +56,8 @@
 .platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
 .platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
 .platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block;min-height:44px;hyphens:auto;-webkit-hyphens:auto}
+/* 44 px — зона касания пальцем; мышью хватает 24 px (WCAG 2.5.8), иначе однострочная строка таблицы вырастала до 73 px пустоты под названием */
+@media (hover: hover) and (pointer: fine){.platform-comparison .feature-link{min-height:24px}}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .feature-link:hover{color:var(--teal-text)} }
 /* код строки нужен только для поиска и ссылок-якорей, посетителю не показываем */
 .platform-comparison .feature-id{display:none}
