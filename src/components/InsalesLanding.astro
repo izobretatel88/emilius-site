@@ -303,7 +303,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="block flat" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
-        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{glue(a)}</p></details>)}
       </div>
       <!-- Вопроса нет в списке — спросить сразу, с началом сообщения (think-different, итерация 64) -->
       <p class="faq-ask" data-goal-place="faq">Не нашли свой вопрос? <a href={`${LINKS.direct}?text=${encodeURIComponent(variant === 'seller' ? 'Вопрос про сайт рядом с WB и Ozon: ' : 'Вопрос про магазин на inSales: ')}`} target="_blank" rel="noopener">Спросите в Telegram&nbsp;<span aria-hidden="true">↗</span><span class="visually-hidden">, откроется в новой вкладке</span></a></p>
