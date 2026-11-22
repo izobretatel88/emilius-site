@@ -369,6 +369,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <script>
   import {updateLiveEstimate,showUpdate} from '../lib/live-estimate';
+  import {contactHint} from '../lib/contact-hint';
   import { QUICK_QUESTIONS, quickEstimate } from '../../docs/insales-service/calc/quick.js';
 
   // Навигация по странице: видна, когда первый экран ушёл вверх; подсвечен раздел, который сейчас на экране.
@@ -429,6 +430,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     const ok = form.querySelector<HTMLElement>('.status:not([data-fail])')!;
     const fail = form.querySelector<HTMLElement>('[data-fail]')!;
     const contact = form.querySelector<HTMLInputElement>('[name=contact]')!;
+    contactHint(contact);
     const agree = form.querySelector<HTMLInputElement>('[name=consent]')!;
     const contactError=form.querySelector<HTMLElement>('#lead-contact-error')!;
     const consentError=form.querySelector<HTMLElement>('#lead-consent-error')!;
