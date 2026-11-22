@@ -47,7 +47,9 @@ import { LINKS } from '../data/site';
     // «пришлите ссылку на кабинет» на лендинге) — плавающая не дублирует её.
     // Кнопка отправки формы на экране — тоже прячемся: на телефоне плавающая закрывала «Отправить».
     const twins = [...document.querySelectorAll<HTMLElement>(`main a[href="${fab.getAttribute('href')}"], main form button[type="submit"]`)];
-    const protectedSections = [...document.querySelectorAll('[data-hide-write-button]')];
+    // На телефоне формы целиком под защитой (think-different, итерация 131): кнопка стояла на стрелке выпадающих списков
+    // калькулятора, и нажатие открывало Telegram вместо списка; на лендинге и главной — поверх полей контакта и текста.
+    const protectedSections = [...document.querySelectorAll('[data-hide-write-button], main form')];
     const compact = matchMedia('(max-width: 480px)');
     // Пока открыта плашка о cookie, на телефоне она занимает низ экрана — кнопка ждёт «Понятно»
     const phone = matchMedia('(max-width: 600px)');
