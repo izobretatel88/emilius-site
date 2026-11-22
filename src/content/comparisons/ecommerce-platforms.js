@@ -2,17 +2,19 @@ const NAMES = ["Tilda", "Яндекс KIT", "inSales", "Shop-Script", "AdvantSho
 const BEST = null; // единственная платформа с синхронизацией WB и Ozon в тарифе
 
 // Быстрые фильтры (из 08-anketa-vybora.csv): какие платформы отпадают и почему.
+// Кнопки с подписями, счётчик «8 из 8» и вывод для «Только сайт» стоят в разметке (think-different, итерация 94):
+// раньше их дописывал скрипт через ~1 с после загрузки, и таблица на компьютере уезжала на 170 px вниз.
 const FILTERS = [
-  { id: "f-1c", label: "Нужна 1С", out: { "Tilda": "нет связи с 1С" } },
-  { id: "f-services", label: "Продаю услуги", out: { "Яндекс KIT": "услуги только заявкой, без оплаты" } },
-  { id: "f-design", label: "Нужен свой дизайн", out: {} },
-  { id: "f-b2b", label: "Опт и B2B", out: { "Tilda": "нет типов цен и складов" } },
-  { id: "f-bonus", label: "Нужны бонусные баллы", out: { "Tilda": "бонусов нет, только сторонние сервисы", "Яндекс KIT": "бонусы только через RetailCRM" } },
-  { id: "f-nodev", label: "Без программиста", out: { "1С-Битрикс": "нужен разработчик", "WooCommerce": "нужен разработчик", "OpenCart": "нужен разработчик" } },
-  { id: "f-server", label: "Данные на своём сервере", out: { "Tilda": "только облако", "Яндекс KIT": "только облако", "inSales": "только облако", "AdvantShop": "облачный тариф" } },
+  { id: "f-1c", out: { "Tilda": "нет связи с 1С" } },
+  { id: "f-services", out: { "Яндекс KIT": "услуги только заявкой, без оплаты" } },
+  { id: "f-design", out: {} },
+  { id: "f-b2b", out: { "Tilda": "нет типов цен и складов" } },
+  { id: "f-bonus", out: { "Tilda": "бонусов нет, только сторонние сервисы", "Яндекс KIT": "бонусы только через RetailCRM" } },
+  { id: "f-nodev", out: { "1С-Битрикс": "нужен разработчик", "WooCommerce": "нужен разработчик", "OpenCart": "нужен разработчик" } },
+  { id: "f-server", out: { "Tilda": "только облако", "Яндекс KIT": "только облако", "inSales": "только облако", "AdvantShop": "облачный тариф" } },
 ];
 const TAKEAWAY = {
-  site: ["Как выбирать", "Сопоставьте каталог, процессы и ограничения платформы. Затраты включают запуск, подписку и внешние сервисы; одного тарифа для решения недостаточно. Неизвестные возможности уточняйте у платформы."],
+  site: [document.querySelector("#takeaway b")?.textContent || "", document.getElementById("takeaway").lastChild?.textContent || ""],
   mp: ["Для продавцов маркетплейсов", "inSales заявляет обмен остатками между площадками. У KIT подтверждён импорт товаров и остатков; обратный обмен и состав обработки заказов нужно уточнить. Итоговая стоимость зависит от выбранной связки и состава интеграций."],
 };
 
@@ -67,9 +69,9 @@ function writeURL() {
 const startParams = new URL(location.href).searchParams;
 for (const id of (startParams.get("need") || "").split(",")) if (FILTERS.some(f => f.id === id)) active.add(id);
 
-const chips = document.getElementById("chips");
 for (const f of FILTERS) {
-  const b = Object.assign(document.createElement("button"), { type: "button", id: f.id, textContent: f.label });
+  const b = document.getElementById(f.id);
+  if (!b) continue;
   b.setAttribute("aria-pressed", String(active.has(f.id)));
   b.addEventListener("click", () => {
     active.has(f.id) ? active.delete(f.id) : active.add(f.id);
@@ -77,7 +79,6 @@ for (const f of FILTERS) {
     apply();
     writeURL();
   });
-  chips.append(b);
 }
 document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; apply(); writeURL(); }));
 try { if (localStorage.getItem("emilius-platform-mode-v1") === "mp") mode = "mp"; } catch (e) {}
