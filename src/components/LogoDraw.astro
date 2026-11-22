@@ -2,7 +2,7 @@
 // Знак-молния, который при загрузке рисуется одной линией со сварочной точкой.
 // Прототип и история итераций — design/logo-bolt/draw-v4.html и DRAW-NOTES.md.
 // Знак — вектор из Figma (bolt-master.svg), геометрия и цвета не меняются.
-// Ритм и порядок хода — как в v2 (решение владельца 22.11.2026): ровный ход, без торможения на углах.
+// Порядок хода — как в v2. В шапке — быстрая версия (1,3 с, без искр): долгая сварка заняла бы 5 с на каждой странице.
 import master from '../../design/logo-bolt/bolt-master.svg?raw';
 
 interface Props { class?: string }
@@ -64,14 +64,12 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
 
 <script>
   const BAR_LEN = 200 - 14.5;
-  const ease = (t: number) => {          // ритм v2: ровный ход, мягкий разгон и остановка только по краям
-    const a = 0.08;
-    if (t < a) return (t * t) / (2 * a * (1 - a));
-    if (t > 1 - a) { const u = 1 - t; return 1 - (u * u) / (2 * a * (1 - a)); }
-    return (t - a / 2) / (1 - a);
-  };
+  // быстрая версия прототипа: плавный разгон и торможение (ease-in-out)
+  const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const SPARKS = false;                  // искры — только в долгой версии
+  const TAIL = 32;                       // раскалённый хвост короче, под быстрый ход
   const css = getComputedStyle(document.documentElement);
-  const dur = (parseFloat(css.getPropertyValue('--mark-draw')) || 5.2) * 1000;
+  const dur = (parseFloat(css.getPropertyValue('--mark-draw')) || 1.3) * 1000;
   const sparkColors = [css.getPropertyValue('--spark-core').trim(), css.getPropertyValue('--spark-warm').trim()];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -109,16 +107,16 @@ const len = PTS.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - PTS[i][0], p[
       set(len);
       const p = mask.getPointAtLength(Math.min(len, L - 0.001));
       torch.setAttribute('transform', `translate(${p.x} ${p.y})`);
-      const tail = Math.min(56, len);
+      const tail = Math.min(TAIL, len);
       hot.style.strokeDasharray = `0 ${len - tail} ${tail} ${L}`;
 
       if (t < 1) {
         const tt = now - t0;
-        const f = 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2);
+        const f = SPARKS ? 0.88 + 0.12 * (Math.sin(tt * 0.031) * 0.5 + Math.sin(tt * 0.077 + 1) * 0.3 + Math.sin(tt * 0.013 + 2) * 0.2) : 1;
         torch.setAttribute('opacity', f.toFixed(3));
         hot.setAttribute('opacity', '0.85');
         halo.setAttribute('r', (55 + 20 * (f - 0.76) / 0.24).toFixed(1));
-        if (now - last > 40) {
+        if (SPARKS && now - last > 40) {
           last = now;
           const n = 1 + Math.floor(Math.random() * 2);
           for (let i = 0; i < n; i++) {
