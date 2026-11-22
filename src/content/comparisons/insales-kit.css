@@ -53,10 +53,11 @@
 .platform-comparison thead th{position:sticky;top:0;z-index:3;background:var(--card);padding:18px 22px 14px;border-bottom:1px solid var(--hair);font-size:22px;line-height:1.3}
 .platform-comparison thead th:first-child{left:0;z-index:4;box-shadow:inset -1px 0 var(--hair);font-size:17px}
 .platform-comparison thead th:last-child{font-size:17px}
-.platform-comparison .stage{display:block;color:var(--ink-2);font-size:var(--fs-small);font-weight:400;margin-bottom:6px}
 .platform-comparison tbody th[scope=row]{position:sticky;left:0;z-index:1;background:var(--card);box-shadow:inset -1px 0 var(--hair);font-size:15px;font-weight:400;padding:18px 22px;border-bottom:1px solid var(--hair)}
 .platform-comparison tbody td{padding:18px 22px;border-bottom:1px solid var(--hair);font-size:15px}
 .platform-comparison .feature-link{color:var(--ink);text-decoration:none;display:block;min-height:44px;hyphens:auto;-webkit-hyphens:auto}
+/* 44 px — зона касания пальцем; мышью хватает 24 px (WCAG 2.5.8), иначе однострочная строка таблицы вырастала до 73 px пустоты под названием */
+@media (hover: hover) and (pointer: fine){.platform-comparison .feature-link{min-height:24px}}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .feature-link:hover{color:var(--teal-text)} }
 /* код строки нужен только для поиска и ссылок-якорей, посетителю не показываем */
 .platform-comparison .feature-id{display:none}
@@ -72,7 +73,6 @@
 .platform-comparison .connection{color:var(--ink)}
 .platform-comparison .source{display:block;width:fit-content;white-space:nowrap;color:var(--teal-text);font-size:var(--fs-small);text-decoration:none;margin-top:3px;margin-bottom:-6px;padding-block:6px}
 @media (hover: hover) and (pointer: fine) { .platform-comparison .source:hover{text-decoration:underline} }
-.platform-comparison .source span{font-size:var(--fs-small);color:var(--ink-2);margin-left:4px}
 .platform-comparison .note{color:var(--ink-2);font-size:14px}
 .platform-comparison .muted{font-size:var(--fs-small)}
 .platform-comparison .scroll tr:target>th,.platform-comparison .scroll tr:target>td,.platform-comparison .scroll tr:target+.mobile-note-row>td{background:var(--teal-soft)}
@@ -114,7 +114,6 @@
 .platform-comparison .note-col{width:225px}
 .platform-comparison thead th{font-size:18px;padding:15px 14px}
 .platform-comparison thead th:first-child,.platform-comparison thead th:last-child{font-size:14px}
-.platform-comparison .stage{font-size:var(--fs-small)} /* не мельче 13 px: подписи читают */
 .platform-comparison tbody th[scope=row]{padding:15px 14px;font-size:13px}
 .platform-comparison tbody td{padding:15px 14px;font-size:13px}
 .platform-comparison .section-row th{font-size:20px;padding:24px 14px 10px}
@@ -179,7 +178,7 @@
 .platform-comparison .choose h3{margin:0 0 12px;font-size:19px;font-weight:700;line-height:1.25}
 .platform-comparison .choose ul{margin:0;padding-left:1.1em;display:grid;gap:10px}
 .platform-comparison .choose li{line-height:1.45;padding-left:2px}
-.platform-comparison .choose-more{white-space:nowrap;font-size:14px;display:inline-block;padding:4px 2px;margin:-4px -2px}
+.platform-comparison .choose-more{white-space:nowrap;font-size:15px;display:inline-block;padding:4px 2px;margin:-4px -2px;color:var(--ink-2);text-decoration:none;transition:color var(--hover)}
 .platform-comparison .choose-note{margin:0;font-size:13px;color:var(--ink-2)}
 @media(max-width:760px){.platform-comparison .choose-cols>div{padding:18px 16px}.platform-comparison .choose h2{font-size:21px}}
 
@@ -232,3 +231,10 @@
 @media(max-width:760px){.platform-comparison .owner .choose-cols>div{padding:18px 16px}.platform-comparison .owner h2{font-size:21px}}
 .platform-comparison .facts .fresh{background:var(--sec-custdev-now);color:var(--ink);font-weight:600;display:inline-flex;align-items:center;gap:8px}
 .platform-comparison .fresh-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+/* Телефон: таблица во всю ширину помещается без горизонтальной прокрутки, поэтому своё окно с прокруткой ей не нужно — листается вместе со страницей (не прокрутка в прокрутке). Шапка таблицы и заголовок раздела держатся под шапкой сайта, как на компьютере */
+@media screen and (max-width:760px){
+  .platform-comparison .card:has(>.scroll){overflow:clip}
+  .platform-comparison .scroll{overflow:visible;max-height:none}
+  .platform-comparison thead th{top:var(--header-h)}
+  .platform-comparison .section-row{top:calc(var(--header-h) + var(--thead-h,72px))}
+}
