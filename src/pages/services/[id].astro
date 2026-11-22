@@ -56,7 +56,7 @@ const arc = (i: number) => {
 };
 ---
 
-<Base title={`${service.title} — Эмилиус Эдженси`} description={service.lead}>
+<Base title={`${service.pageTitle ?? service.title} — Эмилиус Эдженси`} description={service.lead}>
   <main class="direction ui-shell">
     <header class="ui-opening direction-opening">
       <Breadcrumbs items={[{ title: 'Услуги', href: 'services/' }, { title: service.title }]} />
