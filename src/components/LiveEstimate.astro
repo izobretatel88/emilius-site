@@ -1,10 +1,14 @@
 ---
-interface Props { target:string; landing?:boolean; }
-const {target,landing=false}=Astro.props;
+// initial — расчёт по умолчанию, известный при сборке (think-different, итерация 91). С ним строка показывается сразу,
+// как только браузер её прочитал, а не после загрузки скрипта страницы: на медленном телефоне это ~2 с, и всё,
+// что ниже, подпрыгивало. Без JavaScript строка по-прежнему скрыта.
+interface Props { target:string; landing?:boolean; initial?:string; }
+const {target,landing=false,initial}=Astro.props;
 ---
 <div class:list={['estimate-strip',{'landing':landing}]} data-live-estimate hidden>
-  <a href={target}><span><span class="caption">Текущая оценка</span><strong data-estimate-strip></strong></span><span class="more">К расчёту ↓</span></a>
+  <a href={target}><span><span class="caption">Текущая оценка</span><strong data-estimate-strip>{initial}</strong></span><span class="more">К расчёту ↓</span></a>
 </div>
+{initial && <script is:inline>document.currentScript.previousElementSibling.hidden=false;</script>}
 <style>
   .estimate-strip{display:none;position:sticky;top:calc(var(--header-h) + 12px);z-index:6;background:var(--card);border-radius:var(--radius-sm);box-shadow:var(--shadow-card)}
   .estimate-strip[hidden]{display:none}
