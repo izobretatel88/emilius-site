@@ -28,6 +28,8 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     <p class="ui-field-error" id="fb-message-error" role="alert" hidden></p>
     </div>
     <div class="ui-field">
+    <!-- autocomplete="tel" (think-different, итерация 108): телефон предлагается над клавиатурой одним касанием,
+         как в форме лендингов inSales. Это только подсказка: ник Telegram или почту можно ввести как раньше. -->
     <label class="ui-field-label" for="fb-contact">Как с вами связаться</label>
     <input
       class="ui-input"
@@ -35,6 +37,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       name="contact"
       type="text"
       maxlength="200"
+      autocomplete="tel"
       autocapitalize="off"
       autocorrect="off"
       spellcheck="false"
