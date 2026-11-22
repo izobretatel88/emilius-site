@@ -629,6 +629,18 @@ const jsonLd = [
       font-size: 13px;
       color: var(--ink-3);
     }
+    /* Суммы в карточке — строкой счёта: подпись слева, число справа на одной линии (think-different, итерация 105).
+       Раньше подпись и число стояли столбиком у правого края, левая половина карточки пустовала,
+       а три тарифа в статье о стоимости занимали полтора экрана телефона. */
+    .body :global(table:has(th:nth-child(3)) td[align='right'][data-label]:not(:first-child)) {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .body :global(table:has(th:nth-child(3)) td[align='right'][data-label]:not(:first-child)::before) {
+      text-align: left;
+    }
   }
   .body :global(th) {
     padding: 10px 14px;
