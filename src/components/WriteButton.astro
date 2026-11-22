@@ -57,7 +57,9 @@ import { LINKS } from '../data/site';
     // Таблицы сравнения (think-different, итерация 129): на экранах до ~1440 px кнопка стояла поверх последней колонки
     // и закрывала статусы и «Источник ↗» KIT и OpenCart. Пока низ экрана над таблицей: помещается круглая иконка
     // рядом с таблицей — сжимаемся до неё, не помещается — прячемся до конца таблицы. На 1920 px всё как было.
-    const tables = [...document.querySelectorAll<HTMLElement>('.platform-comparison table')];
+    // С итерации 130 — все таблицы страницы: в статьях на телефоне и планшете кнопка закрывала суммы
+    // («11 880 ₽», «67 320 ₽» — они прижаты вправо), на лендинге при 768 и 1280 px — ячейку «Google».
+    const tables = [...document.querySelectorAll<HTMLElement>('main table')];
     let overTable: 'none' | 'compact' | 'hide' = 'none';
     const measureTables = () => {
       if (!tables.length) return;
@@ -66,8 +68,8 @@ import { LINKS } from '../data/site';
       const wide = fab.classList.contains('is-compact') ? fullWidth : fab.offsetWidth;
       let next: typeof overTable = 'none';
       for (const t of tables) {
-        // Видимая часть таблицы: на узких экранах она листается внутри рамки .scroll
-        const r = t.getBoundingClientRect(), box = (t.closest('.scroll') ?? t).getBoundingClientRect();
+        // Видимая часть таблицы: на узких экранах она листается внутри своей рамки
+        const r = t.getBoundingClientRect(), box = (t.closest('.scroll, .table-wrap') ?? t).getBoundingClientRect();
         const top = Math.max(r.top, box.top), bottom = Math.min(r.bottom, box.bottom);
         if (bottom <= band[0] || top >= band[1] || t.hidden || t.closest('[hidden]')) continue;
         const edge = Math.min(r.right, box.right, vw);
@@ -89,7 +91,7 @@ import { LINKS } from '../data/site';
       addEventListener('scroll', queue, { passive: true });
       addEventListener('resize', queue);
       // Таблица на телефоне листается внутри своей рамки — её прокрутка тоже двигает строки под кнопкой
-      document.querySelectorAll('.platform-comparison .scroll').forEach((el) => el.addEventListener('scroll', queue, { passive: true }));
+      document.querySelectorAll('.platform-comparison .scroll, main .table-wrap').forEach((el) => el.addEventListener('scroll', queue, { passive: true }));
       measureTables();
     }
     document.addEventListener('emi:menu', update);
