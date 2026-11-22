@@ -66,9 +66,24 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
       data.keys.forEach((key:string)=>url.searchParams.set(`calc_${key}`,String(answers.get(key))));
       link.href=url.href;
     };
+    // Ответы живут в адресе страницы (think-different, итерация 49): обновление страницы или ссылка партнёру
+    // открывают тот же расчёт. Те же имена calc_*, что в ссылке на лендинг; принимаются только значения из списков.
+    const pageParams=new URL(location.href).searchParams;
+    form.querySelectorAll('select').forEach(select=>{
+      const saved=pageParams.get(`calc_${select.name}`);
+      if(saved!==null&&[...select.options].some(option=>option.value===saved))select.value=saved;
+    });
+    const writeURL=(clear=false)=>{
+      const url=new URL(location.href);
+      form.querySelectorAll('select').forEach(select=>{
+        if(clear)url.searchParams.delete(`calc_${select.name}`);else url.searchParams.set(`calc_${select.name}`,select.value);
+      });
+      history.replaceState(history.state,'',url.href);
+    };
     form.addEventListener('submit',event=>event.preventDefault());
     form.addEventListener('change',update);
-    form.addEventListener('reset',()=>requestAnimationFrame(update));
+    form.addEventListener('change',()=>writeURL());
+    form.addEventListener('reset',()=>setTimeout(()=>{update();writeURL(true);}));
     update();
     // Цели Метрики: calc-used — первое изменение ответа за визит на страницу, calc-to-lead — переход к заявке с расчётом.
     const goal=(name:string,params:Record<string,unknown>={})=>(window as any).emiGoal?.(name,params);
