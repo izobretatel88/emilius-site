@@ -117,12 +117,16 @@ const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
     const px = k * Math.max(1, 401 / k / 60);               // крупный знак — искры летят дальше
     type Spark = { el: SVGLineElement; x: number; y: number; vx: number; vy: number; born: number; life: number };
     let sparks: Spark[] = [], last = 0, ended = false;
-    const t0 = performance.now(); let prev = t0;
+    // Время прорисовки — сумма кадров, каждый не длиннее 50 мс, отсчёт с первого кадра.
+    // Заминка (знак только что показан, страница грузится, вкладку скрыли) притормаживает ход, а не перепрыгивает кусок линии.
+    let prev = -1, played = 0;
     const fade = 450;
 
     const frame = (now: number) => {
-      const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-      const t = Math.min(1, (now - t0) / cfg.dur);
+      const step = prev < 0 ? 0 : Math.min(50, now - prev); prev = now;
+      const dt = step / 1000; played += step;
+      const t0 = now - played;                                   // «начало» в часах кадра, для таймингов ниже
+      const t = Math.min(1, played / cfg.dur);
       const len = p.L * cfg.ease(t);
       p.set(len);
       const pt = p.mask.getPointAtLength(Math.min(len, p.L - 0.001));
