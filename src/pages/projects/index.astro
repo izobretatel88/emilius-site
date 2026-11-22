@@ -225,7 +225,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   .gallery-contact h2{font-size:var(--fs-h2);line-height:1.15;letter-spacing:var(--tracking-tight);margin:0 0 12px}
   .gallery-contact a{gap:28px}
   /* Пояснение сразу под заголовком, кнопка — последней: сначала зачем, потом действие */
-  .gallery-contact>.contact-note{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;margin:0 0 28px;max-width:30ch}
+  .gallery-contact>.contact-note{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;margin:0 0 28px;max-width:calc(30 * var(--ch))}
   .project-viewer{width:min(1440px,calc(100% - 40px));max-width:none;height:calc(100svh - 40px);max-height:calc(100svh - 40px);padding:0;border:0;border-radius:var(--radius-card);background:var(--card);color:var(--ink);box-shadow:var(--shadow-pop)}
   /* Окно постоянной высоты во весь экран: при смене «Компьютер / Телефон» и экранов не прыгает, серое поле снимка занимает остаток */
   .project-viewer[open]{display:flex;flex-direction:column}

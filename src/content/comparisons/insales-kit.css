@@ -12,8 +12,8 @@
 .platform-comparison .topline{display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--ink-2);font-size:14px}
 .platform-comparison #theme{border:1px solid var(--hair);border-radius:var(--radius-sm);padding:8px 12px;background:var(--card);font-size:13px;flex-shrink:0}
 .platform-comparison h1{margin:8px 0 0;font-size:clamp(32px,4.6vw,50px);line-height:1.08;letter-spacing:-.015em;font-weight:700;text-wrap:balance}
-.platform-comparison .lead{margin:0;color:var(--ink-2);font-size:20px;line-height:1.4;max-width:65ch}
-.platform-comparison .scope{font-size:14px;color:var(--ink-2);max-width:72ch;margin:0}
+.platform-comparison .lead{margin:0;color:var(--ink-2);font-size:20px;line-height:1.4;max-width:calc(65 * var(--ch))}
+.platform-comparison .scope{font-size:14px;color:var(--ink-2);max-width:calc(72 * var(--ch));margin:0}
 .platform-comparison .panel{background:var(--card);padding:20px;border-radius:var(--radius-card);display:grid;gap:18px}
 .platform-comparison .search-row{display:grid;grid-template-columns:minmax(240px,1fr) minmax(200px,320px);gap:20px}
 .platform-comparison .field{display:grid;gap:6px}
@@ -32,13 +32,13 @@
 .platform-comparison .chips button[aria-pressed=true]{background:var(--teal-soft);color:var(--teal-text);border-color:var(--teal-text);font-weight:700}
 .platform-comparison .reset{padding:9px 0;border:0;background:none;color:var(--teal-text);font-size:14px;text-decoration:underline;white-space:nowrap}
 .platform-comparison .explanation{background:var(--teal-soft);border-radius:var(--radius-sm);padding:18px 20px;font-size:14px}
-.platform-comparison .explanation>p{margin:0 0 10px;max-width:62ch}
+.platform-comparison .explanation>p{margin:0 0 10px;max-width:calc(62 * var(--ch))}
 .platform-comparison .explanation strong{color:var(--teal-text)}
 .platform-comparison summary{color:var(--teal-text);font-weight:700;width:fit-content;min-height:44px;padding:12px 0;margin-block:-8px}
 .platform-comparison dl{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;margin:20px 0}
 .platform-comparison dt{font-weight:700}
 .platform-comparison dd{margin:4px 0 0;color:var(--ink-2)}
-.platform-comparison .method-note{max-width:72ch;color:var(--ink-2);margin-bottom:0}
+.platform-comparison .method-note{max-width:calc(72 * var(--ch));color:var(--ink-2);margin-bottom:0}
 .platform-comparison .table-meta{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--ink-2);font-size:14px;margin:0 0 12px}
 .platform-comparison .table-meta p{margin:0;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
 .platform-comparison .card{background:var(--card);border-radius:var(--radius-card);overflow:hidden;min-width:0}
@@ -81,7 +81,7 @@
 .platform-comparison .empty p{color:var(--ink-2)}
 .platform-comparison .empty button{border:0;border-radius:var(--radius-sm);background:var(--teal-btn);color:var(--on-teal);padding:12px 18px}
 .platform-comparison .mobile-hint{display:none}
-.platform-comparison .foot{max-width:62ch;display:grid;gap:14px;color:var(--ink-2);font-size:14px}
+.platform-comparison .foot{max-width:calc(62 * var(--ch));display:grid;gap:14px;color:var(--ink-2);font-size:14px}
 .platform-comparison .foot h2{font-size:25px;color:var(--ink);margin:12px 0 0;letter-spacing:-.01em}
 .platform-comparison .foot p{margin:0}
 .platform-comparison .sources{margin-top:4px}

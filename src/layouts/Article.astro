@@ -371,7 +371,7 @@ const jsonLd = [
   .body :global(ul),
   .body :global(ol) {
     margin: 14px 0 0;
-    max-width: 62ch; /* кириллица уже латиницы: 62ch дают 65–75 знаков в строке */
+    max-width: calc(62 * var(--ch)); /* кириллица уже латиницы: 62ch дают 65–75 знаков в строке */
     font-size: 17px;
     line-height: 1.65;
   }
@@ -499,7 +499,7 @@ const jsonLd = [
   }
   .body :global(figcaption) {
     margin-top: 8px;
-    max-width: 62ch;
+    max-width: calc(62 * var(--ch));
     font-size: 14px;
     line-height: 1.5;
     color: var(--ink-2);
@@ -562,7 +562,7 @@ const jsonLd = [
     margin-top: 18px;
     /* Ширина колонки текста (62ch при 17 px, как у абзацев): таблица не выступает за правый край текста и обложки */
     font-size: 17px;
-    max-width: 62ch;
+    max-width: calc(62 * var(--ch));
     overflow-x: auto;
     border-radius: var(--radius-sm);
     box-shadow: 0 0 0 1px var(--hair);

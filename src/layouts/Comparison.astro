@@ -65,13 +65,13 @@ const related=[
   .platform-comparison{--est:var(--ink-2);--caution:var(--ink-2);--negative:var(--ink-2);--low-fg:var(--ink-2);min-width:0;font-family:var(--font);color:var(--ink)}
   .platform-comparison :global(.wrap){padding:4px 0 20px;grid-template-columns:minmax(0,1fr);gap:16px}
   .platform-comparison :global(header){max-width:none;gap:8px}
-  .platform-comparison :global(.lead){max-width:80ch;line-height:1.45}
-  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:110ch}
+  .platform-comparison :global(.lead){max-width:calc(80 * var(--ch));line-height:1.45}
+  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:calc(110 * var(--ch))}
   .platform-comparison :global(.scope){line-height:1.45}
   .platform-comparison :global(.search-row){align-items:start}
   .platform-comparison :global(.search-row input),.platform-comparison :global(.search-row select){height:48px}
   .platform-comparison :global(.card){border:0;box-shadow:none}
-  .platform-comparison :global(.foot){max-width:62ch}
+  .platform-comparison :global(.foot){max-width:calc(62 * var(--ch))}
   .platform-comparison :global(#comparison){min-width:0}
   .platform-comparison :global(.card,.panel){border-radius:var(--radius-card)}
   .platform-comparison :global(.table-jump){width:fit-content;font-size:14px;text-underline-offset:4px}

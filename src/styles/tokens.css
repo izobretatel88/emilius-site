@@ -126,6 +126,11 @@
 
   /* Типографика: Glober (src/styles/fonts.css) */
   --font: 'Glober', 'Glober Fallback', Arial, sans-serif; /* 'Glober Fallback' — Arial по метрикам Glober, fonts.css */
+  /* Ширина строки текста — в «ch» Glober: ширина цифры «0» = 0,619 em во всех начертаниях сайта.
+     Пишется так: max-width: calc(62 * var(--ch)). Обычная единица ch считается по шрифту, который сейчас
+     на экране: пока Glober грузится, это запасной Arial, и его «0» на 14 % уже. Абзацы получались уже,
+     переносились на лишнюю строку, а после загрузки шрифта схлопывались (think-different, итерация 93). */
+  --ch: 0.619em;
   /* Блоки кода в статьях блога: промпты и артикулы */
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 

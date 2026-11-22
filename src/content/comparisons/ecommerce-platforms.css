@@ -13,7 +13,7 @@
 @media (hover: hover) and (pointer: fine) { .platform-comparison .eyebrow a:hover{ text-decoration: underline; } }
 .platform-comparison .eyebrow a:focus-visible{ outline: 2px solid var(--teal); outline-offset: 2px; border-radius:var(--radius-sm); }
 .platform-comparison h1{ margin: 0; font-size: clamp(30px, 4.6vw, 46px); line-height: 1.06; letter-spacing: -0.015em; font-weight: 700; text-wrap: balance; }
-.platform-comparison .lead{ margin: 0; color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: 62ch; }
+.platform-comparison .lead{ margin: 0; color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: calc(62 * var(--ch)); }
 .platform-comparison .card{ background: var(--card); border-radius:var(--radius-card); min-width: 0; overflow: hidden; }
 /* Таблица шире экрана, поэтому листается внутри блока высотой в экран: шапка и первая колонка остаются на месте при прокрутке в обе стороны */
 .platform-comparison .scroll{ overflow: auto; max-height: calc(100dvh - var(--header-h) - 24px); overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
@@ -88,10 +88,10 @@
 .platform-comparison .count b{ color: var(--ink); }
 .platform-comparison .reset{ font: inherit; font-size: 14px; padding: 0; border: 0; background: none; color: var(--teal-text);
   text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.platform-comparison .takeaway{ margin: 0; max-width: 68ch; padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
+.platform-comparison .takeaway{ margin: 0; max-width: calc(68 * var(--ch)); padding: 14px 18px; border-radius:var(--radius-sm); background: var(--teal-soft); font-size: 15px; }
 .platform-comparison .takeaway b{ display: block; color: var(--teal-text); }
 @media (prefers-reduced-motion: reduce){.platform-comparison .seg button,.platform-comparison .chips button{ transition: none; }}
-.platform-comparison .foot{ display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; max-width: 86ch; }
+.platform-comparison .foot{ display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; max-width: calc(86 * var(--ch)); }
 .platform-comparison .foot p{ margin: 0; }
 @media (max-width: 760px){.platform-comparison .wrap{ padding-block: 32px 44px; gap: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .platform-comparison .lead{ font-size: 16px; }
