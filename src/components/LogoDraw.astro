@@ -41,6 +41,8 @@ const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
       <stop offset="1" class="ld-warm" stop-opacity="0" />
     </radialGradient>
   </defs>
+  <!-- шапка: пока знак рисуется заново, под линией бледный контур — знак не пропадает из навигации -->
+  {trigger === 'hover' && <image data-ld="ghost" class="ld-ghost" href={src} width="267" height="401" />}
   <!-- маска действует только во время прорисовки; в покое — чистый PNG -->
   <image data-ld="img" href={src} width="267" height="401" data-mask={`url(#${uid}-r)`} mask={trigger === 'manual' ? `url(#${uid}-r)` : undefined} />
   <path data-ld="hot" class="ld-hot" d={d} fill="none" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${uid}-h)`} opacity="0" />
@@ -98,7 +100,11 @@ const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
       diag.style.strokeDasharray = `${Math.min(len, diagLen)} ${L}`;
     };
     const img = q('img');
-    const masked = (on: boolean) => (on ? img.setAttribute('mask', img.dataset.mask!) : img.removeAttribute('mask'));
+    const ghost = svg.querySelector<SVGImageElement>('[data-ld="ghost"]');
+    const masked = (on: boolean) => {
+      if (on) img.setAttribute('mask', img.dataset.mask!); else img.removeAttribute('mask');
+      ghost?.classList.toggle('is-on', on);
+    };
     return { mask, L, set, masked, hot: q('hot'), torch: q('torch'), halo: q('halo'), core: q('core'), blur: q('blur'), sparksG: q('sparks') };
   }
 
@@ -207,4 +213,6 @@ const diagLen = Math.hypot(PTS[1][0] - PTS[0][0], PTS[1][1] - PTS[0][1]);
   .ld-warm { stop-color: var(--spark-warm); }
   .ld-core-dot { fill: var(--spark-core); }
   .ld-hot { stroke: var(--spark-hot); }
+  .ld-ghost { opacity: 0; }
+  .ld-ghost.is-on { opacity: var(--mark-ghost); }
 </style>
