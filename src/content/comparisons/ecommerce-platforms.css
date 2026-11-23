@@ -112,3 +112,9 @@
 /* Ссылки на источники — цель касания 44 px: список длинный, на телефоне ссылки шли вплотную по 32 px */
 .platform-comparison #comparison-sources li a{display:inline-flex;align-items:center;min-height:44px}
 .platform-comparison details[open]>:not(summary){animation:ui-fade-in var(--fade-in)}
+/* Раскрывашки: шеврон после подписи, как у содержания статей и калькулятора, вместо треугольника браузера */
+.platform-comparison summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer}
+.platform-comparison summary::-webkit-details-marker{display:none}
+.platform-comparison summary::after{content:'';flex:none;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform var(--fade-in)}
+.platform-comparison details[open]>summary::after{transform:translateY(2px) rotate(225deg)}
+@media (prefers-reduced-motion:reduce){.platform-comparison summary::after{transition:none}}
