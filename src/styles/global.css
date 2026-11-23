@@ -148,3 +148,42 @@ select {
     scroll-behavior: auto !important; /* лента телефонов на лендинге inSales листается без плавной прокрутки */
   }
 }
+
+/* Печать и «Сохранить как PDF» (статьи, политика, согласие): на бумаге остаётся текст страницы.
+   Меню, плавающие кнопки, переключатель темы, баннер cookie и ссылки подвала на бумаге не нужны;
+   реквизиты в подвале остаются. Фон — белый, без лучей. Цвета — светлая тема (tokens.css). */
+@media print {
+  html,
+  body {
+    background: var(--print-page);
+  }
+  body::before,
+  .skip,
+  .site-header .nav-links,
+  .site-header .nav-action,
+  .site-header .nav-menu,
+  .cookie-notice,
+  .write-fab,
+  .top-fab,
+  .img-hint,
+  .theme-control,
+  .footer-links,
+  .legal-links,
+  .site-iterations,
+  .site-iterations + p,
+  .arda,
+  .toc:has(details) {
+    display: none !important;
+  }
+  /* Сворачиваемое содержание статьи на бумаге не раскрыть — убираем; у политики и согласия оно списком и остаётся */
+  /* Размытые тени карточек Chrome печатает серыми прямоугольниками. Рамка таблиц статей — тоже тень, её оставляем */
+  *:not(.table-wrap) {
+    box-shadow: none !important;
+  }
+  .site-header {
+    position: static !important;
+    background: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
