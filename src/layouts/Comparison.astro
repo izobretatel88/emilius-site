@@ -5,7 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LinkList from '../components/LinkList.astro';
 import ComparisonPicker from '../components/ComparisonPicker.astro';
 import {href} from '../lib/urls';
-import {glueHtml} from '../lib/typograph.mjs';
+import {glue,glueHtml} from '../lib/typograph.mjs';
 import '../styles/architecture.css';
 import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
 import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
@@ -21,7 +21,10 @@ const description=detailed?'Чем отличаются inSales и Яндекс 
 // Неразрывные пробелы в числах и перед ₽/%: «29 900 ₽» не расходится по строкам в узких ячейках
 const html=glueHtml(detailed?detailHtml:generalHtml);
 const css=detailed?detailCss:generalCss;
-const script=detailed?detailScript:generalScript;
+// Подсказки сравнения («Как выбирать», причины ограничений) скрипт вставляет на странице — типограф после сборки их не видит.
+// Склеиваем русские строки прямо в тексте скрипта: строка в двойных кавычках с кириллицей проходит через glue().
+const glueStrings=(js:string)=>js.replace(/"((?:[^"\\\n]|\\.)*)"/g,(m,str)=>/[а-яё]/i.test(str)?`"${glue(str)}"`:m);
+const script=glueStrings(detailed?detailScript:generalScript);
 const related=[
   detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'inSales и Яндекс KIT подробно',description:'Когда что выбрать, ответы команды KIT и 349 функций с источниками.',href:'compare/insales-vs-yandex-kit/'},
   {title:'Оценить запуск на inSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
