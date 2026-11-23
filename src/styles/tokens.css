@@ -113,7 +113,7 @@
 
   /* Фокус клавиатуры — кольцо «внимание»: сплошное бирюзовое, с отступом, как обод центра колеса.
      Контраст бирюзы с фоном страницы и карточки — не ниже 3:1 в обеих темах. */
-  --focus-ring: 2px solid var(--teal);
+  --focus-ring: 2px solid var(--teal-text); /* 23.11.2026: текстовый бирюзовый — контраст кольца ~5:1 на светлом фоне (было 3,2:1), в тёмной теме светлее */
   --focus-offset: 3px;
 
   /* Форма */
@@ -125,7 +125,7 @@
   --print-ink: #000000;
 
   /* Типографика: Glober (src/styles/fonts.css) */
-  --font: 'Glober', Arial, sans-serif;
+  --font: 'Glober', 'Glober Fallback', Arial, sans-serif;
   /* Блоки кода в статьях блога: промпты и артикулы */
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
@@ -161,7 +161,9 @@
   :root { --header-h: 68px; }
 }
 
-@media (prefers-color-scheme: dark) {
+/* Тёмная тема — только на экране: при печати и сохранении в PDF страница всегда светлая.
+   Иначе светлый текст тёмной темы печатался бы бледно-серым по белой бумаге. */
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
     --selection: rgba(0, 153, 155, 0.42);
@@ -218,6 +220,7 @@
   }
 }
 
+@media screen {
 :root[data-theme='dark'] {
   color-scheme: dark;
   --selection: rgba(0, 153, 155, 0.42);
@@ -270,4 +273,5 @@
   --shadow-pop: 0 0 18px 0 rgba(0, 0, 0, 0.6);
   --img-dim: brightness(0.88);
   --shadow-icon: 0 0 5px 0 rgba(0, 0, 0, 0.6);
+}
 }

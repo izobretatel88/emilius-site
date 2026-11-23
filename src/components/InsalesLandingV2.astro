@@ -84,7 +84,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
       <ul class="ticks">{hero.bullets.map((b) => <li>{b}</li>)}</ul>
       <div class="cta-row">
         <a class="cta" href="#lead" data-goal="calc-click">{hero.cta}</a>
-        <p class="note">{CTA_NOTE_V2}</p>
+        <p class="note">{glue(CTA_NOTE_V2)}</p>
       </div>
       {variant === 'seller' && <p class="quick">Или <a href={LINKS.direct} target="_blank" rel="noopener">{SELLER_QUICK.link}<span class="visually-hidden">, откроется в новой вкладке</span></a> — {SELLER_QUICK.rest}.</p>}
       <a class="switch" href={other.url}>{glue(other.text)}</a>
@@ -310,7 +310,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     <section class="block flat" aria-labelledby="t-faq">
       <h2 id="t-faq">Частые вопросы</h2>
       <div class="faq">
-        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+        {faq.map(([q, a]) => <details><summary>{glue(q)}</summary><p>{glue(a)}</p></details>)}
       </div>
     </section>
 
@@ -344,7 +344,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>
         <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
-        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" aria-describedby="lead-contact-hint lead-contact-error" /></label>
+        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="lead-contact-hint lead-contact-error" /></label>
         <p class="small" id="lead-contact-hint">Укажите @имя в Telegram или номер, по которому можно ответить.</p>
         <p class="field-error" id="lead-contact-error" role="alert" hidden></p>
         <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
@@ -387,7 +387,12 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => {
         const id = e.target.querySelector('h2')?.id;
-        if (id && e.isIntersecting) links.forEach((a, k) => a.classList.toggle('is-here', k === id));
+        // aria-current="location": текущий раздел слышен и экранному диктору, не только виден цветом
+        if (id && e.isIntersecting) links.forEach((a, k) => {
+          a.classList.toggle('is-here', k === id);
+          if (k === id) a.setAttribute('aria-current', 'location');
+          else a.removeAttribute('aria-current');
+        });
       }),
       { rootMargin: '-45% 0px -50% 0px' },
     );
@@ -635,7 +640,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     border: 0;
     border-radius: var(--radius-btn);
     background: var(--teal-btn);
-    color: #fff;
+    color: var(--on-teal);
     font: inherit;
     font-weight: 600;
     font-size: 16px;
@@ -885,7 +890,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   .nums li {
     counter-increment: n;
     position: relative;
-    padding: 12px 0 12px 30px;
+    padding: 12px 0 12px 32px;
     border-top: 1px solid var(--hair);
   }
   .nums li:first-child { padding-top: 0; border-top: 0; }
@@ -893,18 +898,18 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
     content: counter(n);
     position: absolute;
     left: 0;
-    top: 0.12em;
-    width: 21px;
-    height: 21px;
+    top: 0.06em;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     border: 1.5px solid var(--teal);
     color: var(--teal-text);
-    font-size: 12px;
+    font-size: var(--fs-small); /* не мельче 13 px, как весь текст сайта */
     font-weight: 700;
     display: grid;
     place-items: center;
   }
-  .nums li:not(:first-child)::before { top: calc(12px + 0.12em); }
+  .nums li:not(:first-child)::before { top: calc(12px + 0.06em); }
   .weeks { gap: 0; }
   .weeks li {
     display: grid;
@@ -1046,7 +1051,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   input[type='text']:focus { border-color: var(--teal); }
   @media (hover: hover) and (pointer: fine) { input[type='text']:hover { border-color: var(--teal); } }
   /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
-  input[type='text']:focus-visible { outline: 2px solid var(--teal); outline-offset: -1px; }
+  input[type='text']:focus-visible { outline: var(--focus-ring); outline-offset: -1px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { position: relative; }
   .chip input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; } /* весь чип — область нажатия */
@@ -1062,7 +1067,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
   }
   .chip input:active + span { transform: scale(var(--press-scale)); }
   .chip input:checked + span { border-color: var(--teal); background: var(--card); color: var(--teal-text); font-weight: 600; }
-  .chip input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .chip input:focus-visible + span { outline: var(--focus-ring); outline-offset: 2px; }
   /* Высокая контрастность Windows: цвет рамки и фона пропадает — выбранный ответ отмечает системная рамка */
   @media (forced-colors: active) { .chip input:checked + span { outline: 2px solid Highlight; outline-offset: -2px; } }
   .side .cta { align-self: stretch; text-align: center; line-height: 1.25; text-wrap: balance; padding-block: 10px; }

@@ -24,7 +24,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       maxlength="3000"
       aria-describedby="fb-message-hint fb-message-error"
       placeholder="Что хотите сделать и какая помощь нужна?"></textarea>
-    <p class="ui-field-hint" id="fb-message-hint">До 3 000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3 000.</span></p>
+    <p class="ui-field-hint" id="fb-message-hint">До 3&nbsp;000 символов. Можно начать с нескольких предложений. <span id="fb-length">Осталось 3&nbsp;000.</span></p>
     <p class="ui-field-error" id="fb-message-error" role="alert" hidden></p>
     </div>
     <div class="ui-field">
@@ -33,6 +33,9 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       class="ui-input"
       id="fb-contact"
       name="contact"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
       type="text"
       maxlength="200"
       aria-describedby="fb-contact-hint"
@@ -134,7 +137,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
       const contextualMessage=selectedProject && !context.hidden && !message.value.includes(selectedProject.message)
         ? `${selectedProject.message}\n\n${message.value}` : message.value;
       if(contextualMessage.length>message.maxLength){
-        fieldError(message,messageError,'Сократите сообщение: вместе с названием проекта — не больше 3 000 символов.');
+        fieldError(message,messageError,'Сократите сообщение: вместе с названием проекта — не больше 3\u00a0000 символов.');
         message.focus();
         return;
       }
@@ -257,7 +260,7 @@ const privacy = `${base}${base.endsWith('/') ? '' : '/'}privacy/`;
     .btn-send:hover {
       background: var(--teal-btn);
       border-color: var(--teal-btn);
-      color: #fff;
+      color: var(--on-teal);
     }
     .btn-send:hover svg {
       fill: #000;

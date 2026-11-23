@@ -33,3 +33,27 @@
   font-display: swap;
   src: url('./fonts/glober-800.woff2') format('woff2');
 }
+
+/* Резерв на время загрузки: Arial, подогнанный под ширину и высоту строки Glober (замер на кириллице лендинга
+   inSales, 23.11.2026). Без него при подмене шрифта строки перескакивают: Arial шире на 4 %, жирный — на 11 %.
+   Подбор по высоте страниц на 375 px: расхождение с Glober 17–24 px на всю страницу против 160–410 px у Arial.
+   На устройствах без Arial local() не находится, и браузер берёт следующий шрифт из --font, как раньше. */
+@font-face {
+  font-family: 'Glober Fallback';
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 97%;
+  ascent-override: 96.9%;
+  descent-override: 25.8%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Glober Fallback';
+  font-weight: 600 800;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 90.5%;
+  ascent-override: 105%;
+  descent-override: 27.6%;
+  line-gap-override: 0%;
+}

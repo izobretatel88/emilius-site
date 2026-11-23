@@ -3,6 +3,7 @@
 import Base from '../layouts/Base.astro';
 import Logo from './Logo.astro';
 import Footer from './Footer.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
 import { LEGAL_DATE } from '../data/legal';
 
 interface Props {
@@ -10,9 +11,11 @@ interface Props {
   description: string;
   eyebrow: string;
   date?: string; // своя дата редакции (документы приложения Emilius Meetings)
+  crumb?: string; // короткое имя для хлебных крошек, если заголовок не помещается в строку телефона
 }
-const { title, description, eyebrow, date = LEGAL_DATE } = Astro.props;
+const { title, description, eyebrow, date = LEGAL_DATE, crumb } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const meetings = Astro.url.pathname.includes('/meetings/');
 // Оглавление из заголовков разделов: у длинных документов (от 4 разделов) — ссылки на каждый раздел.
 let html = await Astro.slots.render('default');
 const toc: { id: string; text: string }[] = [];
@@ -25,13 +28,15 @@ const showToc = toc.length >= 4;
 ---
 
 <Base title={`${title} — Эмилиус Эдженси`} description={description}>
-  {Astro.url.pathname.includes('/meetings/') && <header class="top">
+  {meetings && <header class="top">
     <a href={base} class="logo-link" aria-label="Эмилиус Эдженси — на главную"><Logo /></a>
   </header>}
 
   <slot name="nav" />
 
   <main class="doc ui-shell">
+    {/* Документы сайта — в общей навигации, как статьи и разделы; у приложения Emilius Meetings своя шапка */}
+    {!meetings && <Breadcrumbs items={[{ title: crumb ?? title }]} />}
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     <p class="date">Редакция от {date}</p>
@@ -138,6 +143,11 @@ const showToc = toc.length >= 4;
     .toc ol {
       columns: 1;
     }
+  }
+  /* Палец: строка содержания — цель от 44 px, а не 18 px высоты текста */
+  @media (pointer: coarse) {
+    .toc li { margin: 0; }
+    .toc a { display: block; padding-block: 11px; }
   }
   .doc :global(ul) {
     padding-left: 20px;

@@ -194,7 +194,7 @@ textarea.ui-input { height: 112px; min-height: 96px; resize: vertical; }
 .ui-input:focus { border-color: var(--teal); }
 @media (hover: hover) and (pointer: fine) { .ui-input:hover { border-color: var(--teal); } }
 /* Фокус — рамка в 2 px: серый и бирюзовый одной яркости (1,04:1), смена цвета тонкой рамки почти не видна */
-.ui-input:focus-visible { outline: 2px solid var(--teal); outline-offset: -1px; }
+.ui-input:focus-visible { outline: var(--focus-ring); outline-offset: -1px; }
 /* Ошибка — рамка цветом текста, а не красным: в палитре нет второго акцента */
 .ui-input[aria-invalid='true'] { outline: 2px solid var(--ink); outline-offset: 2px; }
 /* Соседний этап внизу страницы направления: «← до этого · дни 14–26» и название этапа с точкой */

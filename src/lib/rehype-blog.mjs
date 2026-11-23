@@ -51,6 +51,12 @@ export function rehypeBlog(options = {}) {
     return `Таблица: ${heading}${n > 1 ? ` (${n})` : ''}`;
   };
 
+  const unpublished = new WeakSet();
+  // Первый значимый узел пункта списка (у «рыхлого» списка он лежит внутри <p>)
+  const firstContent = (node) => {
+    const kid = (node.children || []).find((k) => !(k.type === 'text' && !k.value.trim()));
+    return kid && kid.tagName === 'p' ? firstContent(kid) : kid;
+  };
   const walk = (node) => {
     if (!node.children) return;
     node.children = node.children.map((child) => {
@@ -69,11 +75,17 @@ export function rehypeBlog(options = {}) {
           if (article && options.releases && !options.releases.has(article[1])) {
             child.tagName = 'span';
             delete props.href;
+            unpublished.add(child);
           } else if (isRoot(props.href)) props.href = base + props.href;
           else if (isExternal(props.href)) props.rel = 'noopener';
         }
         if (/^h[2-4]$/.test(child.tagName)) heading = textOf(child).replace(/\s+/g, ' ').trim();
         if (child.tagName !== 'code' && child.tagName !== 'pre') walk(child);
+        // Пункт списка, который начинается со ссылки на неопубликованную статью («Читайте также»), убираем целиком:
+        // серый текст без ссылки среди ссылок выглядит битой ссылкой. Внутри абзаца ссылка просто становится текстом.
+        if ((child.tagName === 'ul' || child.tagName === 'ol') && child.children) {
+          child.children = child.children.filter((li) => !(li.tagName === 'li' && unpublished.has(firstContent(li))));
+        }
         // Подпись пишется в Markdown сразу под картинкой, без пустой строки: такой абзац становится
         // <figure> с <figcaption>. Абзац после пустой строки — обычный текст статьи, не подпись.
         if (child.tagName === 'p') {
@@ -115,10 +127,23 @@ export function rehypeBlog(options = {}) {
     });
   };
 
+  // Картинка, с которой статья начинается, — первый экран: её грузим сразу и раньше остального
+  // (think-different, итерация 99). С loading="lazy" браузер ждал раскладки и брал её последней:
+  // на телефоне обложка «Как выбрать платформу» появлялась через 1,3 с после текста.
+  const eagerLead = (tree) => {
+    const first = (tree.children || []).find((k) => k.type === 'element');
+    if (!first || (first.tagName !== 'p' && first.tagName !== 'figure')) return;
+    const img = (first.children || []).find((k) => k.type === 'element');
+    if (!img || img.tagName !== 'img') return;
+    delete img.properties.loading;
+    img.properties.fetchPriority = 'high';
+  };
+
   return (tree) => {
     heading = '';
     used.clear();
     walk(tree);
+    eagerLead(tree);
     wrapImages(tree);
   };
 }

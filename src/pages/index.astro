@@ -2,6 +2,7 @@
 // Главная — композиция экспериментальной главной (/experiments/cursor/, итерации 1–37 журнала),
 // перенесённая на общий каркас 04.11.2026: миссия → метод (колесо) → клиенты → услуги → проекты →
 // полезное → обсуждение задачи. Шапка и подвал общие (SiteNav, Footer), примитивы — styles/layout.css.
+import { glue } from '../lib/typograph.mjs';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import Base from '../layouts/Base.astro';
 import Wheel from '../components/Wheel.astro';
@@ -96,7 +97,7 @@ const organization = {
             <p>Запустим магазин на вашем домене. Добавим товары, настроим оплату и доставку, проверим тестовый заказ.</p>
           </div>
           <div class="service-next">
-            <span id={`offer-terms-${service.id}`}>{service.note}</span>
+            <span id={`offer-terms-${service.id}`}>{glue(service.note)}</span>
             <span class="service-link">Посмотреть услугу <span aria-hidden="true">→</span></span>
           </div>
         </a>
@@ -143,8 +144,8 @@ const organization = {
           <li>
             <a class="material ui-surface" href={href(item.href)}>
               <span class="ui-label">{item.label}</span>
-              <strong>{item.title}</strong>
-              <span class="material-text">{item.description}</span>
+              <strong>{glue(item.title)}</strong>
+              <span class="material-text">{glue(item.description)}</span>
               <span class="ui-arrow" aria-hidden="true">→</span>
             </a>
           </li>
@@ -225,8 +226,9 @@ const organization = {
   /* Логотип загорается плавно — при наведении, фокусе с клавиатуры и касании */
   .client-strip a:focus-visible img, .client-strip a:active img { opacity: 1; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover img { opacity: 1; } }
-  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
-  :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
+  /* Только на экране: при печати страница светлая (tokens.css), белые логотипы на бумаге пропали бы */
+  @media screen and (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
+  @media screen { :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); } }
 
   .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform var(--press); }
   .service-feature h3 { font-size: 27px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
@@ -290,7 +292,7 @@ const organization = {
     .product-demo { padding: 0 18px; }
     .demo-top { min-height: 60px; }
     .demo-top h2 { font-size: 18px; }
-    .demo-top > span { font-size: 12px; }
+    .demo-top > span { font-size: var(--fs-small); }
     .demo-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .wheel-area { padding-inline: 14px; margin-inline: -18px; --rail-reach: 0px; }
     .method { padding: 20px 0 16px; border-top: 1px solid var(--hair); }
@@ -300,7 +302,7 @@ const organization = {
     .stages a { grid-template-columns: 42px minmax(0, 1fr) auto; min-height: 48px; gap: 6px; border-bottom: 1px solid var(--hair); }
     .stages li:nth-last-child(-n+2) a { border: 0; }
     .stage-name { font-size: 15px; }
-    .day-range { font-size: 12px; }
+    .day-range { font-size: var(--fs-small); }
     .demo-note { padding-block: 14px; }
     .client-strip { padding: 24px 0 28px; gap: 14px; }
     .client-strip img { height: 28px; }

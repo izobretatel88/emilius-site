@@ -152,6 +152,15 @@ import { LINKS } from '../data/site';
     opacity: 0;
     visibility: hidden;
   }
+  /* Плашка cookie на телефоне: кнопка не показывается вовсе, пока плашка открыта (think-different, итерация 97).
+     Класс ставит встроенный скрипт плашки сразу при разборе страницы. Раньше кнопку прятал модульный скрипт
+     через 0,4–0,5 с: она появлялась, плашка наплывала на неё, и только потом кнопка гасла. */
+  @media (max-width: 600px) {
+    :global(html.cookie-open) .write-fab {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
   /* Низ страницы (футер) не уходит под кнопку */
   :global(body) {
     padding-bottom: 88px;

@@ -84,7 +84,8 @@
     });
   }
   form.hidden = false;
-  form.addEventListener('submit', event => event.preventDefault());
+  // Таблица фильтруется на лету. Кнопка «Найти» на клавиатуре телефона закрывает клавиатуру, чтобы стали видны результаты
+  form.addEventListener('submit', event => { event.preventDefault(); if (matchMedia('(pointer: coarse)').matches) document.activeElement?.blur(); });
   form.addEventListener('reset', event => { event.preventDefault(); reset(); search.focus(); });
   search.addEventListener('input', () => { update(); });
   group.addEventListener('change', () => { update(); });

@@ -2,6 +2,7 @@
 // Страница направления — на общем каркасе (04.11.2026): первый экран слева, как на главной,
 // секции с тонкой линией сверху, белые поверхности без обводки. Кейсы ведут в галерею проектов,
 // внешний сайт — отдельной ссылкой. Залитая кнопка на странице одна — «Обсудить задачу».
+import { glue } from '../../lib/typograph.mjs';
 import ProjectPreview from '../../components/ProjectPreview.astro';
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
@@ -92,7 +93,7 @@ const arc = (i: number) => {
           <div>
             <p class="ui-label">{service.offer.eyebrow}</p>
             <h2 id="t-offer">{service.offer.title}</h2>
-            <p>{service.offer.text}</p>
+            <p>{glue(service.offer.text)}</p>
           </div>
           <span class="offer-link">{service.offer.cta} <span aria-hidden="true">→</span></span>
         </a>

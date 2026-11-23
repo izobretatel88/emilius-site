@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LinkList from '../components/LinkList.astro';
 import ComparisonPicker from '../components/ComparisonPicker.astro';
 import {href} from '../lib/urls';
+import {glue,glueHtml} from '../lib/typograph.mjs';
 import '../styles/architecture.css';
 import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
 import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
@@ -17,9 +18,21 @@ const {kind}=Astro.props;
 const detailed=kind==='detail';
 const title=detailed?'inSales или Яндекс KIT: что выбрать и чем отличаются':'Сравнение платформ для интернет-магазина';
 const description=detailed?'Чем отличаются inSales и Яндекс KIT: кому что подходит, 349 функций с источниками и ответы команды KIT на 28 вопросов (ноябрь 2026).':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
-const html=detailed?detailHtml:generalHtml;
+// Неразрывные пробелы в числах и перед ₽/%: «29 900 ₽» не расходится по строкам в узких ячейках
+// Ссылки на источники открываются в новой вкладке. Видно это по ↗, а экранный диктор зачитывал «Источник, стрелка».
+// Добавляем пометку, как в остальном сайте: к aria-label, если он есть, иначе скрытым текстом. Стрелку прячем от диктора.
+const NEW_TAB=', откроется в новой вкладке';
+const markNewTab=(h:string)=>h.replace(/<a\b([^>]*\btarget="_blank"[^>]*)>([\s\S]*?)<\/a>/g,(m,attrs:string,body:string)=>{
+  if(/новой вкладк/.test(attrs+body))return m;
+  if(/aria-label="/.test(attrs))return `<a${attrs.replace(/aria-label="([^"]*)"/,(_x,l)=>`aria-label="${l}${NEW_TAB}"`)}>${body}</a>`;
+  return `<a${attrs}>${body.replace(/[ \u00a0]?↗(?![^<]*<\/span>)/,'\u00a0<span aria-hidden="true">↗</span>')}<span class="visually-hidden sr-only">${NEW_TAB}</span></a>`;
+});
+const html=markNewTab(glueHtml(detailed?detailHtml:generalHtml));
 const css=detailed?detailCss:generalCss;
-const script=detailed?detailScript:generalScript;
+// Подсказки сравнения («Как выбирать», причины ограничений) скрипт вставляет на странице — типограф после сборки их не видит.
+// Склеиваем русские строки прямо в тексте скрипта: строка в двойных кавычках с кириллицей проходит через glue().
+const glueStrings=(js:string)=>js.replace(/"((?:[^"\\\n]|\\.)*)"/g,(m,str)=>/[а-яё]/i.test(str)?`"${glue(str)}"`:m);
+const script=glueStrings(detailed?detailScript:generalScript);
 const related=[
   detailed?{title:'Посмотреть другие платформы',description:'Общее сравнение восьми вариантов.',href:'compare/ecommerce-platforms/'}:{title:'inSales и Яндекс KIT подробно',description:'Когда что выбрать, ответы команды KIT и 349 функций с источниками.',href:'compare/insales-vs-yandex-kit/'},
   {title:'Оценить запуск на inSales',description:'Предварительный бюджет и срок.',href:'tools/insales-calculator/'},
@@ -27,7 +40,7 @@ const related=[
 ];
 ---
 <Base title={`${title} — Emilius Agency`} description={description} modifiedTime={detailed?'2026-11-22':undefined} jsonLd={detailed?{'@context':'https://schema.org','@type':'WebPage',name:title,description,inLanguage:'ru',dateModified:'2026-11-22',url:new URL(Astro.url.pathname,Astro.site).href,about:[{'@type':'SoftwareApplication',name:'inSales',applicationCategory:'BusinessApplication',url:'https://www.insales.ru/'},{'@type':'SoftwareApplication',name:'Яндекс KIT',applicationCategory:'BusinessApplication',url:'https://kit.yandex.ru/'}],publisher:{'@type':'Organization',name:'Emilius Agency',url:'https://emilius.agency/'}}:undefined}>
-  <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения',href:'compare/'},{title}]} />
+  <main class="comparison-page"><Breadcrumbs items={[{title:'Сравнения платформ',href:'compare/'},{title}]} />
     <div class="platform-comparison"><Fragment set:html={html} />{!detailed && <ComparisonPicker />}</div>
     <section class="directory-callout"><h2>Что делать дальше</h2><LinkList items={related} /><a class="directory-button" href={href('#feedback')}>Помогите выбрать платформу</a><div class="directory-tags"><a href={href('services/insales-shop/')}>Запуск магазина на inSales</a><a href={href('resources/')}>Все полезные материалы</a></div></section>
   </main><Footer />
@@ -43,7 +56,8 @@ const related=[
   .platform-comparison :global(.wrap){padding:4px 0 20px;grid-template-columns:minmax(0,1fr);gap:16px}
   .platform-comparison :global(header){max-width:none;gap:8px}
   .platform-comparison :global(.lead){max-width:80ch;line-height:1.45}
-  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:110ch}
+  /* Мелкий текст длинной строкой читать трудно: около 80 знаков в строке, как у сносок под таблицей */
+  .platform-comparison :global(.overview-note){font-size:13px;line-height:1.45;color:var(--ink-2);margin:0;max-width:75ch}
   .platform-comparison :global(.scope){line-height:1.45}
   .platform-comparison :global(.search-row){align-items:start}
   .platform-comparison :global(.search-row input),.platform-comparison :global(.search-row select){height:48px}
