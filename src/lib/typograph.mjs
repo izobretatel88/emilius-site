@@ -20,3 +20,11 @@ export function glue(text) {
     .replace(/ ([→↗↓↑←])/g, `${NBSP}$1`)
     .replace(new RegExp(`(\\d) (${MONTHS})`, 'g'), `$1${NBSP}$2`);
 }
+
+// То же для готового HTML (сравнения платформ приходят файлом): правим только текст между тегами,
+// атрибуты, <script>, <style>, <pre>, <code> и <textarea> не трогаем.
+export function glueHtml(html) {
+  if (typeof html !== 'string') return html;
+  return html.replace(/(<(script|style|pre|code|textarea)\b[\s\S]*?<\/\2>)|(<[^>]*>)|([^<]+)/gi,
+    (m, raw, _tag, tag, text) => (text ? glue(text) : m));
+}

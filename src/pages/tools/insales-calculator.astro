@@ -26,7 +26,7 @@ function combinations(index:number,answers:Record<string,string>) {
 combinations(0,{});
 const defaults=Object.fromEntries(entries.map(([key,[,options]])=>[key,key==='channel'?'social':options[0][0]]));
 const initial=results[lookup[entries.map(([key])=>defaults[key]).join('|')]];
-const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
+const rub=(n:number)=>n.toLocaleString('ru-RU')+'\u00a0₽'; // ₽ не уходит один на новую строку
 ---
 <Directory title="Калькулятор магазина на inSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
   <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>

@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LinkList from '../components/LinkList.astro';
 import ComparisonPicker from '../components/ComparisonPicker.astro';
 import {href} from '../lib/urls';
+import {glueHtml} from '../lib/typograph.mjs';
 import '../styles/architecture.css';
 import generalHtml from '../content/comparisons/ecommerce-platforms.html?raw';
 import generalCss from '../content/comparisons/ecommerce-platforms.css?raw';
@@ -17,7 +18,8 @@ const {kind}=Astro.props;
 const detailed=kind==='detail';
 const title=detailed?'inSales или Яндекс KIT: что выбрать и чем отличаются':'Сравнение платформ для интернет-магазина';
 const description=detailed?'Чем отличаются inSales и Яндекс KIT: кому что подходит, 349 функций с источниками и ответы команды KIT на 28 вопросов (ноябрь 2026).':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
-const html=detailed?detailHtml:generalHtml;
+// Неразрывные пробелы в числах и перед ₽/%: «29 900 ₽» не расходится по строкам в узких ячейках
+const html=glueHtml(detailed?detailHtml:generalHtml);
 const css=detailed?detailCss:generalCss;
 const script=detailed?detailScript:generalScript;
 const related=[
