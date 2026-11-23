@@ -541,6 +541,19 @@ const jsonLd = [
     .body :global(table:has(th:nth-child(3))) {
       min-width: 520px;
     }
+    /* Первый столбец — подпись строки: при листании он остаётся на месте, цифры не теряют своей строки */
+    .body :global(table:has(th:nth-child(3)) :is(th, td):first-child) {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      width: 9.5em;
+      min-width: 9.5em;
+      background: var(--card);
+      box-shadow: inset -1px 0 0 var(--hair);
+    }
+    .body :global(table:has(th:nth-child(3)) th:first-child) {
+      background: var(--well);
+    }
   }
   .body :global(th) {
     padding: 10px 14px;
