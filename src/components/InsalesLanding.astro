@@ -337,7 +337,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
           <p class="small">Ориентир без SEO, фидов для рекламы и доработок кодом. Точную смету «входит / не входит» фиксируем после диагностики, до оплаты.</p>
         </div>
         <label>Имя (необязательно)<input name="name" type="text" maxlength="100" autocomplete="name" /></label>
-        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" aria-describedby="lead-contact-hint lead-contact-error" /></label>
+        <label>Telegram или телефон<input name="contact" type="text" maxlength="200" required autocomplete="tel" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="lead-contact-hint lead-contact-error" /></label>
         <p class="small" id="lead-contact-hint">Укажите @имя в Telegram или номер, по которому можно ответить.</p>
         <p class="field-error" id="lead-contact-error" role="alert" hidden></p>
         <div class="trap" aria-hidden="true"><input name="website" type="text" tabindex="-1" autocomplete="off" /></div>
