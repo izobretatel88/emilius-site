@@ -4,6 +4,8 @@ import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import { ruDate, type Post } from '../lib/blog';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 interface Props {
   posts: Post[];
@@ -12,6 +14,16 @@ const { posts } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
 const cover = (p: string) => href(p.replace(/^\//, ''));
+// Обложка из frontmatter — JPG для превью ссылки в мессенджерах и соцсетях. В списке показываем WebP той же
+// картинки, если он лежит рядом (think-different, итерация 78): «cover-storefronts.jpg» 149 КБ → «.webp» 41 КБ,
+// «cover-og.jpg» 62 КБ → «cover.webp» 37 КБ и вдвое чётче.
+const inPublic = (p: string) => existsSync(join(process.cwd(), 'public', p));
+const listCover = (c: string) => {
+  for (const alt of [c.replace(/\.(jpe?g|png)$/i, '.webp'), c.replace(/\/cover-og\.(jpe?g|png)$/i, '/cover.webp')]) {
+    if (alt !== c && inPublic(alt)) return alt;
+  }
+  return c;
+};
 ---
 
 <Base
@@ -26,10 +38,11 @@ const cover = (p: string) => href(p.replace(/^\//, ''));
     <p class="ui-lead">Исследования, дизайн, разработка и маркетинг продуктов. Начинаем с практических материалов о запуске интернет-магазинов и работе с маркетплейсами.</p>
     </header>
     <ul class="posts">
-      {posts.map((p) => (
+      {posts.map((p, i) => (
         <li class="post ui-surface">
           <a href={href(`blog/${p.id}/`)} class="cover-link" tabindex="-1" aria-hidden="true">
-            <img src={cover(p.data.cover)} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+            {/* Обложка первой карточки — в первом экране: грузим сразу и с высоким приоритетом (итерация 99) */}
+            <img src={cover(listCover(p.data.cover))} alt="" width="1200" height="630" loading={i === 0 ? undefined : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async" />
           </a>
           <div class="text">
             <h2><a href={href(`blog/${p.id}/`)}>{p.data.h1}</a></h2>
