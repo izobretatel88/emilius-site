@@ -111,7 +111,9 @@ const listCover = (c: string) => {
     transition: color var(--hover);
   }
   @media (hover: hover) and (pointer: fine) {
-    h2 a:hover {
+    /* Обложка ведёт туда же, куда заголовок: наведение на неё подсвечивает заголовок, видно, что карточка кликабельна */
+    h2 a:hover,
+    .post:has(.cover-link:hover) h2 a {
       color: var(--teal-text);
     }
   }
