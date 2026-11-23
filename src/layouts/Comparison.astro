@@ -19,7 +19,15 @@ const detailed=kind==='detail';
 const title=detailed?'inSales или Яндекс KIT: что выбрать и чем отличаются':'Сравнение платформ для интернет-магазина';
 const description=detailed?'Чем отличаются inSales и Яндекс KIT: кому что подходит, 349 функций с источниками и ответы команды KIT на 28 вопросов (ноябрь 2026).':'Восемь платформ для интернет-магазина: сценарии, возможности и затраты.';
 // Неразрывные пробелы в числах и перед ₽/%: «29 900 ₽» не расходится по строкам в узких ячейках
-const html=glueHtml(detailed?detailHtml:generalHtml);
+// Ссылки на источники открываются в новой вкладке. Видно это по ↗, а экранный диктор зачитывал «Источник, стрелка».
+// Добавляем пометку, как в остальном сайте: к aria-label, если он есть, иначе скрытым текстом. Стрелку прячем от диктора.
+const NEW_TAB=', откроется в новой вкладке';
+const markNewTab=(h:string)=>h.replace(/<a\b([^>]*\btarget="_blank"[^>]*)>([\s\S]*?)<\/a>/g,(m,attrs:string,body:string)=>{
+  if(/новой вкладк/.test(attrs+body))return m;
+  if(/aria-label="/.test(attrs))return `<a${attrs.replace(/aria-label="([^"]*)"/,(_x,l)=>`aria-label="${l}${NEW_TAB}"`)}>${body}</a>`;
+  return `<a${attrs}>${body.replace(/[ \u00a0]?↗(?![^<]*<\/span>)/,'\u00a0<span aria-hidden="true">↗</span>')}<span class="visually-hidden sr-only">${NEW_TAB}</span></a>`;
+});
+const html=markNewTab(glueHtml(detailed?detailHtml:generalHtml));
 const css=detailed?detailCss:generalCss;
 // Подсказки сравнения («Как выбирать», причины ограничений) скрипт вставляет на странице — типограф после сборки их не видит.
 // Склеиваем русские строки прямо в тексте скрипта: строка в двойных кавычках с кириллицей проходит через glue().
