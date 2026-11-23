@@ -577,6 +577,15 @@ const jsonLd = [
     border-top: 1px solid var(--hair);
     vertical-align: top;
   }
+  /* Столбцы с суммами в markdown выровнены вправо (---:): заголовок встаёт над цифрами, а не над пустым левым краем,
+     цифры одной ширины — разряды «27 540» и «186 320» стоят друг под другом */
+  .body :global(th[align='right']) {
+    text-align: right;
+  }
+  .body :global(td[align='right']) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
   .body :global(.table-wrap:focus-visible) {
     outline: var(--focus-ring);
     outline-offset: 3px;
