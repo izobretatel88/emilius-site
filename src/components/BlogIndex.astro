@@ -1,5 +1,6 @@
 ---
 // Список статей блога: карточка с обложкой, заголовком, описанием, датой и временем чтения.
+import { glue } from '../lib/typograph.mjs';
 import Base from '../layouts/Base.astro';
 import Footer from './Footer.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
@@ -46,7 +47,7 @@ const listCover = (c: string) => {
           </a>
           <div class="text">
             <h2><a href={href(`blog/${p.id}/`)}>{p.data.h1}</a></h2>
-            <p>{p.data.description}</p>
+            <p>{glue(p.data.description)}</p>
             <p class="meta">
               {p.data.draft && <span class="draft">черновик</span>}
               <span>{ruDate(p.data.date)}</span>
