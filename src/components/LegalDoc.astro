@@ -139,6 +139,11 @@ const showToc = toc.length >= 4;
       columns: 1;
     }
   }
+  /* Палец: строка содержания — цель от 44 px, а не 18 px высоты текста */
+  @media (pointer: coarse) {
+    .toc li { margin: 0; }
+    .toc a { display: block; padding-block: 11px; }
+  }
   .doc :global(ul) {
     padding-left: 20px;
   }
