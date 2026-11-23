@@ -75,7 +75,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   }
   // Главные залитые кнопки страницы: когда одна из них на экране, кнопка шапки уступает (итерация 58)
   const navAction = document.querySelector<HTMLElement>('.site-nav .nav-action');
-  const primaries = [...document.querySelectorAll<HTMLElement>('main .ui-button, main .directory-button, main a.cta, main .btn-primary')];
+  const primaries = [...document.querySelectorAll<HTMLElement>('main .ui-button, main .directory-button, main .cta, main .plan-cta, main .btn-primary')];
   if (navAction && primaries.length && 'IntersectionObserver' in window) {
     const seen = new Set<Element>();
     const io = new IntersectionObserver((entries) => {
