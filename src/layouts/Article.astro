@@ -150,7 +150,11 @@ const jsonLd = [
       viewer.addEventListener('click', function (e) {
         if (e.target === viewer || e.target.closest('[data-close-img]')) viewer.close();
       });
-      viewer.addEventListener('close', function () { vImg.removeAttribute('src'); });
+      // Широкая схема на телефоне открывается крупнее экрана и листается вбок — иначе «крупнее» ничего не даёт
+      vImg.addEventListener('load', function () {
+        viewer.classList.toggle('is-wide', vImg.naturalWidth >= 1600 && vImg.naturalWidth / vImg.naturalHeight > 1.3);
+      });
+      viewer.addEventListener('close', function () { vImg.removeAttribute('src'); viewer.classList.remove('is-wide'); });
     }
     // Переход из статьи на лендинг услуги: ссылки с utm_source=blog
     document.addEventListener('click', function (e) {
@@ -176,7 +180,9 @@ const jsonLd = [
   @media (max-width: 600px) {
     .img-viewer { width: calc(100% - 16px); max-height: calc(100svh - 16px); border-radius: var(--radius-sm); }
     .img-viewer-bar { padding-left: 14px; }
-    .img-viewer-body { padding: 8px; }
+    .img-viewer-body { padding: 8px; overflow-x: auto; overscroll-behavior-x: contain; }
+    /* Схемы рисуются в 2400 px: при 960 px подписи читаются (≈16 px вместо 6), шапка окна с «Закрыть» остаётся на месте */
+    .img-viewer.is-wide .img-viewer-body img { width: 960px; max-width: none; }
   }
   @media (prefers-reduced-motion: reduce) { .img-viewer[open], .img-viewer[open]::backdrop { animation: none; } }
   .top {
