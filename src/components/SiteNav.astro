@@ -111,7 +111,7 @@ const discuss = isHome ? '#feedback' : href('#feedback');
   .site-nav .nav-action.is-quiet { background: transparent; color: var(--teal-text); box-shadow: inset 0 0 0 1.5px var(--teal-btn); }
   @media (hover: hover) and (pointer: fine) { .site-nav .nav-action.is-quiet:hover { background: var(--teal-btn); color: var(--on-teal); } }
   .nav-menu { display: none; }
-  .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: 2px solid var(--teal-text); outline-offset: 4px; }
+  .site-nav a:focus-visible, .nav-menu summary:focus-visible { outline: var(--focus-ring); outline-offset: 4px; }
   @media (max-width: 1000px) {
     .site-nav { gap: 16px; }
     .nav-links { gap: 20px; }

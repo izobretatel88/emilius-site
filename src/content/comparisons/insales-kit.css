@@ -3,7 +3,7 @@
 .platform-comparison{margin:0;/* без своего фона: под сравнением те же лучи, что на всём сайте */ color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
 .platform-comparison button,.platform-comparison input,.platform-comparison select{font:inherit;color:inherit}
 .platform-comparison button,.platform-comparison a,.platform-comparison input,.platform-comparison select,.platform-comparison summary,.platform-comparison .scroll{outline-offset:4px}
-.platform-comparison button:focus-visible,.platform-comparison a:focus-visible,.platform-comparison input:focus-visible,.platform-comparison select:focus-visible,.platform-comparison summary:focus-visible,.platform-comparison .scroll:focus-visible{outline:2px solid var(--teal-text)}
+.platform-comparison button:focus-visible,.platform-comparison a:focus-visible,.platform-comparison input:focus-visible,.platform-comparison select:focus-visible,.platform-comparison summary:focus-visible,.platform-comparison .scroll:focus-visible{outline:var(--focus-ring)}
 .platform-comparison a{color:var(--teal-text);text-underline-offset:3px}
 .platform-comparison button,.platform-comparison summary,.platform-comparison select{cursor:pointer}
 .platform-comparison [hidden]{display:none!important}
@@ -206,7 +206,7 @@
 .platform-comparison .choose li::before{content:"";position:absolute;left:14px;top:calc(9px + .72em - 3px);width:6px;height:6px;border-radius:50%;background:var(--ink-2)}
 .platform-comparison .choose-more::after{content:"";position:absolute;inset:0;border-radius:inherit}
 @media (hover: hover) and (pointer: fine){.platform-comparison .choose li:hover{background:var(--input-bg)}.platform-comparison .choose li:hover .choose-more{color:var(--teal-text)}}
-.platform-comparison .choose li:has(.choose-more:focus-visible){outline:2px solid var(--teal-text);outline-offset:0}
+.platform-comparison .choose li:has(.choose-more:focus-visible){outline:var(--focus-ring);outline-offset:0}
 .platform-comparison .choose-more:focus-visible{outline:none}
 @media print{.platform-comparison .choose-more::after{content:none}}
 /* Фокус с клавиатуры не прячется под шапкой и заголовком раздела: пока фокус в таблице, страница оставляет им место */
@@ -227,7 +227,7 @@
 .platform-comparison .owner li{position:relative;padding:9px 12px 9px 30px;line-height:1.45;border-radius:var(--radius-sm);transition:background-color var(--hover)}
 .platform-comparison .owner li::before{content:"";position:absolute;left:14px;top:calc(9px + .72em - 3px);width:6px;height:6px;border-radius:50%;background:var(--ink-2)}
 @media (hover: hover) and (pointer: fine){.platform-comparison .owner li:has(.choose-more):hover{background:var(--input-bg)}.platform-comparison .owner li:hover .choose-more{color:var(--teal-text)}}
-.platform-comparison .owner li:has(.choose-more:focus-visible){outline:2px solid var(--teal-text);outline-offset:0}
+.platform-comparison .owner li:has(.choose-more:focus-visible){outline:var(--focus-ring);outline-offset:0}
 @media(max-width:760px){.platform-comparison .owner .choose-cols>div{padding:18px 16px}.platform-comparison .owner h2{font-size:21px}}
 .platform-comparison .facts .fresh{background:var(--sec-custdev-now);color:var(--ink);font-weight:600;display:inline-flex;align-items:center;gap:8px}
 .platform-comparison .fresh-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--teal)}
