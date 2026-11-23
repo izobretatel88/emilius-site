@@ -12,7 +12,7 @@ const ld={'@context':'https://schema.org','@type':'BreadcrumbList',itemListEleme
 <style>
   .breadcrumbs{font-size:13px;color:var(--ink-2);margin-bottom:20px}
   .breadcrumbs ol{display:flex;align-items:center;flex-wrap:wrap;gap:0 10px;list-style:none;padding:0;margin:0}
-  .breadcrumbs li{min-width:0;overflow-wrap:anywhere}
+  .breadcrumbs li{min-width:0;margin:0;overflow-wrap:anywhere} /* margin: 0 — отступы списков текста (документы, статьи) крошек не касаются */
   .breadcrumbs li+li::before{content:'›';margin-right:10px;color:var(--ink-3)}
   a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
   @media (hover: hover) and (pointer: fine) { a:hover {text-decoration:underline;text-underline-offset:4px} }
