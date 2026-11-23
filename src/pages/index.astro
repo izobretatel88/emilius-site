@@ -226,8 +226,9 @@ const organization = {
   /* Логотип загорается плавно — при наведении, фокусе с клавиатуры и касании */
   .client-strip a:focus-visible img, .client-strip a:active img { opacity: 1; }
   @media (hover: hover) and (pointer: fine) { .client-strip a:hover img { opacity: 1; } }
-  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
-  :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); }
+  /* Только на экране: при печати страница светлая (tokens.css), белые логотипы на бумаге пропали бы */
+  @media screen and (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .client-strip img.mono { filter: grayscale(1) invert(1); } }
+  @media screen { :global(:root[data-theme='dark']) .client-strip img.mono { filter: grayscale(1) invert(1); } }
 
   .service-feature { display: flex; justify-content: space-between; gap: 40px; padding: 30px 32px; transition: transform var(--press); }
   .service-feature h3 { font-size: 27px; line-height: 1.2; font-weight: 600; letter-spacing: -.02em; margin: 0 0 12px; }
