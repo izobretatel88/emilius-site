@@ -95,6 +95,8 @@ const rub=(n:number)=>n.toLocaleString('ru-RU')+' ₽';
   #public-calculator button{min-height:44px;text-underline-offset:4px}
   #calc-result,#public-calculator{scroll-margin-top:24px}
   @media(max-width:700px){.calc-jump{display:inline-flex}}
+  /* Шире 700 px вопросы и итог стоят рядом: ссылка «Изменить параметры ↑» вела бы к тому, что и так на экране */
+  @media(min-width:701px){.calc-result .calc-back{display:none}}
 </style>
 <!-- Строка «Текущая оценка» (компонент LiveEstimate) ведёт туда же, куда ссылка над формой: когда строка показана, ссылка-дубль не нужна. Без JavaScript строки нет — ссылка остаётся. Глобально, потому что :has смотрит в чужой компонент. -->
 <style is:global>@media(max-width:700px){.calc-jump:has(+ .calculator .estimate-strip:not([hidden])){display:none}}</style>
