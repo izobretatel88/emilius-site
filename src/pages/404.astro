@@ -7,12 +7,15 @@ import LinkList from '../components/LinkList.astro';
 import { LINKS } from '../data/site';
 import { SERVICE_ROWS } from '../data/services-list';
 import { href } from '../lib/urls';
+import { getPosts } from '../lib/blog';
 
 const paths = [
   ...SERVICE_ROWS.map((r) => ({ title: r.title, description: r.note, href: r.href })),
   { title: 'Все услуги', description: 'Касдев, дизайн, разработка и маркетинг', href: 'services/' },
   { title: 'Проекты', description: 'Примеры работы команды', href: 'projects/' },
   { title: 'Полезное', description: 'Сравнения платформ и калькулятор', href: 'resources/' },
+  // Блог — как в шапке: отдельным пунктом, пока в нём есть статьи. Старые ссылки чаще всего ведут на статьи
+  ...((await getPosts()).length ? [{ title: 'Блог', description: 'Статьи о запуске интернет-магазина', href: 'blog/' }] : []),
 ];
 ---
 
