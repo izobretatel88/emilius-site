@@ -4,6 +4,7 @@
 Options -Indexes
 DirectoryIndex index.html
 ErrorDocument 404 /404.html
+ErrorDocument 410 /404.html
 
 # --- Редиректы: emilius.agency и www — на https://emilius.agency без www ---
 # Только для своего домена: на техническом адресе Бегета сайт проверяют до переключения DNS,
@@ -37,6 +38,9 @@ ErrorDocument 404 /404.html
   # и zalina.me, /career, /careers, /jobs — с Хабр Карьеры. Своих страниц нет, ведём на главную.
   RewriteRule ^ru(/.*)?$ https://emilius.agency/ [L,R=301]
   RewriteRule ^(career|careers|jobs)/?$ https://emilius.agency/ [L,R=301]
+  # Чужие карточки товаров Tilda (/tproduct/…, доски и брус) и /hello: 38 из 56 адресов в поиске Яндекса
+  # на 25.11.2026. Сейчас 404; 410 Gone быстрее убирает их из индекса.
+  RewriteRule ^(tproduct/.*|hello/?)$ - [G,L]
 </IfModule>
 
 # --- Сжатие ---
