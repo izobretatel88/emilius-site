@@ -57,7 +57,7 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <!-- Своя миниатюра для пересылки ссылки (Телеграм, VK): public/og/*.jpg рисует `npm run brand` -->
 <Base
-  title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`}
+  title={`${hero.seoTitle ?? hero.title.split('.')[0]} — Эмилиус Эдженси`}
   description={hero.lead}
   ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
   ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на inSales' : 'Свой интернет-магазин на inSales за 3–5 недель: телефон с живым магазином'}
