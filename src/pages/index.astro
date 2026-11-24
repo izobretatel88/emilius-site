@@ -34,10 +34,11 @@ const organization = {
   description: 'Дизайн, разработка и интернет-маркетинг цифровых продуктов. Интернет-магазины на inSales.',
   sameAs: [LINKS.channel, 'https://vk.ru/emiliusagency', 'https://career.habr.com/companies/emilius-agency'],
 };
+import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
 ---
 <Base
-  title="Эмилиус Эдженси – дизайн и реализация продуктов"
-  description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
+  title="Эмилиус Эдженси — сайты и интернет-магазины на inSales"
+  description={`Агентство полного цикла: касдев, дизайн, разработка и маркетинг. Запускаем интернет-магазины на inSales за 3–5 недель, от ${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')} 000 ₽.`}
   bodyClass="home"
   jsonLd={organization}
 >
