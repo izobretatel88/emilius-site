@@ -321,9 +321,9 @@
       "accessed": "2026-10-31"
     },
     "K38": {
-      "title": "KIT: проверка функционала витрины",
-      "url": "https://www.yandex.ru/support/kit/ru/referralprogram/checklist",
-      "accessed": "2026-10-31"
+      "title": "KIT: контекстная коллекция",
+      "url": "https://yandex.ru/support/kit/ru/goods/collections/type/context",
+      "accessed": "2026-11-25"
     },
     "K39": {
       "title": "KIT: домены",
@@ -985,7 +985,7 @@
       "kit": "Да",
       "insales_source": "I1",
       "kit_source": "K38",
-      "note": "KIT: полка «Похожие товары» в официальном чек-листе."
+      "note": "KIT: подборка похожих товаров по характеристикам — контекстная коллекция."
     },
     {
       "id": "F048",
@@ -995,7 +995,7 @@
       "kit": "Да",
       "insales_source": "I1",
       "kit_source": "K38",
-      "note": "Подтверждена официальным чек-листом; набор сортировок не сопоставлен."
+      "note": "В справке KIT — сортировка товаров в подборках; набор сортировок каталога не сопоставлен."
     },
     {
       "id": "F049",
