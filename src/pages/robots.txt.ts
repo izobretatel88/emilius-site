@@ -17,6 +17,8 @@ export const GET: APIRoute = ({ site }) => {
         'Allow: /',
         'Disallow: /api/',
         'Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid&from',
+        // Ссылки «Смотреть проект» со страниц этапов: /?project=… открывает просмотр на главной — это та же главная
+        'Clean-param: project /',
         '',
         `Sitemap: ${sitemap}`,
         '',
