@@ -22,7 +22,7 @@ import { PREVIEW_SIZES, previewSrcset } from '../lib/preview-sizes';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
 // Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
-// sameAs — только свои публичные профили; телефон и адрес не указываем, их нет на сайте.
+// sameAs — только свои публичные профили. Телефона и улицы нет на сайте — их и тут нет; город и почта есть (футер, политика).
 const abs = (p: string) => new URL(href(p), Astro.site).href;
 const organization = {
   '@context': 'https://schema.org',
@@ -33,8 +33,12 @@ const organization = {
   logo: abs('brand/logo.png'),
   description: 'Дизайн, разработка и интернет-маркетинг цифровых продуктов. Интернет-магазины на inSales.',
   sameAs: [LINKS.channel, 'https://vk.ru/emiliusagency', 'https://career.habr.com/companies/emilius-agency'],
+  email: OPERATOR.email,
+  address: { '@type': 'PostalAddress', addressLocality: 'Сочи', addressRegion: 'Краснодарский край', addressCountry: 'RU' },
+  areaServed: { '@type': 'Country', name: 'Россия' },
 };
 import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
+import { OPERATOR } from '../data/legal';
 ---
 <Base
   title="Эмилиус Эдженси — сайты и интернет-магазины на inSales"
