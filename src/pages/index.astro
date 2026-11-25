@@ -38,7 +38,6 @@ const organization = {
   address: { '@type': 'PostalAddress', addressLocality: 'Сочи', addressRegion: 'Краснодарский край', addressCountry: 'RU' },
   areaServed: { '@type': 'Country', name: 'Россия' },
 };
-import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
 import { OPERATOR } from '../data/legal';
 // «Полезное»: к сравнениям и калькулятору — свежая статья блога. Главная — единственная страница с трафиком,
 // ссылка отсюда помогает статье в поиске. Только опубликованные; нет статей — блок как раньше.
@@ -49,7 +48,7 @@ const materials = freshPost
 ---
 <Base
   title="Эмилиус Эдженси – дизайн и реализация продуктов"
-  description={`Агентство полного цикла: касдев, дизайн, разработка и маркетинг. Запускаем интернет-магазины на inSales за 3–5 недель, от ${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')} 000 ₽.`}
+  description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
   bodyClass="home"
   jsonLd={organization}
 >
