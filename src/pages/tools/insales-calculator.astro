@@ -26,9 +26,12 @@ function combinations(index:number,answers:Record<string,string>) {
 combinations(0,{});
 const defaults=Object.fromEntries(entries.map(([key,[,options]])=>[key,key==='channel'?'social':options[0][0]]));
 const initial=results[lookup[entries.map(([key])=>defaults[key]).join('|')]];
+// Разметка для поиска: бесплатный онлайн-калькулятор в браузере, без регистрации
+const calcDescription='Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны.';
+const jsonLd={'@context':'https://schema.org','@type':'WebApplication',name:'Калькулятор магазина на inSales',description:calcDescription,url:new URL(Astro.url.pathname,Astro.site).href,applicationCategory:'BusinessApplication',operatingSystem:'Any',inLanguage:'ru',isAccessibleForFree:true,offers:{'@type':'Offer',price:0,priceCurrency:'RUB'},provider:{'@type':'Organization',name:'Эмилиус Эдженси',url:new URL(import.meta.env.BASE_URL,Astro.site).href}};
 const rub=(n:number)=>n.toLocaleString('ru-RU')+'\u00a0₽'; // ₽ не уходит один на новую строку
 ---
-<Directory title="Калькулятор магазина на inSales" description="Ответьте на семь вопросов — получите ориентир по бюджету и сроку. Тот же расчёт используется в форме услуги. Контакты для расчёта не нужны." parents={[{title:'Инструменты',href:'tools/'}]}>
+<Directory title="Калькулятор магазина на inSales" seoTitle="Калькулятор стоимости интернет-магазина на inSales" description={calcDescription} jsonLd={jsonLd} parents={[{title:'Инструменты',href:'tools/'}]}>
   <a class="calc-jump" href="#calc-result">Показать бюджет и срок ↓</a>
   <div class="calculator"><form id="public-calculator" aria-label="Параметры магазина"><LiveEstimate target="#calc-result" />{entries.map(([key,[label,options]])=><div class="ui-field calc-field"><label class="ui-field-label" for={`calc-${key}`}>{label}</label><select class="ui-input" id={`calc-${key}`} name={key}>{options.map(([value,title])=><option value={value} selected={value===defaults[key]}>{title}</option>)}</select></div>)}<button type="reset">Сбросить ответы</button></form>
   <section class="directory-callout calc-result" id="calc-result" tabindex="-1" aria-labelledby="calc-result-title">

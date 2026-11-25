@@ -6,6 +6,22 @@ export const GET: APIRoute = ({ site }) => {
   const sitemap = new URL(`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}sitemap-index.xml`, site);
   const body = preview
     ? ['User-agent: *', 'Disallow: /', ''].join('\n')
-    : ['User-agent: *', 'Allow: /', '', `Sitemap: ${sitemap}`, ''].join('\n');
+    : [
+        'User-agent: *',
+        'Allow: /',
+        // Обработчик формы — не страница
+        'Disallow: /api/',
+        '',
+        // Яндекс: адреса с метками рекламы и рассылок — та же страница, без дублей в индексе
+        'User-agent: Yandex',
+        'Allow: /',
+        'Disallow: /api/',
+        'Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&gclid&fbclid&from',
+        // Ссылки «Смотреть проект» со страниц этапов: /?project=… открывает просмотр на главной — это та же главная
+        'Clean-param: project /',
+        '',
+        `Sitemap: ${sitemap}`,
+        '',
+      ].join('\n');
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

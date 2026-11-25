@@ -13,14 +13,15 @@ import {
   ACCEPTANCE, WEEKS, CHOICE, FAQ, TEMPLATE_SHOPS, MORE_SHOPS, INTEGRATIONS, PROOF_LINKS, VIDEO_REVIEW, FRESH_SHOP, MOBILE_SHOTS,
   SELLER_WHY, SELLER_MOVE, SELLER_MOVE_NOTE, SELLER_QUICK, SELLER_FAQ } from '../data/insales';
 import { QUICK_QUESTIONS } from '../../docs/insales-service/calc/quick.js';
-import { parseCatalog } from '../../docs/insales-service/calc/estimate.js';
+import { parseCatalog, PACKAGES } from '../../docs/insales-service/calc/estimate.js';
 import catalogCsv from '../../docs/insales-service/03-catalog.csv?raw';
 
 interface Props {
   variant: 'shop' | 'seller';
 }
 const { variant } = Astro.props;
-const hasStockArticle = (await getPosts()).some(p=>p.id==='edinye-ostatki-wb-ozon-insales');
+const postIds = new Set((await getPosts()).map(p=>p.id));
+const hasStockArticle = postIds.has('edinye-ostatki-wb-ozon-insales');
 const hero = HERO[variant];
 const base = import.meta.env.BASE_URL;
 const href = (p: string) => `${base}${base.endsWith('/') ? '' : '/'}${p}`;
@@ -43,6 +44,28 @@ const PLAN_PRESETS: Record<string, Record<string, string>> = {
   Селлер: { channel: 'mp', sku: '150', where: 'mp', variants: 'yes', carriers: '2', crm: 'no' },
 };
 // Разделы для навигации по странице: id заголовка → подпись.
+// Разметка для поиска: услуга с ценой «от» и вопросы из видимого блока FAQ — те же тексты, что на странице.
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+// Цена «от» — та же, что в первом экране: «Старт» для магазина, «Селлер» для продавцов
+const minPrice = variant === 'seller' ? PACKAGES.P.min : PACKAGES.S.min;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: hero.seoTitle ?? hero.title,
+    serviceType: 'Разработка интернет-магазина на inSales',
+    description: hero.lead,
+    url: pageUrl,
+    areaServed: { '@type': 'Country', name: 'Россия' },
+    provider: { '@type': 'Organization', name: 'Эмилиус Эдженси', alternateName: 'Emilius Agency', url: new URL(base, Astro.site).href },
+    offers: { '@type': 'Offer', priceCurrency: 'RUB', price: minPrice, url: pageUrl },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
 const JUMPS = [['t-examples', 'Примеры'], ['t-plans', 'Цены'], ['t-weeks', 'Этапы'], ['t-faq', 'Вопросы']] as const;
 // Телефон на первом экране: общей версии — свежий кейс, селлеру — бренд одежды.
 const heroShop = MOBILE_SHOTS.find((x) => x.id === (variant === 'seller' ? 'duman' : 'happyanimal'))!;
@@ -57,8 +80,9 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
 
 <!-- Своя миниатюра для пересылки ссылки (Телеграм, VK): public/og/*.jpg рисует `npm run brand` -->
 <Base
-  title={`${hero.title.split('.')[0]} — Эмилиус Эдженси`}
+  title={`${hero.seoTitle ?? hero.title.split('.')[0]} — Эмилиус Эдженси`}
   description={hero.lead}
+  jsonLd={jsonLd}
   ogImage={variant === 'seller' ? 'og/insales-seller.jpg' : 'og/insales.jpg'}
   ogImageAlt={variant === 'seller' ? 'Свой магазин рядом с Wildberries и Ozon: телефон с живым магазином на inSales' : 'Свой интернет-магазин на inSales за 3–5 недель: телефон с живым магазином'}
 >
@@ -293,6 +317,8 @@ const questions = Object.entries(QUICK_QUESTIONS).map(([name, [label, opts]]) =>
         {title:'Сравнить восемь платформ',description:'Сценарии, затраты и ограничения.',href:'compare/ecommerce-platforms/'},
         {title:'inSales и Яндекс KIT подробно',description:'Когда что выбрать, ответы команды KIT и 349 функций с источниками.',href:'compare/insales-vs-yandex-kit/'},
         {title:'Рассчитать состав проекта',description:'Предварительный бюджет и срок по семи ответам.',href:'tools/insales-calculator/'},
+        ...(postIds.has('stoimost-insales-pervyy-god') ? [{title:'Сколько стоит магазин в первый год',description:'Тариф, запуск, касса, эквайринг и доставка — по строкам.',href:'blog/stoimost-insales-pervyy-god/'}] : []),
+        ...(postIds.has('tarify-insales-seller-combo') ? [{title:'Какой тариф inSales выбрать',description:'«Селлер», «Комбо» или «Интернет-магазин» на примере года.',href:'blog/tarify-insales-seller-combo/'}] : []),
         ...(variant==='seller' && hasStockArticle ? [{title:'Как устроены единые остатки',description:'Сайт, маркетплейсы и учётная система.',href:'blog/edinye-ostatki-wb-ozon-insales/'}] : []),
       ]} />
       <dl class="choice">

@@ -16,13 +16,14 @@ import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
 import IterationRuler from '../components/IterationRuler.astro';
 import { MATERIALS } from '../data/navigation';
+import { getPosts } from '../lib/blog';
 import { href } from '../lib/urls';
 import { similarLabel } from '../lib/project-inquiry';
 import { PREVIEW_SIZES, previewSrcset } from '../lib/preview-sizes';
 const clients = ['alohagaia', 'wizzu', 'duman', 'geekboards'].map(id => PROJECTS.find(p => p.id === id)!);
 const selected = [PROJECTS.find(p => p.id === 'alohagaia')!, PROJECTS.find(p => p.id === 'wizzu')!];
 // Разметка организации для поисковиков (аудит 11.11.2026): на остальных страницах есть только хлебные крошки.
-// sameAs — только свои публичные профили; телефон и адрес не указываем, их нет на сайте.
+// sameAs — только свои публичные профили. Телефона и улицы нет на сайте — их и тут нет; город и почта есть (футер, политика).
 const abs = (p: string) => new URL(href(p), Astro.site).href;
 const organization = {
   '@context': 'https://schema.org',
@@ -33,11 +34,22 @@ const organization = {
   logo: abs('brand/logo.png'),
   description: 'Дизайн, разработка и интернет-маркетинг цифровых продуктов. Интернет-магазины на inSales.',
   sameAs: [LINKS.channel, 'https://vk.ru/emiliusagency', 'https://career.habr.com/companies/emilius-agency'],
+  email: OPERATOR.email,
+  address: { '@type': 'PostalAddress', addressLocality: 'Сочи', addressRegion: 'Краснодарский край', addressCountry: 'RU' },
+  areaServed: { '@type': 'Country', name: 'Россия' },
 };
+import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
+import { OPERATOR } from '../data/legal';
+// «Полезное»: к сравнениям и калькулятору — свежая статья блога. Главная — единственная страница с трафиком,
+// ссылка отсюда помогает статье в поиске. Только опубликованные; нет статей — блок как раньше.
+const [freshPost] = await getPosts();
+const materials = freshPost
+  ? [{ title: freshPost.data.title, description: freshPost.data.description, href: `blog/${freshPost.id}/`, label: 'Статья' }, ...MATERIALS]
+  : MATERIALS;
 ---
 <Base
-  title="Эмилиус Эдженси – дизайн и реализация продуктов"
-  description="Знаем, как надо! Дизайн, разработка, интернет-маркетинг для создания вдохновляющего опыта 💎"
+  title="Эмилиус Эдженси — сайты и интернет-магазины на inSales"
+  description={`Агентство полного цикла: касдев, дизайн, разработка и маркетинг. Запускаем интернет-магазины на inSales за 3–5 недель, от ${(PACKAGES.S.min / 1000).toLocaleString('ru-RU')} 000 ₽.`}
   bodyClass="home"
   jsonLd={organization}
 >
@@ -139,8 +151,8 @@ const organization = {
 
     <section class="ui-section" id="useful" aria-labelledby="t-useful">
       <div class="ui-section-head"><h2 id="t-useful">Полезное</h2><a class="ui-link" href={href('resources/')}>Все материалы <span class="ui-arrow" aria-hidden="true">→</span></a></div>
-      <ul class="material-grid" role="list">
-        {MATERIALS.map(item => (
+      <ul class:list={["material-grid", { "is-four": materials.length === 4 }]} role="list">
+        {materials.map(item => (
           <li>
             <a class="material ui-surface" href={href(item.href)}>
               <span class="ui-label">{item.label}</span>
@@ -258,6 +270,8 @@ const organization = {
   .project-description p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  /* Четыре карточки — сетка 2×2, чтобы четвёртая не висела одна в ряду */
+  .material-grid.is-four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform var(--press); }
   /* Нажатие на карточку: едва заметно проседает, как кнопка */
   .material:active, .service-feature:active { transform: scale(var(--press-scale-card)); }
@@ -286,7 +300,7 @@ const organization = {
     .direction-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .service-feature { gap: 24px; }
     .service-next { flex-shrink: 1; min-width: 200px; }
-    .material-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .material-grid, .material-grid.is-four { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   }
   @media (max-width: 760px) {
     .product-demo { padding: 0 18px; }

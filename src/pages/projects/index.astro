@@ -114,7 +114,7 @@ const media=Object.fromEntries(projects.map(p=>[p.id,{
   ],
 }]));
 ---
-<Directory title="Проекты" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие." ogImage="og/projects.jpg" ogImageAlt="Проекты Эмилиус Эдженси: шесть снимков сайтов клиентов — Aloha Gaia, Навалишенское, Zalina Verkhovskaya, LimeMart, Duman, Geekboards">
+<Directory title="Проекты" seoTitle="Проекты: интернет-магазины и сайты клиентов" description="Магазины и сайты, над которыми мы работали. Фронтенд, интеграции и развитие." ogImage="og/projects.jpg" ogImageAlt="Проекты Эмилиус Эдженси: шесть снимков сайтов клиентов — Aloha Gaia, Навалишенское, Zalina Verkhovskaya, LimeMart, Duman, Geekboards">
   <div class="gallery-intro"><span>Избранные работы · {projects.length} проектов</span><a href={href('#feedback')}>Обсудить ваш проект</a></div>
   <div class="project-gallery">
     {projects.map((p,index)=><article class:list={['project','project-card',{'project-featured':index===0}]} id={p.id} aria-labelledby={`title-${p.id}`}>
