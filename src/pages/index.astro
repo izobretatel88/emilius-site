@@ -16,6 +16,7 @@ import { PROJECTS } from '../data/projects';
 import { SERVICE_ROWS } from '../data/services-list';
 import IterationRuler from '../components/IterationRuler.astro';
 import { MATERIALS } from '../data/navigation';
+import { getPosts } from '../lib/blog';
 import { href } from '../lib/urls';
 import { similarLabel } from '../lib/project-inquiry';
 import { PREVIEW_SIZES, previewSrcset } from '../lib/preview-sizes';
@@ -39,6 +40,12 @@ const organization = {
 };
 import { PACKAGES } from '../../docs/insales-service/calc/estimate.js';
 import { OPERATOR } from '../data/legal';
+// «Полезное»: к сравнениям и калькулятору — свежая статья блога. Главная — единственная страница с трафиком,
+// ссылка отсюда помогает статье в поиске. Только опубликованные; нет статей — блок как раньше.
+const [freshPost] = await getPosts();
+const materials = freshPost
+  ? [{ title: freshPost.data.title, description: freshPost.data.description, href: `blog/${freshPost.id}/`, label: 'Статья' }, ...MATERIALS]
+  : MATERIALS;
 ---
 <Base
   title="Эмилиус Эдженси — сайты и интернет-магазины на inSales"
@@ -144,8 +151,8 @@ import { OPERATOR } from '../data/legal';
 
     <section class="ui-section" id="useful" aria-labelledby="t-useful">
       <div class="ui-section-head"><h2 id="t-useful">Полезное</h2><a class="ui-link" href={href('resources/')}>Все материалы <span class="ui-arrow" aria-hidden="true">→</span></a></div>
-      <ul class="material-grid" role="list">
-        {MATERIALS.map(item => (
+      <ul class:list={["material-grid", { "is-four": materials.length === 4 }]} role="list">
+        {materials.map(item => (
           <li>
             <a class="material ui-surface" href={href(item.href)}>
               <span class="ui-label">{item.label}</span>
@@ -263,6 +270,8 @@ import { OPERATOR } from '../data/legal';
   .project-description p { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
 
   .material-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  /* Четыре карточки — сетка 2×2, чтобы четвёртая не висела одна в ряду */
+  .material-grid.is-four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .material { display: grid; grid-template-columns: 1fr auto; align-content: start; gap: 8px 16px; height: 100%; padding: 24px; transition: box-shadow var(--hover), transform var(--press); }
   /* Нажатие на карточку: едва заметно проседает, как кнопка */
   .material:active, .service-feature:active { transform: scale(var(--press-scale-card)); }
@@ -291,7 +300,7 @@ import { OPERATOR } from '../data/legal';
     .direction-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .service-feature { gap: 24px; }
     .service-next { flex-shrink: 1; min-width: 200px; }
-    .material-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .material-grid, .material-grid.is-four { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   }
   @media (max-width: 760px) {
     .product-demo { padding: 0 18px; }
